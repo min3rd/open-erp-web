@@ -9,12 +9,15 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { AuthService, RegisterDto } from '../../../../core/services/auth';
+import { catchError, of } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 interface RegisterForm {
   email: FormControl<string>;
@@ -42,6 +45,9 @@ interface RegisterForm {
 })
 export class Register {
   private router = inject(Router);
+  private authService = inject(AuthService);
+  private messageService = inject(MessageService);
+  private translocoService = inject(TranslocoService);
 
   protected readonly showTermsDialog = signal(false);
   protected readonly isSubmitting = signal(false);
@@ -54,15 +60,11 @@ export class Register {
       }),
       fullName: new FormControl('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.minLength(16)],
+        validators: [Validators.required, Validators.minLength(8)],
       }),
       password: new FormControl('', {
         nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.minLength(8),
-          this.passwordStrengthValidator,
-        ],
+        validators: [Validators.required, Validators.minLength(8), this.passwordStrengthValidator],
       }),
       confirmPassword: new FormControl('', {
         nonNullable: true,
@@ -160,18 +162,35 @@ export class Register {
 
     try {
       // TODO: Implement actual API call when backend is ready
-      const formValue = this.registerForm.value;
-      console.log('Registration data:', {
-        email: formValue.email,
-        fullName: formValue.fullName,
-        // Don't log passwords in production
-      });
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Navigate to login or verification page
-      this.router.navigate(['/auth/verify-account']);
+      const formValue = this.registerForm.value as RegisterDto;
+      this.authService
+        .register({
+          email: formValue.email,
+          fullName: formValue.fullName,
+          password: formValue.password,
+        })
+        .pipe(
+          catchError((e) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translocoService.translate(e.error.errorCode),
+              detail: this.translocoService.translate(e.error.message, e.error.details),
+            });
+            throw e;
+          })
+        )
+        .subscribe((e) => {
+          if (e.error) {
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translocoService.translate(e.error.errorCode),
+              detail: this.translocoService.translate(e.error.message, e.error.details),
+            });
+            return;
+          }
+          // Navigate to login or verification page
+          this.router.navigate(['/auth/verify-account']);
+        });
     } catch (error) {
       console.error('Registration failed:', error);
     } finally {
