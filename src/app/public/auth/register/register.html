@@ -48,12 +48,7 @@
       </div>
 
       <!-- Registration Form -->
-      <form
-        [formGroup]="registerForm"
-        (ngSubmit)="onSubmit()"
-        class="space-y-6"
-        novalidate
-      >
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6" novalidate>
         <!-- Email Field -->
         <div class="space-y-2">
           <label
@@ -77,14 +72,12 @@
             [attr.aria-invalid]="
               registerForm.get('email')?.invalid && registerForm.get('email')?.touched
             "
-            [attr.aria-describedby]="
-              getFieldError('email') ? 'email-error' : null
-            "
+            [attr.aria-describedby]="getFieldError('email') ? 'email-error' : null"
           />
           @if (getFieldError('email'); as errorKey) {
-            <small id="email-error" class="text-red-600 text-sm" role="alert">
-              {{ errorKey | transloco }}
-            </small>
+          <small id="email-error" class="text-red-600 text-sm" role="alert">
+            {{ errorKey | transloco }}
+          </small>
           }
         </div>
 
@@ -105,22 +98,18 @@
             [placeholder]="'register.form.fullName.placeholder' | transloco"
             class="w-full"
             [class.ng-invalid]="
-              registerForm.get('fullName')?.invalid &&
-              registerForm.get('fullName')?.touched
+              registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched
             "
             [class.ng-dirty]="registerForm.get('fullName')?.touched"
             [attr.aria-invalid]="
-              registerForm.get('fullName')?.invalid &&
-              registerForm.get('fullName')?.touched
+              registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched
             "
-            [attr.aria-describedby]="
-              getFieldError('fullName') ? 'fullName-error' : null
-            "
+            [attr.aria-describedby]="getFieldError('fullName') ? 'fullName-error' : null"
           />
           @if (getFieldError('fullName'); as errorKey) {
-            <small id="fullName-error" class="text-red-600 text-sm" role="alert">
-              {{ errorKey | transloco }}
-            </small>
+          <small id="fullName-error" class="text-red-600 text-sm" role="alert">
+            {{ errorKey | transloco }}
+          </small>
           }
         </div>
 
@@ -142,17 +131,14 @@
             styleClass="w-full"
             inputStyleClass="w-full"
             [attr.aria-invalid]="
-              registerForm.get('password')?.invalid &&
-              registerForm.get('password')?.touched
+              registerForm.get('password')?.invalid && registerForm.get('password')?.touched
             "
-            [attr.aria-describedby]="
-              getFieldError('password') ? 'password-error' : null
-            "
+            [attr.aria-describedby]="getFieldError('password') ? 'password-error' : null"
           />
           @if (getFieldError('password'); as errorKey) {
-            <small id="password-error" class="text-red-600 text-sm" role="alert">
-              {{ errorKey | transloco }}
-            </small>
+          <small id="password-error" class="text-red-600 text-sm" role="alert">
+            {{ errorKey | transloco }}
+          </small>
           }
         </div>
 
@@ -178,18 +164,12 @@
                 registerForm.errors?.['passwordMismatch']) &&
               registerForm.get('confirmPassword')?.touched
             "
-            [attr.aria-describedby]="
-              getConfirmPasswordError() ? 'confirmPassword-error' : null
-            "
+            [attr.aria-describedby]="getConfirmPasswordError() ? 'confirmPassword-error' : null"
           />
           @if (getConfirmPasswordError(); as errorKey) {
-            <small
-              id="confirmPassword-error"
-              class="text-red-600 text-sm"
-              role="alert"
-            >
-              {{ errorKey | transloco }}
-            </small>
+          <small id="confirmPassword-error" class="text-red-600 text-sm" role="alert">
+            {{ errorKey | transloco }}
+          </small>
           }
         </div>
 
@@ -205,9 +185,7 @@
                 registerForm.get('termsAccepted')?.invalid &&
                 registerForm.get('termsAccepted')?.touched
               "
-              [attr.aria-describedby]="
-                getFieldError('termsAccepted') ? 'terms-error' : null
-              "
+              [attr.aria-describedby]="getFieldError('termsAccepted') ? 'terms-error' : null"
             />
             <label for="termsAccepted" class="ml-3 text-sm text-gray-700">
               {{ 'register.form.terms.label' | transloco }}
@@ -222,14 +200,14 @@
             </label>
           </div>
           @if (getFieldError('termsAccepted'); as errorKey) {
-            <small id="terms-error" class="text-red-600 text-sm" role="alert">
-              {{ errorKey | transloco }}
-            </small>
+          <small id="terms-error" class="text-red-600 text-sm" role="alert">
+            {{ errorKey | transloco }}
+          </small>
           }
         </div>
 
         <!-- Action Buttons -->
-        <div class="space-y-3">
+        <div class="flex flex-col space-y-2">
           <p-button
             type="submit"
             [label]="'register.buttons.register' | transloco"
@@ -245,7 +223,6 @@
             (onClick)="navigateToLogin()"
             styleClass="w-full"
             severity="secondary"
-            [outlined]="true"
           />
         </div>
       </form>
