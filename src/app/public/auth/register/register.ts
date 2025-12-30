@@ -173,8 +173,11 @@ export class Register {
           catchError((e) => {
             this.messageService.add({
               severity: 'error',
-              summary: this.translocoService.translate(e.error.errorCode),
-              detail: this.translocoService.translate(e.error.message, e.error.details),
+              summary: this.translocoService.translate(e.error.errorCode ?? 'error.unknown'),
+              detail:
+                this.translocoService.translate(e.error.message, e.error.details) +
+                '\n' +
+                e.error.supportUrl,
             });
             throw e;
           })
@@ -183,8 +186,11 @@ export class Register {
           if (e.error) {
             this.messageService.add({
               severity: 'error',
-              summary: this.translocoService.translate(e.error.errorCode),
-              detail: this.translocoService.translate(e.error.message, e.error.details),
+              summary: this.translocoService.translate(e.error.errorCode ?? 'error.unknown'),
+              detail:
+                this.translocoService.translate(e.error.message, e.error.details) +
+                '\n' +
+                e.error.supportUrl,
             });
             return;
           }
