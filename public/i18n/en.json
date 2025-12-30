@@ -1,1 +1,60 @@
-{}
+{
+  "register": {
+    "title": "Create Account",
+    "subtitle": "Join us to get started",
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter your email",
+        "errors": {
+          "required": "Email is required",
+          "email": "Please enter a valid email address"
+        }
+      },
+      "fullName": {
+        "label": "Full Name",
+        "placeholder": "Enter your full name",
+        "errors": {
+          "required": "Full name is required",
+          "minlength": "Full name must be at least 16 characters"
+        }
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password",
+        "errors": {
+          "required": "Password is required",
+          "minlength": "Password must be at least 8 characters",
+          "pattern": "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character"
+        }
+      },
+      "confirmPassword": {
+        "label": "Confirm Password",
+        "placeholder": "Re-enter your password",
+        "errors": {
+          "required": "Please confirm your password",
+          "mismatch": "Passwords do not match"
+        }
+      },
+      "terms": {
+        "label": "I accept the terms and conditions",
+        "errors": {
+          "required": "You must accept the terms and conditions"
+        }
+      }
+    },
+    "buttons": {
+      "register": "Register",
+      "backToLogin": "Back to Login",
+      "viewTerms": "View Terms"
+    },
+    "footer": {
+      "githubLink": "Visit our GitHub repository"
+    },
+    "termsDialog": {
+      "title": "Terms and Conditions",
+      "content": "Welcome to Open ERP. By using this service, you agree to the following terms:\n\n1. Account Usage: You are responsible for maintaining the security of your account.\n\n2. Data Privacy: We respect your privacy and protect your personal information according to applicable laws.\n\n3. Service Usage: You agree to use this service in compliance with all applicable laws and regulations.\n\n4. Intellectual Property: All content and materials available on this service are protected by intellectual property rights.\n\n5. Limitation of Liability: The service is provided 'as is' without warranties of any kind.\n\n6. Changes to Terms: We reserve the right to modify these terms at any time.\n\nFor full terms and conditions, please visit our website.",
+      "closeButton": "Close"
+    }
+  }
+}
