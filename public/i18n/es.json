@@ -1,1 +1,60 @@
-{}
+{
+  "register": {
+    "title": "Crear Cuenta",
+    "subtitle": "Únete para comenzar",
+    "form": {
+      "email": {
+        "label": "Correo Electrónico",
+        "placeholder": "Ingresa tu correo electrónico",
+        "errors": {
+          "required": "El correo electrónico es obligatorio",
+          "email": "Por favor ingresa un correo electrónico válido"
+        }
+      },
+      "fullName": {
+        "label": "Nombre Completo",
+        "placeholder": "Ingresa tu nombre completo",
+        "errors": {
+          "required": "El nombre completo es obligatorio",
+          "minlength": "El nombre completo debe tener al menos 16 caracteres"
+        }
+      },
+      "password": {
+        "label": "Contraseña",
+        "placeholder": "Ingresa tu contraseña",
+        "errors": {
+          "required": "La contraseña es obligatoria",
+          "minlength": "La contraseña debe tener al menos 8 caracteres",
+          "pattern": "La contraseña debe contener al menos 1 letra mayúscula, 1 letra minúscula, 1 número y 1 carácter especial"
+        }
+      },
+      "confirmPassword": {
+        "label": "Confirmar Contraseña",
+        "placeholder": "Vuelve a ingresar tu contraseña",
+        "errors": {
+          "required": "Por favor confirma tu contraseña",
+          "mismatch": "Las contraseñas no coinciden"
+        }
+      },
+      "terms": {
+        "label": "Acepto los términos y condiciones",
+        "errors": {
+          "required": "Debes aceptar los términos y condiciones"
+        }
+      }
+    },
+    "buttons": {
+      "register": "Registrarse",
+      "backToLogin": "Volver al Inicio de Sesión",
+      "viewTerms": "Ver Términos"
+    },
+    "footer": {
+      "githubLink": "Visita nuestro repositorio de GitHub"
+    },
+    "termsDialog": {
+      "title": "Términos y Condiciones",
+      "content": "Bienvenido a Open ERP. Al usar este servicio, aceptas los siguientes términos:\n\n1. Uso de Cuenta: Eres responsable de mantener la seguridad de tu cuenta.\n\n2. Privacidad de Datos: Respetamos tu privacidad y protegemos tu información personal según las leyes aplicables.\n\n3. Uso del Servicio: Aceptas usar este servicio cumpliendo con todas las leyes y regulaciones aplicables.\n\n4. Propiedad Intelectual: Todo el contenido y materiales disponibles en este servicio están protegidos por derechos de propiedad intelectual.\n\n5. Limitación de Responsabilidad: El servicio se proporciona 'tal cual' sin garantías de ningún tipo.\n\n6. Cambios en los Términos: Nos reservamos el derecho de modificar estos términos en cualquier momento.\n\nPara ver los términos y condiciones completos, visita nuestro sitio web.",
+      "closeButton": "Cerrar"
+    }
+  }
+}
