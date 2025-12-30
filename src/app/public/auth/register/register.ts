@@ -76,7 +76,6 @@ export class Register {
     { validators: this.passwordMatchValidator }
   );
 
-
   private passwordStrengthValidator(control: FormControl): ValidationErrors | null {
     const value = control.value;
     if (!value) {

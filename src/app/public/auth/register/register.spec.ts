@@ -2,7 +2,6 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { Register } from './register';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-import { provideTransloco } from '@jsverse/transloco';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 
 describe('Register Component', () => {
@@ -197,9 +196,9 @@ describe('Register Component', () => {
 
   describe('Form Submission', () => {
     it('should mark all fields as touched on invalid submit', async () => {
-      spyOn(component['registerForm'], 'markAllAsTouched');
+      const markAllAsTouchedSpy = vi.spyOn(component['registerForm'], 'markAllAsTouched');
       await component['onSubmit']();
-      expect(component['registerForm'].markAllAsTouched).toHaveBeenCalled();
+      expect(markAllAsTouchedSpy).toHaveBeenCalled();
     });
 
     it('should set submitting state on valid submit', async () => {
