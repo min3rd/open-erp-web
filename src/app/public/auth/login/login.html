@@ -1,1 +1,160 @@
-<p>login works!</p>,
+<div class="min-h-screen flex">
+  <!-- Left Panel - Background Image and Logo (Desktop Only) -->
+  <div
+    class="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-indigo-600 to-purple-700 items-center justify-center p-12"
+  >
+    <div class="absolute inset-0 overflow-hidden">
+      <img
+        ngSrc="/images/auth-background.svg"
+        alt=""
+        fill
+        priority
+        class="object-cover opacity-20"
+      />
+    </div>
+    <div class="relative z-10 text-center">
+      <img
+        ngSrc="/images/logo.svg"
+        alt="Open ERP Logo"
+        width="200"
+        height="80"
+        priority
+        class="mx-auto mb-8"
+      />
+      <h1 class="text-4xl font-bold text-white mb-4">
+        {{ 'login.title' | transloco }}
+      </h1>
+      <p class="text-xl text-white/90">{{ 'login.subtitle' | transloco }}</p>
+    </div>
+  </div>
+
+  <!-- Right Panel - Login Form -->
+  <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+    <div class="w-full max-w-md">
+      <!-- Mobile Logo -->
+      <div class="lg:hidden text-center mb-8">
+        <img
+          ngSrc="/images/logo.svg"
+          alt="Open ERP Logo"
+          width="160"
+          height="64"
+          priority
+          class="mx-auto mb-4"
+        />
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+          {{ 'login.title' | transloco }}
+        </h1>
+        <p class="text-lg text-gray-600">{{ 'login.subtitle' | transloco }}</p>
+      </div>
+
+      <!-- Login Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6" novalidate>
+        <!-- Username/Email Field -->
+        <div class="space-y-2">
+          <label
+            for="username"
+            class="block text-sm font-medium text-gray-700"
+            [attr.aria-required]="true"
+          >
+            {{ 'login.form.username.label' | transloco }}
+          </label>
+          <input
+            pInputText
+            id="username"
+            type="text"
+            formControlName="username"
+            [placeholder]="'login.form.username.placeholder' | transloco"
+            class="w-full"
+            [class.ng-invalid]="
+              loginForm.get('username')?.invalid && loginForm.get('username')?.touched
+            "
+            [class.ng-dirty]="loginForm.get('username')?.touched"
+            [attr.aria-invalid]="
+              loginForm.get('username')?.invalid && loginForm.get('username')?.touched
+            "
+            [attr.aria-describedby]="getFieldError('username') ? 'username-error' : null"
+          />
+          @if (getFieldError('username'); as errorKey) {
+          <small id="username-error" class="text-red-600 text-sm" role="alert">
+            {{ errorKey | transloco }}
+          </small>
+          }
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-2">
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700"
+            [attr.aria-required]="true"
+          >
+            {{ 'login.form.password.label' | transloco }}
+          </label>
+          <p-password
+            id="password"
+            formControlName="password"
+            [placeholder]="'login.form.password.placeholder' | transloco"
+            [toggleMask]="true"
+            [feedback]="false"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+            [attr.aria-invalid]="
+              loginForm.get('password')?.invalid && loginForm.get('password')?.touched
+            "
+            [attr.aria-describedby]="getFieldError('password') ? 'password-error' : null"
+          />
+          @if (getFieldError('password'); as errorKey) {
+          <small id="password-error" class="text-red-600 text-sm" role="alert">
+            {{ errorKey | transloco }}
+          </small>
+          }
+        </div>
+
+        <!-- Forgot Password Link -->
+        <div class="flex justify-end">
+          <button
+            type="button"
+            (click)="navigateToForgotPassword()"
+            class="text-sm text-indigo-600 hover:text-indigo-700 underline focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded"
+            [attr.aria-label]="'login.buttons.forgotPassword' | transloco"
+          >
+            {{ 'login.buttons.forgotPassword' | transloco }}
+          </button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col space-y-2">
+          <p-button
+            type="submit"
+            [label]="'login.buttons.login' | transloco"
+            [disabled]="!loginForm.valid || isSubmitting()"
+            [loading]="isSubmitting()"
+            styleClass="w-full"
+            severity="primary"
+            [attr.aria-busy]="isSubmitting()"
+          />
+          <p-button
+            type="button"
+            [label]="'login.buttons.createAccount' | transloco"
+            (onClick)="navigateToRegister()"
+            styleClass="w-full"
+            severity="secondary"
+          />
+        </div>
+      </form>
+
+      <!-- Footer -->
+      <footer class="mt-8 text-center">
+        <a
+          href="https://github.com/min3rd/open-erp"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm text-gray-600 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded"
+          [attr.aria-label]="'login.footer.githubLink' | transloco"
+        >
+          {{ 'login.footer.githubLink' | transloco }}
+        </a>
+      </footer>
+    </div>
+  </div>
+</div>,

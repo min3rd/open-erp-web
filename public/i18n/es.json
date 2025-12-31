@@ -57,6 +57,39 @@
       "closeButton": "Cerrar"
     }
   },
+  "login": {
+    "title": "Bienvenido de Nuevo",
+    "subtitle": "Inicia sesión en tu cuenta",
+    "form": {
+      "username": {
+        "label": "Correo Electrónico o Nombre de Usuario",
+        "placeholder": "Ingresa tu correo electrónico o nombre de usuario",
+        "errors": {
+          "required": "El correo electrónico o nombre de usuario es obligatorio"
+        }
+      },
+      "password": {
+        "label": "Contraseña",
+        "placeholder": "Ingresa tu contraseña",
+        "errors": {
+          "required": "La contraseña es obligatoria",
+          "minlength": "La contraseña debe tener al menos 8 caracteres"
+        }
+      }
+    },
+    "buttons": {
+      "login": "Iniciar Sesión",
+      "createAccount": "Crear Cuenta",
+      "forgotPassword": "¿Olvidaste tu Contraseña?"
+    },
+    "messages": {
+      "loginSuccess": "¡Inicio de sesión exitoso! Redirigiendo...",
+      "loginError": "Error al iniciar sesión. Por favor verifica tus credenciales e intenta de nuevo."
+    },
+    "footer": {
+      "githubLink": "Visita nuestro repositorio de GitHub"
+    }
+  },
   "verifyAccount": {
     "title": "Verifica tu Correo Electrónico",
     "subtitle": "Ingresa el código de verificación enviado a tu correo",
