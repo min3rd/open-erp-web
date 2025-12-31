@@ -129,18 +129,19 @@
           />
           <p-button
             type="button"
-            [label]="
-              resendCooldown() > 0
-                ? ('verifyAccount.messages.resendCooldown' | transloco: { seconds: resendCooldown() })
-                : ('verifyAccount.buttons.resendCode' | transloco)
-            "
             (onClick)="onResendCode()"
             [disabled]="resendCooldown() > 0 || isResending()"
             [loading]="isResending()"
             styleClass="w-full"
             severity="secondary"
             [attr.aria-busy]="isResending()"
-          />
+          >
+            @if (resendCooldown() > 0) {
+              {{ 'verifyAccount.messages.resendCooldown' | transloco: { seconds: resendCooldown() } }}
+            } @else {
+              {{ 'verifyAccount.buttons.resendCode' | transloco }}
+            }
+          </p-button>
           <p-button
             type="button"
             [label]="'verifyAccount.buttons.backToLogin' | transloco"
