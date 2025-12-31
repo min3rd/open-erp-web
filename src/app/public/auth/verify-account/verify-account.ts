@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, OnDestroy } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   FormControl,
@@ -18,6 +18,15 @@ interface VerifyAccountForm {
   verificationCode: FormControl<string>;
 }
 
+interface ApiResponse {
+  error?: {
+    errorCode?: string;
+    message?: string;
+    details?: any;
+    supportUrl?: string;
+  };
+}
+
 @Component({
   selector: 'public-verify-account',
   imports: [
@@ -31,7 +40,7 @@ interface VerifyAccountForm {
   templateUrl: './verify-account.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VerifyAccount {
+export class VerifyAccount implements OnDestroy {
   private router = inject(Router);
   private authService = inject(AuthService);
   private messageService = inject(MessageService);
@@ -79,7 +88,7 @@ export class VerifyAccount {
     this.router.navigate(['/auth/login']);
   }
 
-  protected async onSubmit(): Promise<void> {
+  protected onSubmit(): void {
     if (this.verifyForm.invalid) {
       this.verifyForm.markAllAsTouched();
       return;
@@ -87,52 +96,47 @@ export class VerifyAccount {
 
     this.isSubmitting.set(true);
 
-    try {
-      const formValue = this.verifyForm.value;
-      this.authService
-        .verifyEmail({
-          email: formValue.email!,
-          code: formValue.verificationCode!,
-        })
-        .subscribe({
-          next: (response: any) => {
-            if (response.error) {
-              this.messageService.add({
-                severity: 'error',
-                summary: this.translocoService.translate('verifyAccount.messages.verificationError'),
-                detail: this.translocoService.translate(
-                  response.error.message ?? 'error.unknown',
-                  response.error.details
-                ),
-              });
-            } else {
-              this.messageService.add({
-                severity: 'success',
-                summary: this.translocoService.translate('verifyAccount.messages.verificationSuccess'),
-              });
-              // Navigate to login after 2 seconds
-              setTimeout(() => {
-                this.router.navigate(['/auth/login']);
-              }, 2000);
-            }
-          },
-          error: () => {
+    const formValue = this.verifyForm.value;
+    this.authService
+      .verifyEmail({
+        email: formValue.email!,
+        code: formValue.verificationCode!,
+      })
+      .subscribe({
+        next: (response: ApiResponse) => {
+          if (response.error) {
             this.messageService.add({
               severity: 'error',
               summary: this.translocoService.translate('verifyAccount.messages.verificationError'),
+              detail: this.translocoService.translate(
+                response.error.message ?? 'error.unknown',
+                response.error.details
+              ),
             });
-          },
-          complete: () => {
-            this.isSubmitting.set(false);
-          },
-        });
-    } catch (error) {
-      console.error('Verification failed:', error);
-      this.isSubmitting.set(false);
-    }
+          } else {
+            this.messageService.add({
+              severity: 'success',
+              summary: this.translocoService.translate('verifyAccount.messages.verificationSuccess'),
+            });
+            // Navigate to login after 2 seconds
+            setTimeout(() => {
+              this.router.navigate(['/auth/login']);
+            }, 2000);
+          }
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translocoService.translate('verifyAccount.messages.verificationError'),
+          });
+        },
+        complete: () => {
+          this.isSubmitting.set(false);
+        },
+      });
   }
 
-  protected async onResendCode(): Promise<void> {
+  protected onResendCode(): void {
     const emailControl = this.verifyForm.get('email');
     if (!emailControl?.value || emailControl.invalid) {
       emailControl?.markAsTouched();
@@ -149,40 +153,35 @@ export class VerifyAccount {
 
     this.isResending.set(true);
 
-    try {
-      this.authService.resendVerificationCode(emailControl.value).subscribe({
-        next: (response: any) => {
-          if (response.error) {
-            this.messageService.add({
-              severity: 'error',
-              summary: this.translocoService.translate('verifyAccount.messages.resendError'),
-              detail: this.translocoService.translate(
-                response.error.message ?? 'error.unknown',
-                response.error.details
-              ),
-            });
-          } else {
-            this.messageService.add({
-              severity: 'success',
-              summary: this.translocoService.translate('verifyAccount.messages.resendSuccess'),
-            });
-            this.startResendCooldown();
-          }
-        },
-        error: () => {
+    this.authService.resendVerificationCode(emailControl.value).subscribe({
+      next: (response: ApiResponse) => {
+        if (response.error) {
           this.messageService.add({
             severity: 'error',
             summary: this.translocoService.translate('verifyAccount.messages.resendError'),
+            detail: this.translocoService.translate(
+              response.error.message ?? 'error.unknown',
+              response.error.details
+            ),
           });
-        },
-        complete: () => {
-          this.isResending.set(false);
-        },
-      });
-    } catch (error) {
-      console.error('Resend failed:', error);
-      this.isResending.set(false);
-    }
+        } else {
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translocoService.translate('verifyAccount.messages.resendSuccess'),
+          });
+          this.startResendCooldown();
+        }
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translocoService.translate('verifyAccount.messages.resendError'),
+        });
+      },
+      complete: () => {
+        this.isResending.set(false);
+      },
+    });
   }
 
   private startResendCooldown(): void {
@@ -204,5 +203,12 @@ export class VerifyAccount {
         this.resendCooldown.set(current - 1);
       }
     }, 1000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.resendTimer) {
+      clearInterval(this.resendTimer);
+      this.resendTimer = null;
+    }
   }
 }
