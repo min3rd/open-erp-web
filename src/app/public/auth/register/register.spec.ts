@@ -3,6 +3,10 @@ import { Register } from './register';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { TranslocoTestingModule } from '@jsverse/transloco';
+import { vi } from 'vitest';
+import { MessageService } from 'primeng/api';
+import { AuthService } from '../../../../core/services/auth';
+import { of } from 'rxjs';
 
 describe('Register Component', () => {
   let component: Register;
@@ -20,7 +24,20 @@ describe('Register Component', () => {
           },
         }),
       ],
-      providers: [provideRouter([]), provideHttpClient()],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        MessageService,
+        {
+          provide: AuthService,
+          useValue: {
+            register: vi.fn(() => of({})),
+            verifyEmail: vi.fn(() => of({})),
+            resendVerificationCode: vi.fn(() => of({})),
+            login: vi.fn(() => of({})),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Register);
@@ -52,7 +69,7 @@ describe('Register Component', () => {
       const fullNameControl = component['registerForm'].get('fullName');
       expect(fullNameControl?.valid).toBeFalsy();
 
-      fullNameControl?.setValue('Short Name');
+      fullNameControl?.setValue('Short');
       expect(fullNameControl?.valid).toBeFalsy();
 
       fullNameControl?.setValue('John Smith Doe Anderson');

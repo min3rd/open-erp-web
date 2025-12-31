@@ -1,1 +1,168 @@
-<p>vertical works!</p>,
+<div class="h-screen flex overflow-hidden bg-surface-50 text-surface-900">
+  <aside
+    class="hidden md:flex flex-col items-center justify-between w-16 border-r border-surface-200 bg-surface-0 py-4"
+    aria-label="Thanh công cụ thu gọn"
+  >
+    <div class="space-y-4">
+      <button
+        type="button"
+        class="p-2 rounded-full border border-surface-200 hover:border-primary-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-400"
+        (click)="toggleMenu.emit()"
+        aria-label="Thu gọn hoặc mở menu"
+      >
+        <i class="pi pi-bars"></i>
+      </button>
+      <div class="flex flex-col gap-3 text-surface-500 text-sm">
+        <i class="pi pi-home"></i>
+        <i class="pi pi-bell"></i>
+        <i class="pi pi-envelope"></i>
+        <i class="pi pi-user"></i>
+      </div>
+    </div>
+    <div class="flex flex-col gap-3 items-center text-surface-400">
+      <i class="pi pi-cog"></i>
+      <div class="w-10 h-10 rounded-full overflow-hidden border border-surface-200">
+        <img
+          ngSrc="https://i.pravatar.cc/80?img=15"
+          width="40"
+          height="40"
+          alt="Tài khoản"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    </div>
+  </aside>
+
+  <aside
+    class="hidden md:flex flex-col bg-surface-0 border-r border-surface-200 transition-all duration-200"
+    [class.w-72]="!menuCollapsed()"
+    [class.w-20]="menuCollapsed()"
+  >
+    <header class="flex items-center justify-between gap-3 px-4 py-3">
+      <div class="flex items-center gap-2 min-w-0">
+        <div class="w-10 h-10 rounded-2xl bg-primary-100 text-primary-600 flex items-center justify-center font-semibold">
+          OE
+        </div>
+        @if (!menuCollapsed()) {
+          <div class="min-w-0">
+            <p class="text-sm font-semibold truncate">Open ERP</p>
+            <p class="text-xs text-surface-500 truncate">Private workspace</p>
+          </div>
+        }
+      </div>
+      <div class="flex items-center gap-2">
+        <p-button
+          icon="pi pi-refresh"
+          [rounded]="true"
+          [text]="true"
+          size="small"
+          aria-label="Làm mới menu"
+          (onClick)="refreshMenu.emit()"
+        />
+        <p-button
+          icon="pi pi-chevron-left"
+          [rounded]="true"
+          [text]="true"
+          size="small"
+          aria-label="Thu gọn menu"
+          (onClick)="toggleMenu.emit()"
+        />
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto px-3 pb-3">
+      @if (menuLoading()) {
+        <div class="space-y-2">
+          <p-skeleton height="2.5rem" />
+          <p-skeleton height="2.5rem" />
+          <p-skeleton height="2.5rem" />
+        </div>
+      } @else {
+        <p-panelMenu
+          [model]="menuItems()"
+          styleClass="border-0 bg-transparent text-sm"
+          [multiple]="true"
+          aria-label="Menu điều hướng"
+        />
+      }
+    </div>
+  </aside>
+
+  <main class="flex-1 flex flex-col overflow-hidden">
+    <header
+      class="flex items-center justify-between gap-3 px-4 py-3 bg-surface-0 border-b border-surface-200 md:sticky md:top-0 z-10"
+    >
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="md:hidden p-2 rounded-full border border-surface-200 hover:border-primary-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-400"
+          aria-label="Mở menu"
+          (click)="openMobileMenu.emit()"
+        >
+          <i class="pi pi-list"></i>
+        </button>
+        <div>
+          <p class="text-sm font-semibold leading-tight">{{ contentTitle() }}</p>
+          <p class="text-xs text-surface-500">Nội dung hiển thị trong 1 màn hình</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <p-button
+          icon="pi pi-comments"
+          [rounded]="true"
+          [text]="true"
+          aria-label="Mở chat"
+          (onClick)="toggleChat.emit()"
+        />
+      </div>
+    </header>
+
+    <section class="flex-1 overflow-hidden p-4">
+      <div
+        class="h-full overflow-y-auto rounded-2xl bg-surface-0 shadow-sm border border-surface-200 p-4 pb-20 md:pb-4"
+        aria-label="Khu vực nội dung"
+      >
+        <ng-content />
+      </div>
+    </section>
+  </main>
+
+  <aside
+    class="hidden lg:flex flex-col border-l border-surface-200 bg-surface-0 transition-all duration-200"
+    [class.w-80]="chatOpen()"
+    [class.w-14]="!chatOpen()"
+    aria-label="Bảng chat"
+  >
+    <div class="flex items-center justify-between px-3 py-3">
+      <p class="text-sm font-semibold">Chat</p>
+      <p-button
+        icon="pi pi-times"
+        [rounded]="true"
+        [text]="true"
+        size="small"
+        aria-label="Đóng chat"
+        (onClick)="toggleChat.emit()"
+      />
+    </div>
+    @if (chatOpen()) {
+      <div class="flex-1 overflow-hidden">
+        @defer (when chatOpen()) {
+          <private-chat-panel />
+        } @placeholder {
+          <div class="h-full flex items-center justify-center text-surface-500">
+            Đang tải chat...
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="flex items-center justify-center flex-1">
+        <p-button
+          label="Mở chat"
+          icon="pi pi-comments"
+          severity="secondary"
+          (onClick)="toggleChat.emit()"
+        />
+      </div>
+    }
+  </aside>
+</div>

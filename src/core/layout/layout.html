@@ -1,1 +1,137 @@
-<p>layout works!</p>,
+<section class="relative h-screen overflow-hidden bg-surface-50 text-surface-900">
+  @switch (layoutType()) {
+    @case ('horizontal') {
+      <layout-horizontal
+        [menuItems]="menuItems()"
+        [menuLoading]="menuLoading()"
+        [chatOpen]="chatOpen()"
+        [contentTitle]="contentTitle()"
+        (toggleChat)="toggleChat()"
+        (refreshMenu)="refreshMenu()"
+      >
+        <ng-content />
+      </layout-horizontal>
+    }
+    @default {
+      <layout-vertical
+        [menuItems]="menuItems()"
+        [menuLoading]="menuLoading()"
+        [chatOpen]="chatOpen()"
+        [menuCollapsed]="menuCollapsed()"
+        [contentTitle]="contentTitle()"
+        (toggleMenu)="toggleMenuCollapse()"
+        (toggleChat)="toggleChat()"
+        (refreshMenu)="refreshMenu()"
+        (openMobileMenu)="openMobileMenu()"
+      >
+        <ng-content />
+      </layout-vertical>
+    }
+  }
+
+  <p-tabs
+    class="md:hidden fixed bottom-0 left-0 right-0 bg-surface-0 border-t border-surface-200 shadow-md"
+    [value]="activeMobileTab()"
+    (valueChange)="handleTabChange($event)"
+    aria-label="Điều hướng nhanh"
+  >
+    <p-tablist class="flex justify-around">
+      <p-tab value="menu">
+        <div class="flex flex-col items-center gap-1 py-2">
+          <i class="pi pi-th-large text-lg"></i>
+          <span class="text-xs font-medium">Menu</span>
+        </div>
+      </p-tab>
+      <p-tab value="content">
+        <div class="flex flex-col items-center gap-1 py-2">
+          <i class="pi pi-window-maximize text-lg"></i>
+          <span class="text-xs font-medium">Nội dung</span>
+        </div>
+      </p-tab>
+      <p-tab value="chat">
+        <div class="flex flex-col items-center gap-1 py-2">
+          <i class="pi pi-comments text-lg"></i>
+          <span class="text-xs font-medium">Chat</span>
+        </div>
+      </p-tab>
+    </p-tablist>
+    <p-tabpanels class="hidden">
+      <p-tabpanel value="menu"></p-tabpanel>
+      <p-tabpanel value="content"></p-tabpanel>
+      <p-tabpanel value="chat"></p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+
+  <p-dialog
+    [visible]="mobileMenuOpen()"
+    (onHide)="closeMobileMenu()"
+    [modal]="true"
+    [dismissableMask]="true"
+    [closeOnEscape]="true"
+    [blockScroll]="true"
+    [style]="{ width: '100vw' }"
+    [contentStyle]="{ height: 'calc(100vh - 4rem)' }"
+    header="Menu"
+    styleClass="max-w-full m-0 top-0 md:hidden"
+  >
+    <div class="space-y-3">
+      <span class="p-input-icon-left w-full">
+        <i class="pi pi-search text-surface-500"></i>
+        <input
+          pInputText
+          type="search"
+          [value]="searchTerm()"
+          (input)="searchTerm.set(($any($event.target)?.value ?? ''))"
+          aria-label="Tìm kiếm menu"
+          class="w-full"
+        />
+      </span>
+
+      <div class="grid grid-cols-2 gap-3">
+        @for (item of filteredMenuFlat(); track item.label) {
+          <button
+            type="button"
+            class="rounded-xl border border-surface-200 bg-surface-0 px-3 py-4 text-left hover:border-primary-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-400 disabled:opacity-40"
+            [disabled]="item.disabled"
+            (click)="closeMobileMenu()"
+            [attr.aria-label]="item.label"
+          >
+            <div class="flex items-center gap-3">
+              @if (item.icon) {
+                <i [class]="item.icon + ' text-primary-500'"></i>
+              }
+              <div>
+                <p class="text-sm font-semibold">{{ item.label }}</p>
+                @if (item.badge) {
+                  <span class="text-xs text-surface-500">{{ item.badge }} new</span>
+                }
+              </div>
+            </div>
+          </button>
+        } @empty {
+          <p class="text-sm text-surface-500 text-center col-span-2">Không có chức năng phù hợp</p>
+        }
+      </div>
+    </div>
+  </p-dialog>
+
+  <p-dialog
+    [visible]="mobileChatOpen()"
+    (onHide)="handleTabChange('content')"
+    [modal]="true"
+    [dismissableMask]="true"
+    [closeOnEscape]="true"
+    [blockScroll]="true"
+    header="Chat"
+    [style]="{ width: '100vw', maxWidth: '480px' }"
+    styleClass="md:hidden"
+  >
+    @defer (when chatOpen()) {
+      <private-chat-panel />
+    } @placeholder {
+      <div class="h-32 flex items-center justify-center text-surface-500">
+        Đang tải chat...
+      </div>
+    }
+  </p-dialog>
+</section>

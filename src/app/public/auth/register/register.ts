@@ -161,7 +161,6 @@ export class Register {
     this.isSubmitting.set(true);
 
     try {
-      // TODO: Implement actual API call when backend is ready
       const formValue = this.registerForm.value as RegisterDto;
       this.authService
         .register({
@@ -194,7 +193,6 @@ export class Register {
             });
             return;
           }
-          // Navigate to login or verification page
           this.router.navigate(['/auth/verify-account'], {
             queryParams: { email: formValue.email },
           });
@@ -202,7 +200,7 @@ export class Register {
     } catch (error) {
       console.error('Registration failed:', error);
     } finally {
-      this.isSubmitting.set(false);
+      queueMicrotask(() => this.isSubmitting.set(false));
     }
   }
 }
