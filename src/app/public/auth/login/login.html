@@ -62,7 +62,7 @@
             pInputText
             id="username"
             type="text"
-            formControlName="username"
+            formControlName="email"
             [placeholder]="'login.form.username.placeholder' | transloco"
             autocomplete="username"
             class="w-full"
@@ -73,9 +73,9 @@
             [attr.aria-invalid]="
               loginForm.get('username')?.invalid && loginForm.get('username')?.touched
             "
-            [attr.aria-describedby]="getFieldError('username') ? 'username-error' : null"
+            [attr.aria-describedby]="getFieldError('email') ? 'username-error' : null"
           />
-          @if (getFieldError('username'); as errorKey) {
+          @if (getFieldError('email'); as errorKey) {
           <small id="username-error" class="text-red-600 text-sm" role="alert">
             {{ errorKey | transloco }}
           </small>

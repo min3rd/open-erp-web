@@ -15,7 +15,7 @@ import { AuthService, LoginDto, LoginResponse } from '../../../../core/services/
 import { MessageService } from 'primeng/api';
 
 interface LoginForm {
-  username: FormControl<string>;
+  email: FormControl<string>;
   password: FormControl<string>;
 }
 
@@ -42,7 +42,7 @@ export class Login {
   protected readonly isSubmitting = signal(false);
 
   protected readonly loginForm = new FormGroup<LoginForm>({
-    username: new FormControl('', {
+    email: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required],
     }),
