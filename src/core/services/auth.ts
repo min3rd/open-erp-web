@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   resendVerificationCode(email: string, version: string = 'v1') {
-    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/resend-verification-code`, { email }).pipe(
+    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/resend-verification`, { email }).pipe(
       catchError((e) => {
         return of(e);
       })
