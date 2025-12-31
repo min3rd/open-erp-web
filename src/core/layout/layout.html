@@ -1,1 +1,7 @@
-<p>layout works!</p>,
+@if (!config || !config.layout || config.layout == 'empty') {
+<layout-empty></layout-empty>
+} @else if (config.layout =='vertical') {
+<layout-vertical></layout-vertical>
+} @else if (config.layout =='horizontal') {
+<layout-horizontal></layout-horizontal>
+}
