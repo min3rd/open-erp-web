@@ -9,6 +9,11 @@ export interface RegisterDto {
   password: string;
 }
 
+export interface VerifyEmailDto {
+  email: string;
+  code: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -17,6 +22,22 @@ export class AuthService {
 
   register(form: RegisterDto, version: string = 'v1') {
     return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/register`, form).pipe(
+      catchError((e) => {
+        return of(e);
+      })
+    );
+  }
+
+  verifyEmail(payload: VerifyEmailDto, version: string = 'v1') {
+    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/verify-email`, payload).pipe(
+      catchError((e) => {
+        return of(e);
+      })
+    );
+  }
+
+  resendVerificationCode(email: string, version: string = 'v1') {
+    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/resend-verification-code`, { email }).pipe(
       catchError((e) => {
         return of(e);
       })

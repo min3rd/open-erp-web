@@ -56,5 +56,43 @@
       "content": "Welcome to Open ERP. By using this service, you agree to the following terms:\n\n1. Account Usage: You are responsible for maintaining the security of your account.\n\n2. Data Privacy: We respect your privacy and protect your personal information according to applicable laws.\n\n3. Service Usage: You agree to use this service in compliance with all applicable laws and regulations.\n\n4. Intellectual Property: All content and materials available on this service are protected by intellectual property rights.\n\n5. Limitation of Liability: The service is provided 'as is' without warranties of any kind.\n\n6. Changes to Terms: We reserve the right to modify these terms at any time.\n\nFor full terms and conditions, please visit our website.",
       "closeButton": "Close"
     }
+  },
+  "verifyAccount": {
+    "title": "Verify Your Email",
+    "subtitle": "Enter the verification code sent to your email",
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter your email",
+        "errors": {
+          "required": "Email is required",
+          "email": "Please enter a valid email address"
+        }
+      },
+      "verificationCode": {
+        "label": "Verification Code",
+        "placeholder": "Enter 6-digit code",
+        "errors": {
+          "required": "Verification code is required",
+          "minlength": "Code must be at least 6 characters",
+          "pattern": "Please enter a valid verification code"
+        }
+      }
+    },
+    "buttons": {
+      "verify": "Verify Email",
+      "resendCode": "Resend Code",
+      "backToLogin": "Back to Login"
+    },
+    "messages": {
+      "verificationSuccess": "Email verified successfully! Redirecting to login...",
+      "verificationError": "Verification failed. Please check your code and try again.",
+      "resendSuccess": "Verification code sent! Please check your email.",
+      "resendError": "Failed to resend code. Please try again later.",
+      "resendCooldown": "Please wait {{seconds}} seconds before requesting a new code"
+    },
+    "footer": {
+      "githubLink": "Visit our GitHub repository"
+    }
   }
 }
