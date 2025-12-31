@@ -88,11 +88,11 @@ export class VerifyAccount {
     this.isSubmitting.set(true);
 
     try {
-      const formValue = this.verifyForm.value as VerifyEmailDto;
+      const formValue = this.verifyForm.value;
       this.authService
         .verifyEmail({
-          email: formValue.email,
-          code: formValue.verificationCode,
+          email: formValue.email!,
+          code: formValue.verificationCode!,
         })
         .subscribe({
           next: (response: any) => {
