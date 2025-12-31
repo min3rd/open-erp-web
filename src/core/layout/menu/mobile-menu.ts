@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, signal, OnInit, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -127,7 +127,7 @@ import type { MenuItem } from '../layout.types';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MobileMenu {
+export class MobileMenu implements OnInit, OnChanges {
   items = input.required<MenuItem[]>();
   visible = input.required<boolean>();
   onClose = output<void>();
@@ -199,7 +199,8 @@ export class MobileMenu {
     if (item.command) {
       item.command();
     }
-    // Close menu after navigation
+    // Close menu after navigation - using a small delay to ensure navigation starts
+    // This is acceptable since the user expects a brief transition when navigating
     setTimeout(() => this.handleClose(), 100);
   }
 

@@ -114,7 +114,6 @@ export class PrivateLayoutService {
    */
   toggleChat(): void {
     this.chatStateSignal.update((state) => ({
-      ...state,
       isOpen: !state.isOpen,
       isLoaded: state.isLoaded || !state.isOpen, // Mark as loaded when opening for first time
     }));

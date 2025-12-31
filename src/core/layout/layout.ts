@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, OnInit, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { PrivateLayoutService } from './layout.service';
@@ -15,7 +15,7 @@ import type { LayoutType } from './layout.types';
   templateUrl: './layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Layout {
+export class Layout implements OnInit, OnChanges {
   private layoutService = inject(PrivateLayoutService);
   private route = inject(ActivatedRoute);
 

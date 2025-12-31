@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, ViewChild, ViewContainerRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -17,7 +17,7 @@ import { MobileMenu } from '../menu/mobile-menu';
   templateUrl: './horizontal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Horizontal {
+export class Horizontal implements OnInit {
   private layoutService = inject(PrivateLayoutService);
 
   @ViewChild('chatContainer', { read: ViewContainerRef })
