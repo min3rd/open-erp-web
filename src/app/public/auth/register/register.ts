@@ -195,7 +195,9 @@ export class Register {
             return;
           }
           // Navigate to login or verification page
-          this.router.navigate(['/auth/verify-account']);
+          this.router.navigate(['/auth/verify-account'], {
+            queryParams: { email: formValue.email },
+          });
         });
     } catch (error) {
       console.error('Registration failed:', error);
