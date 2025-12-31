@@ -56,5 +56,43 @@
       "content": "Bienvenido a Open ERP. Al usar este servicio, aceptas los siguientes términos:\n\n1. Uso de Cuenta: Eres responsable de mantener la seguridad de tu cuenta.\n\n2. Privacidad de Datos: Respetamos tu privacidad y protegemos tu información personal según las leyes aplicables.\n\n3. Uso del Servicio: Aceptas usar este servicio cumpliendo con todas las leyes y regulaciones aplicables.\n\n4. Propiedad Intelectual: Todo el contenido y materiales disponibles en este servicio están protegidos por derechos de propiedad intelectual.\n\n5. Limitación de Responsabilidad: El servicio se proporciona 'tal cual' sin garantías de ningún tipo.\n\n6. Cambios en los Términos: Nos reservamos el derecho de modificar estos términos en cualquier momento.\n\nPara ver los términos y condiciones completos, visita nuestro sitio web.",
       "closeButton": "Cerrar"
     }
+  },
+  "verifyAccount": {
+    "title": "Verifica tu Correo Electrónico",
+    "subtitle": "Ingresa el código de verificación enviado a tu correo",
+    "form": {
+      "email": {
+        "label": "Correo Electrónico",
+        "placeholder": "Ingresa tu correo electrónico",
+        "errors": {
+          "required": "El correo electrónico es obligatorio",
+          "email": "Por favor ingresa un correo electrónico válido"
+        }
+      },
+      "verificationCode": {
+        "label": "Código de Verificación",
+        "placeholder": "Ingresa el código de 6 dígitos",
+        "errors": {
+          "required": "El código de verificación es obligatorio",
+          "minlength": "El código debe tener al menos 6 caracteres",
+          "pattern": "Por favor ingresa un código de verificación válido"
+        }
+      }
+    },
+    "buttons": {
+      "verify": "Verificar Correo",
+      "resendCode": "Reenviar Código",
+      "backToLogin": "Volver al Inicio de Sesión"
+    },
+    "messages": {
+      "verificationSuccess": "¡Correo verificado exitosamente! Redirigiendo al inicio de sesión...",
+      "verificationError": "La verificación falló. Por favor verifica tu código e intenta de nuevo.",
+      "resendSuccess": "¡Código de verificación enviado! Por favor revisa tu correo.",
+      "resendError": "No se pudo reenviar el código. Por favor intenta más tarde.",
+      "resendCooldown": "Por favor espera {{seconds}} segundos antes de solicitar un nuevo código"
+    },
+    "footer": {
+      "githubLink": "Visita nuestro repositorio de GitHub"
+    }
   }
 }
