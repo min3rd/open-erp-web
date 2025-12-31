@@ -2,14 +2,13 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { ChartModule } from 'primeng/chart';
 
 /**
  * Demo dashboard component to test layout functionality
  */
 @Component({
   selector: 'app-demo-dashboard',
-  imports: [CommonModule, CardModule, ButtonModule, ChartModule],
+  imports: [CommonModule, CardModule, ButtonModule],
   template: `
     <div class="p-6 space-y-6">
       <!-- Header -->
