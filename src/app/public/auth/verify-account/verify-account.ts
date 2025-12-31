@@ -1,17 +1,20 @@
-import { ChangeDetectionStrategy, Component, signal, inject, OnDestroy } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Router } from '@angular/router';
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthService, VerifyEmailDto } from '../../../../core/services/auth';
 import { MessageService } from 'primeng/api';
+import { Subject, takeUntil } from 'rxjs';
 
 interface VerifyAccountForm {
   email: FormControl<string>;
@@ -40,11 +43,12 @@ interface ApiResponse {
   templateUrl: './verify-account.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VerifyAccount implements OnDestroy {
+export class VerifyAccount implements OnInit, OnDestroy {
   private router = inject(Router);
   private authService = inject(AuthService);
   private messageService = inject(MessageService);
   private translocoService = inject(TranslocoService);
+  private activatedRoute = inject(ActivatedRoute);
 
   protected readonly isSubmitting = signal(false);
   protected readonly isResending = signal(false);
@@ -61,6 +65,27 @@ export class VerifyAccount implements OnDestroy {
       validators: [Validators.required, Validators.minLength(6)],
     }),
   });
+
+  private unsubscribeAll: Subject<any> = new Subject<any>();
+
+  ngOnInit(): void {
+    this.activatedRoute.queryParamMap.pipe(takeUntil(this.unsubscribeAll)).subscribe((params) => {
+      console.log(params);
+      
+      this.verifyForm.patchValue({
+        email: params.get('email') || '',
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.resendTimer) {
+      clearInterval(this.resendTimer);
+      this.resendTimer = null;
+    }
+    this.unsubscribeAll.next(null);
+    this.unsubscribeAll.complete();
+  }
 
   protected getFieldError(fieldName: keyof VerifyAccountForm): string | null {
     const control = this.verifyForm.get(fieldName);
@@ -116,7 +141,9 @@ export class VerifyAccount implements OnDestroy {
           } else {
             this.messageService.add({
               severity: 'success',
-              summary: this.translocoService.translate('verifyAccount.messages.verificationSuccess'),
+              summary: this.translocoService.translate(
+                'verifyAccount.messages.verificationSuccess'
+              ),
             });
             // Navigate to login after 2 seconds
             setTimeout(() => {
@@ -186,11 +213,11 @@ export class VerifyAccount implements OnDestroy {
 
   private startResendCooldown(): void {
     this.resendCooldown.set(60);
-    
+
     if (this.resendTimer) {
       clearInterval(this.resendTimer);
     }
-    
+
     this.resendTimer = setInterval(() => {
       const current = this.resendCooldown();
       if (current <= 1) {
@@ -203,12 +230,5 @@ export class VerifyAccount implements OnDestroy {
         this.resendCooldown.set(current - 1);
       }
     }, 1000);
-  }
-
-  ngOnDestroy(): void {
-    if (this.resendTimer) {
-      clearInterval(this.resendTimer);
-      this.resendTimer = null;
-    }
   }
 }
