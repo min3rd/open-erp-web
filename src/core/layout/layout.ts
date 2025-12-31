@@ -12,6 +12,7 @@ import { Vertical } from './vertical/vertical';
 import { UserConfig } from '../config.types';
 import { ConfigService } from '../services/config';
 import { Subject, takeUntil } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
@@ -22,6 +23,8 @@ import { Subject, takeUntil } from 'rxjs';
 export class Layout implements OnInit, OnDestroy {
   private configService = inject(ConfigService);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -29,7 +32,12 @@ export class Layout implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.configService.config$.pipe(takeUntil(this._unsubscribeAll)).subscribe((config) => {
-      this.config = config!;
+      if (!config) {
+        this._updateLayout();
+        return;
+      }
+      this.config = config;
+      this._updateLayout();
       this.cdr.markForCheck();
     });
   }
@@ -37,5 +45,20 @@ export class Layout implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
+  }
+
+  private _updateLayout(): void {
+    let route = this.activatedRoute;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+
+    const paths = route.pathFromRoot;
+    paths.forEach((path) => {
+      const layout = path.snapshot.data['layout'];
+      if (layout) {
+        this.config = { ...this.config, layout };
+      }
+    });
   }
 }

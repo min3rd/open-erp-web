@@ -7,6 +7,9 @@ export const routes: Routes = [
     path: '',
     canActivate: [privateGuard],
     component: Layout,
+    data: {
+      layout: 'vertical',
+    },
     loadChildren: () => import('./private/private.routes').then((m) => m.routes),
   },
   {
