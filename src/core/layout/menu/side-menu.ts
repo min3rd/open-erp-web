@@ -13,9 +13,9 @@ import type { MenuItem } from '../layout.types';
   selector: 'app-side-menu',
   imports: [CommonModule, RouterModule, PanelMenuModule, ButtonModule],
   template: `
-    <div class="flex flex-col h-full bg-surface-0 dark:bg-surface-900 border-r border-surface-200 dark:border-surface-700">
+    <div class="flex flex-col h-full bg-surface-0 dark:bg-surface-900">
       <!-- Menu Header -->
-      <div class="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700">
+      <div class="flex items-center justify-between p-4 border-b border-surface-border">
         @if (!collapsed()) {
           <div class="flex items-center gap-2">
             <i class="pi pi-th-large text-xl text-primary-500"></i>

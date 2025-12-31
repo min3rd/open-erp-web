@@ -25,7 +25,7 @@ import type { MenuItem } from '../layout.types';
     >
       <div class="flex flex-col h-full bg-surface-0 dark:bg-surface-900">
         <!-- Header with search -->
-        <div class="p-4 border-b border-surface-200 dark:border-surface-700">
+        <div class="p-4 border-b border-surface-border">
           <div class="flex items-center justify-between mb-3">
             <h2 class="text-xl font-bold m-0">Menu</h2>
             <button

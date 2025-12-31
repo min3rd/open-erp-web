@@ -11,7 +11,7 @@ import type { MenuItem } from '../layout.types';
   selector: 'app-top-menu',
   imports: [CommonModule, RouterModule, MenubarModule],
   template: `
-    <div class="bg-surface-0 dark:bg-surface-900 border-b border-surface-200 dark:border-surface-700 sticky top-0 z-40">
+    <div class="bg-surface-0 dark:bg-surface-900">
       <div class="flex items-center px-4">
         <div class="flex items-center gap-2 py-3 mr-4">
           <i class="pi pi-th-large text-xl text-primary-500"></i>
@@ -22,14 +22,14 @@ import type { MenuItem } from '../layout.types';
             <div class="flex items-center gap-2">
               <button
                 type="button"
-                class="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800"
+                class="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
                 [attr.aria-label]="'Notifications'"
               >
                 <i class="pi pi-bell"></i>
               </button>
               <button
                 type="button"
-                class="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800"
+                class="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
                 [attr.aria-label]="'User menu'"
               >
                 <i class="pi pi-user"></i>

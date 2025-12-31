@@ -15,7 +15,7 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
     <div class="flex flex-col h-full bg-surface-0 dark:bg-surface-900">
       <!-- Chat Header -->
       <div
-        class="flex items-center justify-between p-4 border-b border-surface-200 dark:border-surface-700"
+        class="flex items-center justify-between p-4 border-b border-surface-border"
       >
         <div class="flex items-center gap-3">
           <i class="pi pi-comments text-xl"></i>
@@ -59,7 +59,7 @@ import { ScrollPanelModule } from 'primeng/scrollpanel';
       </div>
 
       <!-- Chat Input -->
-      <div class="p-4 border-t border-surface-200 dark:border-surface-700">
+      <div class="p-4 border-t border-surface-border">
         <div class="flex gap-2">
           <input
             pInputText
