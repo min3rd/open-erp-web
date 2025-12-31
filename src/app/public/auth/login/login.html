@@ -64,6 +64,7 @@
             type="text"
             formControlName="username"
             [placeholder]="'login.form.username.placeholder' | transloco"
+            autocomplete="username"
             class="w-full"
             [class.ng-invalid]="
               loginForm.get('username')?.invalid && loginForm.get('username')?.touched
@@ -96,6 +97,7 @@
             [placeholder]="'login.form.password.placeholder' | transloco"
             [toggleMask]="true"
             [feedback]="false"
+            autocomplete="current-password"
             styleClass="w-full"
             inputStyleClass="w-full"
             [attr.aria-invalid]="

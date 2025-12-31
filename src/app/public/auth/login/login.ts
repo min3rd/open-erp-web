@@ -87,48 +87,56 @@ export class Login {
     try {
       const formValue = this.loginForm.value as LoginDto;
       
-      this.authService.login(formValue).subscribe(async (response) => {
-        // Check if response is an error (from catchError)
-        if ('error' in response) {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translocoService.translate('login.messages.loginError'),
-            detail: this.translocoService.translate(
-              response.error?.message ?? 'login.messages.loginError'
-            ),
-          });
-          this.isSubmitting.set(false);
-          return;
-        }
+      this.authService.login(formValue).subscribe({
+        next: async (response) => {
+          // Check if response is an error (from catchError)
+          if ('error' in response) {
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translocoService.translate('login.messages.loginError'),
+              detail: this.translocoService.translate(
+                response.error?.message ?? 'login.messages.loginError'
+              ),
+            });
+            this.isSubmitting.set(false);
+            return;
+          }
 
-        // Success case
-        const loginResponse = response as LoginResponse;
-        
-        try {
-          // Encrypt and store tokens
-          await this.authService.encryptAndStoreTokens({
-            accessToken: loginResponse.accessToken,
-            refreshToken: loginResponse.refreshToken,
-          });
+          // Success case
+          const loginResponse = response as LoginResponse;
+          
+          try {
+            // Encrypt and store tokens
+            await this.authService.encryptAndStoreTokens({
+              accessToken: loginResponse.accessToken,
+              refreshToken: loginResponse.refreshToken,
+            });
 
-          this.messageService.add({
-            severity: 'success',
-            summary: this.translocoService.translate('login.messages.loginSuccess'),
-          });
+            this.messageService.add({
+              severity: 'success',
+              summary: this.translocoService.translate('login.messages.loginSuccess'),
+            });
 
-          // Redirect to dashboard or home page after successful login
-          setTimeout(() => {
+            // Redirect to dashboard or home page after successful login
             this.router.navigate(['/']);
-          }, 1000);
-        } catch (encryptError) {
-          console.error('Failed to encrypt tokens:', encryptError);
+          } catch (encryptError) {
+            console.error('Failed to encrypt tokens:', encryptError);
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translocoService.translate('login.messages.loginError'),
+              detail: 'Failed to securely store authentication tokens',
+            });
+            this.isSubmitting.set(false);
+          }
+        },
+        error: (error) => {
+          console.error('Login failed:', error);
           this.messageService.add({
             severity: 'error',
             summary: this.translocoService.translate('login.messages.loginError'),
-            detail: 'Failed to securely store authentication tokens',
           });
           this.isSubmitting.set(false);
-        }
+        },
       });
     } catch (error) {
       console.error('Login failed:', error);
