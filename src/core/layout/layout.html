@@ -1,1 +1,6 @@
-<p>layout works!</p>,
+@if (layoutConfig().layoutType === 'horizontal') {
+  <layout-horizontal />
+} @else {
+  <layout-vertical />
+}
+
