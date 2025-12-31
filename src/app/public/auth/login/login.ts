@@ -1,13 +1,142 @@
-import { ChangeDetectionStrategy, Component, type OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
+import { AuthService, LoginDto, LoginResponse } from '../../../../core/services/auth';
+import { MessageService } from 'primeng/api';
+
+interface LoginForm {
+  username: FormControl<string>;
+  password: FormControl<string>;
+}
 
 @Component({
   selector: 'public-login',
-  imports: [],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslocoModule,
+    NgOptimizedImage,
+    ButtonModule,
+    InputTextModule,
+    PasswordModule,
+  ],
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Login implements OnInit {
+export class Login {
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private messageService = inject(MessageService);
+  private translocoService = inject(TranslocoService);
 
-  ngOnInit(): void { }
+  protected readonly isSubmitting = signal(false);
 
+  protected readonly loginForm = new FormGroup<LoginForm>({
+    username: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(8)],
+    }),
+  });
+
+  protected getFieldError(fieldName: keyof LoginForm): string | null {
+    const control = this.loginForm.get(fieldName);
+    if (!control || !control.touched || !control.errors) {
+      return null;
+    }
+
+    const errors = control.errors;
+    if (errors['required']) {
+      return `login.form.${fieldName}.errors.required`;
+    }
+    if (errors['minlength']) {
+      return `login.form.${fieldName}.errors.minlength`;
+    }
+    return null;
+  }
+
+  protected navigateToRegister(): void {
+    this.router.navigate(['/auth/register']);
+  }
+
+  protected navigateToForgotPassword(): void {
+    this.router.navigate(['/auth/forgot-password']);
+  }
+
+  protected async onSubmit(): Promise<void> {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSubmitting.set(true);
+
+    try {
+      const formValue = this.loginForm.value as LoginDto;
+      
+      this.authService.login(formValue).subscribe(async (response) => {
+        // Check if response is an error (from catchError)
+        if ('error' in response) {
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translocoService.translate('login.messages.loginError'),
+            detail: this.translocoService.translate(
+              response.error?.message ?? 'login.messages.loginError'
+            ),
+          });
+          this.isSubmitting.set(false);
+          return;
+        }
+
+        // Success case
+        const loginResponse = response as LoginResponse;
+        
+        try {
+          // Encrypt and store tokens
+          await this.authService.encryptAndStoreTokens({
+            accessToken: loginResponse.accessToken,
+            refreshToken: loginResponse.refreshToken,
+          });
+
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translocoService.translate('login.messages.loginSuccess'),
+          });
+
+          // Redirect to dashboard or home page after successful login
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 1000);
+        } catch (encryptError) {
+          console.error('Failed to encrypt tokens:', encryptError);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translocoService.translate('login.messages.loginError'),
+            detail: 'Failed to securely store authentication tokens',
+          });
+          this.isSubmitting.set(false);
+        }
+      });
+    } catch (error) {
+      console.error('Login failed:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translocoService.translate('login.messages.loginError'),
+      });
+      this.isSubmitting.set(false);
+    }
+  }
 }

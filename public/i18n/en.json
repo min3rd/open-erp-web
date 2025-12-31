@@ -57,6 +57,39 @@
       "closeButton": "Close"
     }
   },
+  "login": {
+    "title": "Welcome Back",
+    "subtitle": "Sign in to your account",
+    "form": {
+      "username": {
+        "label": "Email or Username",
+        "placeholder": "Enter your email or username",
+        "errors": {
+          "required": "Email or username is required"
+        }
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password",
+        "errors": {
+          "required": "Password is required",
+          "minlength": "Password must be at least 8 characters"
+        }
+      }
+    },
+    "buttons": {
+      "login": "Login",
+      "createAccount": "Create Account",
+      "forgotPassword": "Forgot Password?"
+    },
+    "messages": {
+      "loginSuccess": "Login successful! Redirecting...",
+      "loginError": "Login failed. Please check your credentials and try again."
+    },
+    "footer": {
+      "githubLink": "Visit our GitHub repository"
+    }
+  },
   "verifyAccount": {
     "title": "Verify Your Email",
     "subtitle": "Enter the verification code sent to your email",
