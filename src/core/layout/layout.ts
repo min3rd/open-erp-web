@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  OnInit,
   computed,
   effect,
   inject,
@@ -34,7 +35,7 @@ type MobileTabId = 'menu' | 'content' | 'chat';
   templateUrl: './layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Layout {
+export class Layout implements OnInit {
   private layoutService = inject(PrivateLayoutService);
 
   readonly layoutType = input<LayoutType>('vertical');
