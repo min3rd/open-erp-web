@@ -20,12 +20,10 @@
       "type": "node",
       "request": "launch",
       "name": "Open ERP Web (Dev)",
+      "preLaunchTask": "npm: install",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start", "--", "--inspect-brk"],
-      "autoAttachChildProcesses": true,
-      "restart": true,
-      "sourceMaps": true,
-      "stopOnEntry": false
+      "runtimeArgs": ["run", "start"],
+      "sourceMaps": true
     }
   ]
 }
