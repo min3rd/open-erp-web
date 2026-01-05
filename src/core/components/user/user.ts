@@ -6,11 +6,11 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { AuthService } from '../../services/auth';
+import { AuthService } from '../../services/auth-service';
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
-import { MeDto } from './user.types';
+import { MeDto } from '../../interfaces/user.types';
 import { AvatarModule } from 'primeng/avatar';
 import { RippleModule } from 'primeng/ripple';
 import { TooltipModule } from 'primeng/tooltip';

@@ -1,9 +1,21 @@
 <div class="flex flex-auto mx-auto justify-center select-none">
   @if(!user){
-  <p-skeleton shape="circle" size="3rem" />
+  <p-skeleton shape="circle" size="2rem" />
   } @else { @if(user.avatarUrl){
-  <p-avatar pRipple [pTooltip]="user.fullName" [image]="user.avatarUrl" size="large" shape="circle" />
+  <p-avatar
+    pRipple
+    [pTooltip]="user.fullName"
+    [image]="user.avatarUrl"
+    size="normal"
+    shape="circle"
+  />
   } @else {
-  <p-avatar pRipple [pTooltip]="user.fullName" [label]="user.fullName.charAt(0)" size="large" shape="circle" />
+  <p-avatar
+    pRipple
+    [pTooltip]="user.fullName"
+    [label]="user.fullName.charAt(0)"
+    size="normal"
+    shape="circle"
+  />
   } }
 </div>

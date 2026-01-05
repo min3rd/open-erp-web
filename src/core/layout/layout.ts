@@ -9,8 +9,8 @@ import {
 import { Empty } from './empty/empty';
 import { Horizontal } from './horizontal/horizontal';
 import { Vertical } from './vertical/vertical';
-import { UserConfig } from '../config.types';
-import { ConfigService } from '../services/config';
+import { UserConfig } from '../interfaces/config.types';
+import { ConfigService } from '../services/config-service';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 

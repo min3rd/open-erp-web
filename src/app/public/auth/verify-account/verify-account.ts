@@ -12,7 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { AuthService, VerifyEmailDto } from '../../../../core/services/auth';
+import { AuthService, VerifyEmailDto } from '../../../../core/services/auth-service';
 import { MessageService } from 'primeng/api';
 import { Subject, takeUntil } from 'rxjs';
 

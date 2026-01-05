@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, isDevMode } from '@angular/core';
 import { API_URI_AUTH } from '../constant';
-import { BehaviorSubject, catchError, from, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, switchMap } from 'rxjs';
 import { User } from '../components/user/user';
-import { MeDto } from '../components/user/user.types';
+import { MeDto } from '../interfaces/user.types';
 
 export interface RegisterDto {
   email: string;
@@ -49,8 +49,6 @@ export class AuthService {
   }
 
   get accessToken(): string | undefined {
-    console.log(this._accessToken);
-    
     return this._accessToken;
   }
 

@@ -14,7 +14,7 @@ import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
 import { httpInterceptor } from '../core/interceptors/http-interceptor';
 import { authInterceptor } from '../core/interceptors/auth-interceptor';
-import { AuthService } from '../core/services/auth';
+import { AuthService } from '../core/services/auth-service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

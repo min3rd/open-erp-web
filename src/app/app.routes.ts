@@ -3,8 +3,8 @@ import { privateGuard } from '../core/guard/private-guard';
 import { Layout } from '../core/layout/layout';
 import { forkJoin } from 'rxjs';
 import { inject } from '@angular/core';
-import { NavigationService } from '../core/services/navigation';
-import { AuthService } from '../core/services/auth';
+import { NavigationService } from '../core/services/navigation-service';
+import { AuthService } from '../core/services/auth-service';
 
 const initializeData = () => {
   const navigationService = inject(NavigationService);

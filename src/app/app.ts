@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { LoadingService } from '../core/services/loading';
+import { LoadingService } from '../core/services/loading-service';
 import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
@@ -12,6 +12,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
   templateUrl: './app.html',
   styleUrl: './app.css',
   providers: [MessageService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
   private loadingService = inject(LoadingService);

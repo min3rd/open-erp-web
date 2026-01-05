@@ -15,7 +15,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { AuthService, RegisterDto } from '../../../../core/services/auth';
+import { AuthService, RegisterDto } from '../../../../core/services/auth-service';
 import { catchError, of } from 'rxjs';
 import { MessageService } from 'primeng/api';
 

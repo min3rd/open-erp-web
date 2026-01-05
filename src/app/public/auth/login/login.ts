@@ -6,7 +6,7 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { AuthService, LoginDto, LoginResponse } from '../../../../core/services/auth';
+import { AuthService, LoginDto, LoginResponse } from '../../../../core/services/auth-service';
 import { MessageService } from 'primeng/api';
 
 interface LoginForm {

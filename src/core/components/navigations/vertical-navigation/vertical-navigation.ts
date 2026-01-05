@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { CommonModule } from '@angular/common';
-import { NavigationService } from '../../../services/navigation';
+import { NavigationService } from '../../../services/navigation-service';
 import { Subject, takeUntil } from 'rxjs';
 import { VerticalNaviagationModuleItem } from '../vertical-naviagation-module-item/vertical-naviagation-module-item';
 import { TranslocoModule } from '@jsverse/transloco';
