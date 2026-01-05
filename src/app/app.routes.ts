@@ -1,12 +1,21 @@
 import { Routes } from '@angular/router';
 import { privateGuard } from '../core/guard/private-guard';
 import { Layout } from '../core/layout/layout';
+import { forkJoin } from 'rxjs';
+import { inject } from '@angular/core';
+import { NavigationService } from '../core/services/navigation';
+
+const initializeData = () => {
+  const navigationService = inject(NavigationService);
+  return forkJoin(navigationService.loadModules());
+};
 
 export const routes: Routes = [
   {
     path: '',
     canActivate: [privateGuard],
     component: Layout,
+    resolve: [initializeData],
     data: {
       layout: 'vertical',
     },

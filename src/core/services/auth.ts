@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, isDevMode } from '@angular/core';
 import { API_URI_AUTH } from '../constant';
-import { catchError, from, Observable, of, switchMap, take } from 'rxjs';
+import { catchError, from, Observable, of, switchMap } from 'rxjs';
 
 export interface RegisterDto {
   email: string;
@@ -91,6 +91,13 @@ export class AuthService {
    */
   async encryptAndStoreTokens(tokens: TokenPayload): Promise<void> {
     try {
+      // In dev mode we store tokens plaintext to simplify debugging.
+      if (isDevMode()) {
+        localStorage.setItem(this.ACCESS_TOKEN_KEY, tokens.accessToken);
+        localStorage.setItem(this.REFRESH_TOKEN_KEY, tokens.refreshToken);
+        return;
+      }
+
       const key = await this.getOrCreateEncryptionKey();
 
       const encryptedAccessToken = await this.encryptData(tokens.accessToken, key);
@@ -110,6 +117,18 @@ export class AuthService {
    */
   async getStoredTokens(): Promise<TokenPayload | null> {
     try {
+      // In dev mode tokens are stored plaintext for easier debugging.
+      if (isDevMode()) {
+        const accessToken = localStorage.getItem(this.ACCESS_TOKEN_KEY);
+        const refreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
+
+        if (!accessToken || !refreshToken) {
+          return null;
+        }
+
+        return { accessToken, refreshToken };
+      }
+
       const encryptedAccessToken = localStorage.getItem(this.ACCESS_TOKEN_KEY);
       const encryptedRefreshToken = localStorage.getItem(this.REFRESH_TOKEN_KEY);
 

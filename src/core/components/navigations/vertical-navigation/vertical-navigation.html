@@ -1,0 +1,32 @@
+<div class="flex flex-auto h-full">
+  <div class="flex flex-auto flex-col h-full p-2 md:max-w-24">
+    <!-- Header -->
+    <div class="font-semibold truncate">
+      {{ 'common.title' | transloco }}
+    </div>
+
+    <p-divider />
+
+    <!-- Modules navigation -->
+    <div class="flex flex-auto flex-col h-full space-y-1.5 md:max-w-24">
+      @for (item of items; track $index) {
+      <layout-vertical-naviagation-module-item
+        [label]="item.label"
+        [icon]="item.icon"
+      ></layout-vertical-naviagation-module-item>
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="flex flex-auto flex-col space-y-1.5 md:max-w-24">
+      <layout-vertical-naviagation-module-item
+        [label]="'logout' | transloco"
+        icon="pi pi-sign-out"
+        (click)="signOut()"
+      ></layout-vertical-naviagation-module-item>
+
+      <p-divider />
+    </div>
+  </div>
+  <div class="flex flex-auto flex-col border-r border-neutral-200 dark:border-neutral-800"></div>
+</div>

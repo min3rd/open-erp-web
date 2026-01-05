@@ -127,5 +127,8 @@
     "footer": {
       "githubLink": "Visit our GitHub repository"
     }
+  },
+  "common": {
+    "title": "Open ERP"
   }
 }
