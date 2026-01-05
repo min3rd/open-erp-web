@@ -9,7 +9,7 @@ import {
 import { Empty } from './empty/empty';
 import { Horizontal } from './horizontal/horizontal';
 import { Vertical } from './vertical/vertical';
-import { UserConfig } from '../interfaces/config.types';
+import { UserConfigDto } from '../interfaces/config.types';
 import { ConfigService } from '../services/config-service';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,7 +28,7 @@ export class Layout implements OnInit, OnDestroy {
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  config!: UserConfig;
+  config!: UserConfigDto;
 
   ngOnInit(): void {
     this.configService.config$.pipe(takeUntil(this._unsubscribeAll)).subscribe((config) => {

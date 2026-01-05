@@ -5,11 +5,17 @@ import { forkJoin } from 'rxjs';
 import { inject } from '@angular/core';
 import { NavigationService } from '../core/services/navigation-service';
 import { AuthService } from '../core/services/auth-service';
+import { ChatService } from '../core/services/chat-service';
 
 const initializeData = () => {
   const navigationService = inject(NavigationService);
   const authService = inject(AuthService);
-  return forkJoin([navigationService.loadModules(), authService.me()]);
+  const chatService = inject(ChatService);
+  return forkJoin([
+    navigationService.loadModules(),
+    authService.me(),
+    chatService.loadConversations(),
+  ]);
 };
 
 export const routes: Routes = [

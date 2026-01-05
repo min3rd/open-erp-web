@@ -1,4 +1,4 @@
-export interface ApiError {
+export interface ApiErrorDto {
   timestamp?: Date;
   status?: number;
   errorCode?: string;

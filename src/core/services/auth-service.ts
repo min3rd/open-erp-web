@@ -3,7 +3,7 @@ import { inject, Injectable, isDevMode } from '@angular/core';
 import { API_URI_AUTH } from '../constant';
 import { BehaviorSubject, from, Observable, of, switchMap } from 'rxjs';
 import { User } from '../components/user/user';
-import { MeDto } from '../interfaces/user.types';
+import { UserDto } from '../interfaces/user.types';
 
 export interface RegisterDto {
   email: string;
@@ -40,11 +40,11 @@ export class AuthService {
   private readonly ACCESS_TOKEN_KEY = 'erp_access_token';
   private readonly REFRESH_TOKEN_KEY = 'erp_refresh_token';
 
-  private _user: BehaviorSubject<MeDto | null> = new BehaviorSubject<any>(null);
+  private _user: BehaviorSubject<UserDto | null> = new BehaviorSubject<any>(null);
   private _accessToken!: string | undefined;
   private _refreshToken!: string | undefined;
 
-  get user$(): Observable<MeDto | null> {
+  get user$(): Observable<UserDto | null> {
     return this._user.asObservable();
   }
 

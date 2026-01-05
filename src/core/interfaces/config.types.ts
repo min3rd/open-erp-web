@@ -1,4 +1,4 @@
-export interface UserConfig {
+export interface UserConfigDto {
   layout: 'empty' | 'vertical' | 'horizontal';
   language: string;
   theme: 'light' | 'dark';

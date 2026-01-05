@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { UserConfig } from '../interfaces/config.types';
+import { UserConfigDto } from '../interfaces/config.types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ConfigService {
-  private _config: BehaviorSubject<UserConfig> = new BehaviorSubject<any>(null);
+  private _config: BehaviorSubject<UserConfigDto> = new BehaviorSubject<any>(null);
 
-  get config$(): Observable<UserConfig | null> {
+  get config$(): Observable<UserConfigDto | null> {
     return this._config.asObservable();
   }
 }

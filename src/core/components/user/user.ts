@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth-service';
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
-import { MeDto } from '../../interfaces/user.types';
+import { UserDto } from '../../interfaces/user.types';
 import { AvatarModule } from 'primeng/avatar';
 import { RippleModule } from 'primeng/ripple';
 import { TooltipModule } from 'primeng/tooltip';
@@ -27,7 +27,7 @@ export class User implements OnInit, OnDestroy {
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  user!: MeDto | null;
+  user!: UserDto | null;
 
   ngOnInit(): void {
     this.authService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user) => {

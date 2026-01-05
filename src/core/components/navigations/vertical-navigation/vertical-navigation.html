@@ -1,11 +1,11 @@
 <div class="flex flex-auto h-full">
   <div class="flex flex-auto flex-col h-full p-2 md:max-w-24">
     <!-- Header -->
-    <div class="font-semibold truncate">
+    <div class="font-semibold truncate animate-fade-right animate-duration-300">
       {{ 'common.title' | transloco }}
     </div>
 
-    <p-divider />
+    <p-divider class="animate-fade-right animate-duration-300" />
 
     <!-- Modules navigation -->
     <div class="flex flex-auto flex-col h-full space-y-1.5 md:max-w-24">
@@ -19,16 +19,15 @@
 
     <!-- Footer -->
     <div class="flex flex-auto flex-col space-y-1.5 md:max-w-24">
+      <layout-user class="animate-fade-right animate-duration-300"></layout-user>
+
+      <p-divider class="animate-fade-right animate-duration-300" />
+
       <layout-vertical-naviagation-module-item
         [label]="'logout' | transloco"
         icon="pi pi-sign-out"
         (click)="logOut()"
       ></layout-vertical-naviagation-module-item>
-
-      <p-divider />
-
-      <layout-user></layout-user>
-      
     </div>
   </div>
   <div class="flex flex-auto flex-col border-r border-neutral-200 dark:border-neutral-800"></div>
