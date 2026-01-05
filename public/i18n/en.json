@@ -130,5 +130,6 @@
   },
   "common": {
     "title": "Open ERP"
-  }
+  },
+  "logout": "Logout"
 }

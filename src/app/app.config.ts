@@ -1,4 +1,10 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  isDevMode,
+  provideEnvironmentInitializer,
+  inject,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
@@ -7,6 +13,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
 import { httpInterceptor } from '../core/interceptors/http-interceptor';
+import { authInterceptor } from '../core/interceptors/auth-interceptor';
+import { AuthService } from '../core/services/auth';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,6 +27,8 @@ export const appConfig: ApplicationConfig = {
       ripple: true,
     }),
     provideHttpClient(withInterceptors([httpInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideEnvironmentInitializer(() => inject(AuthService)),
     provideTransloco({
       config: {
         availableLangs: ['en', 'es'],

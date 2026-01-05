@@ -4,10 +4,12 @@ import { Layout } from '../core/layout/layout';
 import { forkJoin } from 'rxjs';
 import { inject } from '@angular/core';
 import { NavigationService } from '../core/services/navigation';
+import { AuthService } from '../core/services/auth';
 
 const initializeData = () => {
   const navigationService = inject(NavigationService);
-  return forkJoin(navigationService.loadModules());
+  const authService = inject(AuthService);
+  return forkJoin([navigationService.loadModules(), authService.me()]);
 };
 
 export const routes: Routes = [

@@ -13,10 +13,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { VerticalNaviagationModuleItem } from '../vertical-naviagation-module-item/vertical-naviagation-module-item';
 import { TranslocoModule } from '@jsverse/transloco';
 import { DividerModule } from 'primeng/divider';
+import { User } from '../../user/user';
 
 @Component({
   selector: 'layout-vertical-navigation',
-  imports: [CommonModule, TranslocoModule, VerticalNaviagationModuleItem, DividerModule],
+  imports: [CommonModule, TranslocoModule, DividerModule, VerticalNaviagationModuleItem, User],
   templateUrl: './vertical-navigation.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,7 +40,7 @@ export class VerticalNavigation implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
-  signOut(): void {
+  logOut(): void {
     console.log("Haven't implement yet");
   }
 }

@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, isDevMode } from '@angular/core';
 import { API_URI_AUTH } from '../constant';
-import { catchError, from, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, from, Observable, of, switchMap } from 'rxjs';
+import { User } from '../components/user/user';
+import { MeDto } from '../components/user/user.types';
 
 export interface RegisterDto {
   email: string;
@@ -38,40 +40,61 @@ export class AuthService {
   private readonly ACCESS_TOKEN_KEY = 'erp_access_token';
   private readonly REFRESH_TOKEN_KEY = 'erp_refresh_token';
 
+  private _user: BehaviorSubject<MeDto | null> = new BehaviorSubject<any>(null);
+  private _accessToken!: string | undefined;
+  private _refreshToken!: string | undefined;
+
+  get user$(): Observable<MeDto | null> {
+    return this._user.asObservable();
+  }
+
+  get accessToken(): string | undefined {
+    console.log(this._accessToken);
+    
+    return this._accessToken;
+  }
+
+  get refreshToken(): string | undefined {
+    return this._refreshToken;
+  }
+
+  constructor() {
+    this.getStoredTokens();
+  }
+
   register(form: RegisterDto, version: string = 'v1') {
-    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/register`, form).pipe(
-      catchError((e) => {
-        return of(e);
-      })
-    );
+    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/register`, form);
   }
 
   verifyEmail(payload: VerifyEmailDto, version: string = 'v1') {
-    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/verify-email`, payload).pipe(
-      catchError((e) => {
-        return of(e);
+    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/verify-email`, payload);
+  }
+
+  resendVerificationCode(email: string, version: string = 'v1') {
+    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/resend-verification`, { email });
+  }
+
+  login(payload: LoginDto, version: string = 'v1') {
+    return this.httpClient.post<LoginResponse>(`${API_URI_AUTH}/${version}/auth/login`, payload);
+  }
+
+  me(version: string = 'v1'): Observable<User> {
+    return this.httpClient.get(`${API_URI_AUTH}/${version}/me`).pipe(
+      switchMap((user: any) => {
+        this._user.next(user);
+        return of(user);
       })
     );
   }
 
-  resendVerificationCode(email: string, version: string = 'v1') {
-    return this.httpClient
-      .post(`${API_URI_AUTH}/${version}/auth/resend-verification`, { email })
-      .pipe(
-        catchError((e) => {
-          return of(e);
-        })
-      );
-  }
+  logOut() {
+    this.clearStoredTokens();
 
-  login(payload: LoginDto, version: string = 'v1') {
-    return this.httpClient
-      .post<LoginResponse>(`${API_URI_AUTH}/${version}/auth/login`, payload)
-      .pipe(
-        catchError((e) => {
-          return of(e);
-        })
-      );
+    this._accessToken = undefined;
+    this._refreshToken = undefined;
+    this._user.next(null);
+
+    return of(true);
   }
 
   /**
@@ -90,6 +113,9 @@ export class AuthService {
    * @param tokens - The access and refresh tokens to encrypt and store
    */
   async encryptAndStoreTokens(tokens: TokenPayload): Promise<void> {
+    this._accessToken = tokens.accessToken;
+    this._refreshToken = tokens.refreshToken;
+
     try {
       // In dev mode we store tokens plaintext to simplify debugging.
       if (isDevMode()) {
@@ -125,7 +151,8 @@ export class AuthService {
         if (!accessToken || !refreshToken) {
           return null;
         }
-
+        this._accessToken = accessToken;
+        this._refreshToken = refreshToken;
         return { accessToken, refreshToken };
       }
 
@@ -140,7 +167,8 @@ export class AuthService {
 
       const accessToken = await this.decryptData(encryptedAccessToken, key);
       const refreshToken = await this.decryptData(encryptedRefreshToken, key);
-
+      this._accessToken = accessToken;
+      this._refreshToken = refreshToken;
       return { accessToken, refreshToken };
     } catch (error) {
       console.error('Failed to retrieve and decrypt tokens:', error);

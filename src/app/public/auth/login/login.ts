@@ -1,11 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
@@ -86,25 +81,12 @@ export class Login {
 
     try {
       const formValue = this.loginForm.value as LoginDto;
-      
-      this.authService.login(formValue).subscribe({
-        next: async (response) => {
-          // Check if response is an error (from catchError)
-          if ('error' in response) {
-            this.messageService.add({
-              severity: 'error',
-              summary: this.translocoService.translate('login.messages.loginError'),
-              detail: this.translocoService.translate(
-                response.error?.message ?? 'login.messages.loginError'
-              ),
-            });
-            this.isSubmitting.set(false);
-            return;
-          }
 
+      this.authService.login(formValue).subscribe({
+        next: async (response: any) => {
           // Success case
           const loginResponse = response as LoginResponse;
-          
+
           try {
             // Encrypt and store tokens
             await this.authService.encryptAndStoreTokens({
@@ -120,7 +102,6 @@ export class Login {
             // Redirect to dashboard or home page after successful login
             this.router.navigate(['/']);
           } catch (encryptError) {
-            console.error('Failed to encrypt tokens:', encryptError);
             this.messageService.add({
               severity: 'error',
               summary: this.translocoService.translate('login.messages.loginError'),
@@ -130,7 +111,6 @@ export class Login {
           }
         },
         error: (error) => {
-          console.error('Login failed:', error);
           this.messageService.add({
             severity: 'error',
             summary: this.translocoService.translate('login.messages.loginError'),
@@ -139,7 +119,6 @@ export class Login {
         },
       });
     } catch (error) {
-      console.error('Login failed:', error);
       this.messageService.add({
         severity: 'error',
         summary: this.translocoService.translate('login.messages.loginError'),

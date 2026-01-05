@@ -11,7 +11,7 @@
     <div class="flex flex-auto flex-col h-full space-y-1.5 md:max-w-24">
       @for (item of items; track $index) {
       <layout-vertical-naviagation-module-item
-        [label]="item.label"
+        [label]="item.label | transloco"
         [icon]="item.icon"
       ></layout-vertical-naviagation-module-item>
       }
@@ -22,10 +22,13 @@
       <layout-vertical-naviagation-module-item
         [label]="'logout' | transloco"
         icon="pi pi-sign-out"
-        (click)="signOut()"
+        (click)="logOut()"
       ></layout-vertical-naviagation-module-item>
 
       <p-divider />
+
+      <layout-user></layout-user>
+      
     </div>
   </div>
   <div class="flex flex-auto flex-col border-r border-neutral-200 dark:border-neutral-800"></div>

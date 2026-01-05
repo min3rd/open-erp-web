@@ -169,20 +169,7 @@ export class Register {
           fullName: formValue.fullName,
           password: formValue.password,
         })
-        .pipe(
-          catchError((e) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: this.translocoService.translate(e.error.errorCode ?? 'error.unknown'),
-              detail:
-                this.translocoService.translate(e.error.message, e.error.details) +
-                '\n' +
-                e.error.supportUrl,
-            });
-            throw e;
-          })
-        )
-        .subscribe((e) => {
+        .subscribe((e: any) => {
           if (e.error) {
             this.messageService.add({
               severity: 'error',
