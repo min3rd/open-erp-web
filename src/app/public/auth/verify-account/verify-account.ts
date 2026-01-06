@@ -15,19 +15,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { AuthService, VerifyEmailDto } from '../../../../core/services/auth-service';
 import { MessageService } from 'primeng/api';
 import { Subject, takeUntil } from 'rxjs';
+import { ApiResponse } from '../../../../core/interfaces/error.types';
 
 interface VerifyAccountForm {
   email: FormControl<string>;
   verificationCode: FormControl<string>;
-}
-
-interface ApiResponse {
-  error?: {
-    errorCode?: string;
-    message?: string;
-    details?: any;
-    supportUrl?: string;
-  };
 }
 
 @Component({
@@ -54,6 +46,7 @@ export class VerifyAccount implements OnInit, OnDestroy {
   protected readonly isResending = signal(false);
   protected readonly resendCooldown = signal(0);
   private resendTimer: ReturnType<typeof setInterval> | null = null;
+  private navigationTimer: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly verifyForm = new FormGroup<VerifyAccountForm>({
     email: new FormControl('', {
@@ -82,6 +75,10 @@ export class VerifyAccount implements OnInit, OnDestroy {
     if (this.resendTimer) {
       clearInterval(this.resendTimer);
       this.resendTimer = null;
+    }
+    if (this.navigationTimer) {
+      clearTimeout(this.navigationTimer);
+      this.navigationTimer = null;
     }
     this.unsubscribeAll.next(null);
     this.unsubscribeAll.complete();
@@ -146,7 +143,7 @@ export class VerifyAccount implements OnInit, OnDestroy {
               ),
             });
             // Navigate to login after 2 seconds
-            setTimeout(() => {
+            this.navigationTimer = setTimeout(() => {
               this.router.navigate(['/auth/login']);
             }, 2000);
           }

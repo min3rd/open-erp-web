@@ -13,18 +13,10 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthService, ForgotPasswordDto } from '../../../../core/services/auth-service';
 import { MessageService } from 'primeng/api';
+import { ApiResponse } from '../../../../core/interfaces/error.types';
 
 interface ForgotPasswordForm {
   email: FormControl<string>;
-}
-
-interface ApiResponse {
-  error?: {
-    errorCode?: string;
-    message?: string;
-    details?: any;
-    supportUrl?: string;
-  };
 }
 
 @Component({

@@ -4,6 +4,7 @@ import {
   signal,
   inject,
   OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
@@ -21,19 +22,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { AuthService, ResetPasswordDto } from '../../../../core/services/auth-service';
 import { MessageService } from 'primeng/api';
+import { ApiResponse } from '../../../../core/interfaces/error.types';
 
 interface ResetPasswordForm {
   password: FormControl<string>;
   confirmPassword: FormControl<string>;
-}
-
-interface ApiResponse {
-  error?: {
-    errorCode?: string;
-    message?: string;
-    details?: any;
-    supportUrl?: string;
-  };
 }
 
 @Component({
@@ -50,7 +43,7 @@ interface ApiResponse {
   templateUrl: './reset-password.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResetPassword implements OnInit {
+export class ResetPassword implements OnInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
@@ -60,6 +53,8 @@ export class ResetPassword implements OnInit {
   protected readonly isSubmitting = signal(false);
   protected readonly token = signal<string | null>(null);
   protected readonly tokenValid = signal(true);
+
+  private navigationTimer: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly resetPasswordForm = new FormGroup<ResetPasswordForm>(
     {
@@ -86,6 +81,13 @@ export class ResetPassword implements OnInit {
       });
     } else {
       this.token.set(tokenParam);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.navigationTimer) {
+      clearTimeout(this.navigationTimer);
+      this.navigationTimer = null;
     }
   }
 
@@ -204,7 +206,7 @@ export class ResetPassword implements OnInit {
               summary: this.translocoService.translate('resetPassword.messages.resetSuccess'),
             });
             // Navigate to login after 2 seconds
-            setTimeout(() => {
+            this.navigationTimer = setTimeout(() => {
               this.router.navigate(['/auth/login']);
             }, 2000);
           }
