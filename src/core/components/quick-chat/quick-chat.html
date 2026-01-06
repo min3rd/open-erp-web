@@ -29,7 +29,7 @@
         class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-surface-100 dark:hover:bg-surface-800 min-h-[64px] animate-fade-left animate-duration-300"
         [class.bg-primary-50]="conversation.id === selectedConversation?.id"
         [class.dark:bg-primary-900/20]="conversation.id === selectedConversation?.id"
-        [style.animation-delay]="($index * 50) + 'ms'"
+        [style.animation-delay]="($index * ANIMATION_DELAY_MS) + 'ms'"
         role="button"
         tabindex="0"
         [attr.aria-label]="'Open conversation with ' + conversation.title"
