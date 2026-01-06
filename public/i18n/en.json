@@ -230,5 +230,18 @@
     "sendMessage": "Send message",
     "participants": "participants",
     "noMessages": "No messages yet"
+  },
+  "organization": {
+    "title": "Organization",
+    "navigation": {
+      "register": "Register Organization",
+      "detail": "View Information",
+      "toggleNavMode": "Toggle navigation mode",
+      "toggleMenu": "Toggle menu"
+    },
+    "tabs": {
+      "register": "Register",
+      "info": "Information"
+    }
   }
 }

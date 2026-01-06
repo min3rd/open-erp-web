@@ -1,1 +1,34 @@
-<p>detail works!</p>,
+<div id="organization-detail-container" class="p-6">
+  @if (isNewMode) {
+  <p-card id="organization-new-card">
+    <ng-template pTemplate="header">
+      <div id="organization-new-header" class="p-4">
+        <h1 id="organization-new-title" class="text-2xl font-bold text-surface-900 dark:text-surface-0">
+          {{ 'organization.navigation.register' | transloco }}
+        </h1>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <p id="organization-new-description" class="text-surface-700 dark:text-surface-300">
+        This is the organization registration form. Here you can register a new organization.
+      </p>
+    </ng-template>
+  </p-card>
+  } @else if (isDetailMode) {
+  <p-card id="organization-detail-card">
+    <ng-template pTemplate="header">
+      <div id="organization-detail-header" class="p-4">
+        <h1 id="organization-detail-title" class="text-2xl font-bold text-surface-900 dark:text-surface-0">
+          {{ 'organization.navigation.detail' | transloco }}
+        </h1>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="content">
+      <p id="organization-detail-description" class="text-surface-700 dark:text-surface-300">
+        This is the organization information view. Here you can see organization details.
+      </p>
+    </ng-template>
+  </p-card>
+  }
+</div>
+
