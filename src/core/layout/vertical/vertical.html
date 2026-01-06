@@ -1,3 +1,6 @@
+<!-- Skip to main content for screen readers -->
+<a href="#main-content" class="skip-to-main">Skip to main content</a>
+
 <!-- Wrapper -->
 <div class="flex flex-col lg:flex-row w-full h-screen overflow-hidden">
   <!-- Mobile Header with Hamburger Menu -->
@@ -14,6 +17,7 @@
         severity="secondary"
         size="large"
         styleClass="w-11 h-11"
+        ariaLabel="Toggle quick chat"
       />
       <p-button
         (onClick)="toggleSidebar()"
@@ -23,6 +27,7 @@
         severity="secondary"
         size="large"
         styleClass="w-11 h-11"
+        ariaLabel="Toggle navigation menu"
       />
     </div>
   </div>
@@ -34,12 +39,16 @@
     [class.z-50]="isMobile()"
     [class.inset-0]="isMobile()"
     class="lg:relative"
+    role="dialog"
+    [attr.aria-hidden]="!sidebarVisible() && isMobile()"
+    [attr.aria-label]="'Navigation menu'"
   >
     <!-- Overlay for mobile -->
     @if (isMobile() && sidebarVisible()) {
     <div
       (click)="toggleSidebar()"
       class="fixed inset-0 bg-black/50 animate-fade-in animate-duration-300"
+      aria-hidden="true"
     ></div>
     }
 
@@ -54,17 +63,21 @@
   </div>
 
   <!-- Content Area -->
-  <div class="flex flex-auto flex-col w-full h-full overflow-hidden bg-surface-50 dark:bg-surface-950">
+  <main
+    id="main-content"
+    class="flex flex-auto flex-col w-full h-full overflow-hidden bg-surface-50 dark:bg-surface-950"
+    role="main"
+  >
     <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
              Otherwise, layout changes won't be registered and the view won't be updated! -->
     @if (true) {
     <router-outlet></router-outlet>
     }
-  </div>
+  </main>
 
   <!-- Quick Chat Panel -->
   @if (quickChatVisible() || !isMobile()) {
-  <div
+  <aside
     [class.fixed]="isMobile()"
     [class.right-0]="isMobile()"
     [class.top-0]="isMobile()"
@@ -73,12 +86,16 @@
     [class.animate-slide-in-right]="isMobile() && quickChatVisible()"
     [class.hidden]="isMobile() && !quickChatVisible()"
     class="lg:relative w-full lg:w-auto"
+    role="complementary"
+    [attr.aria-label]="'Quick chat'"
+    [attr.aria-hidden]="isMobile() && !quickChatVisible()"
   >
     <!-- Overlay for mobile -->
     @if (isMobile() && quickChatVisible()) {
     <div
       (click)="toggleQuickChat()"
       class="fixed inset-0 bg-black/50 animate-fade-in animate-duration-300"
+      aria-hidden="true"
     ></div>
     }
 
@@ -86,6 +103,6 @@
     <div class="relative h-full bg-surface-0 dark:bg-surface-900 w-80 lg:w-auto z-40">
       <layout-quick-chat></layout-quick-chat>
     </div>
-  </div>
+  </aside>
   }
 </div>
