@@ -1,21 +1,33 @@
-<div class="flex flex-auto mx-auto justify-center select-none">
+<div class="flex items-center gap-3 px-2 py-2 lg:justify-center select-none">
   @if(!user){
-  <p-skeleton shape="square" size="2rem" />
-  } @else { @if(user.avatarUrl){
-  <p-avatar
-    pRipple
-    [pTooltip]="user.fullName"
-    [image]="user.avatarUrl"
-    size="large"
-    shape="square"
-  />
+  <p-skeleton shape="square" size="3rem" />
   } @else {
-  <p-avatar
-    pRipple
-    [pTooltip]="user.fullName"
-    [label]="user.fullName.charAt(0)"
-    size="large"
-    shape="square"
-  />
-  } }
+  <div class="flex items-center gap-3 lg:flex-col lg:gap-1">
+    @if(user.avatarUrl){
+    <p-avatar
+      pRipple
+      [pTooltip]="user.fullName"
+      tooltipPosition="right"
+      [image]="user.avatarUrl"
+      size="large"
+      shape="circle"
+      class="animate-fade-in animate-duration-300"
+    />
+    } @else {
+    <p-avatar
+      pRipple
+      [pTooltip]="user.fullName"
+      tooltipPosition="right"
+      [label]="user.fullName.charAt(0)"
+      size="large"
+      shape="circle"
+      class="animate-fade-in animate-duration-300"
+    />
+    }
+    <div class="flex flex-col lg:hidden">
+      <span class="text-sm font-semibold text-surface-900 dark:text-surface-0">{{ user.fullName }}</span>
+      <span class="text-xs text-surface-600 dark:text-surface-400">{{ user.email }}</span>
+    </div>
+  </div>
+  }
 </div>
