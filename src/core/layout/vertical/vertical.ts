@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  HostListener,
+} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { VerticalNavigation } from '../../components/navigations/vertical-navigation/vertical-navigation';
 import { QuickChat } from '../../components/quick-chat/quick-chat';
@@ -11,6 +19,9 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, RouterOutlet, VerticalNavigation, QuickChat, ButtonModule],
   templateUrl: './vertical.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:keydown.escape)': 'onEscapeKey()',
+  },
 })
 export class Vertical {
   private layoutService = inject(LayoutService);
@@ -24,7 +35,7 @@ export class Vertical {
   constructor() {
     // Initialize mobile detection
     this.checkMobileView();
-    
+
     // Set up resize listener
     if (typeof window !== 'undefined') {
       window.addEventListener('resize', () => this.checkMobileView());
@@ -47,6 +58,17 @@ export class Vertical {
 
   toggleQuickChat(): void {
     this.layoutService.toggleQuickChat();
+  }
+
+  onEscapeKey(): void {
+    // Close sidebar or quick chat on Escape key
+    if (this.isMobile()) {
+      if (this.sidebarVisible()) {
+        this.layoutService.setSidebarVisible(false);
+      } else if (this.quickChatVisible()) {
+        this.layoutService.setQuickChatVisible(false);
+      }
+    }
   }
 
   private checkMobileView(): void {
