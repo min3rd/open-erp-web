@@ -16,7 +16,7 @@
       [label]="item.label | transloco"
       [icon]="item.icon"
       class="animate-fade-in animate-duration-300"
-      [style.animation-delay]="($index * 50) + 'ms'"
+      [style.animation-delay]="($index * ANIMATION_DELAY_MS) + 'ms'"
     ></layout-vertical-naviagation-module-item>
     }
   </nav>

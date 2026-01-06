@@ -44,6 +44,9 @@ export class QuickChat implements OnInit, OnDestroy {
   selectedConversation!: ConversationDto | null;
   messageText: string = '';
 
+  // Animation delay for staggered list item animations (in milliseconds)
+  readonly ANIMATION_DELAY_MS = 50;
+
   ngOnInit(): void {
     this.chatService.conversations$.pipe().subscribe((conversations) => {
       this.conversations = conversations;

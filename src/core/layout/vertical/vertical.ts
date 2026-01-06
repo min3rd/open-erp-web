@@ -4,7 +4,7 @@ import {
   effect,
   inject,
   signal,
-  HostListener,
+  OnDestroy,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { VerticalNavigation } from '../../components/navigations/vertical-navigation/vertical-navigation';
@@ -22,7 +22,7 @@ import { CommonModule } from '@angular/common';
     '(document:keydown.escape)': 'onEscapeKey()',
   },
 })
-export class Vertical {
+export class Vertical implements OnDestroy {
   private layoutService = inject(LayoutService);
 
   sidebarVisible = this.layoutService.sidebarVisible;
@@ -31,13 +31,15 @@ export class Vertical {
   // Check if mobile view based on window width
   isMobile = signal(false);
 
+  private resizeHandler = () => this.checkMobileView();
+
   constructor() {
     // Initialize mobile detection
     this.checkMobileView();
 
     // Set up resize listener
     if (typeof window !== 'undefined') {
-      window.addEventListener('resize', () => this.checkMobileView());
+      window.addEventListener('resize', this.resizeHandler);
     }
 
     // Auto-hide sidebar on mobile, show on desktop
@@ -49,6 +51,13 @@ export class Vertical {
         this.layoutService.setSidebarVisible(true);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    // Clean up resize listener
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', this.resizeHandler);
+    }
   }
 
   toggleSidebar(): void {
