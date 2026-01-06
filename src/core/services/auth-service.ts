@@ -31,6 +31,15 @@ export interface TokenPayload {
   refreshToken: string;
 }
 
+export interface ForgotPasswordDto {
+  email: string;
+}
+
+export interface ResetPasswordDto {
+  token: string;
+  password: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -74,6 +83,14 @@ export class AuthService {
 
   login(payload: LoginDto, version: string = 'v1') {
     return this.httpClient.post<LoginResponse>(`${API_URI_AUTH}/${version}/auth/login`, payload);
+  }
+
+  forgotPassword(payload: ForgotPasswordDto, version: string = 'v1') {
+    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/forgot-password`, payload);
+  }
+
+  resetPassword(payload: ResetPasswordDto, version: string = 'v1') {
+    return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/reset-password`, payload);
   }
 
   me(version: string = 'v1'): Observable<User> {

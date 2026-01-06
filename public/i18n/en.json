@@ -128,6 +128,81 @@
       "githubLink": "Visit our GitHub repository"
     }
   },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "subtitle": "Reset your account password",
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter your email address",
+        "errors": {
+          "required": "Email is required",
+          "email": "Please enter a valid email address"
+        }
+      }
+    },
+    "info": "Enter the email address associated with your account and we'll send you a link to reset your password.",
+    "checkEmail": "Please check your email inbox and spam folder for the password reset link.",
+    "buttons": {
+      "submit": "Send Reset Link",
+      "resend": "Resend Link",
+      "backToLogin": "Back to Login",
+      "cooldown": "Wait {{seconds}} seconds"
+    },
+    "messages": {
+      "emailSent": "If an account exists with this email, a password reset link has been sent."
+    },
+    "footer": {
+      "githubLink": "Visit our GitHub repository"
+    }
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "subtitle": "Create a new password",
+    "form": {
+      "password": {
+        "label": "New Password",
+        "placeholder": "Enter your new password",
+        "strength": {
+          "title": "Password Strength",
+          "requirements": "Password must contain:",
+          "minLength": "At least 8 characters",
+          "uppercase": "At least 1 uppercase letter (A-Z)",
+          "lowercase": "At least 1 lowercase letter (a-z)",
+          "number": "At least 1 number (0-9)",
+          "special": "At least 1 special character (!@#$%^&*...)"
+        },
+        "errors": {
+          "required": "Password is required",
+          "minlength": "Password must be at least 8 characters",
+          "pattern": "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character"
+        }
+      },
+      "confirmPassword": {
+        "label": "Confirm New Password",
+        "placeholder": "Re-enter your new password",
+        "errors": {
+          "required": "Please confirm your password",
+          "mismatch": "Passwords do not match"
+        }
+      }
+    },
+    "requestNew": "You can request a new password reset link.",
+    "buttons": {
+      "submit": "Reset Password",
+      "backToLogin": "Back to Login",
+      "requestNew": "Request New Link"
+    },
+    "messages": {
+      "resetSuccess": "Password reset successfully! Redirecting to login...",
+      "resetError": "Failed to reset password. Please try again.",
+      "invalidToken": "Invalid or missing reset token.",
+      "tokenExpired": "This password reset link has expired or is invalid."
+    },
+    "footer": {
+      "githubLink": "Visit our GitHub repository"
+    }
+  },
   "common": {
     "title": "Open ERP",
     "appShortName": "ERP"

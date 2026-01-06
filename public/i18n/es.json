@@ -128,6 +128,81 @@
       "githubLink": "Visita nuestro repositorio de GitHub"
     }
   },
+  "forgotPassword": {
+    "title": "Olvidé mi Contraseña",
+    "subtitle": "Restablece la contraseña de tu cuenta",
+    "form": {
+      "email": {
+        "label": "Correo Electrónico",
+        "placeholder": "Ingresa tu correo electrónico",
+        "errors": {
+          "required": "El correo electrónico es obligatorio",
+          "email": "Por favor ingresa un correo electrónico válido"
+        }
+      }
+    },
+    "info": "Ingresa el correo electrónico asociado con tu cuenta y te enviaremos un enlace para restablecer tu contraseña.",
+    "checkEmail": "Por favor revisa tu bandeja de entrada y carpeta de spam para encontrar el enlace de restablecimiento de contraseña.",
+    "buttons": {
+      "submit": "Enviar Enlace de Restablecimiento",
+      "resend": "Reenviar Enlace",
+      "backToLogin": "Volver al Inicio de Sesión",
+      "cooldown": "Espera {{seconds}} segundos"
+    },
+    "messages": {
+      "emailSent": "Si existe una cuenta con este correo, se ha enviado un enlace de restablecimiento de contraseña."
+    },
+    "footer": {
+      "githubLink": "Visita nuestro repositorio de GitHub"
+    }
+  },
+  "resetPassword": {
+    "title": "Restablecer Contraseña",
+    "subtitle": "Crea una nueva contraseña",
+    "form": {
+      "password": {
+        "label": "Nueva Contraseña",
+        "placeholder": "Ingresa tu nueva contraseña",
+        "strength": {
+          "title": "Seguridad de la Contraseña",
+          "requirements": "La contraseña debe contener:",
+          "minLength": "Al menos 8 caracteres",
+          "uppercase": "Al menos 1 letra mayúscula (A-Z)",
+          "lowercase": "Al menos 1 letra minúscula (a-z)",
+          "number": "Al menos 1 número (0-9)",
+          "special": "Al menos 1 carácter especial (!@#$%^&*...)"
+        },
+        "errors": {
+          "required": "La contraseña es obligatoria",
+          "minlength": "La contraseña debe tener al menos 8 caracteres",
+          "pattern": "La contraseña debe contener al menos 1 letra mayúscula, 1 letra minúscula, 1 número y 1 carácter especial"
+        }
+      },
+      "confirmPassword": {
+        "label": "Confirmar Nueva Contraseña",
+        "placeholder": "Vuelve a ingresar tu nueva contraseña",
+        "errors": {
+          "required": "Por favor confirma tu contraseña",
+          "mismatch": "Las contraseñas no coinciden"
+        }
+      }
+    },
+    "requestNew": "Puedes solicitar un nuevo enlace de restablecimiento de contraseña.",
+    "buttons": {
+      "submit": "Restablecer Contraseña",
+      "backToLogin": "Volver al Inicio de Sesión",
+      "requestNew": "Solicitar Nuevo Enlace"
+    },
+    "messages": {
+      "resetSuccess": "¡Contraseña restablecida exitosamente! Redirigiendo al inicio de sesión...",
+      "resetError": "No se pudo restablecer la contraseña. Por favor intenta de nuevo.",
+      "invalidToken": "Token de restablecimiento inválido o faltante.",
+      "tokenExpired": "Este enlace de restablecimiento de contraseña ha expirado o es inválido."
+    },
+    "footer": {
+      "githubLink": "Visita nuestro repositorio de GitHub"
+    }
+  },
   "common": {
     "title": "Open ERP",
     "appShortName": "ERP"
