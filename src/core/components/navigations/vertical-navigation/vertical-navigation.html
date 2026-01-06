@@ -1,34 +1,37 @@
-<div class="flex flex-auto h-full">
-  <div class="flex flex-auto flex-col h-full p-2 md:max-w-24">
-    <!-- Header -->
-    <div class="font-semibold truncate animate-fade-right animate-duration-300">
+<div class="flex flex-col h-full w-full lg:w-20 p-4">
+  <!-- Header -->
+  <div class="flex items-center justify-center mb-4 animate-fade-in animate-duration-300">
+    <h2 class="text-lg font-bold text-surface-900 dark:text-surface-0 lg:hidden">
       {{ 'common.title' | transloco }}
-    </div>
-
-    <p-divider class="animate-fade-right animate-duration-300" />
-
-    <!-- Modules navigation -->
-    <div class="flex flex-auto flex-col h-full space-y-1.5 md:max-w-24">
-      @for (item of items; track $index) {
-      <layout-vertical-naviagation-module-item
-        [label]="item.label | transloco"
-        [icon]="item.icon"
-      ></layout-vertical-naviagation-module-item>
-      }
-    </div>
-
-    <!-- Footer -->
-    <div class="flex flex-auto flex-col space-y-1.5 md:max-w-24">
-      <layout-user class="animate-fade-right animate-duration-300"></layout-user>
-
-      <p-divider class="animate-fade-right animate-duration-300" />
-
-      <layout-vertical-naviagation-module-item
-        [label]="'logout' | transloco"
-        icon="pi pi-sign-out"
-        (click)="logOut()"
-      ></layout-vertical-naviagation-module-item>
-    </div>
+    </h2>
+    <span class="hidden lg:block text-2xl font-bold text-primary-500">ERP</span>
   </div>
-  <div class="flex flex-auto flex-col border-r border-neutral-200 dark:border-neutral-800"></div>
+
+  <p-divider class="my-2 animate-fade-in animate-duration-300" />
+
+  <!-- Modules navigation -->
+  <nav class="flex-1 flex flex-col gap-2 overflow-y-auto" role="navigation" aria-label="Main navigation">
+    @for (item of items; track $index) {
+    <layout-vertical-naviagation-module-item
+      [label]="item.label | transloco"
+      [icon]="item.icon"
+      class="animate-fade-in animate-duration-300"
+      [style.animation-delay]="($index * 50) + 'ms'"
+    ></layout-vertical-naviagation-module-item>
+    }
+  </nav>
+
+  <!-- Footer -->
+  <div class="flex flex-col gap-2 mt-4">
+    <layout-user class="animate-fade-in animate-duration-300"></layout-user>
+
+    <p-divider class="my-2 animate-fade-in animate-duration-300" />
+
+    <layout-vertical-naviagation-module-item
+      [label]="'logout' | transloco"
+      icon="pi pi-sign-out"
+      (click)="logOut()"
+      class="animate-fade-in animate-duration-300"
+    ></layout-vertical-naviagation-module-item>
+  </div>
 </div>

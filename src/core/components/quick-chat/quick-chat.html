@@ -1,69 +1,133 @@
-<div
-  class="flex flex-auto w-full h-full items-center overflow-hidden border-l border-neutral-200 dark:border-neutral-800"
->
-  <div
-    class="flex flex-auto flex-col h-full p-2 space-y-2 items-center overflow-x-hidden overflow-y-scroll"
-  >
-    @if (!conversations) {
-    <p-skeleton pRipple shape="square" size="2rem" />
-    } @else { @for (conversation of conversations; track $index) {
-    <div
-      (click)="openConversation(conversation.id)"
-      class="flex items-center justify-center p-0.5 rounded-md"
-      [class.bg-primary-300]="conversation.id === selectedConversation?.id"
-    >
-      @if(conversation.participants.length >1){
-      <p-avatar
-        pRipple
-        icon="pi pi-users"
-        size="large"
-        class="animate-fade-left animate-duration-300"
+<div class="flex flex-col w-full h-full border-l border-surface-200 dark:border-surface-700">
+  <!-- Chat List -->
+  <div class="flex flex-col h-full p-4 gap-3 overflow-y-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-lg font-semibold text-surface-900 dark:text-surface-0">Messages</h3>
+      <p-button
+        icon="pi pi-plus"
+        [rounded]="true"
+        [text]="true"
+        size="small"
+        styleClass="w-11 h-11"
+        aria-label="New conversation"
       />
-      } @else if(conversation.participants[0].avatarUrl) {
-      <p-avatar
-        pRipple
-        [image]="conversation.participants[0].avatarUrl"
-        shape="square"
-        size="large"
-        class="animate-fade-left animate-duration-300"
-      ></p-avatar>
-      }@else {
-      <p-avatar
-        pRipple
-        [label]="conversation.title?.charAt(0)"
-        shape="square"
-        size="large"
-        class="animate-fade-left animate-duration-300"
-      ></p-avatar>
+    </div>
+
+    <!-- Conversation List -->
+    @if (!conversations) {
+    <div class="flex flex-col gap-3">
+      @for (i of [1,2,3,4,5]; track i) {
+      <p-skeleton shape="square" size="3rem" />
       }
     </div>
-    } }
-    <p-button icon="pi pi-plus" size="large" />
+    } @else {
+    <div class="flex flex-col gap-2">
+      @for (conversation of conversations; track conversation.id) {
+      <div
+        (click)="openConversation(conversation.id)"
+        class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-surface-100 dark:hover:bg-surface-800 min-h-[64px] animate-fade-left animate-duration-300"
+        [class.bg-primary-50]="conversation.id === selectedConversation?.id"
+        [class.dark:bg-primary-900/20]="conversation.id === selectedConversation?.id"
+        [style.animation-delay]="($index * 50) + 'ms'"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'Open conversation with ' + conversation.title"
+      >
+        @if(conversation.participants.length > 1){
+        <p-avatar
+          icon="pi pi-users"
+          size="large"
+          shape="circle"
+        />
+        } @else if(conversation.participants[0].avatarUrl) {
+        <p-avatar
+          [image]="conversation.participants[0].avatarUrl"
+          shape="circle"
+          size="large"
+        />
+        } @else {
+        <p-avatar
+          [label]="conversation.title?.charAt(0)"
+          shape="circle"
+          size="large"
+        />
+        }
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-semibold text-surface-900 dark:text-surface-0 truncate">
+            {{ conversation.title }}
+          </div>
+          @if (conversation.lastMessage) {
+          <div class="text-xs text-surface-600 dark:text-surface-400 truncate">
+            {{ conversation.lastMessage.content }}
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+    }
   </div>
 
+  <!-- Selected Conversation View -->
   @if (selectedConversation) {
-  <div
-    class="flex flex-auto flex-col w-fit h-full border-l border-neutral-200 dark:border-neutral-800"
-  >
-    <div class="flex items-center px-2 py-4 border-b border-neutral-200 dark:border-neutral-800">
-      <p-button (onClick)="selectedConversation = null" text="" icon="pi pi-arrow-left" />
-      <div class="font-semibold truncate">
-        {{ selectedConversation.title }}
+  <div class="fixed inset-0 z-50 flex flex-col bg-surface-0 dark:bg-surface-900 lg:relative lg:inset-auto animate-slide-in-right animate-duration-300">
+    <!-- Conversation Header -->
+    <div class="flex items-center gap-3 px-4 py-4 border-b border-surface-200 dark:border-surface-700 min-h-[64px]">
+      <p-button
+        (onClick)="selectedConversation = null"
+        icon="pi pi-arrow-left"
+        [text]="true"
+        [rounded]="true"
+        size="small"
+        styleClass="w-11 h-11"
+        aria-label="Back to conversations"
+      />
+      <div class="flex-1 min-w-0">
+        <div class="font-semibold text-surface-900 dark:text-surface-0 truncate">
+          {{ selectedConversation.title }}
+        </div>
       </div>
-      <div class="flex items-center ml-auto">
-        <p-button text="" icon="pi pi-info-circle" />
-      </div>
+      <p-button
+        icon="pi pi-ellipsis-v"
+        [text]="true"
+        [rounded]="true"
+        size="small"
+        styleClass="w-11 h-11"
+        aria-label="Conversation options"
+      />
     </div>
-    <div class="flex flex-auto flex-col h-full"></div>
-    <div
-      class="flex w-full items-center px-2 py-4 space-x-0.5 border-t border-neutral-200 dark:border-neutral-800"
-    >
-      <div class="flex items-center">
-        <p-button icon="pi pi-plus" [rounded]="true" [text]="true" />
-        <p-button icon="pi pi-image" [rounded]="true" [text]="true" />
-      </div>
-      <input type="text" pInputText [(ngModel)]="messageText" />
-      <p-button icon="pi pi-send" [rounded]="true" [text]="true" />
+
+    <!-- Messages Area -->
+    <div class="flex-1 overflow-y-auto p-4">
+      <!-- Messages will be displayed here -->
+    </div>
+
+    <!-- Message Input -->
+    <div class="flex items-center gap-2 px-4 py-4 border-t border-surface-200 dark:border-surface-700">
+      <p-button
+        icon="pi pi-paperclip"
+        [rounded]="true"
+        [text]="true"
+        size="small"
+        styleClass="w-11 h-11"
+        aria-label="Attach file"
+      />
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="messageText"
+        placeholder="Type a message..."
+        class="flex-1"
+        aria-label="Message input"
+      />
+      <p-button
+        icon="pi pi-send"
+        [rounded]="true"
+        size="small"
+        styleClass="w-11 h-11"
+        aria-label="Send message"
+      />
     </div>
   </div>
   }
