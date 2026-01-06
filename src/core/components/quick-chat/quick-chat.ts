@@ -15,16 +15,20 @@ import { AvatarModule } from 'primeng/avatar';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'layout-quick-chat',
   imports: [
     CommonModule,
+    FormsModule,
     SkeletonModule,
     AvatarModule,
     OverlayBadgeModule,
     RippleModule,
     ButtonModule,
+    InputTextModule,
   ],
   templateUrl: './quick-chat.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +42,7 @@ export class QuickChat implements OnInit, OnDestroy {
   conversations!: ConversationDto[];
   messages!: MessageDto[];
   selectedConversation!: ConversationDto | null;
+  messageText: string = '';
 
   ngOnInit(): void {
     this.chatService.conversations$.pipe().subscribe((conversations) => {

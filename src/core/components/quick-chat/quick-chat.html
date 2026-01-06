@@ -1,55 +1,49 @@
 <div
-  class="flex flex-auto h-full items-center overflow-hidden border-l border-neutral-200 dark:border-neutral-800"
+  class="flex flex-auto w-full h-full items-center overflow-hidden border-l border-neutral-200 dark:border-neutral-800"
 >
-  <div class="flex flex-auto flex-col h-full p-2 items-center">
-    <div class="flex flex-col space-y-2 items-center">
-      @if (!conversations) {
-      <p-skeleton pRipple shape="square" size="2rem" />
-      } @else { @for (conversation of conversations; track $index) {
-      <div
-        (click)="openConversation(conversation.id)"
-        class="flex items-center justify-center p-0.5 rounded-md"
-        [class.bg-primary-300]="conversation.id === selectedConversation?.id"
-      >
-        @if(conversation.participants.length >1){
-        <p-overlay-badge
-          [value]="conversation.participants.length"
-          severity="danger"
-          class="inline-flex animate-fade-left animate-duration-300"
-        >
-          <p-avatar
-            pRipple
-            icon="pi pi-user"
-            size="large"
-            class="animate-fade-left animate-duration-300"
-          />
-        </p-overlay-badge>
-        } @else if(conversation.participants[0].avatarUrl) {
-        <p-avatar
-          pRipple
-          [image]="conversation.participants[0].avatarUrl"
-          shape="square"
-          size="large"
-          class="animate-fade-left animate-duration-300"
-        ></p-avatar>
-        }@else {
-        <p-avatar
-          pRipple
-          [label]="conversation.title?.charAt(0)"
-          shape="square"
-          size="large"
-          class="animate-fade-left animate-duration-300"
-        ></p-avatar>
-        }
-      </div>
-      } }
-      <p-button icon="pi pi-plus" size="large" />
+  <div
+    class="flex flex-auto flex-col h-full p-2 space-y-2 items-center overflow-x-hidden overflow-y-scroll"
+  >
+    @if (!conversations) {
+    <p-skeleton pRipple shape="square" size="2rem" />
+    } @else { @for (conversation of conversations; track $index) {
+    <div
+      (click)="openConversation(conversation.id)"
+      class="flex items-center justify-center p-0.5 rounded-md"
+      [class.bg-primary-300]="conversation.id === selectedConversation?.id"
+    >
+      @if(conversation.participants.length >1){
+      <p-avatar
+        pRipple
+        icon="pi pi-users"
+        size="large"
+        class="animate-fade-left animate-duration-300"
+      />
+      } @else if(conversation.participants[0].avatarUrl) {
+      <p-avatar
+        pRipple
+        [image]="conversation.participants[0].avatarUrl"
+        shape="square"
+        size="large"
+        class="animate-fade-left animate-duration-300"
+      ></p-avatar>
+      }@else {
+      <p-avatar
+        pRipple
+        [label]="conversation.title?.charAt(0)"
+        shape="square"
+        size="large"
+        class="animate-fade-left animate-duration-300"
+      ></p-avatar>
+      }
     </div>
+    } }
+    <p-button icon="pi pi-plus" size="large" />
   </div>
 
   @if (selectedConversation) {
   <div
-    class="flex flex-auto flex-col h-full md:w-64 border-l border-neutral-200 dark:border-neutral-800"
+    class="flex flex-auto flex-col w-fit h-full border-l border-neutral-200 dark:border-neutral-800"
   >
     <div class="flex items-center px-2 py-4 border-b border-neutral-200 dark:border-neutral-800">
       <p-button (onClick)="selectedConversation = null" text="" icon="pi pi-arrow-left" />
@@ -59,6 +53,17 @@
       <div class="flex items-center ml-auto">
         <p-button text="" icon="pi pi-info-circle" />
       </div>
+    </div>
+    <div class="flex flex-auto flex-col h-full"></div>
+    <div
+      class="flex w-full items-center px-2 py-4 space-x-0.5 border-t border-neutral-200 dark:border-neutral-800"
+    >
+      <div class="flex items-center">
+        <p-button icon="pi pi-plus" [rounded]="true" [text]="true" />
+        <p-button icon="pi pi-image" [rounded]="true" [text]="true" />
+      </div>
+      <input type="text" pInputText [(ngModel)]="messageText" />
+      <p-button icon="pi pi-send" [rounded]="true" [text]="true" />
     </div>
   </div>
   }
