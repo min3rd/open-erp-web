@@ -1,8 +1,8 @@
-<div class="flex items-center gap-3 px-2 py-2 lg:justify-center select-none">
+<div class="flex items-center gap-3 px-2 py-2 lg:justify-center select-none" id="user-profile-container">
   @if(!user){
-  <p-skeleton shape="square" size="2rem" />
+  <p-skeleton shape="square" size="2rem" id="user-profile-skeleton" />
   } @else {
-  <div class="flex items-center gap-2 lg:flex-col lg:gap-1">
+  <div class="flex items-center gap-2 lg:flex-col lg:gap-1" id="user-profile-info">
     @if(user.avatarUrl){
     <p-avatar
       pRipple
@@ -12,6 +12,7 @@
       size="normal"
       shape="circle"
       class="animate-fade-in animate-duration-300"
+      [attr.id]="'user-profile-avatar'"
     />
     } @else {
     <p-avatar
@@ -22,11 +23,12 @@
       size="normal"
       shape="circle"
       class="animate-fade-in animate-duration-300"
+      [attr.id]="'user-profile-avatar'"
     />
     }
-    <div class="flex flex-col lg:hidden">
-      <span class="text-sm font-semibold text-surface-900 dark:text-surface-0">{{ user.fullName }}</span>
-      <span class="text-xs text-surface-600 dark:text-surface-400">{{ user.email }}</span>
+    <div class="flex flex-col lg:hidden" id="user-profile-details">
+      <span class="text-sm font-semibold text-surface-900 dark:text-surface-0" id="user-profile-name">{{ user.fullName }}</span>
+      <span class="text-xs text-surface-600 dark:text-surface-400" id="user-profile-email">{{ user.email }}</span>
     </div>
   </div>
   }

@@ -49,6 +49,58 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Do not assume globals like (`new Date()`) are available.
 - Do not write arrow functions in templates (they are not supported).
 
+## DOM Element ID Requirements
+
+**CRITICAL: All DOM elements MUST have unique `id` attributes**
+
+### ID Naming Convention
+
+- Use kebab-case for all IDs
+- Prefix IDs with the component/page name to ensure uniqueness
+- Use descriptive names that indicate the element's purpose
+- For form fields, use pattern: `{component}-{field-name}` (e.g., `login-username`, `register-email`)
+- For error messages, use pattern: `{component}-{field-name}-error` (e.g., `login-username-error`)
+- For buttons, use pattern: `{component}-{action}-button` (e.g., `login-submit-button`)
+- For containers/wrappers, use pattern: `{component}-{section}-{type}` (e.g., `login-container`, `login-form-wrapper`)
+
+### Examples
+
+```html
+<!-- Login Component -->
+<div id="login-container">
+  <form id="login-form">
+    <input id="login-username" type="text" />
+    <small id="login-username-error">Error message</small>
+    <button id="login-submit-button">Login</button>
+  </form>
+</div>
+
+<!-- Register Component -->
+<div id="register-container">
+  <form id="register-form">
+    <input id="register-email" type="email" />
+    <small id="register-email-error">Error message</small>
+    <button id="register-submit-button">Register</button>
+  </form>
+</div>
+```
+
+### Why IDs are Required
+
+- **Accessibility**: Screen readers and assistive technologies rely on unique IDs for proper navigation
+- **Testing**: Automated tests use IDs to locate and interact with elements reliably
+- **Debugging**: Unique IDs make it easier to trace and debug issues in the application
+- **SEO**: Search engines use IDs to understand page structure better
+- **Form Labels**: Labels must reference form inputs by ID for accessibility
+
+### Important Notes
+
+- NEVER reuse the same ID across different components or pages
+- Always assign IDs to interactive elements (buttons, inputs, links)
+- Assign IDs to major container elements for navigation and testing
+- IDs must be unique within the entire document, not just the component
+- When in doubt, always add an ID rather than omitting it
+
 ## Services
 
 - Design services around a single responsibility

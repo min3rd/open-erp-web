@@ -1,16 +1,18 @@
-<div class="flex flex-col flex-auto h-full animate-fadeinleft">
+<div class="flex flex-col flex-auto h-full animate-fadeinleft" id="vertical-navigation-container">
   <!-- Header -->
   <div
+    id="vertical-navigation-header"
     class="flex items-center justify-center px-2 py-3 border-b border-surface-200 dark:border-surface-700"
   >
-    <h2 class="text-lg font-bold text-surface-900 dark:text-surface-0 lg:hidden">
+    <h2 class="text-lg font-bold text-surface-900 dark:text-surface-0 lg:hidden" id="vertical-navigation-title">
       {{ 'common.title' | transloco }}
     </h2>
-    <span class="hidden lg:block text-2xl font-bold text-primary-500">
+    <span class="hidden lg:block text-2xl font-bold text-primary-500" id="vertical-navigation-app-name">
       {{ 'common.appShortName' | transloco }}
     </span>
-    <div class="flex items-center justify-center md:hidden ml-auto">
+    <div class="flex items-center justify-center md:hidden ml-auto" id="vertical-navigation-close-wrapper">
       <p-button
+        id="vertical-navigation-close-button"
         (onClick)="toggleSidebar()"
         icon="pi pi-times"
         [rounded]="true"
@@ -21,12 +23,14 @@
 
   <!-- Modules navigation -->
   <nav
+    id="vertical-navigation-modules"
     class="flex flex-col flex-auto h-full px-2 py-3 space-y-2"
     role="navigation"
     [attr.aria-label]="'navigation.main' | transloco"
   >
     @for (item of items; track $index) {
     <layout-vertical-naviagation-module-item
+      [attr.id]="'vertical-navigation-item-' + $index"
       [label]="item.label | transloco"
       [icon]="item.icon"
       [showLabel]="isMobile()"
@@ -35,10 +39,11 @@
   </nav>
 
   <!-- Footer -->
-  <div class="flex flex-col p-2 space-y-2 border-t border-surface-200 dark:border-surface-700">
+  <div class="flex flex-col p-2 space-y-2 border-t border-surface-200 dark:border-surface-700" id="vertical-navigation-footer">
     <layout-user></layout-user>
 
     <layout-vertical-naviagation-module-item
+      id="vertical-navigation-logout"
       [label]="'auth.logout' | transloco"
       [showLabel]="isMobile()"
       icon="pi pi-sign-out"
