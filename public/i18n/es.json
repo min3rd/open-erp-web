@@ -127,5 +127,30 @@
     "footer": {
       "githubLink": "Visita nuestro repositorio de GitHub"
     }
+  },
+  "common": {
+    "title": "Open ERP",
+    "appShortName": "ERP"
+  },
+  "auth": {
+    "logout": "Cerrar Sesión"
+  },
+  "navigation": {
+    "main": "Navegación principal",
+    "menu": "Menú de navegación",
+    "toggle": "Alternar menú de navegación"
+  },
+  "quickChat": {
+    "title": "Mensajes",
+    "panel": "Chat rápido",
+    "toggle": "Alternar chat rápido",
+    "newConversation": "Nueva conversación",
+    "openConversation": "Abrir conversación con",
+    "backToConversations": "Volver a conversaciones",
+    "conversationOptions": "Opciones de conversación",
+    "attachFile": "Adjuntar archivo",
+    "typeMessage": "Escribe un mensaje...",
+    "messageInput": "Entrada de mensaje",
+    "sendMessage": "Enviar mensaje"
   }
 }

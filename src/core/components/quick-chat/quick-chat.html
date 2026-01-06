@@ -3,14 +3,14 @@
   <div class="flex flex-col h-full p-4 gap-3 overflow-y-auto">
     <!-- Header -->
     <div class="flex items-center justify-between mb-2">
-      <h3 class="text-lg font-semibold text-surface-900 dark:text-surface-0">Messages</h3>
+      <h3 class="text-lg font-semibold text-surface-900 dark:text-surface-0">{{ 'quickChat.title' | transloco }}</h3>
       <p-button
         icon="pi pi-plus"
         [rounded]="true"
         [text]="true"
         size="small"
         styleClass="w-11 h-11"
-        aria-label="New conversation"
+        [aria-label]="'quickChat.newConversation' | transloco"
       />
     </div>
 
@@ -26,13 +26,12 @@
       @for (conversation of conversations; track conversation.id) {
       <div
         (click)="openConversation(conversation.id)"
-        class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-surface-100 dark:hover:bg-surface-800 min-h-[64px] animate-fade-left animate-duration-300"
+        class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-surface-100 dark:hover:bg-surface-800 min-h-16 animate-fade-left animate-duration-300 animate-delay-{{ $index * 50 }}"
         [class.bg-primary-50]="conversation.id === selectedConversation?.id"
         [class.dark:bg-primary-900/20]="conversation.id === selectedConversation?.id"
-        [style.animation-delay]="($index * ANIMATION_DELAY_MS) + 'ms'"
         role="button"
         tabindex="0"
-        [attr.aria-label]="'Open conversation with ' + conversation.title"
+        [attr.aria-label]="('quickChat.openConversation' | transloco) + ' ' + conversation.title"
       >
         @if(conversation.participants.length > 1){
         <p-avatar
@@ -73,7 +72,7 @@
   @if (selectedConversation) {
   <div class="fixed inset-0 z-50 flex flex-col bg-surface-0 dark:bg-surface-900 lg:relative lg:inset-auto animate-slide-in-right animate-duration-300">
     <!-- Conversation Header -->
-    <div class="flex items-center gap-3 px-4 py-4 border-b border-surface-200 dark:border-surface-700 min-h-[64px]">
+    <div class="flex items-center gap-3 px-4 py-4 border-b border-surface-200 dark:border-surface-700 min-h-16">
       <p-button
         (onClick)="selectedConversation = null"
         icon="pi pi-arrow-left"
@@ -81,7 +80,7 @@
         [rounded]="true"
         size="small"
         styleClass="w-11 h-11"
-        aria-label="Back to conversations"
+        [aria-label]="'quickChat.backToConversations' | transloco"
       />
       <div class="flex-1 min-w-0">
         <div class="font-semibold text-surface-900 dark:text-surface-0 truncate">
@@ -94,7 +93,7 @@
         [rounded]="true"
         size="small"
         styleClass="w-11 h-11"
-        aria-label="Conversation options"
+        [aria-label]="'quickChat.conversationOptions' | transloco"
       />
     </div>
 
@@ -111,22 +110,22 @@
         [text]="true"
         size="small"
         styleClass="w-11 h-11"
-        aria-label="Attach file"
+        [aria-label]="'quickChat.attachFile' | transloco"
       />
       <input
         type="text"
         pInputText
         [(ngModel)]="messageText"
-        placeholder="Type a message..."
+        [placeholder]="'quickChat.typeMessage' | transloco"
         class="flex-1"
-        aria-label="Message input"
+        [aria-label]="'quickChat.messageInput' | transloco"
       />
       <p-button
         icon="pi pi-send"
         [rounded]="true"
         size="small"
         styleClass="w-11 h-11"
-        aria-label="Send message"
+        [aria-label]="'quickChat.sendMessage' | transloco"
       />
     </div>
   </div>

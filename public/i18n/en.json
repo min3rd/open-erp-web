@@ -129,7 +129,28 @@
     }
   },
   "common": {
-    "title": "ERP"
+    "title": "Open ERP",
+    "appShortName": "ERP"
   },
-  "logout": "Logout"
+  "auth": {
+    "logout": "Logout"
+  },
+  "navigation": {
+    "main": "Main navigation",
+    "menu": "Navigation menu",
+    "toggle": "Toggle navigation menu"
+  },
+  "quickChat": {
+    "title": "Messages",
+    "panel": "Quick chat",
+    "toggle": "Toggle quick chat",
+    "newConversation": "New conversation",
+    "openConversation": "Open conversation with",
+    "backToConversations": "Back to conversations",
+    "conversationOptions": "Conversation options",
+    "attachFile": "Attach file",
+    "typeMessage": "Type a message...",
+    "messageInput": "Message input",
+    "sendMessage": "Send message"
+  }
 }
