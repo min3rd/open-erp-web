@@ -1,14 +1,16 @@
-<div class="flex h-full border-l border-surface-200 dark:border-surface-700">
+<div class="flex h-full border-l border-surface-200 dark:border-surface-700" id="quick-chat-container">
   <!-- Conversation List - Narrow Column with Avatars -->
   <div
+    id="quick-chat-conversation-list"
     class="flex flex-col h-full border-r border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 animate-fadeinright"
   >
     <!-- Conversation List - Avatar Only -->
-    <div class="flex flex-col flex-auto px-2 py-3 space-y-1 overflow-y-auto">
+    <div class="flex flex-col flex-auto px-2 py-3 space-y-1 overflow-y-auto" id="quick-chat-conversations">
       @if (!conversations) { @for (i of [1,2,3,4,5]; track i) {
       <p-skeleton shape="square" size="3rem" />
       } } @else { @for (conversation of conversations; track conversation.id) {
       <div
+        [id]="'quick-chat-conversation-' + conversation.id"
         (click)="openConversation(conversation.id)"
         class="flex p-0.5 text-center justify-center cursor-pointer transition-all duration-100 hover:scale-110 rounded-md"
         [class.bg-primary-50]="conversation.id === selectedConversation?.id"
@@ -34,9 +36,11 @@
       } }
     </div>
     <div
+      id="quick-chat-new-conversation-wrapper"
       class="flex px-2 py-3 items-center justify-center p-3 border-t border-surface-200 dark:border-surface-700"
     >
       <p-button
+        id="quick-chat-new-conversation-button"
         icon="pi pi-plus"
         [rounded]="true"
         [text]="true"
@@ -48,20 +52,22 @@
 
   <!-- Selected Conversation Detail Panel -->
   @if (selectedConversation) {
-  <div class="flex flex-col w-80 bg-surface-0 dark:bg-surface-900 animate-fadeinright">
+  <div class="flex flex-col w-80 bg-surface-0 dark:bg-surface-900 animate-fadeinright" id="quick-chat-detail-panel">
     <!-- Conversation Header -->
     <div
+      id="quick-chat-conversation-header"
       class="flex items-center gap-3 px-4 py-3 border-b border-surface-200 dark:border-surface-700"
     >
-      <div class="flex-1 min-w-0">
-        <div class="font-semibold text-surface-900 dark:text-surface-0 truncate">
+      <div class="flex-1 min-w-0" id="quick-chat-conversation-info">
+        <div class="font-semibold text-surface-900 dark:text-surface-0 truncate" id="quick-chat-conversation-title">
           {{ selectedConversation.title || selectedConversation.participants[0].fullName }}
         </div>
-        <div class="text-xs text-surface-600 dark:text-surface-400 truncate">
+        <div class="text-xs text-surface-600 dark:text-surface-400 truncate" id="quick-chat-conversation-participants">
           {{ selectedConversation.participants.length }} {{ 'quickChat.participants' | transloco }}
         </div>
       </div>
       <p-button
+        id="quick-chat-close-conversation-button"
         (onClick)="selectedConversation = null"
         icon="pi pi-times"
         [text]="true"
@@ -73,17 +79,19 @@
     </div>
 
     <!-- Messages Area -->
-    <div class="flex-1 overflow-y-auto p-4">
-      <div class="text-center text-surface-500 dark:text-surface-400 text-sm">
+    <div class="flex-1 overflow-y-auto p-4" id="quick-chat-messages-area">
+      <div class="text-center text-surface-500 dark:text-surface-400 text-sm" id="quick-chat-no-messages">
         {{ 'quickChat.noMessages' | transloco }}
       </div>
     </div>
 
     <!-- Message Input -->
     <div
+      id="quick-chat-message-input-wrapper"
       class="flex items-center gap-2 px-4 py-3 border-t border-surface-200 dark:border-surface-700"
     >
       <p-button
+        id="quick-chat-attach-button"
         icon="pi pi-paperclip"
         [rounded]="true"
         [text]="true"
@@ -93,6 +101,7 @@
       />
       <input
         type="text"
+        id="quick-chat-message-input"
         pInputText
         [(ngModel)]="messageText"
         [placeholder]="'quickChat.typeMessage' | transloco"
@@ -100,6 +109,7 @@
         [aria-label]="'quickChat.messageInput' | transloco"
       />
       <p-button
+        id="quick-chat-send-button"
         icon="pi pi-send"
         [rounded]="true"
         size="small"
