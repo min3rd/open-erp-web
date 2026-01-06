@@ -1,65 +1,56 @@
 <div class="flex h-full border-l border-surface-200 dark:border-surface-700">
   <!-- Conversation List - Narrow Column with Avatars -->
-  <div class="flex flex-col h-full w-20 border-r border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900">
+  <div
+    class="flex flex-col h-full border-r border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 animate-fadeinright"
+  >
     <!-- Header -->
-    <div class="flex items-center justify-center p-3 border-b border-surface-200 dark:border-surface-700">
+    <div
+      class="flex px-4 py-3 items-center justify-center p-3 border-b border-surface-200 dark:border-surface-700"
+    >
       <p-button
         icon="pi pi-plus"
         [rounded]="true"
         [text]="true"
         size="small"
-        styleClass="w-11 h-11"
         [aria-label]="'quickChat.newConversation' | transloco"
       />
     </div>
 
     <!-- Conversation List - Avatar Only -->
-    <div class="flex flex-col flex-1 p-2 gap-2 overflow-y-auto">
-      @if (!conversations) {
-      @for (i of [1,2,3,4,5]; track i) {
-      <p-skeleton shape="circle" size="3rem" />
-      }
-      } @else {
-      @for (conversation of conversations; track conversation.id) {
+    <div class="flex flex-col flex-auto p-2 gap-0.5 overflow-y-auto">
+      @if (!conversations) { @for (i of [1,2,3,4,5]; track i) {
+      <p-skeleton shape="square" size="3rem" />
+      } } @else { @for (conversation of conversations; track conversation.id) {
       <div
         (click)="openConversation(conversation.id)"
-        class="cursor-pointer transition-all duration-200 hover:scale-110 animate-fade-in animate-duration-300 animate-delay-{{ $index * 50 }}"
-        [class.ring-2]="conversation.id === selectedConversation?.id"
-        [class.ring-primary-500]="conversation.id === selectedConversation?.id"
+        class="flex p-1 text-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 animate-fade-in animate-duration-300 animate-delay-{{
+          $index * 50
+        }}"
+        [class.rounded-md]="conversation.id === selectedConversation?.id"
+        [class.bg-primary-500]="conversation.id === selectedConversation?.id"
         role="button"
         tabindex="0"
         [attr.aria-label]="('quickChat.openConversation' | transloco) + ' ' + conversation.title"
       >
         @if(conversation.participants.length > 1){
-        <p-avatar
-          icon="pi pi-users"
-          size="large"
-          shape="circle"
-        />
+        <p-avatar icon="pi pi-users" size="large" shape="square" />
         } @else if(conversation.participants[0].avatarUrl) {
-        <p-avatar
-          [image]="conversation.participants[0].avatarUrl"
-          shape="circle"
-          size="large"
-        />
+        <p-avatar [image]="conversation.participants[0].avatarUrl" shape="square" size="large" />
         } @else {
-        <p-avatar
-          [label]="conversation.title?.charAt(0)"
-          shape="circle"
-          size="large"
-        />
+        <p-avatar [label]="conversation.title?.charAt(0)" shape="square" size="large" />
         }
       </div>
-      }
-      }
+      } }
     </div>
   </div>
 
   <!-- Selected Conversation Detail Panel -->
   @if (selectedConversation) {
-  <div class="flex flex-col w-80 bg-surface-0 dark:bg-surface-900 animate-slide-in-right animate-duration-300">
+  <div class="flex flex-col w-80 bg-surface-0 dark:bg-surface-900 animate-fadeinright">
     <!-- Conversation Header -->
-    <div class="flex items-center gap-3 px-4 py-3 border-b border-surface-200 dark:border-surface-700">
+    <div
+      class="flex items-center gap-3 px-4 py-3 border-b border-surface-200 dark:border-surface-700"
+    >
       <div class="flex-1 min-w-0">
         <div class="font-semibold text-surface-900 dark:text-surface-0 truncate">
           {{ selectedConversation.title }}
@@ -89,7 +80,9 @@
     </div>
 
     <!-- Message Input -->
-    <div class="flex items-center gap-2 px-4 py-3 border-t border-surface-200 dark:border-surface-700">
+    <div
+      class="flex items-center gap-2 px-4 py-3 border-t border-surface-200 dark:border-surface-700"
+    >
       <p-button
         icon="pi pi-paperclip"
         [rounded]="true"

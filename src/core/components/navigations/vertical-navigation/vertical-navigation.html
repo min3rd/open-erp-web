@@ -1,36 +1,41 @@
-<div class="flex flex-col h-full w-full lg:w-20 p-3">
+<div class="flex flex-auto flex-col h-full p-2 animate-fadeinleft">
   <!-- Header -->
-  <div class="flex items-center justify-center mb-3 animate-fade-in animate-duration-300">
+  <div class="flex items-center justify-center mb-3">
     <h2 class="text-lg font-bold text-surface-900 dark:text-surface-0 lg:hidden">
       {{ 'common.title' | transloco }}
     </h2>
-    <span class="hidden lg:block text-2xl font-bold text-primary-500">{{ 'common.appShortName' | transloco }}</span>
+    <span class="hidden lg:block text-2xl font-bold text-primary-500">{{
+      'common.appShortName' | transloco
+    }}</span>
   </div>
 
-  <p-divider class="my-2 animate-fade-in animate-duration-300" />
+  <p-divider />
 
   <!-- Modules navigation -->
-  <nav class="flex-1 flex flex-col gap-2 overflow-y-auto" role="navigation" [attr.aria-label]="'navigation.main' | transloco">
+  <nav
+    class="flex flex-auto flex-col h-full space-y-2"
+    role="navigation"
+    [attr.aria-label]="'navigation.main' | transloco"
+  >
     @for (item of items; track $index) {
     <layout-vertical-naviagation-module-item
       [label]="item.label | transloco"
       [icon]="item.icon"
-      class="animate-fade-in animate-duration-300 animate-delay-{{ $index * 50 }}"
+      class=" animate-delay-{{ $index * 50 }}"
     ></layout-vertical-naviagation-module-item>
     }
   </nav>
 
   <!-- Footer -->
-  <div class="flex flex-col gap-2 mt-3">
-    <layout-user class="animate-fade-in animate-duration-300"></layout-user>
+  <div class="flex flex-col">
+    <layout-user></layout-user>
 
-    <p-divider class="my-2 animate-fade-in animate-duration-300" />
+    <p-divider />
 
     <layout-vertical-naviagation-module-item
       [label]="'auth.logout' | transloco"
       icon="pi pi-sign-out"
       (click)="logOut()"
-      class="animate-fade-in animate-duration-300"
     ></layout-vertical-naviagation-module-item>
   </div>
 </div>
