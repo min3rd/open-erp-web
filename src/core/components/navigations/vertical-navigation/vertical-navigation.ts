@@ -29,9 +29,6 @@ export class VerticalNavigation implements OnInit, OnDestroy {
 
   items: MenuItem[] | undefined;
 
-  // Animation delay for staggered list item animations (in milliseconds)
-  readonly ANIMATION_DELAY_MS = 50;
-
   ngOnInit() {
     this.navigationService.modules$.pipe(takeUntil(this._unsubscribeAll)).subscribe((modules) => {
       this.items = modules;

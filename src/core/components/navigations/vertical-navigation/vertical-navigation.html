@@ -4,19 +4,18 @@
     <h2 class="text-lg font-bold text-surface-900 dark:text-surface-0 lg:hidden">
       {{ 'common.title' | transloco }}
     </h2>
-    <span class="hidden lg:block text-2xl font-bold text-primary-500">ERP</span>
+    <span class="hidden lg:block text-2xl font-bold text-primary-500">{{ 'common.appShortName' | transloco }}</span>
   </div>
 
   <p-divider class="my-2 animate-fade-in animate-duration-300" />
 
   <!-- Modules navigation -->
-  <nav class="flex-1 flex flex-col gap-2 overflow-y-auto" role="navigation" aria-label="Main navigation">
+  <nav class="flex-1 flex flex-col gap-2 overflow-y-auto" role="navigation" [attr.aria-label]="'navigation.main' | transloco">
     @for (item of items; track $index) {
     <layout-vertical-naviagation-module-item
       [label]="item.label | transloco"
       [icon]="item.icon"
-      class="animate-fade-in animate-duration-300"
-      [style.animation-delay]="($index * ANIMATION_DELAY_MS) + 'ms'"
+      class="animate-fade-in animate-duration-300 animate-delay-{{ $index * 50 }}"
     ></layout-vertical-naviagation-module-item>
     }
   </nav>
@@ -28,7 +27,7 @@
     <p-divider class="my-2 animate-fade-in animate-duration-300" />
 
     <layout-vertical-naviagation-module-item
-      [label]="'logout' | transloco"
+      [label]="'auth.logout' | transloco"
       icon="pi pi-sign-out"
       (click)="logOut()"
       class="animate-fade-in animate-duration-300"

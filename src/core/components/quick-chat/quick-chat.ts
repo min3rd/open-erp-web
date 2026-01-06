@@ -17,6 +17,7 @@ import { RippleModule } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'layout-quick-chat',
@@ -29,6 +30,7 @@ import { FormsModule } from '@angular/forms';
     RippleModule,
     ButtonModule,
     InputTextModule,
+    TranslocoModule,
   ],
   templateUrl: './quick-chat.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,9 +45,6 @@ export class QuickChat implements OnInit, OnDestroy {
   messages!: MessageDto[];
   selectedConversation!: ConversationDto | null;
   messageText: string = '';
-
-  // Animation delay for staggered list item animations (in milliseconds)
-  readonly ANIMATION_DELAY_MS = 50;
 
   ngOnInit(): void {
     this.chatService.conversations$.pipe().subscribe((conversations) => {
