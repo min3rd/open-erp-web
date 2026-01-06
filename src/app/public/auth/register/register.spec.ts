@@ -3,6 +3,7 @@ import { Register } from './register';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { TranslocoTestingModule } from '@jsverse/transloco';
+import { MessageService } from 'primeng/api';
 
 describe('Register Component', () => {
   let component: Register;
@@ -20,7 +21,7 @@ describe('Register Component', () => {
           },
         }),
       ],
-      providers: [provideRouter([]), provideHttpClient()],
+      providers: [provideRouter([]), provideHttpClient(), MessageService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Register);
