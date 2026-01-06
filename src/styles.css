@@ -28,3 +28,32 @@
   color: var(--p-primary-contrast-color);
   border-radius: 0.5rem;
 }
+
+/* Navigation item styles */
+.nav-item {
+  @apply flex items-center gap-3 px-4 py-3 rounded-lg border border-surface-200 dark:border-surface-700 
+         cursor-pointer transition-all duration-200 hover:bg-primary-50 hover:border-primary-500 
+         dark:hover:bg-primary-900/20 dark:hover:border-primary-400 select-none min-h-[44px] 
+         lg:flex-col lg:text-center lg:gap-1 lg:px-2 lg:min-w-[64px] 
+         animate-fade-in animate-duration-300 hover:scale-105 active:scale-95;
+}
+
+.nav-item.active {
+  @apply bg-primary-50 border-primary-500 dark:bg-primary-900/20;
+}
+
+.nav-item-icon {
+  @apply text-xl text-surface-700 dark:text-surface-300;
+}
+
+.nav-item-label {
+  @apply text-sm font-medium text-surface-900 dark:text-surface-0 lg:text-xs lg:truncate lg:max-w-full;
+}
+
+/* Mobile header styles */
+.mobile-header {
+  @apply flex lg:hidden items-center justify-between px-4 py-3 
+         border-b border-surface-200 dark:border-surface-700 
+         bg-surface-0 dark:bg-surface-900 
+         animate-fade-down animate-duration-300;
+}
