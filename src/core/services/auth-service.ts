@@ -77,6 +77,17 @@ export class AuthService {
   }
 
   me(version: string = 'v1'): Observable<User> {
+    if (isDevMode()) {
+      const mockUser: UserDto = {
+        id: 'mock-user-id',
+        email: 'test@example.com',
+        fullName: 'Test User',
+        avatarUrl: null,
+        createdAt: new Date().toISOString(),
+      };
+      this._user.next(mockUser);
+      return of(mockUser as any);
+    }
     return this.httpClient.get(`${API_URI_AUTH}/${version}/me`).pipe(
       switchMap((user: any) => {
         this._user.next(user);
