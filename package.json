@@ -34,7 +34,6 @@
     "primeicons": "^7.0.0",
     "primeng": "^21.0.2",
     "rxjs": "~7.8.0",
-    "tailwindcss-animated": "2.0.0",
     "tailwindcss-primeui": "^0.6.1",
     "tslib": "^2.3.0"
   },
