@@ -1,15 +1,15 @@
 <div class="flex items-center gap-3 px-2 py-2 lg:justify-center select-none">
   @if(!user){
-  <p-skeleton shape="square" size="3rem" />
+  <p-skeleton shape="square" size="2rem" />
   } @else {
-  <div class="flex items-center gap-3 lg:flex-col lg:gap-1">
+  <div class="flex items-center gap-2 lg:flex-col lg:gap-1">
     @if(user.avatarUrl){
     <p-avatar
       pRipple
       [pTooltip]="user.fullName"
       tooltipPosition="right"
       [image]="user.avatarUrl"
-      size="large"
+      size="normal"
       shape="circle"
       class="animate-fade-in animate-duration-300"
     />
@@ -19,7 +19,7 @@
       [pTooltip]="user.fullName"
       tooltipPosition="right"
       [label]="user.fullName.charAt(0)"
-      size="large"
+      size="normal"
       shape="circle"
       class="animate-fade-in animate-duration-300"
     />

@@ -14,4 +14,5 @@ export class VerticalNaviagationModuleItem {
   icon = input<string | undefined>();
   isActive = input<boolean>(false);
   url = input<string | undefined>();
+  showLabel = input<boolean>(true);
 }
