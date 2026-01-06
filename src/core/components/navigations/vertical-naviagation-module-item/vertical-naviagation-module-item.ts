@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RippleModule } from 'primeng/ripple';
 import { TooltipModule } from 'primeng/tooltip';
 
@@ -15,4 +15,10 @@ export class VerticalNaviagationModuleItem {
   isActive = input<boolean>(false);
   url = input<string | undefined>();
   showLabel = input<boolean>(true);
+
+  // Computed property for generating consistent ID suffix from label
+  elementId = computed(() => {
+    const labelValue = this.label() || 'unknown';
+    return labelValue.toLowerCase().replace(/\s+/g, '-');
+  });
 }

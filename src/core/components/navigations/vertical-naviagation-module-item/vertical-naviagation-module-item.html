@@ -9,13 +9,13 @@
   role="button"
   tabindex="0"
   [attr.aria-label]="label()"
-  [attr.id]="'nav-module-item-' + (label() || 'unknown').toLowerCase().replace(/\s+/g, '-')"
+  [attr.id]="'nav-module-item-' + elementId()"
 >
   @if (icon()) {
-  <span [class]="icon() + ' text-xl text-surface-700 dark:text-surface-300'" [attr.id]="'nav-module-item-icon-' + (label() || 'unknown').toLowerCase().replace(/\s+/g, '-')"></span>
+  <span [class]="icon() + ' text-xl text-surface-700 dark:text-surface-300'" [attr.id]="'nav-module-item-icon-' + elementId()"></span>
   }
   @if (label() && showLabel()) {
-    <span class="text-xs text-surface-900 dark:text-surface-0 lg:text-xs lg:truncate lg:max-w-full" [attr.id]="'nav-module-item-label-' + (label() || 'unknown').toLowerCase().replace(/\s+/g, '-')">
+    <span class="text-xs text-surface-900 dark:text-surface-0 lg:text-xs lg:truncate lg:max-w-full" [attr.id]="'nav-module-item-label-' + elementId()">
       {{ label() }}
     </span>
   }
