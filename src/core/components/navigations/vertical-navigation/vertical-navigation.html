@@ -1,19 +1,27 @@
-<div class="flex flex-auto flex-col h-full p-2 animate-fadeinleft">
+<div class="flex flex-col flex-auto h-full animate-fadeinleft">
   <!-- Header -->
-  <div class="flex items-center justify-center mb-3">
+  <div
+    class="flex items-center justify-center px-2 py-3 border-b border-surface-200 dark:border-surface-700"
+  >
     <h2 class="text-lg font-bold text-surface-900 dark:text-surface-0 lg:hidden">
       {{ 'common.title' | transloco }}
     </h2>
-    <span class="hidden lg:block text-2xl font-bold text-primary-500">{{
-      'common.appShortName' | transloco
-    }}</span>
+    <span class="hidden lg:block text-2xl font-bold text-primary-500">
+      {{ 'common.appShortName' | transloco }}
+    </span>
+    <div class="flex items-center justify-center md:hidden ml-auto">
+      <p-button
+        (onClick)="toggleSidebar()"
+        icon="pi pi-times"
+        [rounded]="true"
+        [text]="true"
+      />
+    </div>
   </div>
-
-  <p-divider />
 
   <!-- Modules navigation -->
   <nav
-    class="flex flex-auto flex-col h-full space-y-2"
+    class="flex flex-col flex-auto h-full px-2 py-3 space-y-2"
     role="navigation"
     [attr.aria-label]="'navigation.main' | transloco"
   >
@@ -21,19 +29,18 @@
     <layout-vertical-naviagation-module-item
       [label]="item.label | transloco"
       [icon]="item.icon"
-      class=" animate-delay-{{ $index * 50 }}"
+      [showLabel]="isMobile()"
     ></layout-vertical-naviagation-module-item>
     }
   </nav>
 
   <!-- Footer -->
-  <div class="flex flex-col">
+  <div class="flex flex-col p-2 space-y-2 border-t border-surface-200 dark:border-surface-700">
     <layout-user></layout-user>
-
-    <p-divider />
 
     <layout-vertical-naviagation-module-item
       [label]="'auth.logout' | transloco"
+      [showLabel]="isMobile()"
       icon="pi pi-sign-out"
       (click)="logOut()"
     ></layout-vertical-naviagation-module-item>

@@ -38,7 +38,7 @@
     [class.z-50]="isMobile()"
     [class.inset-0]="isMobile()"
     role="dialog"
-    class="flex flex-auto flex-col h-full"
+    class="flex flex-col flex-auto h-full"
     [attr.aria-hidden]="!sidebarVisible() && isMobile()"
     [attr.aria-label]="'navigation.menu' | transloco"
   >
@@ -55,16 +55,17 @@
     <div
       [class.animate-fadeinleft]="isMobile() && sidebarVisible()"
       [class.animate-fadeoutleft]="isMobile() && !sidebarVisible()"
-      class="flex flex-auto flex-col h-full bg-surface-0 dark:bg-surface-900 border-r border-surface-200 dark:border-surface-700 w-80 md:w-auto z-50"
+      [class.flex-col]="isMobile()"
+      class="flex h-full bg-surface-0 dark:bg-surface-900 border-r border-surface-200 dark:border-surface-700 w-80 md:w-auto z-50"
     >
-      <layout-vertical-navigation></layout-vertical-navigation>
+      <layout-vertical-navigation [isMobile]="isMobile()"></layout-vertical-navigation>
     </div>
   </div>
 
   <!-- Content Area -->
   <main
     id="main-content"
-    class="flex flex-auto flex-col w-full h-full overflow-hidden bg-surface-50 dark:bg-surface-950"
+    class="flex flex-col flex-auto w-full h-full overflow-hidden bg-surface-50 dark:bg-surface-950"
     role="main"
   >
     <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
