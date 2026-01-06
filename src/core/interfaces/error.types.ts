@@ -7,3 +7,7 @@ export interface ApiErrorDto {
   correlationId?: string;
   supportUrl?: string;
 }
+
+export interface ApiResponse {
+  error?: ApiErrorDto;
+}
