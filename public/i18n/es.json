@@ -147,10 +147,13 @@
     "newConversation": "Nueva conversación",
     "openConversation": "Abrir conversación con",
     "backToConversations": "Volver a conversaciones",
+    "closeConversation": "Cerrar conversación",
     "conversationOptions": "Opciones de conversación",
     "attachFile": "Adjuntar archivo",
     "typeMessage": "Escribe un mensaje...",
     "messageInput": "Entrada de mensaje",
-    "sendMessage": "Enviar mensaje"
+    "sendMessage": "Enviar mensaje",
+    "participants": "participantes",
+    "noMessages": "Aún no hay mensajes"
   }
 }
