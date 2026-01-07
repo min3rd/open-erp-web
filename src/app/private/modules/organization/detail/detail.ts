@@ -14,6 +14,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { ToolbarModule } from 'primeng/toolbar';
 import { MessageService } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import {
@@ -45,6 +46,7 @@ interface BusinessRegistrationForm {
     InputTextModule,
     DatePickerModule,
     AutoCompleteModule,
+    ToolbarModule,
   ],
   templateUrl: './detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
