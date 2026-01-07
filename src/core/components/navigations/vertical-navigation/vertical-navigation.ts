@@ -12,27 +12,28 @@ import { MenuItem } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { NavigationService } from '../../../services/navigation-service';
 import { Subject, takeUntil } from 'rxjs';
-import { VerticalNaviagationModuleItem } from '../vertical-naviagation-module-item/vertical-naviagation-module-item';
 import { TranslocoModule } from '@jsverse/transloco';
 import { User } from '../../user/user';
 import { ButtonModule } from 'primeng/button';
 import { LayoutService } from '../../../services/layout-service';
 import { OrganizationSwitcher } from '../../organization-switcher/organization-switcher';
 import { LanguageSelector } from '../../language-selector/language-selector';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
+import { RippleModule } from 'primeng/ripple';
 
 @Component({
   selector: 'layout-vertical-navigation',
   imports: [
     CommonModule,
     TranslocoModule,
-    VerticalNaviagationModuleItem,
     User,
     ButtonModule,
     OrganizationSwitcher,
     LanguageSelector,
     TooltipModule,
+    RouterModule,
+    RippleModule,
   ],
   templateUrl: './vertical-navigation.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

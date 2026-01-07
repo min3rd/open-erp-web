@@ -1,4 +1,4 @@
-<div id="language-selector-container" class="w-full" [class.p-2]="showLabel()" [class.p-1]="!showLabel()">
+<div id="language-selector-container" class="w-full" [class.p-2]="showLabel()" [class.p-1]="!showLabel()" [class.flex]="!showLabel()" [class.justify-center]="!showLabel()">
   @if (showLabel()) {
   <label
     for="language-selector-dropdown"
@@ -13,12 +13,12 @@
     [(ngModel)]="selectedLanguage"
     optionLabel="label"
     optionValue="code"
-    [placeholder]="showLabel() ? ('languageSelector.placeholder' | transloco) : ''"
-    [styleClass]="showLabel() ? 'w-full' : 'w-full justify-center'"
+    [placeholder]="''"
+    [styleClass]="showLabel() ? 'w-full' : ''"
     [attr.aria-label]="'languageSelector.ariaLabel' | transloco"
   >
     <ng-template let-lang pTemplate="item">
-      <div class="flex items-center py-1" [class.gap-2]="showLabel()" [class.justify-center]="!showLabel()" [attr.id]="'language-selector-option-' + lang.code">
+      <div class="flex items-center py-1 justify-center" [attr.id]="'language-selector-option-' + lang.code">
         <img
           [src]="getFlagUrl(lang.flagCode)"
           [alt]="lang.label + ' flag'"
@@ -26,21 +26,25 @@
           aria-hidden="true"
         />
         @if (showLabel()) {
-        <span class="font-medium">{{ lang.label }}</span>
+        <span class="font-medium ml-2">{{ lang.label }}</span>
         }
       </div>
     </ng-template>
 
     <ng-template let-lang pTemplate="selectedItem">
-      <div class="flex items-center" [class.gap-2]="showLabel()" [class.justify-center]="!showLabel()" id="language-selector-selected">
+      <div class="flex items-center justify-center" id="language-selector-selected">
         <img
           [src]="getFlagUrl(lang.flagCode)"
           [alt]="lang.label + ' flag'"
-          class="w-5 h-5 rounded"
+          [class.w-5]="showLabel()"
+          [class.h-5]="showLabel()"
+          [class.w-6]="!showLabel()"
+          [class.h-6]="!showLabel()"
+          class="rounded"
           aria-hidden="true"
         />
         @if (showLabel()) {
-        <span class="font-medium text-sm">{{ lang.label }}</span>
+        <span class="font-medium text-sm ml-2">{{ lang.label }}</span>
         }
       </div>
     </ng-template>

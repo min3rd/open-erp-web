@@ -104,21 +104,31 @@
   </div>
 
   <!-- Modules navigation -->
-  <nav
-    id="vertical-navigation-modules"
-    class="flex flex-col flex-auto h-full px-2 py-3 space-y-2 overflow-y-auto"
-    role="navigation"
-    [attr.aria-label]="'navigation.main' | transloco"
-  >
-    @for (item of items; track $index) {
-    <layout-vertical-naviagation-module-item
-      [attr.id]="'vertical-navigation-item-' + $index"
-      [label]="item.label | transloco"
-      [icon]="item.icon"
-      [showLabel]="isMobile() || navMode() === 'sidebar'"
-    ></layout-vertical-naviagation-module-item>
-    }
-  </nav>
+  <div id="vertical-navigation-modules" class="flex-1 overflow-y-auto py-2">
+    <ul class="space-y-1 px-2" role="list">
+      @for (item of items; track $index) {
+      <li [attr.id]="'vertical-navigation-item-' + $index">
+        <a
+          [routerLink]="item.routerLink"
+          routerLinkActive="bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
+          [routerLinkActiveOptions]="{ exact: false }"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors text-surface-700 dark:text-surface-300"
+          [class.justify-center]="navMode() === 'narrow' && !isMobile()"
+          [pTooltip]="navMode() === 'narrow' && !isMobile() ? (item.label | transloco) : ''"
+          tooltipPosition="right"
+          [showDelay]="500"
+          [attr.aria-label]="item.label | transloco"
+          pRipple
+        >
+          <i [class]="item.icon + ' text-xl'" aria-hidden="true"></i>
+          @if (navMode() === 'sidebar' || isMobile()) {
+          <span class="text-sm font-medium">{{ item.label | transloco }}</span>
+          }
+        </a>
+      </li>
+      }
+    </ul>
+  </div>
 
   <!-- Footer -->
   <div
@@ -127,13 +137,24 @@
   >
     <layout-user></layout-user>
 
-    <layout-vertical-naviagation-module-item
+    <a
       id="vertical-navigation-logout"
-      [label]="'auth.logout' | transloco"
-      [showLabel]="isMobile() || navMode() === 'sidebar'"
-      icon="pi pi-sign-out"
       (click)="logOut()"
-    ></layout-vertical-naviagation-module-item>
+      class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors text-surface-700 dark:text-surface-300 cursor-pointer"
+      [class.justify-center]="navMode() === 'narrow' && !isMobile()"
+      [pTooltip]="navMode() === 'narrow' && !isMobile() ? ('auth.logout' | transloco) : ''"
+      tooltipPosition="right"
+      [showDelay]="500"
+      [attr.aria-label]="'auth.logout' | transloco"
+      role="button"
+      tabindex="0"
+      pRipple
+    >
+      <i class="pi pi-sign-out text-xl" aria-hidden="true"></i>
+      @if (navMode() === 'sidebar' || isMobile()) {
+      <span class="text-sm font-medium">{{ 'auth.logout' | transloco }}</span>
+      }
+    </a>
   </div>
 
   <!-- Resize Handle (desktop only, sidebar mode) -->
