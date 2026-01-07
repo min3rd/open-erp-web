@@ -16,6 +16,7 @@ import {
   FormsModule,
   Validators,
   ValidationErrors,
+  AbstractControl,
 } from '@angular/forms';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { CardModule } from 'primeng/card';
@@ -353,7 +354,7 @@ export class Detail implements OnInit, OnDestroy {
     });
   }
 
-  private phoneValidator(control: FormControl): ValidationErrors | null {
+  private phoneValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value) {
       return null;
@@ -364,7 +365,7 @@ export class Detail implements OnInit, OnDestroy {
     return phoneRegex.test(value) ? null : { invalidPhone: true };
   }
 
-  private websiteValidator(control: FormControl): ValidationErrors | null {
+  private websiteValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value || value.trim() === '') {
       return null;
