@@ -1,4 +1,4 @@
-<div id="language-selector-container" class="w-full p-2">
+<div id="language-selector-container" class="w-full" [class.p-2]="showLabel()" [class.p-1]="!showLabel()">
   @if (showLabel()) {
   <label
     for="language-selector-dropdown"
@@ -13,12 +13,12 @@
     [(ngModel)]="selectedLanguage"
     optionLabel="label"
     optionValue="code"
-    [placeholder]="'languageSelector.placeholder' | transloco"
-    styleClass="w-full"
+    [placeholder]="showLabel() ? ('languageSelector.placeholder' | transloco) : ''"
+    [styleClass]="showLabel() ? 'w-full' : 'w-full justify-center'"
     [attr.aria-label]="'languageSelector.ariaLabel' | transloco"
   >
     <ng-template let-lang pTemplate="item">
-      <div class="flex items-center gap-2 py-1" [attr.id]="'language-selector-option-' + lang.code">
+      <div class="flex items-center py-1" [class.gap-2]="showLabel()" [class.justify-center]="!showLabel()" [attr.id]="'language-selector-option-' + lang.code">
         <img
           [src]="getFlagUrl(lang.flagCode)"
           [alt]="lang.label + ' flag'"
@@ -32,7 +32,7 @@
     </ng-template>
 
     <ng-template let-lang pTemplate="selectedItem">
-      <div class="flex items-center gap-2" id="language-selector-selected">
+      <div class="flex items-center" [class.gap-2]="showLabel()" [class.justify-center]="!showLabel()" id="language-selector-selected">
         <img
           [src]="getFlagUrl(lang.flagCode)"
           [alt]="lang.label + ' flag'"

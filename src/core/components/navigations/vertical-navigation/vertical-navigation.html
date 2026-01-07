@@ -28,7 +28,6 @@
     <div
       class="flex items-center justify-center ml-auto"
       id="vertical-navigation-actions"
-      [class.md:hidden]="navMode() === 'sidebar' || isMobile()"
     >
       <!-- Toggle nav mode button (desktop only) -->
       @if (!isMobile()) {
@@ -95,18 +94,14 @@
   </div>
 
   <!-- Organization Switcher -->
-  @if (navMode() === 'sidebar' || isMobile()) {
   <div id="vertical-navigation-org-switcher" class="border-b border-surface-200 dark:border-surface-700">
     <organization-switcher></organization-switcher>
   </div>
-  }
 
   <!-- Language Selector -->
-  @if (navMode() === 'sidebar' || isMobile()) {
   <div id="vertical-navigation-language-selector" class="border-b border-surface-200 dark:border-surface-700">
     <language-selector [showLabel]="navMode() === 'sidebar' || isMobile()"></language-selector>
   </div>
-  }
 
   <!-- Modules navigation -->
   <nav
