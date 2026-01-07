@@ -28,6 +28,7 @@ export class OrganizationSwitcher implements OnInit {
 
   loading = signal(false);
   error = signal<string | null>(null);
+  showLabel = signal(true);
 
   // For dropdown display
   dropdownOptions = computed(() => {
