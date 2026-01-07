@@ -1,21 +1,40 @@
-<div id="organization-detail-container" class="p-6">
+<div id="organization-detail-container" class="flex flex-col h-full">
   @if (isNewMode) {
-  <p-card id="organization-new-card">
-    <ng-template pTemplate="header">
-      <div id="organization-new-header" class="p-4">
+  <!-- Toolbar Header -->
+  <p-toolbar id="organization-new-toolbar" styleClass="border-b border-surface-200 dark:border-surface-700 mb-0">
+    <ng-template pTemplate="start">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-building text-xl" aria-hidden="true"></i>
         <h1
           id="organization-new-title"
-          class="text-2xl font-bold text-surface-900 dark:text-surface-0"
+          class="text-xl font-semibold text-surface-900 dark:text-surface-0 m-0"
         >
           {{ 'organization.navigation.register' | transloco }}
         </h1>
       </div>
     </ng-template>
-    <ng-template pTemplate="content">
+    <ng-template pTemplate="end">
+      <div class="flex gap-2">
+        <p-button
+          id="organization-register-submit-button"
+          [label]="'registerBusiness.buttons.register' | transloco"
+          icon="pi pi-check"
+          [disabled]="!registrationForm.valid || isSubmitting()"
+          [loading]="isSubmitting()"
+          severity="primary"
+          (onClick)="onSubmit()"
+          [attr.aria-busy]="isSubmitting()"
+        />
+      </div>
+    </ng-template>
+  </p-toolbar>
+
+  <!-- Content Area -->
+  <div class="flex-1 overflow-auto">
+    <div class="p-6">
       <!-- Registration Form -->
       <form
         [formGroup]="registrationForm"
-        (ngSubmit)="onSubmit()"
         class="space-y-6"
         novalidate
         id="register-business-form"
@@ -245,37 +264,42 @@
             </small>
           </div>
         </div>
-
-        <!-- Submit Button -->
-        <div class="flex gap-3 pt-4">
-          <p-button
-            type="submit"
-            [label]="'registerBusiness.buttons.register' | transloco"
-            [disabled]="!registrationForm.valid || isSubmitting()"
-            [loading]="isSubmitting()"
-            severity="primary"
-          />
-        </div>
       </form>
-    </ng-template>
-  </p-card>
+    </div>
+  </div>
   } @else if (isDetailMode) {
-  <p-card id="organization-detail-card">
-    <ng-template pTemplate="header">
-      <div id="organization-detail-header" class="p-4">
+  <!-- Toolbar Header for Detail View -->
+  <p-toolbar id="organization-detail-toolbar" styleClass="border-b border-surface-200 dark:border-surface-700 mb-0">
+    <ng-template pTemplate="start">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-info-circle text-xl" aria-hidden="true"></i>
         <h1
           id="organization-detail-title"
-          class="text-2xl font-bold text-surface-900 dark:text-surface-0"
+          class="text-xl font-semibold text-surface-900 dark:text-surface-0 m-0"
         >
           {{ 'organization.navigation.detail' | transloco }}
         </h1>
       </div>
     </ng-template>
-    <ng-template pTemplate="content">
+    <ng-template pTemplate="end">
+      <div class="flex gap-2">
+        <p-button
+          label="Edit"
+          icon="pi pi-pencil"
+          severity="secondary"
+          outlined="true"
+        />
+      </div>
+    </ng-template>
+  </p-toolbar>
+
+  <!-- Content Area -->
+  <div class="flex-1 overflow-auto">
+    <div class="p-6">
       <p id="organization-detail-description" class="text-surface-700 dark:text-surface-300">
         This is the organization information view. Here you can see organization details.
       </p>
-    </ng-template>
-  </p-card>
+    </div>
+  </div>
   }
 </div>
