@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, catchError, map, of } from 'rxjs';
-import { API_URI_AUTH } from '../constant';
+import { API_URI_TENANT } from '../constant';
 
 export interface VietQRBusinessResponse {
   code: string;
@@ -76,7 +76,7 @@ export class OrganizationService {
     version: string = 'v1'
   ): Observable<OrganizationResponse> {
     return this.httpClient.post<OrganizationResponse>(
-      `${API_URI_AUTH}/${version}/organizations`,
+      `${API_URI_TENANT}/${version}/organizations`,
       dto
     );
   }

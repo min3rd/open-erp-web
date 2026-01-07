@@ -128,11 +128,7 @@ export class Detail implements OnDestroy {
     // Setup tax ID lookup with debounce
     this.registrationForm
       .get('taxId')
-      ?.valueChanges.pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        takeUntil(this.destroy$)
-      )
+      ?.valueChanges.pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((taxId) => {
         if (taxId && taxId.length >= 10 && this.registrationForm.get('taxId')?.valid) {
           this.lookupTaxId(taxId);
