@@ -32,7 +32,7 @@
         <img
           [src]="getFlagUrl(lang.flagCode)"
           [alt]="lang.label + ' flag'"
-          class="w-6 h-6 rounded"
+          class="w-6 h-6"
           aria-hidden="true"
         />
         @if (showLabel()) {
@@ -54,13 +54,19 @@
           [class.h-5]="showLabel()"
           [class.w-6]="!showLabel()"
           [class.h-6]="!showLabel()"
-          class="rounded"
+          class="rounded-full"
           aria-hidden="true"
         />
         @if (showLabel()) {
         <span class="font-medium text-sm ml-2 truncate">{{ lang.label }}</span>
         }
       </div>
+    </ng-template>
+
+    <ng-template #dropdownicon>
+      @if (showLabel()) {
+      <i class="pi pi-chevron-down" aria-hidden="true"></i>
+      }
     </ng-template>
   </p-select>
 </div>
