@@ -250,4 +250,13 @@ export class OrganizationService {
       `${API_URI_TENANT}/${version}/organizations/${organizationId}/members/${memberId}`
     );
   }
+
+  /**
+   * Get organizations that the current user belongs to
+   */
+  getUserOrganizations(version: string = 'v1'): Observable<OrganizationResponse[]> {
+    return this.httpClient.get<OrganizationResponse[]>(
+      `${API_URI_TENANT}/${version}/organizations/user/me`
+    );
+  }
 }
