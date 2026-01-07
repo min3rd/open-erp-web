@@ -13,6 +13,7 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  FormsModule,
   Validators,
   ValidationErrors,
 } from '@angular/forms';
@@ -23,13 +24,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ToolbarModule } from 'primeng/toolbar';
-import { AccordionModule } from 'primeng/accordion';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { SkeletonModule } from 'primeng/skeleton';
-import { TreeModule } from 'primeng/tree';
-import { TimelineModule } from 'primeng/timeline';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
@@ -67,6 +66,7 @@ interface InviteForm {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     TranslocoModule,
     CardModule,
     ButtonModule,
@@ -74,13 +74,11 @@ interface InviteForm {
     DatePickerModule,
     AutoCompleteModule,
     ToolbarModule,
-    AccordionModule,
+    SelectButtonModule,
     TableModule,
     TagModule,
     DialogModule,
     SkeletonModule,
-    TreeModule,
-    TimelineModule,
     TooltipModule,
   ],
   templateUrl: './detail.html',
@@ -117,8 +115,13 @@ export class Detail implements OnInit, OnDestroy {
   protected readonly eventsLimit = signal(20);
   protected readonly eventsTotal = signal(0);
 
-  protected readonly activeTabIndex = signal(0);
-  protected readonly activeMobileSection = signal<string | null>('overview');
+  protected readonly activeTab = signal<string>('overview');
+  protected readonly tabOptions = [
+    { label: 'Overview', value: 'overview' },
+    { label: 'Members', value: 'members' },
+    { label: 'Relations', value: 'relations' },
+    { label: 'Activity', value: 'activity' },
+  ];
 
   protected readonly isNewMode = computed(() => this.router.url.includes('/new'));
   protected readonly isViewMode = computed(() => !this.isNewMode() && this.organizationId() !== null);
@@ -620,11 +623,7 @@ export class Detail implements OnInit, OnDestroy {
   }
 
   protected onTabChange(index: number): void {
-    this.activeTabIndex.set(index);
-  }
-
-  protected onMobileSectionChange(section: string): void {
-    this.activeMobileSection.set(this.activeMobileSection() === section ? null : section);
+    this.activeTab.set(this.tabOptions[index].value);
   }
 
   protected formatDate(dateString: string): string {
