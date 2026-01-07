@@ -5,15 +5,14 @@ import {
   FormGroup,
   ReactiveFormsModule,
   Validators,
-  AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { DatePicker } from 'primeng/datepicker';
-import { AutoComplete } from 'primeng/autocomplete';
+import { DatePickerModule } from 'primeng/datepicker';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MessageService } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import {
@@ -43,8 +42,8 @@ interface BusinessRegistrationForm {
     NgOptimizedImage,
     ButtonModule,
     InputTextModule,
-    DatePicker,
-    AutoComplete,
+    DatePickerModule,
+    AutoCompleteModule,
   ],
   templateUrl: './register-business.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
