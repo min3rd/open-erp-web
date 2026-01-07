@@ -96,7 +96,7 @@
     class="border-b border-surface-200 dark:border-surface-700"
   >
     <organization-switcher
-      [showLabel]="navMode() === 'sidebar' && !isMobile()"
+      [showLabel]="navMode() === 'sidebar' || isMobile()"
     ></organization-switcher>
   </div>
 
@@ -105,7 +105,7 @@
     id="vertical-navigation-language-selector"
     class="border-b border-surface-200 dark:border-surface-700"
   >
-    <language-selector [showLabel]="navMode() === 'sidebar' && !isMobile()"></language-selector>
+    <language-selector [showLabel]="navMode() === 'sidebar' || isMobile()"></language-selector>
   </div>
 
   <!-- Modules navigation -->
