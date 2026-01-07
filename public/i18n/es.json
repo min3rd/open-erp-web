@@ -244,6 +244,25 @@
       "info": "Información"
     }
   },
+  "organizationSwitcher": {
+    "label": "Organización Actual",
+    "placeholder": "Seleccionar organización",
+    "ariaLabel": "Seleccionar organización actual",
+    "taxId": "ID de Impuesto",
+    "loading": "Cargando organizaciones...",
+    "noOrganizations": "No hay organizaciones disponibles"
+  },
+  "languageSelector": {
+    "label": "Idioma",
+    "placeholder": "Seleccionar idioma",
+    "ariaLabel": "Seleccionar idioma"
+  },
+  "verticalNav": {
+    "registerOrganization": "Registrar Organización",
+    "registerOrganizationShort": "Registrar",
+    "resizeHandle": "Arrastrar para redimensionar la navegación",
+    "companies": "Empresas"
+  },
   "registerBusiness": {
     "title": "Registro de Empresa",
     "subtitle": "Registre su empresa con Open ERP",

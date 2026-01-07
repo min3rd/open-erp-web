@@ -1,0 +1,65 @@
+<div id="organization-switcher-container" class="w-full">
+  @if (loading()) {
+  <div
+    id="organization-switcher-loading"
+    class="flex items-center justify-center p-3 text-surface-600 dark:text-surface-400"
+  >
+    <i class="pi pi-spin pi-spinner text-xl" aria-hidden="true"></i>
+    <span class="ml-2 text-sm">{{ 'organizationSwitcher.loading' | transloco }}</span>
+  </div>
+  } @else if (error()) {
+  <div
+    id="organization-switcher-error"
+    class="p-3 text-sm text-red-600 dark:text-red-400"
+    role="alert"
+  >
+    {{ error() }}
+  </div>
+  } @else if (organizations().length > 0) {
+  <div id="organization-switcher-dropdown-wrapper" class="p-2">
+    <label
+      for="organization-switcher-dropdown"
+      class="block text-xs font-medium text-surface-600 dark:text-surface-400 mb-1"
+    >
+      {{ 'organizationSwitcher.label' | transloco }}
+    </label>
+    <p-dropdown
+      id="organization-switcher-dropdown"
+      [options]="dropdownOptions()"
+      [(ngModel)]="selectedOrgId()"
+      (ngModelChange)="onOrganizationChange($event)"
+      optionLabel="label"
+      optionValue="value"
+      [filter]="true"
+      [filterBy]="'label,subtitle'"
+      [placeholder]="'organizationSwitcher.placeholder' | transloco"
+      [showClear]="false"
+      styleClass="w-full"
+      [attr.aria-label]="'organizationSwitcher.ariaLabel' | transloco"
+    >
+      <ng-template let-org pTemplate="item">
+        <div class="flex flex-col py-1" [attr.id]="'organization-switcher-option-' + org.value">
+          <span class="font-medium text-surface-900 dark:text-surface-0">{{ org.label }}</span>
+          <span class="text-xs text-surface-500 dark:text-surface-400">{{
+            'organizationSwitcher.taxId' | transloco
+          }}: {{ org.subtitle }}</span>
+        </div>
+      </ng-template>
+
+      <ng-template let-org pTemplate="selectedItem">
+        <div class="flex flex-col" id="organization-switcher-selected">
+          <span class="font-medium text-sm">{{ org.label }}</span>
+          <span class="text-xs text-surface-500 dark:text-surface-400">{{ org.subtitle }}</span>
+        </div>
+      </ng-template>
+    </p-dropdown>
+  </div>
+  } @else {
+  <div
+    id="organization-switcher-empty"
+    class="p-3 text-sm text-surface-600 dark:text-surface-400"
+  >
+    {{ 'organizationSwitcher.noOrganizations' | transloco }}
+  </div>
+  }
+</div>

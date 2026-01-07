@@ -1,30 +1,117 @@
-<div class="flex flex-col flex-auto h-full animate-fadeinleft" id="vertical-navigation-container">
+<div
+  class="flex flex-col flex-auto h-full animate-fadeinleft relative"
+  id="vertical-navigation-container"
+  [style.width.px]="isMobile() ? 320 : (navMode() === 'narrow' ? 56 : navWidth())"
+  [class.transition-width]="!isResizing()"
+  [class.duration-300]="!isResizing()"
+>
   <!-- Header -->
   <div
     id="vertical-navigation-header"
-    class="flex items-center justify-center px-2 py-3 border-b border-surface-200 dark:border-surface-700"
+    class="flex items-center px-2 py-3 border-b border-surface-200 dark:border-surface-700"
+    [class.justify-center]="navMode() === 'narrow' && !isMobile()"
   >
-    <h2 class="text-lg font-bold text-surface-900 dark:text-surface-0 lg:hidden" id="vertical-navigation-title">
+    @if (navMode() === 'sidebar' || isMobile()) {
+    <h2
+      class="text-lg font-bold text-surface-900 dark:text-surface-0 lg:hidden"
+      id="vertical-navigation-title"
+    >
       {{ 'common.title' | transloco }}
     </h2>
-    <span class="hidden lg:block text-2xl font-bold text-primary-500" id="vertical-navigation-app-name">
+    <span
+      class="hidden lg:block text-2xl font-bold text-primary-500"
+      id="vertical-navigation-app-name"
+    >
       {{ 'common.appShortName' | transloco }}
     </span>
-    <div class="flex items-center justify-center md:hidden ml-auto" id="vertical-navigation-close-wrapper">
+    }
+    <div
+      class="flex items-center justify-center ml-auto"
+      id="vertical-navigation-actions"
+      [class.md:hidden]="navMode() === 'sidebar' || isMobile()"
+    >
+      <!-- Toggle nav mode button (desktop only) -->
+      @if (!isMobile()) {
+      <p-button
+        id="vertical-navigation-toggle-mode"
+        (onClick)="toggleNavMode()"
+        [icon]="navMode() === 'narrow' ? 'pi pi-angle-right' : 'pi pi-angle-left'"
+        [rounded]="true"
+        [text]="true"
+        severity="secondary"
+        size="small"
+        [pTooltip]="'navigation.toggle' | transloco"
+        tooltipPosition="right"
+        [showDelay]="500"
+        [attr.aria-label]="'navigation.toggle' | transloco"
+        [attr.aria-expanded]="navMode() === 'sidebar'"
+      />
+      }
+      <!-- Close button (mobile only) -->
+      @if (isMobile()) {
       <p-button
         id="vertical-navigation-close-button"
         (onClick)="toggleSidebar()"
         icon="pi pi-times"
         [rounded]="true"
         [text]="true"
+        [attr.aria-label]="'navigation.toggle' | transloco"
       />
+      }
     </div>
   </div>
+
+  <!-- Register Organization CTA -->
+  <div
+    id="vertical-navigation-register-cta"
+    class="p-2 border-b border-surface-200 dark:border-surface-700"
+  >
+    @if (navMode() === 'sidebar' || isMobile()) {
+    <p-button
+      id="vertical-navigation-register-button-full"
+      (onClick)="navigateToRegisterOrganization()"
+      [label]="'verticalNav.registerOrganization' | transloco"
+      icon="pi pi-building"
+      severity="primary"
+      size="small"
+      styleClass="w-full"
+      [attr.aria-label]="'verticalNav.registerOrganization' | transloco"
+    />
+    } @else {
+    <p-button
+      id="vertical-navigation-register-button-icon"
+      (onClick)="navigateToRegisterOrganization()"
+      icon="pi pi-building"
+      [rounded]="true"
+      severity="primary"
+      size="small"
+      styleClass="w-full"
+      [pTooltip]="'verticalNav.registerOrganizationShort' | transloco"
+      tooltipPosition="right"
+      [showDelay]="500"
+      [attr.aria-label]="'verticalNav.registerOrganization' | transloco"
+    />
+    }
+  </div>
+
+  <!-- Organization Switcher -->
+  @if (navMode() === 'sidebar' || isMobile()) {
+  <div id="vertical-navigation-org-switcher" class="border-b border-surface-200 dark:border-surface-700">
+    <organization-switcher></organization-switcher>
+  </div>
+  }
+
+  <!-- Language Selector -->
+  @if (navMode() === 'sidebar' || isMobile()) {
+  <div id="vertical-navigation-language-selector" class="border-b border-surface-200 dark:border-surface-700">
+    <language-selector></language-selector>
+  </div>
+  }
 
   <!-- Modules navigation -->
   <nav
     id="vertical-navigation-modules"
-    class="flex flex-col flex-auto h-full px-2 py-3 space-y-2"
+    class="flex flex-col flex-auto h-full px-2 py-3 space-y-2 overflow-y-auto"
     role="navigation"
     [attr.aria-label]="'navigation.main' | transloco"
   >
@@ -33,21 +120,41 @@
       [attr.id]="'vertical-navigation-item-' + $index"
       [label]="item.label | transloco"
       [icon]="item.icon"
-      [showLabel]="isMobile()"
+      [showLabel]="isMobile() || navMode() === 'sidebar'"
     ></layout-vertical-naviagation-module-item>
     }
   </nav>
 
   <!-- Footer -->
-  <div class="flex flex-col p-2 space-y-2 border-t border-surface-200 dark:border-surface-700" id="vertical-navigation-footer">
+  <div
+    class="flex flex-col p-2 space-y-2 border-t border-surface-200 dark:border-surface-700"
+    id="vertical-navigation-footer"
+  >
     <layout-user></layout-user>
 
     <layout-vertical-naviagation-module-item
       id="vertical-navigation-logout"
       [label]="'auth.logout' | transloco"
-      [showLabel]="isMobile()"
+      [showLabel]="isMobile() || navMode() === 'sidebar'"
       icon="pi pi-sign-out"
       (click)="logOut()"
     ></layout-vertical-naviagation-module-item>
   </div>
+
+  <!-- Resize Handle (desktop only, sidebar mode) -->
+  @if (!isMobile() && navMode() === 'sidebar') {
+  <div
+    id="vertical-navigation-resize-handle"
+    class="absolute top-0 right-0 bottom-0 w-1 cursor-ew-resize hover:bg-primary-500 transition-colors group"
+    (mousedown)="onResizeStart($event)"
+    [attr.aria-label]="'verticalNav.resizeHandle' | transloco"
+    role="separator"
+    tabindex="0"
+  >
+    <div
+      class="absolute inset-y-0 right-0 w-1 bg-surface-300 dark:bg-surface-600 group-hover:bg-primary-500"
+    ></div>
+  </div>
+  }
 </div>
+
