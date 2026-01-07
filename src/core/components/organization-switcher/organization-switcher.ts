@@ -8,14 +8,14 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
-import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
-import { TenantContextService, TenantOrganization } from '../../../services/tenant-context.service';
-import { OrganizationService } from '../../../services/organization-service';
+import { TenantContextService, TenantOrganization } from '../../services/tenant-context.service';
+import { OrganizationService } from '../../services/organization-service';
 
 @Component({
   selector: 'organization-switcher',
-  imports: [CommonModule, TranslocoModule, DropdownModule, FormsModule],
+  imports: [CommonModule, TranslocoModule, Select, FormsModule],
   templateUrl: './organization-switcher.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -31,7 +31,7 @@ export class OrganizationSwitcher implements OnInit {
 
   // For dropdown display
   dropdownOptions = computed(() => {
-    return this.organizations().map((org) => ({
+    return this.organizations().map((org: TenantOrganization) => ({
       label: org.name,
       value: org.id,
       subtitle: org.taxId,
@@ -39,13 +39,19 @@ export class OrganizationSwitcher implements OnInit {
     }));
   });
 
-  selectedOrgId = computed(() => this.selectedOrganization()?.id || null);
+  // Use writable signal for two-way binding
+  selectedOrgId = signal<string | null>(this.selectedOrganization()?.id || null);
 
   ngOnInit(): void {
     // Load user's organizations if not already loaded
     if (this.organizations().length === 0) {
       this.loadUserOrganizations();
     }
+
+    // Watch for changes to selected organization from context
+    this.tenantContextService.organizationChanged$.subscribe((org) => {
+      this.selectedOrgId.set(org?.id || null);
+    });
   }
 
   onOrganizationChange(organizationId: string): void {

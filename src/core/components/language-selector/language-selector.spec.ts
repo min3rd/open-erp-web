@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LanguageSelector } from './language-selector';
 import { TranslocoService } from '@jsverse/transloco';
-import { getTranslocoModule } from '../../../testing/transloco-testing.module';
+import { getTranslocoModule } from '../../testing/transloco-testing.module';
 
 describe('LanguageSelector', () => {
   let component: LanguageSelector;

@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OrganizationSwitcher } from './organization-switcher';
-import { TenantContextService } from '../../../services/tenant-context.service';
-import { OrganizationService } from '../../../services/organization-service';
+import { TenantContextService } from '../../services/tenant-context.service';
+import { OrganizationService } from '../../services/organization-service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { getTranslocoModule } from '../../../testing/transloco-testing.module';
+import { getTranslocoModule } from '../../testing/transloco-testing.module';
 
 describe('OrganizationSwitcher', () => {
   let component: OrganizationSwitcher;
