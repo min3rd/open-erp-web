@@ -23,17 +23,16 @@
     >
       {{ 'organizationSwitcher.label' | transloco }}
     </label>
-    <p-dropdown
+    <p-select
       id="organization-switcher-dropdown"
       [options]="dropdownOptions()"
-      [(ngModel)]="selectedOrgId()"
+      [(ngModel)]="selectedOrgId"
       (ngModelChange)="onOrganizationChange($event)"
       optionLabel="label"
       optionValue="value"
       [filter]="true"
-      [filterBy]="'label,subtitle'"
+      [filterFields]="['label', 'subtitle']"
       [placeholder]="'organizationSwitcher.placeholder' | transloco"
-      [showClear]="false"
       styleClass="w-full"
       [attr.aria-label]="'organizationSwitcher.ariaLabel' | transloco"
     >
@@ -52,7 +51,7 @@
           <span class="text-xs text-surface-500 dark:text-surface-400">{{ org.subtitle }}</span>
         </div>
       </ng-template>
-    </p-dropdown>
+    </p-select>
   </div>
   } @else {
   <div

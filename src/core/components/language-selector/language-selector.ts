@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
 
 interface LanguageOption {
@@ -12,7 +12,7 @@ interface LanguageOption {
 
 @Component({
   selector: 'language-selector',
-  imports: [CommonModule, TranslocoModule, DropdownModule, FormsModule],
+  imports: [CommonModule, TranslocoModule, Select, FormsModule],
   templateUrl: './language-selector.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,6 +25,7 @@ export class LanguageSelector {
     { code: 'es', label: 'Español', flag: '🇪🇸' },
   ];
 
+  // Use a writable signal instead of computed for two-way binding
   selectedLanguage = signal<string>(this.loadLanguage());
 
   constructor() {
@@ -35,14 +36,8 @@ export class LanguageSelector {
     effect(() => {
       const lang = this.selectedLanguage();
       this.saveLanguage(lang);
+      this.translocoService.setActiveLang(lang);
     });
-  }
-
-  onLanguageChange(languageCode: string): void {
-    if (languageCode) {
-      this.selectedLanguage.set(languageCode);
-      this.translocoService.setActiveLang(languageCode);
-    }
   }
 
   private loadLanguage(): string {
