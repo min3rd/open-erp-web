@@ -216,7 +216,7 @@
             [label]="'register.buttons.register' | transloco"
             [disabled]="!registerForm.valid || isSubmitting()"
             [loading]="isSubmitting()"
-            class="w-full"
+            styleClass="w-full"
             severity="primary"
             [attr.aria-busy]="isSubmitting()"
           />
@@ -225,7 +225,7 @@
             id="register-back-to-login-button"
             [label]="'register.buttons.backToLogin' | transloco"
             (onClick)="navigateToLogin()"
-            class="w-full"
+            styleClass="w-full"
             severity="secondary"
           />
         </div>

@@ -127,14 +127,14 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex flex-col space-y-2" id="login-actions">
+        <div class="flex flex-col space-y-2 text-center" id="login-actions">
           <p-button
             type="submit"
             id="login-submit-button"
             [label]="'login.buttons.login' | transloco"
             [disabled]="!loginForm.valid || isSubmitting()"
             [loading]="isSubmitting()"
-            class="w-full"
+            styleClass="w-full"
             severity="primary"
             [attr.aria-busy]="isSubmitting()"
           />
@@ -143,7 +143,7 @@
             id="login-create-account-button"
             [label]="'login.buttons.createAccount' | transloco"
             (onClick)="navigateToRegister()"
-            class="w-full"
+            styleClass="w-full"
             severity="secondary"
           />
         </div>
