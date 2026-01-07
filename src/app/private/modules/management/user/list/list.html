@@ -1,1 +1,252 @@
-<p>list works!</p>,
+<div class="flex h-full flex-col">
+  <!-- Fixed Toolbar -->
+  <p-toolbar
+    id="user-list-toolbar"
+    class="border-b border-surface-200 dark:border-surface-700"
+  >
+    <ng-template pTemplate="start">
+      <!-- Scope Toggle -->
+      <p-selectButton
+        id="user-list-scope-toggle"
+        [options]="scopeOptions"
+        [(ngModel)]="scope"
+        (onChange)="onScopeChange($event.value)"
+        [allowEmpty]="false"
+        optionLabel="label"
+        optionValue="value"
+        class="mr-4"
+        aria-label="Select user scope"
+      >
+        <ng-template let-item pTemplate>
+          <i [class]="item.icon"></i>
+          <span class="ml-2">{{ item.label }}</span>
+        </ng-template>
+      </p-selectButton>
+
+      <!-- Search Input -->
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          id="user-list-search"
+          type="text"
+          pInputText
+          placeholder="Search by name, email, or phone"
+          (input)="onSearchChange($event)"
+          [value]="searchQuery()"
+          class="w-80"
+          aria-label="Search users"
+        />
+      </span>
+    </ng-template>
+
+    <ng-template pTemplate="end">
+      <!-- Add New Button -->
+      <p-button
+        id="user-list-add-button"
+        icon="pi pi-plus"
+        [rounded]="true"
+        [text]="true"
+        severity="primary"
+        (onClick)="onAddUser()"
+        pTooltip="Add new user"
+        tooltipPosition="bottom"
+        aria-label="Add new user"
+      />
+
+      <!-- Actions Menu -->
+      <p-button
+        id="user-list-actions-button"
+        icon="pi pi-ellipsis-v"
+        [rounded]="true"
+        [text]="true"
+        (onClick)="menu.toggle($event)"
+        aria-label="Open actions menu"
+        aria-haspopup="true"
+        aria-controls="user-list-actions-menu"
+      />
+      <p-menu
+        #menu
+        id="user-list-actions-menu"
+        [model]="actionMenuItems"
+        [popup]="true"
+      />
+    </ng-template>
+  </p-toolbar>
+
+  <!-- Scrollable Content Area -->
+  <div
+    id="user-list-content"
+    class="flex-1 overflow-auto"
+  >
+    <!-- Table -->
+    <p-table
+      id="user-list-table"
+      [value]="users()"
+      [(selection)]="selectedUsers"
+      [loading]="isLoading()"
+      [rowHover]="true"
+      dataKey="id"
+      styleClass="p-datatable-sm"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 4rem">
+            <p-checkbox
+              [(ngModel)]="selectedUsers"
+              [binary]="true"
+              aria-label="Select all users"
+            />
+          </th>
+          <th style="width: 4rem">Avatar</th>
+          <th pSortableColumn="fullName">
+            Full Name
+            <p-sortIcon field="fullName" />
+          </th>
+          <th pSortableColumn="email">
+            Email
+            <p-sortIcon field="email" />
+          </th>
+          <th pSortableColumn="phone">
+            Phone
+            <p-sortIcon field="phone" />
+          </th>
+          <th pSortableColumn="status">
+            Status
+            <p-sortIcon field="status" />
+          </th>
+          <th>Last Login</th>
+          <th style="width: 8rem">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+        <tr [id]="'user-list-row-' + user.id">
+          <td>
+            <p-checkbox
+              [(ngModel)]="selectedUsers"
+              [value]="user"
+              [binary]="false"
+              [aria-label]="'Select ' + user.fullName"
+            />
+          </td>
+          <td>
+            <p-avatar
+              [image]="user.avatar"
+              [label]="user.fullName.charAt(0)"
+              shape="circle"
+              size="normal"
+            />
+          </td>
+          <td>
+            <div class="font-medium">{{ user.fullName }}</div>
+            <div class="text-sm text-surface-500 dark:text-surface-400">
+              @{{ user.username }}
+            </div>
+          </td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.phone || '-' }}</td>
+          <td>
+            <p-tag
+              [value]="user.status"
+              [severity]="getStatusSeverity(user.status)"
+            />
+          </td>
+          <td>{{ formatDate(user.lastLogin || '') }}</td>
+          <td>
+            <p-button
+              icon="pi pi-eye"
+              [rounded]="true"
+              [text]="true"
+              size="small"
+              severity="secondary"
+              pTooltip="View details"
+              tooltipPosition="top"
+              [aria-label]="'View ' + user.fullName + ' details'"
+            />
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              size="small"
+              severity="secondary"
+              pTooltip="Edit user"
+              tooltipPosition="top"
+              [aria-label]="'Edit ' + user.fullName"
+            />
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center py-8 text-surface-500">
+            @if (isLoading()) {
+              <i class="pi pi-spin pi-spinner text-2xl"></i>
+              <p class="mt-2">Loading users...</p>
+            } @else if (searchQuery()) {
+              <i class="pi pi-search text-2xl"></i>
+              <p class="mt-2">No users found matching "{{ searchQuery() }}"</p>
+            } @else {
+              <i class="pi pi-users text-2xl"></i>
+              <p class="mt-2">No users available</p>
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Fixed Footer with Pagination -->
+  <div
+    class="border-t border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 p-4"
+  >
+    <div class="flex items-center justify-between">
+      <!-- Pagination -->
+      <p-paginator
+        id="user-list-pagination"
+        [rows]="pageSize()"
+        [totalRecords]="totalRecords()"
+        [first]="(currentPage() - 1) * pageSize()"
+        [rowsPerPageOptions]="[10, 25, 50, 100]"
+        (onPageChange)="onPageChange($event)"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+      />
+
+      <!-- Page Size Selector -->
+      <div id="user-list-page-size" class="flex items-center gap-2">
+        <label for="page-size-select" class="text-sm text-surface-600 dark:text-surface-400">
+          Items per page:
+        </label>
+        <select
+          id="page-size-select"
+          class="rounded border border-surface-300 dark:border-surface-600 bg-surface-0 dark:bg-surface-800 px-3 py-2 text-sm"
+          [value]="pageSize()"
+          (change)="onPageChange({ page: 0, rows: +$any($event.target).value })"
+        >
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen Reader Status Announcements -->
+  <div
+    id="user-list-status"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+    class="sr-only"
+  >
+    @if (isLoading()) {
+      Loading users...
+    } @else {
+      {{ totalRecords() }} users loaded
+    }
+  </div>
+</div>
