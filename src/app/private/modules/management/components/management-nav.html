@@ -1,0 +1,62 @@
+<nav
+  id="management-nav"
+  class="flex flex-col h-full bg-surface-0 dark:bg-surface-900 border-r border-surface-200 dark:border-surface-700 transition-all duration-300"
+  [class.w-14]="navMode() === 'narrow'"
+  [class.w-64]="navMode() === 'sidebar'"
+  role="navigation"
+  [attr.aria-label]="'management.title' | transloco"
+>
+  <!-- Header with toggle -->
+  <div
+    id="management-nav-header"
+    class="flex items-center justify-between p-3 border-b border-surface-200 dark:border-surface-700"
+    [class.justify-center]="navMode() === 'narrow'"
+  >
+    @if (navMode() === 'sidebar') {
+    <h2 id="management-nav-title" class="text-lg font-semibold text-surface-900 dark:text-surface-0">
+      {{ 'management.title' | transloco }}
+    </h2>
+    }
+    <p-button
+      id="management-nav-toggle"
+      (onClick)="onToggleNavMode()"
+      [icon]="navMode() === 'narrow' ? 'pi pi-angle-right' : 'pi pi-angle-left'"
+      [text]="true"
+      [rounded]="true"
+      severity="secondary"
+      size="small"
+      [pTooltip]="'management.navigation.toggleNavMode' | transloco"
+      tooltipPosition="right"
+      [showDelay]="500"
+      [attr.aria-label]="'management.navigation.toggleNavMode' | transloco"
+      [attr.aria-expanded]="navMode() === 'sidebar'"
+    />
+  </div>
+
+  <!-- Navigation items -->
+  <div id="management-nav-items" class="flex-1 overflow-y-auto py-2">
+    <ul class="space-y-1 px-2" role="list">
+      <!-- User Management -->
+      <li id="management-nav-item-user">
+        <a
+          id="management-nav-link-user"
+          routerLink="user"
+          routerLinkActive="bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
+          [routerLinkActiveOptions]="{ exact: false }"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors text-surface-700 dark:text-surface-300"
+          [class.justify-center]="navMode() === 'narrow'"
+          [pTooltip]="navMode() === 'narrow' ? ('management.navigation.user' | transloco) : ''"
+          tooltipPosition="right"
+          [showDelay]="500"
+          [attr.aria-label]="'management.navigation.user' | transloco"
+          [attr.aria-current]="isActive('user') ? 'page' : null"
+        >
+          <i class="pi pi-users text-xl" aria-hidden="true"></i>
+          @if (navMode() === 'sidebar') {
+          <span class="text-sm font-medium">{{ 'management.navigation.user' | transloco }}</span>
+          }
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>

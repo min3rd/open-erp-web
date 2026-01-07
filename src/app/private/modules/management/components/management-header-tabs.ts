@@ -2,19 +2,15 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
-import { TenantContextService } from '../../../../../core/services/tenant-context.service';
 
 @Component({
-  selector: 'organization-header-tabs',
+  selector: 'management-header-tabs',
   imports: [CommonModule, RouterLink, RouterLinkActive, TranslocoModule],
-  templateUrl: './organization-header-tabs.html',
+  templateUrl: './management-header-tabs.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OrganizationHeaderTabs {
-  private tenantContextService = inject(TenantContextService);
-
+export class ManagementHeaderTabs {
   router = inject(Router);
-  curentOrganization = this.tenantContextService.currentOrganization;
 
   isActive(route: string): boolean {
     return this.router.isActive(route, {
@@ -23,15 +19,5 @@ export class OrganizationHeaderTabs {
       fragment: 'ignored',
       matrixParams: 'ignored',
     });
-  }
-
-  get activeTabIndex(): number {
-    const url = this.router.url;
-    if (url.includes('/new')) {
-      return 0;
-    } else if (url.includes('/detail')) {
-      return 1;
-    }
-    return 0;
   }
 }

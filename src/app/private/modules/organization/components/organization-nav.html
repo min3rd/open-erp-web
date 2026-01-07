@@ -49,6 +49,7 @@
           tooltipPosition="right"
           [showDelay]="500"
           [attr.aria-label]="'organization.navigation.register' | transloco"
+          [attr.aria-current]="isActive('new') ? 'page' : null"
         >
           <i class="pi pi-building text-xl" aria-hidden="true"></i>
           @if (navMode() === 'sidebar') {
@@ -70,6 +71,7 @@
           tooltipPosition="right"
           [showDelay]="500"
           [attr.aria-label]="'organization.navigation.detail' | transloco"
+          [attr.aria-current]="currentOrganization()?.id && isActive(currentOrganization()!.id) ? 'page' : null"
         >
           <i class="pi pi-info-circle text-xl" aria-hidden="true"></i>
           @if (navMode() === 'sidebar') {

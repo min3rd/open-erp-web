@@ -6,7 +6,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
@@ -32,6 +32,7 @@ export class OrganizationNav implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private layoutService = inject(OrganizationLayoutService);
   private tenantContextService = inject(TenantContextService);
+  private router = inject(Router);
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -41,6 +42,15 @@ export class OrganizationNav implements OnInit, OnDestroy {
 
   onToggleNavMode(): void {
     this.layoutService.toggleNavMode();
+  }
+
+  isActive(route: string): boolean {
+    return this.router.isActive(route, {
+      paths: 'subset',
+      queryParams: 'ignored',
+      fragment: 'ignored',
+      matrixParams: 'ignored',
+    });
   }
 
   ngOnInit(): void {

@@ -18,7 +18,7 @@
         [routerLinkActiveOptions]="{ exact: false }"
         class="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 transition-colors border-b-2 border-transparent"
         [attr.aria-label]="'organization.tabs.register' | transloco"
-        [attr.aria-current]="router.url.includes('/new') ? 'page' : null"
+        [attr.aria-current]="isActive('new') ? 'page' : null"
       >
         <i class="pi pi-building" aria-hidden="true"></i>
         <span>{{ 'organization.tabs.register' | transloco }}</span>
@@ -32,7 +32,7 @@
         [routerLinkActiveOptions]="{ exact: false }"
         class="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 transition-colors border-b-2 border-transparent"
         [attr.aria-label]="'organization.tabs.info' | transloco"
-        [attr.aria-current]="router.url.includes('/detail') ? 'page' : null"
+        [attr.aria-current]="isActive('detail') ? 'page' : null"
       >
         <i class="pi pi-info-circle" aria-hidden="true"></i>
         <span>{{ 'organization.tabs.info' | transloco }}</span>

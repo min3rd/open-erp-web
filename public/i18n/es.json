@@ -393,5 +393,16 @@
     "footer": {
       "helpText": "¿Necesita ayuda? Contacte a nuestro equipo de soporte"
     }
+  },
+  "management": {
+    "title": "Gestión",
+    "navigation": {
+      "user": "Gestión de Usuarios",
+      "toggleNavMode": "Cambiar modo de navegación",
+      "toggleMenu": "Alternar menú"
+    },
+    "tabs": {
+      "user": "Usuarios"
+    }
   }
 }
