@@ -12,14 +12,15 @@ import { Router } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { CalendarModule } from 'primeng/calendar';
-import { ChipsModule } from 'primeng/chips';
+import { DatePicker } from 'primeng/datepicker';
+import { AutoComplete } from 'primeng/autocomplete';
 import { MessageService } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import {
   OrganizationService,
   CreateOrganizationDto,
-} from '../../../../../core/services/organization-service';
+  VietQRBusinessResponse,
+} from '../../../../core/services/organization-service';
 
 interface BusinessRegistrationForm {
   taxId: FormControl<string>;
@@ -42,8 +43,8 @@ interface BusinessRegistrationForm {
     NgOptimizedImage,
     ButtonModule,
     InputTextModule,
-    CalendarModule,
-    ChipsModule,
+    DatePicker,
+    AutoComplete,
   ],
   templateUrl: './register-business.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,7 +58,9 @@ export class RegisterBusiness {
 
   protected readonly isSubmitting = signal(false);
   protected readonly isTaxLookupLoading = signal(false);
-  protected readonly taxLookupData = signal<any>(null);
+  protected readonly taxLookupData = signal<VietQRBusinessResponse['data'] | null>(null);
+  protected readonly businessActivitySuggestions = signal<string[]>([]);
+  protected readonly maxDate = new Date();
 
   protected readonly registrationForm = new FormGroup<BusinessRegistrationForm>({
     taxId: new FormControl('', {
@@ -131,7 +134,7 @@ export class RegisterBusiness {
   private lookupTaxId(taxId: string): void {
     this.isTaxLookupLoading.set(true);
     this.organizationService.lookupBusinessByTaxId(taxId).subscribe({
-      next: (response) => {
+      next: (response: VietQRBusinessResponse | null) => {
         this.isTaxLookupLoading.set(false);
         if (response && response.data) {
           this.taxLookupData.set(response.data);
@@ -145,7 +148,7 @@ export class RegisterBusiness {
           this.taxLookupData.set(null);
         }
       },
-      error: (error) => {
+      error: (error: any) => {
         this.isTaxLookupLoading.set(false);
         this.taxLookupData.set(null);
         console.error('Tax lookup failed:', error);
@@ -211,7 +214,7 @@ export class RegisterBusiness {
       };
 
       this.organizationService.createOrganization(dto).subscribe({
-        next: (response) => {
+        next: (response: any) => {
           this.messageService.add({
             severity: 'success',
             summary: this.translocoService.translate('registerBusiness.messages.success'),
@@ -220,7 +223,7 @@ export class RegisterBusiness {
           // Navigate to dashboard or login
           this.router.navigate(['/auth/login']);
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Organization registration failed:', error);
           this.messageService.add({
             severity: 'error',
