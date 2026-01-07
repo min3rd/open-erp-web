@@ -23,13 +23,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ToolbarModule } from 'primeng/toolbar';
-import { TabsModule } from 'primeng/tabs';
+import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TreeModule } from 'primeng/tree';
 import { TimelineModule } from 'primeng/timeline';
+import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import {
@@ -73,13 +74,14 @@ interface InviteForm {
     DatePickerModule,
     AutoCompleteModule,
     ToolbarModule,
-    TabsModule,
+    AccordionModule,
     TableModule,
     TagModule,
     DialogModule,
     SkeletonModule,
     TreeModule,
     TimelineModule,
+    TooltipModule,
   ],
   templateUrl: './detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -116,6 +118,7 @@ export class Detail implements OnInit, OnDestroy {
   protected readonly eventsTotal = signal(0);
 
   protected readonly activeTabIndex = signal(0);
+  protected readonly activeMobileSection = signal<string | null>('overview');
 
   protected readonly isNewMode = computed(() => this.router.url.includes('/new'));
   protected readonly isViewMode = computed(() => !this.isNewMode() && this.organizationId() !== null);
@@ -614,6 +617,14 @@ export class Detail implements OnInit, OnDestroy {
       default:
         return 'secondary';
     }
+  }
+
+  protected onTabChange(index: number): void {
+    this.activeTabIndex.set(index);
+  }
+
+  protected onMobileSectionChange(section: string): void {
+    this.activeMobileSection.set(this.activeMobileSection() === section ? null : section);
   }
 
   protected formatDate(dateString: string): string {

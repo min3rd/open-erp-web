@@ -276,7 +276,7 @@
         </div>
       </ng-template>
       <ng-template pTemplate="end">
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap">
           <p-button
             id="organization-edit-button"
             [label]="'organization.detail.actions.edit' | transloco"
@@ -318,14 +318,14 @@
       <p-skeleton height="10rem"></p-skeleton>
     </div>
     } @else if (organization()) {
-    <!-- Desktop Layout: 3-column -->
-    <div class="hidden lg:grid lg:grid-cols-12 gap-6 p-6 h-full">
-      <!-- Left Column: Info Panel (~320px) -->
+    <!-- Desktop Layout: 2-column (info sidebar + content) -->
+    <div class="hidden lg:grid lg:grid-cols-12 gap-6 p-6">
+      <!-- Left Column: Info Panel -->
       <div class="col-span-3">
         <p-card
           id="organization-info-card"
           [header]="'organization.detail.info.basicInfo' | transloco"
-          styleClass="h-fit"
+          styleClass="h-fit sticky top-0"
         >
           <div class="space-y-4">
             <!-- Tax ID -->
@@ -388,7 +388,7 @@
                 class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1"
                 >{{ 'organization.detail.info.address' | transloco }}</label
               >
-              <span id="org-info-address-value" class="text-surface-900 dark:text-surface-0">{{
+              <span id="org-info-address-value" class="text-surface-900 dark:text-surface-0 text-sm">{{
                 organization()!.headquartersAddress
               }}</span>
             </div>
@@ -425,7 +425,6 @@
                   severity="secondary"
                   (onClick)="copyToClipboard(organization()!.contactPhone)"
                   [pTooltip]="'organization.detail.info.copy' | transloco"
-                  [attr.aria-label]="'organization.detail.info.copy' | transloco"
                 />
               </div>
             </div>
@@ -438,7 +437,7 @@
                 >{{ 'organization.detail.info.contactEmail' | transloco }}</label
               >
               <div class="flex items-center gap-2">
-                <span id="org-info-email-value" class="text-surface-900 dark:text-surface-0">{{
+                <span id="org-info-email-value" class="text-surface-900 dark:text-surface-0 text-sm break-all">{{
                   organization()!.contactEmail
                 }}</span>
                 <p-button
@@ -450,7 +449,6 @@
                   severity="secondary"
                   (onClick)="copyToClipboard(organization()!.contactEmail)"
                   [pTooltip]="'organization.detail.info.copy' | transloco"
-                  [attr.aria-label]="'organization.detail.info.copy' | transloco"
                 />
               </div>
             </div>
@@ -487,50 +485,39 @@
         </p-card>
       </div>
 
-      <!-- Main Column: Tabs -->
+      <!-- Main Column: Content Sections -->
       <div class="col-span-9">
-        <p-tabview
-          id="organization-detail-tabs"
-          [(activeIndex)]="activeTabIndex"
-          styleClass="h-full"
-        >
-          <!-- Overview Tab -->
-          <p-tabpanel [header]="'organization.detail.tabs.overview' | transloco">
-            <div id="organization-overview-tab" class="space-y-4">
+        <p-accordion id="organization-detail-accordion" [multiple]="true" [activeIndex]="[0]">
+          <!-- Overview Section -->
+          <p-accordiontab [header]="'organization.detail.tabs.overview' | transloco">
+            <div id="organization-overview-section" class="space-y-4">
               <div>
-                <h2
+                <h3
                   id="organization-overview-title"
-                  class="text-lg font-semibold text-surface-900 dark:text-surface-0 mb-4"
+                  class="text-lg font-semibold text-surface-900 dark:text-surface-0 mb-2"
                 >
-                  {{ 'organization.detail.info.basicInfo' | transloco }}
-                </h2>
-                <p id="organization-overview-description" class="text-surface-700 dark:text-surface-300">
-                  {{ organization()!.name }} ({{ organization()!.internationalName }})
+                  {{ organization()!.name }}
+                </h3>
+                <p class="text-surface-700 dark:text-surface-300">
+                  {{ organization()!.internationalName }}
                 </p>
-                <p class="text-sm text-surface-600 dark:text-surface-400 mt-2">
-                  {{ 'organization.detail.info.createdAt' | transloco }}:
-                  {{ formatDate(organization()!.createdAt) }}
-                </p>
-                <p class="text-sm text-surface-600 dark:text-surface-400">
-                  {{ 'organization.detail.info.updatedAt' | transloco }}:
-                  {{ formatDate(organization()!.updatedAt) }}
-                </p>
+                <div class="mt-4 space-y-2 text-sm">
+                  <p class="text-surface-600 dark:text-surface-400">
+                    <span class="font-medium">{{ 'organization.detail.info.createdAt' | transloco }}:</span>
+                    {{ formatDate(organization()!.createdAt) }}
+                  </p>
+                  <p class="text-surface-600 dark:text-surface-400">
+                    <span class="font-medium">{{ 'organization.detail.info.updatedAt' | transloco }}:</span>
+                    {{ formatDate(organization()!.updatedAt) }}
+                  </p>
+                </div>
               </div>
             </div>
-          </p-tabpanel>
+          </p-accordiontab>
 
-          <!-- Members Tab -->
-          <p-tabpanel [header]="'organization.detail.tabs.members' | transloco">
-            <div id="organization-members-tab" class="space-y-4">
-              <div class="flex justify-between items-center mb-4">
-                <h2
-                  id="organization-members-title"
-                  class="text-lg font-semibold text-surface-900 dark:text-surface-0"
-                >
-                  {{ 'organization.detail.members.title' | transloco }}
-                </h2>
-              </div>
-
+          <!-- Members Section -->
+          <p-accordiontab [header]="'organization.detail.tabs.members' | transloco">
+            <div id="organization-members-section" class="space-y-4">
               @if (members().length > 0) {
               <p-table
                 id="organization-members-table"
@@ -598,27 +585,20 @@
               </div>
               }
             </div>
-          </p-tabpanel>
+          </p-accordiontab>
 
-          <!-- Relations & Structure Tab -->
-          <p-tabpanel [header]="'organization.detail.tabs.relations' | transloco">
-            <div id="organization-relations-tab" class="space-y-4">
-              <h2
-                id="organization-relations-title"
-                class="text-lg font-semibold text-surface-900 dark:text-surface-0 mb-4"
-              >
-                {{ 'organization.detail.relations.title' | transloco }}
-              </h2>
-
+          <!-- Relations Section -->
+          <p-accordiontab [header]="'organization.detail.tabs.relations' | transloco">
+            <div id="organization-relations-section" class="space-y-4">
               @if (relations().length > 0) {
               <div id="organization-relations-list" class="space-y-3">
                 @for (relation of relations(); track relation.id) {
-                <p-card styleClass="cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800">
+                <p-card styleClass="cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors">
                   <div class="flex justify-between items-center">
                     <div>
-                      <h3 class="font-semibold text-surface-900 dark:text-surface-0">
+                      <h4 class="font-semibold text-surface-900 dark:text-surface-0">
                         {{ relation.relatedOrganization.name }}
-                      </h3>
+                      </h4>
                       <p class="text-sm text-surface-600 dark:text-surface-400">
                         {{ relation.relatedOrganization.internationalName }}
                       </p>
@@ -663,18 +643,11 @@
               </div>
               }
             </div>
-          </p-tabpanel>
+          </p-accordiontab>
 
-          <!-- Activity Log Tab -->
-          <p-tabpanel [header]="'organization.detail.tabs.activity' | transloco">
-            <div id="organization-activity-tab" class="space-y-4">
-              <h2
-                id="organization-activity-title"
-                class="text-lg font-semibold text-surface-900 dark:text-surface-0 mb-4"
-              >
-                {{ 'organization.detail.activity.title' | transloco }}
-              </h2>
-
+          <!-- Activity Log Section -->
+          <p-accordiontab [header]="'organization.detail.tabs.activity' | transloco">
+            <div id="organization-activity-section" class="space-y-4">
               @if (events().length > 0) {
               <p-timeline id="organization-activity-timeline" [value]="events()" align="left">
                 <ng-template pTemplate="content" let-event>
@@ -703,16 +676,16 @@
               </div>
               }
             </div>
-          </p-tabpanel>
+          </p-accordiontab>
 
-          <!-- Documents Tab (Placeholder) -->
-          <p-tabpanel [header]="'organization.detail.tabs.documents' | transloco">
-            <div id="organization-documents-tab" class="text-center py-8">
+          <!-- Documents Section (Placeholder) -->
+          <p-accordiontab [header]="'organization.detail.tabs.documents' | transloco">
+            <div id="organization-documents-section" class="text-center py-8">
               <i class="pi pi-file text-4xl text-surface-400 mb-4"></i>
               <p class="text-surface-600 dark:text-surface-400">Documents section coming soon</p>
             </div>
-          </p-tabpanel>
-        </p-tabview>
+          </p-accordiontab>
+        </p-accordion>
       </div>
     </div>
 
@@ -723,9 +696,9 @@
         id="organization-mobile-info-card"
         [header]="'organization.detail.info.basicInfo' | transloco"
       >
-        <div class="space-y-4">
+        <div class="space-y-3 text-sm">
           <div>
-            <label class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">{{
+            <label class="block text-xs font-medium text-surface-600 dark:text-surface-400 mb-1">{{
               'organization.detail.info.taxId' | transloco
             }}</label>
             <div class="flex items-center gap-2">
@@ -741,7 +714,13 @@
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">{{
+            <label class="block text-xs font-medium text-surface-600 dark:text-surface-400 mb-1">{{
+              'organization.detail.info.name' | transloco
+            }}</label>
+            <span class="text-surface-900 dark:text-surface-0">{{ organization()!.name }}</span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-surface-600 dark:text-surface-400 mb-1">{{
               'organization.detail.info.internationalName' | transloco
             }}</label>
             <span class="text-surface-900 dark:text-surface-0">{{
@@ -751,28 +730,31 @@
         </div>
       </p-card>
 
-      <!-- Tabs for Mobile -->
-      <p-tabview id="organization-mobile-tabs" [(activeIndex)]="activeTabIndex">
-        <!-- Same tab content as desktop but adapted for mobile -->
-        <p-tabpanel [header]="'organization.detail.tabs.overview' | transloco">
-          <div class="space-y-4">
-            <p>{{ organization()!.name }}</p>
+      <!-- Sections Accordion for Mobile -->
+      <p-accordion id="organization-mobile-accordion" [multiple]="false">
+        <p-accordiontab [header]="'organization.detail.tabs.overview' | transloco">
+          <div class="space-y-2 text-sm">
+            <p>{{ organization()!.name }} ({{ organization()!.internationalName }})</p>
+            <p class="text-surface-600 dark:text-surface-400">
+              {{ 'organization.detail.info.createdAt' | transloco }}: {{ formatDate(organization()!.createdAt) }}
+            </p>
           </div>
-        </p-tabpanel>
+        </p-accordiontab>
 
-        <p-tabpanel [header]="'organization.detail.tabs.members' | transloco">
+        <p-accordiontab [header]="'organization.detail.tabs.members' | transloco">
           @if (members().length > 0) {
           <div class="space-y-3">
             @for (member of members(); track member.id) {
             <p-card>
-              <div class="space-y-2">
-                <h3 class="font-semibold">{{ member.fullName }}</h3>
-                <p class="text-sm text-surface-600">{{ member.email }}</p>
+              <div class="space-y-2 text-sm">
+                <h4 class="font-semibold">{{ member.fullName }}</h4>
+                <p class="text-xs text-surface-600">{{ member.email }}</p>
                 <div class="flex gap-2">
-                  <p-tag [value]="member.role" severity="info"></p-tag>
+                  <p-tag [value]="member.role" severity="info" styleClass="text-xs"></p-tag>
                   <p-tag
                     [value]="'organization.detail.members.status.' + member.status | transloco"
                     [severity]="getMemberStatusSeverity(member.status)"
+                    styleClass="text-xs"
                   ></p-tag>
                 </div>
               </div>
@@ -782,23 +764,24 @@
           } @else {
           <div class="text-center py-8">
             <i class="pi pi-users text-4xl text-surface-400 mb-4"></i>
-            <p>{{ 'organization.detail.members.empty' | transloco }}</p>
+            <p class="text-sm">{{ 'organization.detail.members.empty' | transloco }}</p>
           </div>
           }
-        </p-tabpanel>
+        </p-accordiontab>
 
-        <p-tabpanel [header]="'organization.detail.tabs.relations' | transloco">
+        <p-accordiontab [header]="'organization.detail.tabs.relations' | transloco">
           @if (relations().length > 0) {
           <div class="space-y-3">
             @for (relation of relations(); track relation.id) {
             <p-card (click)="onViewRelatedOrg(relation.relatedOrganizationId)">
-              <div class="space-y-2">
-                <h3 class="font-semibold">{{ relation.relatedOrganization.name }}</h3>
-                <p class="text-sm">{{ relation.relatedOrganization.internationalName }}</p>
+              <div class="space-y-2 text-sm">
+                <h4 class="font-semibold">{{ relation.relatedOrganization.name }}</h4>
+                <p class="text-xs">{{ relation.relatedOrganization.internationalName }}</p>
                 <p-tag
                   [value]="
                     'organization.detail.relations.type.' + relation.relationType | transloco
                   "
+                  styleClass="text-xs"
                 ></p-tag>
               </div>
             </p-card>
@@ -807,19 +790,19 @@
           } @else {
           <div class="text-center py-8">
             <i class="pi pi-sitemap text-4xl text-surface-400 mb-4"></i>
-            <p>{{ 'organization.detail.relations.empty' | transloco }}</p>
+            <p class="text-sm">{{ 'organization.detail.relations.empty' | transloco }}</p>
           </div>
           }
-        </p-tabpanel>
+        </p-accordiontab>
 
-        <p-tabpanel [header]="'organization.detail.tabs.activity' | transloco">
+        <p-accordiontab [header]="'organization.detail.tabs.activity' | transloco">
           @if (events().length > 0) {
           <div class="space-y-3">
             @for (event of events(); track event.id) {
             <p-card>
-              <div class="space-y-1">
+              <div class="space-y-1 text-sm">
                 <h4 class="font-semibold">{{ event.type }}</h4>
-                <p class="text-sm">{{ event.description }}</p>
+                <p class="text-xs">{{ event.description }}</p>
                 <p class="text-xs text-surface-500">{{ formatDate(event.createdAt) }}</p>
               </div>
             </p-card>
@@ -828,11 +811,11 @@
           } @else {
           <div class="text-center py-8">
             <i class="pi pi-history text-4xl text-surface-400 mb-4"></i>
-            <p>{{ 'organization.detail.activity.empty' | transloco }}</p>
+            <p class="text-sm">{{ 'organization.detail.activity.empty' | transloco }}</p>
           </div>
           }
-        </p-tabpanel>
-      </p-tabview>
+        </p-accordiontab>
+      </p-accordion>
     </div>
     }
   </div>
