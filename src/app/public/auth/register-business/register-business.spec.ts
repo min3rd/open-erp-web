@@ -4,7 +4,7 @@ import { provideRouter, Router } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
-import { OrganizationService } from '../../../../../core/services/organization-service';
+import { OrganizationService } from '../../../../core/services/organization-service';
 import { of, throwError } from 'rxjs';
 
 describe('RegisterBusiness Component', () => {

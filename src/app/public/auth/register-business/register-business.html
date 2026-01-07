@@ -391,13 +391,13 @@
             >
               {{ 'registerBusiness.form.foundedDate.label' | transloco }}
             </label>
-            <p-calendar
+            <p-datepicker
               id="register-business-foundedDate"
               formControlName="foundedDate"
               [placeholder]="'registerBusiness.form.foundedDate.placeholder' | transloco"
               dateFormat="dd/mm/yy"
               [showIcon]="true"
-              [maxDate]="new Date()"
+              [maxDate]="maxDate"
               styleClass="w-full"
               inputStyleClass="w-full"
               [attr.aria-invalid]="
@@ -428,10 +428,12 @@
               {{ 'registerBusiness.form.businessActivities.label' | transloco }}
               <span class="text-gray-500 text-xs ml-1">({{ 'registerBusiness.form.businessActivities.optional' | transloco }})</span>
             </label>
-            <p-chips
+            <p-autocomplete
               id="register-business-businessActivities"
               formControlName="businessActivities"
               [placeholder]="'registerBusiness.form.businessActivities.placeholder' | transloco"
+              [multiple]="true"
+              [suggestions]="businessActivitySuggestions()"
               styleClass="w-full"
               inputStyleClass="w-full"
               [attr.aria-describedby]="'register-business-businessActivities-help'"
