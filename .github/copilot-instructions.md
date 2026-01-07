@@ -101,6 +101,16 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - IDs must be unique within the entire document, not just the component
 - When in doubt, always add an ID rather than omitting it
 
+## Data Operation Screen Layout
+
+- When creating data operation screens, follow this layout:
+  - **Toolbar:** a header toolbar at the top containing the title and primary actions.
+  - **Content:** the content area below the toolbar containing forms, tables, or interactive components.
+- The overall application layout must fit within a single viewport and must NOT scroll the whole page.
+- Only allow scrolling within the `content` area when its content exceeds the visible height; the toolbar and header must be fixed and always visible.
+- Use IDs for containers with the convention: `{component}-toolbar`, `{component}-content` (e.g., `user-edit-toolbar`, `user-edit-content`).
+- Ensure accessibility: proper keyboard focus management, status/error announcements inside the `content` area, and appropriate ARIA attributes.
+
 ## Services
 
 - Design services around a single responsibility
