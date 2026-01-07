@@ -271,8 +271,9 @@
               [placeholder]="'registerBusiness.form.country.placeholder' | transloco"
               [suggestions]="countrySuggestions()"
               (completeMethod)="onSearchCountry($event)"
-              field="name"
-              styleClass="w-full"
+              optionLabel="name"
+              dataKey="code"
+              [style]="{ width: '100%' }"
             >
               <ng-template let-country pTemplate="item">
                 <div class="flex items-center gap-2">
@@ -281,10 +282,12 @@
                 </div>
               </ng-template>
               <ng-template let-country pTemplate="selectedItem">
-                <div class="flex items-center gap-2" *ngIf="country">
-                  <span>{{ country.flag }}</span>
-                  <span>{{ country.name }}</span>
-                </div>
+                @if (country) {
+                  <div class="flex items-center gap-2">
+                    <span>{{ country.flag }}</span>
+                    <span>{{ country.name }}</span>
+                  </div>
+                }
               </ng-template>
             </p-autocomplete>
             @if (getFieldError('country'); as errorKey) {
