@@ -335,22 +335,23 @@ export class Detail implements OnInit, OnDestroy {
   }
 
   private populateEditForm(org: OrganizationResponse): void {
-    const country = this.countryService.getCountryByCode(org.country);
-    this.registrationForm.patchValue({
-      taxId: org.taxId,
-      name: org.name,
-      internationalName: org.internationalName,
-      headquartersAddress: org.headquartersAddress,
-      legalRepresentative: org.legalRepresentative,
-      contactPhone: org.contactPhone,
-      contactEmail: org.contactEmail,
-      foundedDate: org.foundedDate ? new Date(org.foundedDate) : null,
-      businessActivities: org.businessActivities || [],
-      type: org.type,
-      status: org.status,
-      country: country || null,
-      description: org.description || '',
-      website: org.website || '',
+    this.countryService.getCountryByCode(org.country).subscribe((country) => {
+      this.registrationForm.patchValue({
+        taxId: org.taxId,
+        name: org.name,
+        internationalName: org.internationalName,
+        headquartersAddress: org.headquartersAddress,
+        legalRepresentative: org.legalRepresentative,
+        contactPhone: org.contactPhone,
+        contactEmail: org.contactEmail,
+        foundedDate: org.foundedDate ? new Date(org.foundedDate) : null,
+        businessActivities: org.businessActivities || [],
+        type: org.type,
+        status: org.status,
+        country: country || null,
+        description: org.description || '',
+        website: org.website || '',
+      });
     });
   }
 
@@ -450,8 +451,9 @@ export class Detail implements OnInit, OnDestroy {
 
   protected onSearchCountry(event: any): void {
     const query = event.query || '';
-    const filtered = this.countryService.searchCountries(query);
-    this.countrySuggestions.set(filtered);
+    this.countryService.searchCountries(query).subscribe((filtered) => {
+      this.countrySuggestions.set(filtered);
+    });
   }
 
   protected async onSubmit(): Promise<void> {

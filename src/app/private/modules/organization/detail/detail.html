@@ -280,6 +280,12 @@
                   <span>{{ country.name }} ({{ country.code }})</span>
                 </div>
               </ng-template>
+              <ng-template let-country pTemplate="selectedItem">
+                <div class="flex items-center gap-2" *ngIf="country">
+                  <span>{{ country.flag }}</span>
+                  <span>{{ country.name }}</span>
+                </div>
+              </ng-template>
             </p-autocomplete>
             @if (getFieldError('country'); as errorKey) {
             <small id="register-business-country-error" class="text-red-600 text-sm" role="alert">
