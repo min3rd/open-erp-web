@@ -81,6 +81,9 @@ export class List implements OnInit, OnDestroy {
   );
   protected readonly hasSelection = computed(() => this.selectedUsers().length > 0);
   protected readonly currentOrganization = computed(() => this.tenantContext.currentOrganization());
+  protected readonly allSelected = computed(() => 
+    this.users().length > 0 && this.selectedUsers().length === this.users().length
+  );
 
   // Scope options for toggle
   protected readonly scopeOptions = [
@@ -88,34 +91,36 @@ export class List implements OnInit, OnDestroy {
     { label: 'Organization', value: 'organization', icon: 'pi pi-building' },
   ];
 
-  // Actions menu items
-  protected readonly actionMenuItems: MenuItem[] = [
-    {
-      label: 'Download CSV',
-      icon: 'pi pi-download',
-      command: () => this.onDownloadCSV(),
-    },
-    {
-      label: 'Import Users',
-      icon: 'pi pi-upload',
-      command: () => this.onImportUsers(),
-    },
-    {
-      separator: true,
-    },
-    {
-      label: 'Block Selected',
-      icon: 'pi pi-ban',
-      command: () => this.onBlockSelected(),
-      disabled: !this.hasSelection(),
-    },
-    {
-      label: 'Revoke Login Sessions',
-      icon: 'pi pi-sign-out',
-      command: () => this.onRevokeLoginSessions(),
-      disabled: !this.hasSelection(),
-    },
-  ];
+  // Actions menu items getter for reactive disabled state
+  protected get actionMenuItems(): MenuItem[] {
+    return [
+      {
+        label: 'Download CSV',
+        icon: 'pi pi-download',
+        command: () => this.onDownloadCSV(),
+      },
+      {
+        label: 'Import Users',
+        icon: 'pi pi-upload',
+        command: () => this.onImportUsers(),
+      },
+      {
+        separator: true,
+      },
+      {
+        label: 'Block Selected',
+        icon: 'pi pi-ban',
+        command: () => this.onBlockSelected(),
+        disabled: !this.hasSelection(),
+      },
+      {
+        label: 'Revoke Login Sessions',
+        icon: 'pi pi-sign-out',
+        command: () => this.onRevokeLoginSessions(),
+        disabled: !this.hasSelection(),
+      },
+    ];
+  }
 
   constructor() {
     // Setup search debouncing
@@ -225,6 +230,27 @@ export class List implements OnInit, OnDestroy {
 
     // Update URL
     this.router.navigate(['/management/user', 'all', newPage, newPageSize]);
+  }
+
+  /**
+   * Handle page size change
+   */
+  protected onPageSizeChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.onPageChange({ page: 0, rows: +select.value });
+  }
+
+  /**
+   * Toggle select all users on current page
+   */
+  protected onToggleSelectAll(event: any): void {
+    if (event.checked) {
+      // Select all users on current page
+      this.selectedUsers.set([...this.users()]);
+    } else {
+      // Deselect all
+      this.selectedUsers.set([]);
+    }
   }
 
   /**
