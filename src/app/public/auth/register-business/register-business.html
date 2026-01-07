@@ -1,0 +1,476 @@
+<div class="min-h-screen flex" id="register-business-container">
+  <!-- Left Panel - Background Image and Logo (Desktop Only) -->
+  <div
+    id="register-business-left-panel"
+    class="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-blue-600 to-cyan-700 items-center justify-center p-12"
+  >
+    <div class="absolute inset-0 overflow-hidden" id="register-business-background-wrapper">
+      <img
+        ngSrc="/images/auth-background.svg"
+        alt=""
+        fill
+        priority
+        class="object-cover opacity-20"
+      />
+    </div>
+    <div class="relative z-10 text-center" id="register-business-branding">
+      <img
+        ngSrc="/images/logo.svg"
+        alt="Open ERP Logo"
+        width="200"
+        height="80"
+        priority
+        class="mx-auto mb-8"
+      />
+      <h1 class="text-4xl font-bold text-white mb-4" id="register-business-title-desktop">
+        {{ 'registerBusiness.title' | transloco }}
+      </h1>
+      <p class="text-xl text-white/90" id="register-business-subtitle-desktop">
+        {{ 'registerBusiness.subtitle' | transloco }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Right Panel - Registration Form -->
+  <div
+    class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50 overflow-y-auto"
+    id="register-business-right-panel"
+  >
+    <div class="w-full max-w-4xl" id="register-business-form-container">
+      <!-- Mobile Logo -->
+      <div class="lg:hidden text-center mb-8" id="register-business-mobile-header">
+        <img
+          ngSrc="/images/logo.svg"
+          alt="Open ERP Logo"
+          width="160"
+          height="64"
+          priority
+          class="mx-auto mb-4"
+        />
+        <h1 class="text-3xl font-bold text-gray-900 mb-2" id="register-business-title-mobile">
+          {{ 'registerBusiness.title' | transloco }}
+        </h1>
+        <p class="text-lg text-gray-600" id="register-business-subtitle-mobile">
+          {{ 'registerBusiness.subtitle' | transloco }}
+        </p>
+      </div>
+
+      <!-- Tax Lookup Info Card -->
+      @if (taxLookupData(); as lookupData) {
+      <div
+        class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg"
+        id="register-business-tax-lookup-card"
+      >
+        <div class="flex justify-between items-start">
+          <div class="flex-1" id="register-business-tax-lookup-info">
+            <h3 class="text-sm font-semibold text-blue-900 mb-2">
+              {{ 'registerBusiness.taxLookup.found' | transloco }}
+            </h3>
+            <p class="text-sm text-blue-800 mb-1">
+              <strong>{{ 'registerBusiness.taxLookup.name' | transloco }}:</strong>
+              {{ lookupData.name }}
+            </p>
+            <p class="text-sm text-blue-800 mb-1">
+              <strong>{{ 'registerBusiness.taxLookup.internationalName' | transloco }}:</strong>
+              {{ lookupData.internationalName }}
+            </p>
+            <p class="text-sm text-blue-800 mb-1">
+              <strong>{{ 'registerBusiness.taxLookup.address' | transloco }}:</strong>
+              {{ lookupData.address }}
+            </p>
+            <p class="text-sm text-blue-800">
+              <strong>{{ 'registerBusiness.taxLookup.status' | transloco }}:</strong>
+              {{ lookupData.status }}
+            </p>
+          </div>
+          <button
+            type="button"
+            id="register-business-clear-lookup-button"
+            (click)="clearTaxLookup()"
+            class="ml-4 text-blue-700 hover:text-blue-900"
+            [attr.aria-label]="'registerBusiness.taxLookup.clear' | transloco"
+          >
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+      </div>
+      }
+
+      <!-- Registration Form -->
+      <form
+        [formGroup]="registrationForm"
+        (ngSubmit)="onSubmit()"
+        class="space-y-6"
+        novalidate
+        id="register-business-form"
+      >
+        <!-- Two Column Layout for Desktop -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Tax ID Field -->
+          <div class="space-y-2">
+            <label
+              for="register-business-taxId"
+              class="block text-sm font-medium text-gray-700"
+              [attr.aria-required]="true"
+            >
+              {{ 'registerBusiness.form.taxId.label' | transloco }}
+            </label>
+            <div class="relative">
+              <input
+                pInputText
+                id="register-business-taxId"
+                type="text"
+                formControlName="taxId"
+                [placeholder]="'registerBusiness.form.taxId.placeholder' | transloco"
+                class="w-full"
+                [class.ng-invalid]="
+                  registrationForm.get('taxId')?.invalid && registrationForm.get('taxId')?.touched
+                "
+                [class.ng-dirty]="registrationForm.get('taxId')?.touched"
+                [attr.aria-invalid]="
+                  registrationForm.get('taxId')?.invalid && registrationForm.get('taxId')?.touched
+                "
+                [attr.aria-describedby]="getFieldError('taxId') ? 'register-business-taxId-error' : null"
+              />
+              @if (isTaxLookupLoading()) {
+              <i
+                class="pi pi-spin pi-spinner absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                id="register-business-taxId-loading"
+              ></i>
+              }
+            </div>
+            @if (getFieldError('taxId'); as errorKey) {
+            <small id="register-business-taxId-error" class="text-red-600 text-sm" role="alert">
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
+          <!-- Contact Email Field -->
+          <div class="space-y-2">
+            <label
+              for="register-business-contactEmail"
+              class="block text-sm font-medium text-gray-700"
+              [attr.aria-required]="true"
+            >
+              {{ 'registerBusiness.form.contactEmail.label' | transloco }}
+            </label>
+            <input
+              pInputText
+              id="register-business-contactEmail"
+              type="email"
+              formControlName="contactEmail"
+              [placeholder]="'registerBusiness.form.contactEmail.placeholder' | transloco"
+              class="w-full"
+              [class.ng-invalid]="
+                registrationForm.get('contactEmail')?.invalid &&
+                registrationForm.get('contactEmail')?.touched
+              "
+              [class.ng-dirty]="registrationForm.get('contactEmail')?.touched"
+              [attr.aria-invalid]="
+                registrationForm.get('contactEmail')?.invalid &&
+                registrationForm.get('contactEmail')?.touched
+              "
+              [attr.aria-describedby]="
+                getFieldError('contactEmail') ? 'register-business-contactEmail-error' : null
+              "
+            />
+            @if (getFieldError('contactEmail'); as errorKey) {
+            <small
+              id="register-business-contactEmail-error"
+              class="text-red-600 text-sm"
+              role="alert"
+            >
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
+          <!-- Business Name (Vietnamese) -->
+          <div class="space-y-2 lg:col-span-2">
+            <label
+              for="register-business-name"
+              class="block text-sm font-medium text-gray-700"
+              [attr.aria-required]="true"
+            >
+              {{ 'registerBusiness.form.name.label' | transloco }}
+            </label>
+            <input
+              pInputText
+              id="register-business-name"
+              type="text"
+              formControlName="name"
+              [placeholder]="'registerBusiness.form.name.placeholder' | transloco"
+              class="w-full"
+              [class.ng-invalid]="
+                registrationForm.get('name')?.invalid && registrationForm.get('name')?.touched
+              "
+              [class.ng-dirty]="registrationForm.get('name')?.touched"
+              [attr.aria-invalid]="
+                registrationForm.get('name')?.invalid && registrationForm.get('name')?.touched
+              "
+              [attr.aria-describedby]="getFieldError('name') ? 'register-business-name-error' : null"
+            />
+            @if (getFieldError('name'); as errorKey) {
+            <small id="register-business-name-error" class="text-red-600 text-sm" role="alert">
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
+          <!-- International Name -->
+          <div class="space-y-2 lg:col-span-2">
+            <label
+              for="register-business-internationalName"
+              class="block text-sm font-medium text-gray-700"
+              [attr.aria-required]="true"
+            >
+              {{ 'registerBusiness.form.internationalName.label' | transloco }}
+            </label>
+            <input
+              pInputText
+              id="register-business-internationalName"
+              type="text"
+              formControlName="internationalName"
+              [placeholder]="'registerBusiness.form.internationalName.placeholder' | transloco"
+              class="w-full"
+              [class.ng-invalid]="
+                registrationForm.get('internationalName')?.invalid &&
+                registrationForm.get('internationalName')?.touched
+              "
+              [class.ng-dirty]="registrationForm.get('internationalName')?.touched"
+              [attr.aria-invalid]="
+                registrationForm.get('internationalName')?.invalid &&
+                registrationForm.get('internationalName')?.touched
+              "
+              [attr.aria-describedby]="
+                getFieldError('internationalName') ? 'register-business-internationalName-error' : null
+              "
+            />
+            @if (getFieldError('internationalName'); as errorKey) {
+            <small
+              id="register-business-internationalName-error"
+              class="text-red-600 text-sm"
+              role="alert"
+            >
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
+          <!-- Headquarters Address -->
+          <div class="space-y-2 lg:col-span-2">
+            <label
+              for="register-business-headquartersAddress"
+              class="block text-sm font-medium text-gray-700"
+              [attr.aria-required]="true"
+            >
+              {{ 'registerBusiness.form.headquartersAddress.label' | transloco }}
+            </label>
+            <input
+              pInputText
+              id="register-business-headquartersAddress"
+              type="text"
+              formControlName="headquartersAddress"
+              [placeholder]="'registerBusiness.form.headquartersAddress.placeholder' | transloco"
+              class="w-full"
+              [class.ng-invalid]="
+                registrationForm.get('headquartersAddress')?.invalid &&
+                registrationForm.get('headquartersAddress')?.touched
+              "
+              [class.ng-dirty]="registrationForm.get('headquartersAddress')?.touched"
+              [attr.aria-invalid]="
+                registrationForm.get('headquartersAddress')?.invalid &&
+                registrationForm.get('headquartersAddress')?.touched
+              "
+              [attr.aria-describedby]="
+                getFieldError('headquartersAddress')
+                  ? 'register-business-headquartersAddress-error'
+                  : null
+              "
+            />
+            @if (getFieldError('headquartersAddress'); as errorKey) {
+            <small
+              id="register-business-headquartersAddress-error"
+              class="text-red-600 text-sm"
+              role="alert"
+            >
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
+          <!-- Legal Representative -->
+          <div class="space-y-2">
+            <label
+              for="register-business-legalRepresentative"
+              class="block text-sm font-medium text-gray-700"
+              [attr.aria-required]="true"
+            >
+              {{ 'registerBusiness.form.legalRepresentative.label' | transloco }}
+            </label>
+            <input
+              pInputText
+              id="register-business-legalRepresentative"
+              type="text"
+              formControlName="legalRepresentative"
+              [placeholder]="'registerBusiness.form.legalRepresentative.placeholder' | transloco"
+              class="w-full"
+              [class.ng-invalid]="
+                registrationForm.get('legalRepresentative')?.invalid &&
+                registrationForm.get('legalRepresentative')?.touched
+              "
+              [class.ng-dirty]="registrationForm.get('legalRepresentative')?.touched"
+              [attr.aria-invalid]="
+                registrationForm.get('legalRepresentative')?.invalid &&
+                registrationForm.get('legalRepresentative')?.touched
+              "
+              [attr.aria-describedby]="
+                getFieldError('legalRepresentative')
+                  ? 'register-business-legalRepresentative-error'
+                  : null
+              "
+            />
+            @if (getFieldError('legalRepresentative'); as errorKey) {
+            <small
+              id="register-business-legalRepresentative-error"
+              class="text-red-600 text-sm"
+              role="alert"
+            >
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
+          <!-- Contact Phone -->
+          <div class="space-y-2">
+            <label
+              for="register-business-contactPhone"
+              class="block text-sm font-medium text-gray-700"
+              [attr.aria-required]="true"
+            >
+              {{ 'registerBusiness.form.contactPhone.label' | transloco }}
+            </label>
+            <input
+              pInputText
+              id="register-business-contactPhone"
+              type="tel"
+              formControlName="contactPhone"
+              [placeholder]="'registerBusiness.form.contactPhone.placeholder' | transloco"
+              class="w-full"
+              [class.ng-invalid]="
+                registrationForm.get('contactPhone')?.invalid &&
+                registrationForm.get('contactPhone')?.touched
+              "
+              [class.ng-dirty]="registrationForm.get('contactPhone')?.touched"
+              [attr.aria-invalid]="
+                registrationForm.get('contactPhone')?.invalid &&
+                registrationForm.get('contactPhone')?.touched
+              "
+              [attr.aria-describedby]="
+                getFieldError('contactPhone') ? 'register-business-contactPhone-error' : null
+              "
+            />
+            @if (getFieldError('contactPhone'); as errorKey) {
+            <small
+              id="register-business-contactPhone-error"
+              class="text-red-600 text-sm"
+              role="alert"
+            >
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
+          <!-- Founded Date -->
+          <div class="space-y-2">
+            <label
+              for="register-business-foundedDate"
+              class="block text-sm font-medium text-gray-700"
+              [attr.aria-required]="true"
+            >
+              {{ 'registerBusiness.form.foundedDate.label' | transloco }}
+            </label>
+            <p-calendar
+              id="register-business-foundedDate"
+              formControlName="foundedDate"
+              [placeholder]="'registerBusiness.form.foundedDate.placeholder' | transloco"
+              dateFormat="dd/mm/yy"
+              [showIcon]="true"
+              [maxDate]="new Date()"
+              styleClass="w-full"
+              inputStyleClass="w-full"
+              [attr.aria-invalid]="
+                registrationForm.get('foundedDate')?.invalid &&
+                registrationForm.get('foundedDate')?.touched
+              "
+              [attr.aria-describedby]="
+                getFieldError('foundedDate') ? 'register-business-foundedDate-error' : null
+              "
+            />
+            @if (getFieldError('foundedDate'); as errorKey) {
+            <small
+              id="register-business-foundedDate-error"
+              class="text-red-600 text-sm"
+              role="alert"
+            >
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
+          <!-- Business Activities (Optional) -->
+          <div class="space-y-2 lg:col-span-2">
+            <label
+              for="register-business-businessActivities"
+              class="block text-sm font-medium text-gray-700"
+            >
+              {{ 'registerBusiness.form.businessActivities.label' | transloco }}
+              <span class="text-gray-500 text-xs ml-1">({{ 'registerBusiness.form.businessActivities.optional' | transloco }})</span>
+            </label>
+            <p-chips
+              id="register-business-businessActivities"
+              formControlName="businessActivities"
+              [placeholder]="'registerBusiness.form.businessActivities.placeholder' | transloco"
+              styleClass="w-full"
+              inputStyleClass="w-full"
+              [attr.aria-describedby]="'register-business-businessActivities-help'"
+            />
+            <small id="register-business-businessActivities-help" class="text-gray-600 text-xs">
+              {{ 'registerBusiness.form.businessActivities.help' | transloco }}
+            </small>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3 pt-4" id="register-business-actions">
+          <p-button
+            type="submit"
+            id="register-business-submit-button"
+            [label]="'registerBusiness.buttons.register' | transloco"
+            [disabled]="!registrationForm.valid || isSubmitting()"
+            [loading]="isSubmitting()"
+            styleClass="flex-1"
+            severity="primary"
+            [attr.aria-busy]="isSubmitting()"
+          />
+          <p-button
+            type="button"
+            id="register-business-back-to-login-button"
+            [label]="'registerBusiness.buttons.backToLogin' | transloco"
+            (onClick)="navigateToLogin()"
+            styleClass="flex-1"
+            severity="secondary"
+          />
+        </div>
+      </form>
+
+      <!-- Footer -->
+      <footer class="mt-8 text-center" id="register-business-footer">
+        <p class="text-sm text-gray-600">
+          {{ 'registerBusiness.footer.helpText' | transloco }}
+        </p>
+      </footer>
+    </div>
+  </div>
+</div>

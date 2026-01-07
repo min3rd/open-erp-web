@@ -243,5 +243,101 @@
       "register": "Registrar",
       "info": "Información"
     }
+  },
+  "registerBusiness": {
+    "title": "Registro de Empresa",
+    "subtitle": "Registre su empresa con Open ERP",
+    "taxLookup": {
+      "found": "Información de Empresa Encontrada",
+      "name": "Nombre de Empresa",
+      "internationalName": "Nombre Internacional",
+      "address": "Dirección",
+      "status": "Estado",
+      "clear": "Borrar datos de búsqueda"
+    },
+    "form": {
+      "taxId": {
+        "label": "ID de Impuesto (Mã số thuế)",
+        "placeholder": "Ingrese ID de impuesto de 10-13 dígitos",
+        "errors": {
+          "required": "El ID de impuesto es obligatorio",
+          "pattern": "El ID de impuesto debe tener 10-13 dígitos"
+        }
+      },
+      "name": {
+        "label": "Nombre de Empresa (Vietnamita)",
+        "placeholder": "Ingrese el nombre de la empresa en vietnamita",
+        "errors": {
+          "required": "El nombre de la empresa es obligatorio",
+          "minlength": "El nombre debe tener al menos 3 caracteres"
+        }
+      },
+      "internationalName": {
+        "label": "Nombre Internacional (Inglés)",
+        "placeholder": "Ingrese el nombre de la empresa en inglés",
+        "errors": {
+          "required": "El nombre internacional es obligatorio",
+          "minlength": "El nombre debe tener al menos 3 caracteres"
+        }
+      },
+      "headquartersAddress": {
+        "label": "Dirección de la Sede",
+        "placeholder": "Ingrese la dirección de la sede",
+        "errors": {
+          "required": "La dirección de la sede es obligatoria",
+          "minlength": "La dirección debe tener al menos 10 caracteres"
+        }
+      },
+      "legalRepresentative": {
+        "label": "Representante Legal",
+        "placeholder": "Ingrese el nombre completo del representante legal",
+        "errors": {
+          "required": "El nombre del representante legal es obligatorio",
+          "minlength": "El nombre debe tener al menos 3 caracteres"
+        }
+      },
+      "contactPhone": {
+        "label": "Teléfono de Contacto",
+        "placeholder": "Ingrese el número de teléfono de contacto",
+        "errors": {
+          "required": "El teléfono de contacto es obligatorio",
+          "invalidPhone": "Ingrese un número de teléfono vietnamita válido"
+        }
+      },
+      "contactEmail": {
+        "label": "Correo Electrónico de Contacto",
+        "placeholder": "Ingrese la dirección de correo electrónico",
+        "errors": {
+          "required": "El correo electrónico es obligatorio",
+          "email": "Ingrese una dirección de correo electrónico válida"
+        }
+      },
+      "foundedDate": {
+        "label": "Fecha de Fundación",
+        "placeholder": "Seleccione la fecha de fundación",
+        "errors": {
+          "required": "La fecha de fundación es obligatoria"
+        }
+      },
+      "businessActivities": {
+        "label": "Actividades Comerciales",
+        "optional": "Opcional",
+        "placeholder": "Presione Enter para agregar actividad comercial",
+        "help": "Ingrese actividades comerciales y presione Enter después de cada una"
+      }
+    },
+    "buttons": {
+      "register": "Registrar Empresa",
+      "backToLogin": "Volver al Inicio de Sesión"
+    },
+    "messages": {
+      "success": "Registro Exitoso",
+      "successDetail": "¡Su empresa ha sido registrada exitosamente!",
+      "error": "Registro Fallido",
+      "errorDetail": "No se pudo registrar la empresa. Por favor, inténtelo de nuevo."
+    },
+    "footer": {
+      "helpText": "¿Necesita ayuda? Contacte a nuestro equipo de soporte"
+    }
   }
 }

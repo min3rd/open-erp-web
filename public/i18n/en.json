@@ -243,5 +243,101 @@
       "register": "Register",
       "info": "Information"
     }
+  },
+  "registerBusiness": {
+    "title": "Business Registration",
+    "subtitle": "Register your business with Open ERP",
+    "taxLookup": {
+      "found": "Business Information Found",
+      "name": "Business Name",
+      "internationalName": "International Name",
+      "address": "Address",
+      "status": "Status",
+      "clear": "Clear lookup data"
+    },
+    "form": {
+      "taxId": {
+        "label": "Tax ID (Mã số thuế)",
+        "placeholder": "Enter 10-13 digit tax ID",
+        "errors": {
+          "required": "Tax ID is required",
+          "pattern": "Tax ID must be 10-13 digits"
+        }
+      },
+      "name": {
+        "label": "Business Name (Vietnamese)",
+        "placeholder": "Enter business name in Vietnamese",
+        "errors": {
+          "required": "Business name is required",
+          "minlength": "Business name must be at least 3 characters"
+        }
+      },
+      "internationalName": {
+        "label": "International Name (English)",
+        "placeholder": "Enter business name in English",
+        "errors": {
+          "required": "International name is required",
+          "minlength": "International name must be at least 3 characters"
+        }
+      },
+      "headquartersAddress": {
+        "label": "Headquarters Address",
+        "placeholder": "Enter headquarters address",
+        "errors": {
+          "required": "Headquarters address is required",
+          "minlength": "Address must be at least 10 characters"
+        }
+      },
+      "legalRepresentative": {
+        "label": "Legal Representative",
+        "placeholder": "Enter full name of legal representative",
+        "errors": {
+          "required": "Legal representative name is required",
+          "minlength": "Name must be at least 3 characters"
+        }
+      },
+      "contactPhone": {
+        "label": "Contact Phone",
+        "placeholder": "Enter contact phone number",
+        "errors": {
+          "required": "Contact phone is required",
+          "invalidPhone": "Please enter a valid Vietnamese phone number"
+        }
+      },
+      "contactEmail": {
+        "label": "Contact Email",
+        "placeholder": "Enter contact email address",
+        "errors": {
+          "required": "Contact email is required",
+          "email": "Please enter a valid email address"
+        }
+      },
+      "foundedDate": {
+        "label": "Founded Date",
+        "placeholder": "Select founded date",
+        "errors": {
+          "required": "Founded date is required"
+        }
+      },
+      "businessActivities": {
+        "label": "Business Activities",
+        "optional": "Optional",
+        "placeholder": "Press Enter to add business activity",
+        "help": "Enter business activities and press Enter after each one"
+      }
+    },
+    "buttons": {
+      "register": "Register Business",
+      "backToLogin": "Back to Login"
+    },
+    "messages": {
+      "success": "Registration Successful",
+      "successDetail": "Your business has been registered successfully!",
+      "error": "Registration Failed",
+      "errorDetail": "Failed to register business. Please try again."
+    },
+    "footer": {
+      "helpText": "Need help? Contact our support team"
+    }
   }
 }
