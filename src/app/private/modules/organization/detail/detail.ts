@@ -30,6 +30,8 @@ import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
+import { SelectModule } from 'primeng/select';
+import { TextareaModule } from 'primeng/textarea';
 import { MessageService } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import {
@@ -42,7 +44,10 @@ import {
   OrganizationRelation,
   OrganizationEvent,
   InviteMemberDto,
+  OrganizationType,
+  OrganizationStatus,
 } from '../../../../../core/services/organization-service';
+import { CountryService, Country } from '../../../../../core/services/country-service';
 
 interface BusinessRegistrationForm {
   taxId: FormControl<string>;
@@ -54,6 +59,11 @@ interface BusinessRegistrationForm {
   contactEmail: FormControl<string>;
   foundedDate: FormControl<Date | null>;
   businessActivities: FormControl<string[]>;
+  type: FormControl<OrganizationType | null>;
+  status: FormControl<OrganizationStatus>;
+  country: FormControl<Country | null>;
+  description: FormControl<string>;
+  website: FormControl<string>;
 }
 
 interface InviteForm {
@@ -80,6 +90,8 @@ interface InviteForm {
     DialogModule,
     SkeletonModule,
     TooltipModule,
+    SelectModule,
+    TextareaModule,
   ],
   templateUrl: './detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -88,6 +100,7 @@ export class Detail implements OnInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private organizationService = inject(OrganizationService);
+  private countryService = inject(CountryService);
   private messageService = inject(MessageService);
   private translocoService = inject(TranslocoService);
   private destroy$ = new Subject<void>();
@@ -102,6 +115,7 @@ export class Detail implements OnInit, OnDestroy {
   protected readonly isSubmitting = signal(false);
   protected readonly isTaxLookupLoading = signal(false);
   protected readonly businessActivitySuggestions = signal<string[]>([]);
+  protected readonly countrySuggestions = signal<Country[]>([]);
   protected readonly maxDate = new Date();
 
   protected readonly showEditDialog = signal(false);
@@ -125,6 +139,15 @@ export class Detail implements OnInit, OnDestroy {
 
   protected readonly isNewMode = computed(() => this.router.url.includes('/new'));
   protected readonly isViewMode = computed(() => !this.isNewMode() && this.organizationId() !== null);
+
+  // Organization type options
+  protected readonly organizationTypeOptions = [
+    { label: 'Holding', value: 'holding' },
+    { label: 'Company', value: 'company' },
+    { label: 'Joint Venture', value: 'joint-venture' },
+    { label: 'Partner', value: 'partner' },
+    { label: 'Branch', value: 'branch' },
+  ];
 
   // Common business activity suggestions for Vietnam
   private readonly defaultActivitySuggestions = [
@@ -184,6 +207,23 @@ export class Detail implements OnInit, OnDestroy {
     }),
     businessActivities: new FormControl<string[]>([], {
       nonNullable: true,
+    }),
+    type: new FormControl<OrganizationType | null>(null, {
+      validators: [Validators.required],
+    }),
+    status: new FormControl<OrganizationStatus>('active', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    country: new FormControl<Country | null>(null, {
+      validators: [Validators.required],
+    }),
+    description: new FormControl('', {
+      nonNullable: true,
+    }),
+    website: new FormControl('', {
+      nonNullable: true,
+      validators: [this.websiteValidator],
     }),
   });
 
@@ -294,6 +334,7 @@ export class Detail implements OnInit, OnDestroy {
   }
 
   private populateEditForm(org: OrganizationResponse): void {
+    const country = this.countryService.getCountryByCode(org.country);
     this.registrationForm.patchValue({
       taxId: org.taxId,
       name: org.name,
@@ -304,6 +345,11 @@ export class Detail implements OnInit, OnDestroy {
       contactEmail: org.contactEmail,
       foundedDate: org.foundedDate ? new Date(org.foundedDate) : null,
       businessActivities: org.businessActivities || [],
+      type: org.type,
+      status: org.status,
+      country: country || null,
+      description: org.description || '',
+      website: org.website || '',
     });
   }
 
@@ -316,6 +362,17 @@ export class Detail implements OnInit, OnDestroy {
     // Vietnamese phone number validation (10-11 digits, optionally with country code)
     const phoneRegex = /^(\+84|84|0)?([0-9]{9,10})$/;
     return phoneRegex.test(value) ? null : { invalidPhone: true };
+  }
+
+  private websiteValidator(control: FormControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value || value.trim() === '') {
+      return null;
+    }
+
+    // URL validation pattern (http or https)
+    const urlRegex = /^https?:\/\/.+/i;
+    return urlRegex.test(value) ? null : { invalidWebsite: true };
   }
 
   private lookupTaxId(taxId: string): void {
@@ -366,6 +423,7 @@ export class Detail implements OnInit, OnDestroy {
       minlength: 'registerBusiness.form.{{field}}.errors.minlength',
       pattern: 'registerBusiness.form.{{field}}.errors.pattern',
       invalidPhone: 'registerBusiness.form.{{field}}.errors.invalidPhone',
+      invalidWebsite: 'registerBusiness.form.{{field}}.errors.invalidWebsite',
     };
 
     for (const [errorType, errorKey] of Object.entries(errorKeys)) {
@@ -387,6 +445,12 @@ export class Detail implements OnInit, OnDestroy {
     } else {
       this.businessActivitySuggestions.set(this.defaultActivitySuggestions);
     }
+  }
+
+  protected onSearchCountry(event: any): void {
+    const query = event.query || '';
+    const filtered = this.countryService.searchCountries(query);
+    this.countrySuggestions.set(filtered);
   }
 
   protected async onSubmit(): Promise<void> {
@@ -412,6 +476,11 @@ export class Detail implements OnInit, OnDestroy {
           ? formValue.foundedDate.toISOString()
           : new Date().toISOString(),
         businessActivities: formValue.businessActivities || [],
+        type: formValue.type || 'company',
+        status: formValue.status || 'active',
+        country: formValue.country?.code || '',
+        description: formValue.description || undefined,
+        website: formValue.website || undefined,
       };
 
       this.organizationService.createOrganization(dto).subscribe({
@@ -478,6 +547,11 @@ export class Detail implements OnInit, OnDestroy {
         contactEmail: formValue.contactEmail || undefined,
         foundedDate: formValue.foundedDate ? formValue.foundedDate.toISOString() : undefined,
         businessActivities: formValue.businessActivities || undefined,
+        type: formValue.type || undefined,
+        status: formValue.status || undefined,
+        country: formValue.country?.code || undefined,
+        description: formValue.description || undefined,
+        website: formValue.website || undefined,
       };
 
       this.organizationService.updateOrganization(this.organizationId()!, dto).subscribe({

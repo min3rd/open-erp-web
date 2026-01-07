@@ -327,6 +327,38 @@
         "optional": "Opcional",
         "placeholder": "Presione Enter para agregar actividad comercial",
         "help": "Ingrese actividades comerciales y presione Enter después de cada una"
+      },
+      "type": {
+        "label": "Tipo de Organización",
+        "placeholder": "Seleccione el tipo de organización",
+        "errors": {
+          "required": "El tipo de organización es obligatorio"
+        }
+      },
+      "status": {
+        "label": "Estado",
+        "placeholder": "Seleccione el estado"
+      },
+      "country": {
+        "label": "País",
+        "placeholder": "Busque y seleccione el país",
+        "errors": {
+          "required": "El país es obligatorio"
+        }
+      },
+      "description": {
+        "label": "Descripción",
+        "optional": "Opcional",
+        "placeholder": "Ingrese la descripción de la organización"
+      },
+      "website": {
+        "label": "Sitio Web",
+        "optional": "Opcional",
+        "placeholder": "https://ejemplo.com",
+        "help": "Ingrese una URL válida que comience con http:// o https://",
+        "errors": {
+          "invalidWebsite": "Ingrese una URL válida (debe comenzar con http:// o https://)"
+        }
       }
     },
     "buttons": {
