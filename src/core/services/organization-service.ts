@@ -39,8 +39,61 @@ export interface OrganizationResponse {
   contactEmail: string;
   foundedDate: string;
   businessActivities?: string[];
+  status?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface UpdateOrganizationDto {
+  taxId?: string;
+  name?: string;
+  internationalName?: string;
+  headquartersAddress?: string;
+  legalRepresentative?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  foundedDate?: string;
+  businessActivities?: string[];
+}
+
+export interface OrganizationMember {
+  id: string;
+  userId: string;
+  username: string;
+  email: string;
+  fullName: string;
+  role: string;
+  status: 'active' | 'pending' | 'inactive';
+  joinedAt: string;
+}
+
+export interface OrganizationRelation {
+  id: string;
+  relatedOrganizationId: string;
+  relatedOrganization: {
+    id: string;
+    name: string;
+    internationalName: string;
+    taxId: string;
+  };
+  relationType: 'subsidiary' | 'parent' | 'partner' | 'joint_venture';
+  sharePercentage?: number;
+  establishedDate?: string;
+}
+
+export interface OrganizationEvent {
+  id: string;
+  type: string;
+  description: string;
+  userId?: string;
+  username?: string;
+  metadata?: Record<string, any>;
+  createdAt: string;
+}
+
+export interface InviteMemberDto {
+  email: string;
+  role: string;
 }
 
 @Injectable({
@@ -78,6 +131,106 @@ export class OrganizationService {
     return this.httpClient.post<OrganizationResponse>(
       `${API_URI_TENANT}/${version}/organizations`,
       dto
+    );
+  }
+
+  /**
+   * Get organization by ID
+   */
+  getOrganization(id: string, version: string = 'v1'): Observable<OrganizationResponse> {
+    return this.httpClient.get<OrganizationResponse>(
+      `${API_URI_TENANT}/${version}/organizations/${id}`
+    );
+  }
+
+  /**
+   * Update organization
+   */
+  updateOrganization(
+    id: string,
+    dto: UpdateOrganizationDto,
+    version: string = 'v1'
+  ): Observable<OrganizationResponse> {
+    return this.httpClient.patch<OrganizationResponse>(
+      `${API_URI_TENANT}/${version}/organizations/${id}`,
+      dto
+    );
+  }
+
+  /**
+   * Get organization members
+   */
+  getOrganizationMembers(
+    id: string,
+    page: number = 1,
+    limit: number = 10,
+    version: string = 'v1'
+  ): Observable<{ data: OrganizationMember[]; total: number; page: number; limit: number }> {
+    return this.httpClient.get<{
+      data: OrganizationMember[];
+      total: number;
+      page: number;
+      limit: number;
+    }>(`${API_URI_TENANT}/${version}/organizations/${id}/members`, {
+      params: { page: page.toString(), limit: limit.toString() },
+    });
+  }
+
+  /**
+   * Get organization relations
+   */
+  getOrganizationRelations(
+    id: string,
+    version: string = 'v1'
+  ): Observable<OrganizationRelation[]> {
+    return this.httpClient.get<OrganizationRelation[]>(
+      `${API_URI_TENANT}/${version}/organizations/${id}/relations`
+    );
+  }
+
+  /**
+   * Get organization events/activity log
+   */
+  getOrganizationEvents(
+    id: string,
+    page: number = 1,
+    limit: number = 20,
+    version: string = 'v1'
+  ): Observable<{ data: OrganizationEvent[]; total: number; page: number; limit: number }> {
+    return this.httpClient.get<{
+      data: OrganizationEvent[];
+      total: number;
+      page: number;
+      limit: number;
+    }>(`${API_URI_TENANT}/${version}/organizations/${id}/events`, {
+      params: { page: page.toString(), limit: limit.toString() },
+    });
+  }
+
+  /**
+   * Invite member to organization
+   */
+  inviteMember(
+    id: string,
+    dto: InviteMemberDto,
+    version: string = 'v1'
+  ): Observable<OrganizationMember> {
+    return this.httpClient.post<OrganizationMember>(
+      `${API_URI_TENANT}/${version}/organizations/${id}/members/invite`,
+      dto
+    );
+  }
+
+  /**
+   * Remove member from organization
+   */
+  removeMember(
+    organizationId: string,
+    memberId: string,
+    version: string = 'v1'
+  ): Observable<void> {
+    return this.httpClient.delete<void>(
+      `${API_URI_TENANT}/${version}/organizations/${organizationId}/members/${memberId}`
     );
   }
 }
