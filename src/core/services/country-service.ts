@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of, map, catchError, shareReplay } from 'rxjs';
 
 export interface Country {
   code: string;
@@ -10,91 +12,67 @@ export interface Country {
   providedIn: 'root',
 })
 export class CountryService {
-  private readonly countries: Country[] = [
-    { code: 'VN', name: 'Vietnam', flag: '🇻🇳' },
-    { code: 'US', name: 'United States', flag: '🇺🇸' },
-    { code: 'GB', name: 'United Kingdom', flag: '🇬🇧' },
-    { code: 'CN', name: 'China', flag: '🇨🇳' },
-    { code: 'JP', name: 'Japan', flag: '🇯🇵' },
-    { code: 'KR', name: 'South Korea', flag: '🇰🇷' },
-    { code: 'SG', name: 'Singapore', flag: '🇸🇬' },
-    { code: 'TH', name: 'Thailand', flag: '🇹🇭' },
-    { code: 'MY', name: 'Malaysia', flag: '🇲🇾' },
-    { code: 'ID', name: 'Indonesia', flag: '🇮🇩' },
-    { code: 'PH', name: 'Philippines', flag: '🇵🇭' },
-    { code: 'IN', name: 'India', flag: '🇮🇳' },
-    { code: 'AU', name: 'Australia', flag: '🇦🇺' },
-    { code: 'NZ', name: 'New Zealand', flag: '🇳🇿' },
-    { code: 'CA', name: 'Canada', flag: '🇨🇦' },
-    { code: 'DE', name: 'Germany', flag: '🇩🇪' },
-    { code: 'FR', name: 'France', flag: '🇫🇷' },
-    { code: 'IT', name: 'Italy', flag: '🇮🇹' },
-    { code: 'ES', name: 'Spain', flag: '🇪🇸' },
-    { code: 'NL', name: 'Netherlands', flag: '🇳🇱' },
-    { code: 'BE', name: 'Belgium', flag: '🇧🇪' },
-    { code: 'CH', name: 'Switzerland', flag: '🇨🇭' },
-    { code: 'AT', name: 'Austria', flag: '🇦🇹' },
-    { code: 'SE', name: 'Sweden', flag: '🇸🇪' },
-    { code: 'NO', name: 'Norway', flag: '🇳🇴' },
-    { code: 'DK', name: 'Denmark', flag: '🇩🇰' },
-    { code: 'FI', name: 'Finland', flag: '🇫🇮' },
-    { code: 'PL', name: 'Poland', flag: '🇵🇱' },
-    { code: 'CZ', name: 'Czech Republic', flag: '🇨🇿' },
-    { code: 'HU', name: 'Hungary', flag: '🇭🇺' },
-    { code: 'RO', name: 'Romania', flag: '🇷🇴' },
-    { code: 'BG', name: 'Bulgaria', flag: '🇧🇬' },
-    { code: 'GR', name: 'Greece', flag: '🇬🇷' },
-    { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
-    { code: 'IE', name: 'Ireland', flag: '🇮🇪' },
-    { code: 'RU', name: 'Russia', flag: '🇷🇺' },
-    { code: 'TR', name: 'Turkey', flag: '🇹🇷' },
-    { code: 'AE', name: 'United Arab Emirates', flag: '🇦🇪' },
-    { code: 'SA', name: 'Saudi Arabia', flag: '🇸🇦' },
-    { code: 'IL', name: 'Israel', flag: '🇮🇱' },
-    { code: 'ZA', name: 'South Africa', flag: '🇿🇦' },
-    { code: 'EG', name: 'Egypt', flag: '🇪🇬' },
-    { code: 'BR', name: 'Brazil', flag: '🇧🇷' },
-    { code: 'MX', name: 'Mexico', flag: '🇲🇽' },
-    { code: 'AR', name: 'Argentina', flag: '🇦🇷' },
-    { code: 'CL', name: 'Chile', flag: '🇨🇱' },
-    { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
-    { code: 'PE', name: 'Peru', flag: '🇵🇪' },
-  ];
+  private httpClient = inject(HttpClient);
+  private countries$: Observable<Country[]> | null = null;
+
+  /**
+   * Load countries from JSON file
+   */
+  private loadCountries(): Observable<Country[]> {
+    if (!this.countries$) {
+      this.countries$ = this.httpClient.get<Country[]>('/data/common/countries.json').pipe(
+        catchError((error) => {
+          console.error('Failed to load countries:', error);
+          return of([]);
+        }),
+        shareReplay(1)
+      );
+    }
+    return this.countries$;
+  }
 
   /**
    * Get all countries
    */
-  getAllCountries(): Country[] {
-    return [...this.countries];
+  getAllCountries(): Observable<Country[]> {
+    return this.loadCountries();
   }
 
   /**
    * Search countries by name or code
    */
-  searchCountries(query: string): Country[] {
-    if (!query || query.trim() === '') {
-      return this.getAllCountries();
-    }
+  searchCountries(query: string): Observable<Country[]> {
+    return this.loadCountries().pipe(
+      map((countries) => {
+        if (!query || query.trim() === '') {
+          return countries;
+        }
 
-    const searchTerm = query.toLowerCase().trim();
-    return this.countries.filter(
-      (country) =>
-        country.name.toLowerCase().includes(searchTerm) ||
-        country.code.toLowerCase().includes(searchTerm)
+        const searchTerm = query.toLowerCase().trim();
+        return countries.filter(
+          (country) =>
+            country.name.toLowerCase().includes(searchTerm) ||
+            country.code.toLowerCase().includes(searchTerm)
+        );
+      })
     );
   }
 
   /**
    * Get country by code
    */
-  getCountryByCode(code: string): Country | undefined {
-    return this.countries.find((country) => country.code === code);
+  getCountryByCode(code: string): Observable<Country | undefined> {
+    return this.loadCountries().pipe(
+      map((countries) => countries.find((country) => country.code === code))
+    );
   }
 
   /**
    * Validate if a country code exists
    */
-  isValidCountryCode(code: string): boolean {
-    return this.countries.some((country) => country.code === code);
+  isValidCountryCode(code: string): Observable<boolean> {
+    return this.loadCountries().pipe(
+      map((countries) => countries.some((country) => country.code === code))
+    );
   }
 }
