@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, effect, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Select } from 'primeng/select';
@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 interface LanguageOption {
   code: string;
   label: string;
-  flag: string;
+  flagCode: string; // Country code for flag API
 }
 
 @Component({
@@ -20,10 +20,18 @@ export class LanguageSelector {
   private translocoService = inject(TranslocoService);
   private readonly STORAGE_KEY = 'app.language';
 
+  // Input to control if showing in narrow mode
+  showLabel = input<boolean>(true);
+
   languages: LanguageOption[] = [
-    { code: 'en', label: 'English', flag: '🇬🇧' },
-    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'en', label: 'English', flagCode: 'GB' },
+    { code: 'es', label: 'Español', flagCode: 'ES' },
   ];
+
+  // Helper to get flag image URL
+  getFlagUrl(flagCode: string): string {
+    return `https://flagsapi.com/${flagCode}/flat/64.png`;
+  }
 
   // Use a writable signal instead of computed for two-way binding
   selectedLanguage = signal<string>(this.loadLanguage());

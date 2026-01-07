@@ -67,32 +67,23 @@ export class OrganizationSwitcher implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    // TODO: Replace with actual API call to get user's organizations
-    // For now, using mock data
-    const mockOrganizations: TenantOrganization[] = [
-      {
-        id: 'demo-org-id',
-        name: 'Demo Organization',
-        internationalName: 'Demo Org',
-        taxId: '0123456789',
-      },
-    ];
-
-    this.tenantContextService.setUserOrganizations(mockOrganizations);
-    this.loading.set(false);
-
-    // In production, this would be:
-    /*
+    // Call backend API to get user's organizations
     this.organizationService.getUserOrganizations().subscribe({
       next: (orgs) => {
-        this.tenantContextService.setUserOrganizations(orgs);
+        const tenantOrgs: TenantOrganization[] = orgs.map((org) => ({
+          id: org.id,
+          name: org.name,
+          internationalName: org.internationalName,
+          taxId: org.taxId,
+        }));
+        this.tenantContextService.setUserOrganizations(tenantOrgs);
         this.loading.set(false);
       },
       error: (err) => {
+        console.error('Failed to load user organizations:', err);
         this.error.set('Failed to load organizations');
         this.loading.set(false);
       },
     });
-    */
   }
 }

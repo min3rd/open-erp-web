@@ -104,7 +104,7 @@
   <!-- Language Selector -->
   @if (navMode() === 'sidebar' || isMobile()) {
   <div id="vertical-navigation-language-selector" class="border-b border-surface-200 dark:border-surface-700">
-    <language-selector></language-selector>
+    <language-selector [showLabel]="navMode() === 'sidebar' || isMobile()"></language-selector>
   </div>
   }
 
