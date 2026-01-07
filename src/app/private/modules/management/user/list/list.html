@@ -94,9 +94,10 @@
         <tr>
           <th style="width: 4rem">
             <p-checkbox
-              [(ngModel)]="selectedUsers"
+              [ngModel]="allSelected()"
+              (onChange)="onToggleSelectAll($event)"
               [binary]="true"
-              aria-label="Select all users"
+              aria-label="Select all users on this page"
             />
           </th>
           <th style="width: 4rem">Avatar</th>
@@ -224,7 +225,7 @@
           id="page-size-select"
           class="rounded border border-surface-300 dark:border-surface-600 bg-surface-0 dark:bg-surface-800 px-3 py-2 text-sm"
           [value]="pageSize()"
-          (change)="onPageChange({ page: 0, rows: +$any($event.target).value })"
+          (change)="onPageSizeChange($event)"
         >
           <option [value]="10">10</option>
           <option [value]="25">25</option>

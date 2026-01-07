@@ -47,7 +47,7 @@ export class UserService {
       username: `user${i + 1}`,
       email: `user${i + 1}@example.com`,
       fullName: `User ${i + 1} Full Name`,
-      phone: `+84${String(900000000 + i).substring(0, 9)}`,
+      phone: `+84${String(900000000 + i)}`,
       avatar: `https://i.pravatar.cc/150?img=${(i % 70) + 1}`,
       status: i % 5 === 0 ? 'inactive' : i % 7 === 0 ? 'blocked' : 'active',
       lastLogin: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
