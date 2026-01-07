@@ -24,9 +24,9 @@
     class="w-full"
     [attr.aria-label]="'languageSelector.ariaLabel' | transloco"
   >
-    <ng-template let-lang pTemplate="item">
+    <ng-template let-lang #item>
       <div
-        class="flex items-center py-1 justify-center"
+        class="flex items-center justify-center"
         [attr.id]="'language-selector-option-' + lang.code"
       >
         <img
@@ -36,13 +36,17 @@
           aria-hidden="true"
         />
         @if (showLabel()) {
-        <span class="font-medium ml-2">{{ lang.label }}</span>
+        <span class="font-medium ml-2 truncate">{{ lang.label }}</span>
         }
       </div>
     </ng-template>
 
-    <ng-template let-lang pTemplate="selectedItem">
-      <div class="flex items-center justify-center" id="language-selector-selected">
+    <ng-template let-lang #selectedItem>
+      <div
+        class="flex items-center justify-start"
+        id="language-selector-selected"
+        [class.w-6]="!showLabel()"
+      >
         <img
           [src]="getFlagUrl(lang.flagCode)"
           [alt]="lang.label + ' flag'"
@@ -54,7 +58,7 @@
           aria-hidden="true"
         />
         @if (showLabel()) {
-        <span class="font-medium text-sm ml-2">{{ lang.label }}</span>
+        <span class="font-medium text-sm ml-2 truncate">{{ lang.label }}</span>
         }
       </div>
     </ng-template>

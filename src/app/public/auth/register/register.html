@@ -129,7 +129,7 @@
             [placeholder]="'register.form.password.placeholder' | transloco"
             [toggleMask]="true"
             [feedback]="false"
-            styleClass="w-full"
+            class="w-full"
             inputStyleClass="w-full"
             [attr.aria-invalid]="
               registerForm.get('password')?.invalid && registerForm.get('password')?.touched
@@ -158,7 +158,7 @@
             [placeholder]="'register.form.confirmPassword.placeholder' | transloco"
             [toggleMask]="true"
             [feedback]="false"
-            styleClass="w-full"
+            class="w-full"
             inputStyleClass="w-full"
             [attr.aria-invalid]="
               (registerForm.get('confirmPassword')?.invalid ||
@@ -216,7 +216,7 @@
             [label]="'register.buttons.register' | transloco"
             [disabled]="!registerForm.valid || isSubmitting()"
             [loading]="isSubmitting()"
-            styleClass="w-full"
+            class="w-full"
             severity="primary"
             [attr.aria-busy]="isSubmitting()"
           />
@@ -225,7 +225,7 @@
             id="register-back-to-login-button"
             [label]="'register.buttons.backToLogin' | transloco"
             (onClick)="navigateToLogin()"
-            styleClass="w-full"
+            class="w-full"
             severity="secondary"
           />
         </div>
@@ -256,7 +256,7 @@
   [closable]="true"
   [draggable]="false"
   [resizable]="false"
-  styleClass="w-full max-w-2xl"
+  class="w-full max-w-2xl"
   [header]="'register.termsDialog.title' | transloco"
 >
   <div class="prose prose-sm max-w-none" id="register-terms-content">
@@ -264,7 +264,7 @@
       {{ 'register.termsDialog.content' | transloco }}
     </p>
   </div>
-  <ng-template pTemplate="footer">
+  <ng-template #footer>
     <p-button
       id="register-terms-close-button"
       [label]="'register.termsDialog.closeButton' | transloco"
