@@ -1,7 +1,7 @@
 <div
   class="flex flex-col flex-auto h-full animate-fadeinleft relative"
   id="vertical-navigation-container"
-  [style.width.px]="isMobile() ? 320 : (navMode() === 'narrow' ? 56 : navWidth())"
+  [style.width.px]="isMobile() ? 320 : navMode() === 'narrow' ? 56 : navWidth()"
   [class.transition-width]="!isResizing()"
   [class.duration-300]="!isResizing()"
 >
@@ -25,10 +25,7 @@
       {{ 'common.appShortName' | transloco }}
     </span>
     }
-    <div
-      class="flex items-center justify-center ml-auto"
-      id="vertical-navigation-actions"
-    >
+    <div class="flex items-center justify-center ml-auto" id="vertical-navigation-actions">
       <!-- Toggle nav mode button (desktop only) -->
       @if (!isMobile()) {
       <p-button
@@ -70,7 +67,7 @@
       id="vertical-navigation-register-button-full"
       (onClick)="navigateToRegisterOrganization()"
       [label]="'verticalNav.registerOrganization' | transloco"
-      icon="pi pi-building"
+      icon="pi pi-plus"
       severity="primary"
       size="small"
       styleClass="w-full"
@@ -80,7 +77,7 @@
     <p-button
       id="vertical-navigation-register-button-icon"
       (onClick)="navigateToRegisterOrganization()"
-      icon="pi pi-building"
+      icon="pi pi-plus"
       [rounded]="true"
       severity="primary"
       size="small"
@@ -94,13 +91,19 @@
   </div>
 
   <!-- Organization Switcher -->
-  <div id="vertical-navigation-org-switcher" class="border-b border-surface-200 dark:border-surface-700">
+  <div
+    id="vertical-navigation-org-switcher"
+    class="border-b border-surface-200 dark:border-surface-700"
+  >
     <organization-switcher></organization-switcher>
   </div>
 
   <!-- Language Selector -->
-  <div id="vertical-navigation-language-selector" class="border-b border-surface-200 dark:border-surface-700">
-    <language-selector [showLabel]="navMode() === 'sidebar' || isMobile()"></language-selector>
+  <div
+    id="vertical-navigation-language-selector"
+    class="border-b border-surface-200 dark:border-surface-700"
+  >
+    <language-selector [showLabel]="navMode() === 'sidebar' && !isMobile()"></language-selector>
   </div>
 
   <!-- Modules navigation -->
@@ -173,4 +176,3 @@
   </div>
   }
 </div>
-

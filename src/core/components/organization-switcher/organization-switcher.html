@@ -33,15 +33,15 @@
       [filter]="true"
       [filterFields]="['label', 'subtitle']"
       [placeholder]="'organizationSwitcher.placeholder' | transloco"
-      styleClass="w-full"
+      class="w-full"
       [attr.aria-label]="'organizationSwitcher.ariaLabel' | transloco"
     >
       <ng-template let-org pTemplate="item">
         <div class="flex flex-col py-1" [attr.id]="'organization-switcher-option-' + org.value">
           <span class="font-medium text-surface-900 dark:text-surface-0">{{ org.label }}</span>
-          <span class="text-xs text-surface-500 dark:text-surface-400">{{
-            'organizationSwitcher.taxId' | transloco
-          }}: {{ org.subtitle }}</span>
+          <span class="text-xs text-surface-500 dark:text-surface-400"
+            >{{ 'organizationSwitcher.taxId' | transloco }}: {{ org.subtitle }}</span
+          >
         </div>
       </ng-template>
 
@@ -54,10 +54,7 @@
     </p-select>
   </div>
   } @else {
-  <div
-    id="organization-switcher-empty"
-    class="p-3 text-sm text-surface-600 dark:text-surface-400"
-  >
+  <div id="organization-switcher-empty" class="p-3 text-sm text-surface-600 dark:text-surface-400">
     {{ 'organizationSwitcher.noOrganizations' | transloco }}
   </div>
   }

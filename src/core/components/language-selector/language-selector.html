@@ -1,4 +1,11 @@
-<div id="language-selector-container" class="w-full" [class.p-2]="showLabel()" [class.p-1]="!showLabel()" [class.flex]="!showLabel()" [class.justify-center]="!showLabel()">
+<div
+  id="language-selector-container"
+  class="w-full"
+  [class.p-2]="showLabel()"
+  [class.p-1]="!showLabel()"
+  [class.flex]="!showLabel()"
+  [class.justify-center]="!showLabel()"
+>
   @if (showLabel()) {
   <label
     for="language-selector-dropdown"
@@ -14,11 +21,14 @@
     optionLabel="label"
     optionValue="code"
     [placeholder]="''"
-    [styleClass]="showLabel() ? 'w-full' : ''"
+    class="w-full"
     [attr.aria-label]="'languageSelector.ariaLabel' | transloco"
   >
     <ng-template let-lang pTemplate="item">
-      <div class="flex items-center py-1 justify-center" [attr.id]="'language-selector-option-' + lang.code">
+      <div
+        class="flex items-center py-1 justify-center"
+        [attr.id]="'language-selector-option-' + lang.code"
+      >
         <img
           [src]="getFlagUrl(lang.flagCode)"
           [alt]="lang.label + ' flag'"
