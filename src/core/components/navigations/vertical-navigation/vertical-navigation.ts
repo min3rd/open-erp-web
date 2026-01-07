@@ -112,4 +112,3 @@ export class VerticalNavigation implements OnInit, OnDestroy {
     document.addEventListener('mouseup', onMouseUp);
   }
 }
-

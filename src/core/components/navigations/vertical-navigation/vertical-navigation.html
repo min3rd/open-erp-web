@@ -60,7 +60,7 @@
   <!-- Register Organization CTA -->
   <div
     id="vertical-navigation-register-cta"
-    class="p-2 border-b border-surface-200 dark:border-surface-700"
+    class="text-center p-2 border-b border-surface-200 dark:border-surface-700"
   >
     @if (navMode() === 'sidebar' || isMobile()) {
     <p-button
@@ -70,7 +70,7 @@
       icon="pi pi-plus"
       severity="primary"
       size="small"
-      styleClass="w-full"
+      class="w-full"
       [attr.aria-label]="'verticalNav.registerOrganization' | transloco"
     />
     } @else {
@@ -81,7 +81,7 @@
       [rounded]="true"
       severity="primary"
       size="small"
-      styleClass="w-full"
+      class="w-full"
       [pTooltip]="'verticalNav.registerOrganizationShort' | transloco"
       tooltipPosition="right"
       [showDelay]="500"
@@ -95,7 +95,9 @@
     id="vertical-navigation-org-switcher"
     class="border-b border-surface-200 dark:border-surface-700"
   >
-    <organization-switcher></organization-switcher>
+    <organization-switcher
+      [showLabel]="navMode() === 'sidebar' && !isMobile()"
+    ></organization-switcher>
   </div>
 
   <!-- Language Selector -->
@@ -115,7 +117,7 @@
           [routerLink]="item.routerLink"
           routerLinkActive="bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
           [routerLinkActiveOptions]="{ exact: false }"
-          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors text-surface-700 dark:text-surface-300"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors text-surface-700 dark:text-surface-300 select-none"
           [class.justify-center]="navMode() === 'narrow' && !isMobile()"
           [pTooltip]="navMode() === 'narrow' && !isMobile() ? (item.label | transloco) : ''"
           tooltipPosition="right"
@@ -143,7 +145,7 @@
     <a
       id="vertical-navigation-logout"
       (click)="logOut()"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors text-surface-700 dark:text-surface-300 cursor-pointer"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors text-surface-700 dark:text-surface-300 cursor-pointer select-none"
       [class.justify-center]="navMode() === 'narrow' && !isMobile()"
       [pTooltip]="navMode() === 'narrow' && !isMobile() ? ('auth.logout' | transloco) : ''"
       tooltipPosition="right"

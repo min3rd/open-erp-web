@@ -5,7 +5,9 @@
     class="flex items-center justify-center p-3 text-surface-600 dark:text-surface-400"
   >
     <i class="pi pi-spin pi-spinner text-xl" aria-hidden="true"></i>
+    @if (showLabel()) {
     <span class="ml-2 text-sm">{{ 'organizationSwitcher.loading' | transloco }}</span>
+    }
   </div>
   } @else if (error()) {
   <div
@@ -16,13 +18,19 @@
     {{ error() }}
   </div>
   } @else if (organizations().length > 0) {
-  <div id="organization-switcher-dropdown-wrapper" class="p-2">
+  <div
+    id="organization-switcher-dropdown-wrapper"
+    [class.p-2]="showLabel()"
+    [class.p-1]="!showLabel()"
+  >
+    @if (showLabel()) {
     <label
       for="organization-switcher-dropdown"
       class="block text-xs font-medium text-surface-600 dark:text-surface-400 mb-1"
     >
       {{ 'organizationSwitcher.label' | transloco }}
     </label>
+    }
     <p-select
       id="organization-switcher-dropdown"
       [options]="dropdownOptions()"
@@ -36,7 +44,7 @@
       class="w-full"
       [attr.aria-label]="'organizationSwitcher.ariaLabel' | transloco"
     >
-      <ng-template let-org pTemplate="item">
+      <ng-template let-org #item>
         <div class="flex flex-col py-1" [attr.id]="'organization-switcher-option-' + org.value">
           <span class="font-medium text-surface-900 dark:text-surface-0">{{ org.label }}</span>
           <span class="text-xs text-surface-500 dark:text-surface-400"
@@ -45,10 +53,18 @@
         </div>
       </ng-template>
 
-      <ng-template let-org pTemplate="selectedItem">
+      <ng-template let-org #selectedItem>
         <div class="flex flex-col" id="organization-switcher-selected">
-          <span class="font-medium text-sm">{{ org.label }}</span>
-          <span class="text-xs text-surface-500 dark:text-surface-400">{{ org.subtitle }}</span>
+          @if (showLabel()) {
+          <span class="font-medium text-sm truncate">{{ org.label }}</span>
+          <span class="text-xs text-surface-500 dark:text-surface-400 truncate">
+            {{ org.subtitle }}
+          </span>
+          } @else {
+          <span class="text-xs text-surface-500 dark:text-surface-400 truncate">
+            {{ org.label.charAt(0) }}
+          </span>
+          }
         </div>
       </ng-template>
     </p-select>

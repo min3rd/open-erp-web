@@ -5,6 +5,7 @@ import {
   OnInit,
   signal,
   computed,
+  input,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
@@ -28,7 +29,7 @@ export class OrganizationSwitcher implements OnInit {
 
   loading = signal(false);
   error = signal<string | null>(null);
-  showLabel = signal(true);
+  showLabel = input<boolean>(true);
 
   // For dropdown display
   dropdownOptions = computed(() => {

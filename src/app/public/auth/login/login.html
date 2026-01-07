@@ -99,7 +99,7 @@
             [toggleMask]="true"
             [feedback]="false"
             autocomplete="current-password"
-            styleClass="w-full"
+            class="w-full"
             inputStyleClass="w-full"
             [attr.aria-invalid]="
               loginForm.get('password')?.invalid && loginForm.get('password')?.touched
@@ -134,7 +134,7 @@
             [label]="'login.buttons.login' | transloco"
             [disabled]="!loginForm.valid || isSubmitting()"
             [loading]="isSubmitting()"
-            styleClass="w-full"
+            class="w-full"
             severity="primary"
             [attr.aria-busy]="isSubmitting()"
           />
@@ -143,7 +143,7 @@
             id="login-create-account-button"
             [label]="'login.buttons.createAccount' | transloco"
             (onClick)="navigateToRegister()"
-            styleClass="w-full"
+            class="w-full"
             severity="secondary"
           />
         </div>

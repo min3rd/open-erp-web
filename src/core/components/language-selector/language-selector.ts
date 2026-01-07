@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, effect, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, effect, input, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Select } from 'primeng/select';
@@ -18,6 +18,7 @@ interface LanguageOption {
 })
 export class LanguageSelector {
   private translocoService = inject(TranslocoService);
+  private cdr = inject(ChangeDetectorRef);
   private readonly STORAGE_KEY = 'app.language';
 
   // Input to control if showing in narrow mode
@@ -45,6 +46,7 @@ export class LanguageSelector {
       const lang = this.selectedLanguage();
       this.saveLanguage(lang);
       this.translocoService.setActiveLang(lang);
+      this.cdr.markForCheck();
     });
   }
 
