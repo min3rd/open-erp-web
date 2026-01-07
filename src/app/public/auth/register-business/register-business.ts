@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, inject, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, OnDestroy } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   FormControl,
@@ -49,7 +49,7 @@ interface BusinessRegistrationForm {
   templateUrl: './register-business.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RegisterBusiness {
+export class RegisterBusiness implements OnDestroy {
   private router = inject(Router);
   private organizationService = inject(OrganizationService);
   private messageService = inject(MessageService);
@@ -61,6 +61,30 @@ export class RegisterBusiness {
   protected readonly taxLookupData = signal<VietQRBusinessResponse['data'] | null>(null);
   protected readonly businessActivitySuggestions = signal<string[]>([]);
   protected readonly maxDate = new Date();
+
+  // Common business activity suggestions for Vietnam
+  private readonly defaultActivitySuggestions = [
+    'Software Development',
+    'IT Consulting',
+    'Manufacturing',
+    'Retail',
+    'Wholesale',
+    'Import/Export',
+    'Construction',
+    'Real Estate',
+    'Finance',
+    'Insurance',
+    'Healthcare',
+    'Education',
+    'Transportation',
+    'Logistics',
+    'Hospitality',
+    'Food & Beverage',
+    'Agriculture',
+    'Marketing',
+    'Advertising',
+    'E-commerce',
+  ];
 
   protected readonly registrationForm = new FormGroup<BusinessRegistrationForm>({
     taxId: new FormControl('', {
@@ -185,6 +209,18 @@ export class RegisterBusiness {
     this.taxLookupData.set(null);
   }
 
+  protected onSearchBusinessActivity(event: any): void {
+    const query = event.query?.toLowerCase() || '';
+    if (query) {
+      const filtered = this.defaultActivitySuggestions.filter((activity) =>
+        activity.toLowerCase().includes(query)
+      );
+      this.businessActivitySuggestions.set(filtered);
+    } else {
+      this.businessActivitySuggestions.set(this.defaultActivitySuggestions);
+    }
+  }
+
   protected navigateToLogin(): void {
     this.router.navigate(['/auth/login']);
   }
@@ -209,7 +245,7 @@ export class RegisterBusiness {
         legalRepresentative: formValue.legalRepresentative || '',
         contactPhone: formValue.contactPhone || '',
         contactEmail: formValue.contactEmail || '',
-        foundedDate: formValue.foundedDate?.toISOString() || '',
+        foundedDate: formValue.foundedDate ? formValue.foundedDate.toISOString() : new Date().toISOString(),
         businessActivities: formValue.businessActivities || [],
       };
 
