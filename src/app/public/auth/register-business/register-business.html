@@ -400,6 +400,7 @@
               [maxDate]="maxDate"
               styleClass="w-full"
               inputStyleClass="w-full"
+              [attr.aria-required]="true"
               [attr.aria-invalid]="
                 registrationForm.get('foundedDate')?.invalid &&
                 registrationForm.get('foundedDate')?.touched
@@ -434,6 +435,7 @@
               [placeholder]="'registerBusiness.form.businessActivities.placeholder' | transloco"
               [multiple]="true"
               [suggestions]="businessActivitySuggestions()"
+              (completeMethod)="onSearchBusinessActivity($event)"
               styleClass="w-full"
               inputStyleClass="w-full"
               [attr.aria-describedby]="'register-business-businessActivities-help'"
