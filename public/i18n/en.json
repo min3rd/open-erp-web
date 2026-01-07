@@ -338,6 +338,25 @@
       }
     }
   },
+  "organizationSwitcher": {
+    "label": "Current Organization",
+    "placeholder": "Select organization",
+    "ariaLabel": "Select current organization",
+    "taxId": "Tax ID",
+    "loading": "Loading organizations...",
+    "noOrganizations": "No organizations available"
+  },
+  "languageSelector": {
+    "label": "Language",
+    "placeholder": "Select language",
+    "ariaLabel": "Select language"
+  },
+  "verticalNav": {
+    "registerOrganization": "Register Organization",
+    "registerOrganizationShort": "Register",
+    "resizeHandle": "Drag to resize navigation",
+    "companies": "Companies"
+  },
   "registerBusiness": {
     "title": "Business Registration",
     "subtitle": "Register your business with Open ERP",
