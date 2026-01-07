@@ -249,6 +249,9 @@
     "subtitle": "Registre su empresa con Open ERP",
     "taxLookup": {
       "found": "Información de Empresa Encontrada",
+      "autoFilled": "Información completada automáticamente para {{name}}",
+      "notFound": "Empresa No Encontrada",
+      "manualEntry": "Por favor ingrese la información de la empresa manualmente",
       "name": "Nombre de Empresa",
       "internationalName": "Nombre Internacional",
       "address": "Dirección",
