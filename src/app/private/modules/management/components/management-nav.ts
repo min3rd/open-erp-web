@@ -3,13 +3,12 @@ import {
   Component,
   inject,
 } from '@angular/core';
-import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ManagementLayoutService } from '../services/management-layout.service';
-import { filter, map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'management-nav',
@@ -29,13 +28,6 @@ export class ManagementNav {
   private router = inject(Router);
 
   navMode = this.layoutService.navMode;
-
-  // Track active route for aria-current
-  isRouteActive$ = this.router.events.pipe(
-    filter((event) => event instanceof NavigationEnd),
-    map(() => this.router.url),
-    startWith(this.router.url)
-  );
 
   onToggleNavMode(): void {
     this.layoutService.toggleNavMode();

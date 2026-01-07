@@ -4,3 +4,9 @@
 @import 'tailwindcss-primeui';
 
 @import 'primeicons/primeicons.css';
+
+/* Navigation active state styles */
+.nav-item--active {
+  /* This class is used to mark active navigation items for testing and accessibility */
+  /* Actual styling is provided by the accompanying Tailwind classes */
+}
