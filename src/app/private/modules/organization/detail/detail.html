@@ -65,6 +65,31 @@
             }
           </div>
 
+          <!-- Organization Type -->
+          <div class="space-y-2">
+            <label
+              for="register-business-type"
+              class="block text-sm font-medium text-gray-700"
+            >
+              {{ 'registerBusiness.form.type.label' | transloco }}
+              <span class="text-red-600">*</span>
+            </label>
+            <p-select
+              id="register-business-type"
+              formControlName="type"
+              [options]="organizationTypeOptions"
+              [placeholder]="'registerBusiness.form.type.placeholder' | transloco"
+              optionLabel="label"
+              optionValue="value"
+              styleClass="w-full"
+            />
+            @if (getFieldError('type'); as errorKey) {
+            <small id="register-business-type-error" class="text-red-600 text-sm" role="alert">
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
           <!-- Contact Email -->
           <div class="space-y-2">
             <label
@@ -226,6 +251,93 @@
             />
             @if (getFieldError('foundedDate'); as errorKey) {
             <small class="text-red-600 text-sm" role="alert">
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
+          <!-- Country -->
+          <div class="space-y-2">
+            <label
+              for="register-business-country"
+              class="block text-sm font-medium text-gray-700"
+            >
+              {{ 'registerBusiness.form.country.label' | transloco }}
+              <span class="text-red-600">*</span>
+            </label>
+            <p-autocomplete
+              id="register-business-country"
+              formControlName="country"
+              [placeholder]="'registerBusiness.form.country.placeholder' | transloco"
+              [suggestions]="countrySuggestions()"
+              (completeMethod)="onSearchCountry($event)"
+              field="name"
+              styleClass="w-full"
+            >
+              <ng-template let-country pTemplate="item">
+                <div class="flex items-center gap-2">
+                  <span>{{ country.flag }}</span>
+                  <span>{{ country.name }} ({{ country.code }})</span>
+                </div>
+              </ng-template>
+            </p-autocomplete>
+            @if (getFieldError('country'); as errorKey) {
+            <small id="register-business-country-error" class="text-red-600 text-sm" role="alert">
+              {{ errorKey | transloco }}
+            </small>
+            }
+          </div>
+
+          <!-- Website -->
+          <div class="space-y-2 lg:col-span-2">
+            <label
+              for="register-business-website"
+              class="block text-sm font-medium text-gray-700"
+            >
+              {{ 'registerBusiness.form.website.label' | transloco }}
+              <span class="text-gray-500 text-xs ml-1"
+                >({{ 'registerBusiness.form.website.optional' | transloco }})</span
+              >
+            </label>
+            <input
+              pInputText
+              id="register-business-website"
+              type="url"
+              formControlName="website"
+              [placeholder]="'registerBusiness.form.website.placeholder' | transloco"
+              class="w-full"
+            />
+            @if (getFieldError('website'); as errorKey) {
+            <small id="register-business-website-error" class="text-red-600 text-sm" role="alert">
+              {{ errorKey | transloco }}
+            </small>
+            }
+            <small class="text-gray-600 text-xs">
+              {{ 'registerBusiness.form.website.help' | transloco }}
+            </small>
+          </div>
+
+          <!-- Description -->
+          <div class="space-y-2 lg:col-span-2">
+            <label
+              for="register-business-description"
+              class="block text-sm font-medium text-gray-700"
+            >
+              {{ 'registerBusiness.form.description.label' | transloco }}
+              <span class="text-gray-500 text-xs ml-1"
+                >({{ 'registerBusiness.form.description.optional' | transloco }})</span
+              >
+            </label>
+            <textarea
+              pTextarea
+              id="register-business-description"
+              formControlName="description"
+              [placeholder]="'registerBusiness.form.description.placeholder' | transloco"
+              rows="4"
+              class="w-full"
+            ></textarea>
+            @if (getFieldError('description'); as errorKey) {
+            <small id="register-business-description-error" class="text-red-600 text-sm" role="alert">
               {{ errorKey | transloco }}
             </small>
             }

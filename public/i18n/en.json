@@ -421,6 +421,38 @@
         "optional": "Optional",
         "placeholder": "Press Enter to add business activity",
         "help": "Enter business activities and press Enter after each one"
+      },
+      "type": {
+        "label": "Organization Type",
+        "placeholder": "Select organization type",
+        "errors": {
+          "required": "Organization type is required"
+        }
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select status"
+      },
+      "country": {
+        "label": "Country",
+        "placeholder": "Search and select country",
+        "errors": {
+          "required": "Country is required"
+        }
+      },
+      "description": {
+        "label": "Description",
+        "optional": "Optional",
+        "placeholder": "Enter organization description"
+      },
+      "website": {
+        "label": "Website",
+        "optional": "Optional",
+        "placeholder": "https://example.com",
+        "help": "Enter a valid URL starting with http:// or https://",
+        "errors": {
+          "invalidWebsite": "Please enter a valid URL (must start with http:// or https://)"
+        }
       }
     },
     "buttons": {

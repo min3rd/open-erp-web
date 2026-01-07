@@ -16,6 +16,9 @@ export interface VietQRBusinessResponse {
   };
 }
 
+export type OrganizationType = 'holding' | 'company' | 'joint-venture' | 'partner' | 'branch';
+export type OrganizationStatus = 'active' | 'inactive' | 'pending';
+
 export interface CreateOrganizationDto {
   taxId: string;
   name: string;
@@ -26,6 +29,11 @@ export interface CreateOrganizationDto {
   contactEmail: string;
   foundedDate: string;
   businessActivities?: string[];
+  type: OrganizationType;
+  status?: OrganizationStatus;
+  country: string;
+  description?: string;
+  website?: string;
 }
 
 export interface OrganizationResponse {
@@ -39,7 +47,11 @@ export interface OrganizationResponse {
   contactEmail: string;
   foundedDate: string;
   businessActivities?: string[];
-  status?: string;
+  type: OrganizationType;
+  status: OrganizationStatus;
+  country: string;
+  description?: string;
+  website?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -54,6 +66,11 @@ export interface UpdateOrganizationDto {
   contactEmail?: string;
   foundedDate?: string;
   businessActivities?: string[];
+  type?: OrganizationType;
+  status?: OrganizationStatus;
+  country?: string;
+  description?: string;
+  website?: string;
 }
 
 export interface OrganizationMember {
