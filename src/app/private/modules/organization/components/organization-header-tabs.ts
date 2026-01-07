@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
+import { TenantContextService } from '../../../../../core/services/tenant-context.service';
 
 @Component({
   selector: 'organization-header-tabs',
@@ -10,7 +11,10 @@ import { TranslocoModule } from '@jsverse/transloco';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganizationHeaderTabs {
+  private tenantContextService = inject(TenantContextService);
+
   router = inject(Router);
+  curentOrganization = this.tenantContextService.currentOrganization;
 
   get activeTabIndex(): number {
     const url = this.router.url;

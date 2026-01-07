@@ -27,7 +27,7 @@
       <!-- Information Tab -->
       <a
         id="organization-tab-detail"
-        routerLink="detail"
+        [routerLink]="[curentOrganization()?.id]"
         routerLinkActive="border-b-2 border-primary-500 text-primary-700 dark:text-primary-300"
         [routerLinkActiveOptions]="{ exact: false }"
         class="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-surface-600 dark:text-surface-400 hover:text-surface-900 dark:hover:text-surface-0 transition-colors border-b-2 border-transparent"
