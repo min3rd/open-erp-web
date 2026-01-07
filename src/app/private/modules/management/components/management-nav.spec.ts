@@ -55,7 +55,7 @@ describe('ManagementNav', () => {
     expect(component.navMode()).toBe('sidebar');
   });
 
-  it('should have nav-item--active class for active routes', () => {
+  it('should apply active styles to active routes', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const userLink = compiled.querySelector('#management-nav-link-user');
