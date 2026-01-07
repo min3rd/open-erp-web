@@ -256,7 +256,7 @@ export class OrganizationService {
    */
   getUserOrganizations(version: string = 'v1'): Observable<OrganizationResponse[]> {
     return this.httpClient.get<OrganizationResponse[]>(
-      `${API_URI_TENANT}/${version}/organizations/user/me`
+      `${API_URI_TENANT}/${version}/organizations`
     );
   }
 }
