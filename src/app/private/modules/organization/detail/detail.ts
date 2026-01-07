@@ -1,5 +1,13 @@
-import { ChangeDetectionStrategy, Component, signal, inject, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+  inject,
+  OnDestroy,
+  OnInit,
+  computed,
+} from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {
   FormControl,
@@ -15,12 +23,25 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ToolbarModule } from 'primeng/toolbar';
+import { TabsModule } from 'primeng/tabs';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { DialogModule } from 'primeng/dialog';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TreeModule } from 'primeng/tree';
+import { TimelineModule } from 'primeng/timeline';
 import { MessageService } from 'primeng/api';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import {
   OrganizationService,
   CreateOrganizationDto,
+  UpdateOrganizationDto,
   VietQRBusinessResponse,
+  OrganizationResponse,
+  OrganizationMember,
+  OrganizationRelation,
+  OrganizationEvent,
+  InviteMemberDto,
 } from '../../../../../core/services/organization-service';
 
 interface BusinessRegistrationForm {
@@ -35,6 +56,11 @@ interface BusinessRegistrationForm {
   businessActivities: FormControl<string[]>;
 }
 
+interface InviteForm {
+  email: FormControl<string>;
+  role: FormControl<string>;
+}
+
 @Component({
   selector: 'organization-detail',
   imports: [
@@ -47,21 +73,52 @@ interface BusinessRegistrationForm {
     DatePickerModule,
     AutoCompleteModule,
     ToolbarModule,
+    TabsModule,
+    TableModule,
+    TagModule,
+    DialogModule,
+    SkeletonModule,
+    TreeModule,
+    TimelineModule,
   ],
   templateUrl: './detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Detail implements OnDestroy {
+export class Detail implements OnInit, OnDestroy {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private organizationService = inject(OrganizationService);
   private messageService = inject(MessageService);
   private translocoService = inject(TranslocoService);
   private destroy$ = new Subject<void>();
 
+  protected readonly organizationId = signal<string | null>(null);
+  protected readonly organization = signal<OrganizationResponse | null>(null);
+  protected readonly members = signal<OrganizationMember[]>([]);
+  protected readonly relations = signal<OrganizationRelation[]>([]);
+  protected readonly events = signal<OrganizationEvent[]>([]);
+  
+  protected readonly isLoading = signal(false);
   protected readonly isSubmitting = signal(false);
   protected readonly isTaxLookupLoading = signal(false);
   protected readonly businessActivitySuggestions = signal<string[]>([]);
   protected readonly maxDate = new Date();
+
+  protected readonly showEditDialog = signal(false);
+  protected readonly showInviteDialog = signal(false);
+  
+  protected readonly membersPage = signal(1);
+  protected readonly membersLimit = signal(10);
+  protected readonly membersTotal = signal(0);
+
+  protected readonly eventsPage = signal(1);
+  protected readonly eventsLimit = signal(20);
+  protected readonly eventsTotal = signal(0);
+
+  protected readonly activeTabIndex = signal(0);
+
+  protected readonly isNewMode = computed(() => this.router.url.includes('/new'));
+  protected readonly isViewMode = computed(() => !this.isNewMode() && this.organizationId() !== null);
 
   // Common business activity suggestions for Vietnam
   private readonly defaultActivitySuggestions = [
@@ -124,6 +181,17 @@ export class Detail implements OnDestroy {
     }),
   });
 
+  protected readonly inviteForm = new FormGroup<InviteForm>({
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email],
+    }),
+    role: new FormControl('member', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+  });
+
   constructor() {
     // Setup tax ID lookup with debounce
     this.registrationForm
@@ -136,17 +204,101 @@ export class Detail implements OnDestroy {
       });
   }
 
+  ngOnInit(): void {
+    // Get organization ID from route params
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const id = params['id'];
+      if (id && id !== 'new') {
+        this.organizationId.set(id);
+        this.loadOrganizationData(id);
+      }
+    });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  get isNewMode(): boolean {
-    return this.router.url.includes('/new');
+  private loadOrganizationData(id: string): void {
+    this.isLoading.set(true);
+    
+    // Load organization details
+    this.organizationService.getOrganization(id).subscribe({
+      next: (org) => {
+        this.organization.set(org);
+        this.populateEditForm(org);
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Failed to load organization:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translocoService.translate('organization.detail.notFound'),
+          detail: error?.error?.message || 'Failed to load organization details',
+        });
+        this.isLoading.set(false);
+        this.router.navigate(['/organization']);
+      },
+    });
+
+    // Load members
+    this.loadMembers(id);
+    
+    // Load relations
+    this.organizationService.getOrganizationRelations(id).subscribe({
+      next: (relations) => {
+        this.relations.set(relations);
+      },
+      error: (error) => {
+        console.error('Failed to load relations:', error);
+      },
+    });
+
+    // Load events
+    this.loadEvents(id);
   }
 
-  get isDetailMode(): boolean {
-    return this.router.url.includes('/detail');
+  private loadMembers(id: string): void {
+    this.organizationService
+      .getOrganizationMembers(id, this.membersPage(), this.membersLimit())
+      .subscribe({
+        next: (response) => {
+          this.members.set(response.data);
+          this.membersTotal.set(response.total);
+        },
+        error: (error) => {
+          console.error('Failed to load members:', error);
+        },
+      });
+  }
+
+  private loadEvents(id: string): void {
+    this.organizationService
+      .getOrganizationEvents(id, this.eventsPage(), this.eventsLimit())
+      .subscribe({
+        next: (response) => {
+          this.events.set(response.data);
+          this.eventsTotal.set(response.total);
+        },
+        error: (error) => {
+          console.error('Failed to load events:', error);
+        },
+      });
+  }
+
+  private populateEditForm(org: OrganizationResponse): void {
+    this.registrationForm.patchValue({
+      taxId: org.taxId,
+      name: org.name,
+      internationalName: org.internationalName,
+      headquartersAddress: org.headquartersAddress,
+      legalRepresentative: org.legalRepresentative,
+      contactPhone: org.contactPhone,
+      contactEmail: org.contactEmail,
+      foundedDate: org.foundedDate ? new Date(org.foundedDate) : null,
+      businessActivities: org.businessActivities || [],
+    });
   }
 
   private phoneValidator(control: FormControl): ValidationErrors | null {
@@ -166,7 +318,6 @@ export class Detail implements OnDestroy {
       next: (response: VietQRBusinessResponse | null) => {
         this.isTaxLookupLoading.set(false);
         if (response && response.data) {
-          // Show success toast with business info
           this.messageService.add({
             severity: 'success',
             summary: this.translocoService.translate('registerBusiness.taxLookup.found'),
@@ -176,7 +327,6 @@ export class Detail implements OnDestroy {
             life: 5000,
           });
 
-          // Auto-populate form fields
           this.registrationForm.patchValue({
             name: response.data.name || '',
             internationalName: response.data.internationalName || '',
@@ -187,7 +337,6 @@ export class Detail implements OnDestroy {
       error: (error: any) => {
         this.isTaxLookupLoading.set(false);
         console.error('Tax lookup failed:', error);
-        // Show error toast
         this.messageService.add({
           severity: 'warn',
           summary: this.translocoService.translate('registerBusiness.taxLookup.notFound'),
@@ -245,7 +394,6 @@ export class Detail implements OnDestroy {
     try {
       const formValue = this.registrationForm.value;
 
-      // Prepare DTO for backend
       const dto: CreateOrganizationDto = {
         taxId: formValue.taxId || '',
         name: formValue.name || '',
@@ -267,8 +415,7 @@ export class Detail implements OnDestroy {
             summary: this.translocoService.translate('registerBusiness.messages.success'),
             detail: this.translocoService.translate('registerBusiness.messages.successDetail'),
           });
-          // Navigate to organization detail view
-          this.router.navigate(['/organization/detail']);
+          this.router.navigate(['/organization', response.id]);
         },
         error: (error: any) => {
           console.error('Organization registration failed:', error);
@@ -291,5 +438,185 @@ export class Detail implements OnDestroy {
       });
       this.isSubmitting.set(false);
     }
+  }
+
+  protected onOpenEditDialog(): void {
+    if (this.organization()) {
+      this.populateEditForm(this.organization()!);
+      this.showEditDialog.set(true);
+    }
+  }
+
+  protected onCloseEditDialog(): void {
+    this.showEditDialog.set(false);
+  }
+
+  protected async onSaveEdit(): Promise<void> {
+    if (this.registrationForm.invalid || !this.organizationId()) {
+      this.registrationForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSubmitting.set(true);
+
+    try {
+      const formValue = this.registrationForm.value;
+
+      const dto: UpdateOrganizationDto = {
+        taxId: formValue.taxId || undefined,
+        name: formValue.name || undefined,
+        internationalName: formValue.internationalName || undefined,
+        headquartersAddress: formValue.headquartersAddress || undefined,
+        legalRepresentative: formValue.legalRepresentative || undefined,
+        contactPhone: formValue.contactPhone || undefined,
+        contactEmail: formValue.contactEmail || undefined,
+        foundedDate: formValue.foundedDate ? formValue.foundedDate.toISOString() : undefined,
+        businessActivities: formValue.businessActivities || undefined,
+      };
+
+      this.organizationService.updateOrganization(this.organizationId()!, dto).subscribe({
+        next: (response) => {
+          this.organization.set(response);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translocoService.translate('organization.detail.edit.success'),
+          });
+          this.showEditDialog.set(false);
+          this.isSubmitting.set(false);
+        },
+        error: (error: any) => {
+          console.error('Organization update failed:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translocoService.translate('organization.detail.edit.error'),
+            detail: error?.error?.message || 'Failed to update organization',
+          });
+          this.isSubmitting.set(false);
+        },
+      });
+    } catch (error) {
+      console.error('Update failed:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translocoService.translate('organization.detail.edit.error'),
+      });
+      this.isSubmitting.set(false);
+    }
+  }
+
+  protected onOpenInviteDialog(): void {
+    this.inviteForm.reset({ email: '', role: 'member' });
+    this.showInviteDialog.set(true);
+  }
+
+  protected onCloseInviteDialog(): void {
+    this.showInviteDialog.set(false);
+  }
+
+  protected async onSendInvite(): Promise<void> {
+    if (this.inviteForm.invalid || !this.organizationId()) {
+      this.inviteForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSubmitting.set(true);
+
+    try {
+      const formValue = this.inviteForm.value;
+
+      const dto: InviteMemberDto = {
+        email: formValue.email || '',
+        role: formValue.role || 'member',
+      };
+
+      this.organizationService.inviteMember(this.organizationId()!, dto).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translocoService.translate('organization.detail.members.invite.success'),
+          });
+          this.showInviteDialog.set(false);
+          this.isSubmitting.set(false);
+          // Reload members
+          this.loadMembers(this.organizationId()!);
+        },
+        error: (error: any) => {
+          console.error('Invite failed:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translocoService.translate('organization.detail.members.invite.error'),
+            detail: error?.error?.message || 'Failed to send invitation',
+          });
+          this.isSubmitting.set(false);
+        },
+      });
+    } catch (error) {
+      console.error('Invite failed:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translocoService.translate('organization.detail.members.invite.error'),
+      });
+      this.isSubmitting.set(false);
+    }
+  }
+
+  protected onRemoveMember(memberId: string): void {
+    if (!this.organizationId()) return;
+
+    this.organizationService.removeMember(this.organizationId()!, memberId).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Member removed successfully',
+        });
+        this.loadMembers(this.organizationId()!);
+      },
+      error: (error: any) => {
+        console.error('Remove member failed:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Failed to remove member',
+          detail: error?.error?.message || 'An error occurred',
+        });
+      },
+    });
+  }
+
+  protected onNewSubsidiary(): void {
+    this.router.navigate(['/organization/new'], {
+      queryParams: { parentId: this.organizationId() },
+    });
+  }
+
+  protected onViewRelatedOrg(orgId: string): void {
+    this.router.navigate(['/organization', orgId]);
+  }
+
+  protected async copyToClipboard(text: string): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(text);
+      this.messageService.add({
+        severity: 'success',
+        summary: this.translocoService.translate('organization.detail.info.copied'),
+        life: 2000,
+      });
+    } catch (error) {
+      console.error('Failed to copy:', error);
+    }
+  }
+
+  protected getMemberStatusSeverity(status: string): 'success' | 'warn' | 'secondary' {
+    switch (status) {
+      case 'active':
+        return 'success';
+      case 'pending':
+        return 'warn';
+      default:
+        return 'secondary';
+    }
+  }
+
+  protected formatDate(dateString: string): string {
+    return new Date(dateString).toLocaleDateString();
   }
 }

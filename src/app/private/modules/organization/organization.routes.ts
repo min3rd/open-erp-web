@@ -13,13 +13,7 @@ export const routes: Routes = [
         component: Detail,
       },
       {
-        path: 'detail',
-        pathMatch: 'full',
-        component: Detail,
-      },
-      {
-        path: 'edit',
-        pathMatch: 'full',
+        path: ':id',
         component: Detail,
       },
     ],

@@ -242,6 +242,100 @@
     "tabs": {
       "register": "Register",
       "info": "Information"
+    },
+    "detail": {
+      "title": "Organization Details",
+      "loading": "Loading organization details...",
+      "notFound": "Organization not found",
+      "tabs": {
+        "overview": "Overview",
+        "members": "Members",
+        "relations": "Relations & Structure",
+        "activity": "Activity Log",
+        "documents": "Documents"
+      },
+      "info": {
+        "basicInfo": "Basic Information",
+        "taxId": "Tax ID",
+        "name": "Business Name",
+        "internationalName": "International Name",
+        "address": "Headquarters Address",
+        "legalRepresentative": "Legal Representative",
+        "contactPhone": "Contact Phone",
+        "contactEmail": "Contact Email",
+        "foundedDate": "Founded Date",
+        "status": "Status",
+        "businessActivities": "Business Activities",
+        "createdAt": "Created At",
+        "updatedAt": "Last Updated",
+        "copy": "Copy to clipboard",
+        "copied": "Copied!",
+        "noActivities": "No business activities listed"
+      },
+      "actions": {
+        "edit": "Edit",
+        "invite": "Invite Member",
+        "newSubsidiary": "New Subsidiary",
+        "save": "Save",
+        "cancel": "Cancel",
+        "close": "Close"
+      },
+      "members": {
+        "title": "Organization Members",
+        "empty": "No members found",
+        "table": {
+          "name": "Name",
+          "email": "Email",
+          "role": "Role",
+          "status": "Status",
+          "joinedAt": "Joined",
+          "actions": "Actions"
+        },
+        "status": {
+          "active": "Active",
+          "pending": "Pending",
+          "inactive": "Inactive"
+        },
+        "actions": {
+          "remove": "Remove",
+          "promote": "Promote"
+        },
+        "invite": {
+          "title": "Invite Member",
+          "email": "Email Address",
+          "emailPlaceholder": "Enter email address",
+          "role": "Role",
+          "rolePlaceholder": "Select role",
+          "submit": "Send Invitation",
+          "success": "Invitation sent successfully",
+          "error": "Failed to send invitation"
+        }
+      },
+      "relations": {
+        "title": "Organization Structure",
+        "empty": "No relations found",
+        "parent": "Parent Organization",
+        "children": "Subsidiaries",
+        "partners": "Partners",
+        "type": {
+          "subsidiary": "Subsidiary",
+          "parent": "Parent",
+          "partner": "Partner",
+          "joint_venture": "Joint Venture"
+        },
+        "sharePercentage": "Share",
+        "viewDetails": "View Details"
+      },
+      "activity": {
+        "title": "Activity Log",
+        "empty": "No activity recorded",
+        "loadMore": "Load More"
+      },
+      "edit": {
+        "title": "Edit Organization",
+        "success": "Organization updated successfully",
+        "error": "Failed to update organization"
+      }
     }
   },
   "registerBusiness": {

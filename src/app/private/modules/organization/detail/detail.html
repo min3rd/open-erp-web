@@ -1,6 +1,6 @@
 <div id="organization-detail-container" class="flex flex-col h-full">
-  @if (isNewMode) {
-  <!-- Toolbar Header -->
+  @if (isNewMode()) {
+  <!-- NEW MODE: Register Organization -->
   <div class="p-2 border-b border-surface-200 dark:border-surface-700">
     <p-toolbar id="organization-new-toolbar">
       <ng-template pTemplate="start">
@@ -260,37 +260,775 @@
       </form>
     </div>
   </div>
-  } @else if (isDetailMode) {
-  <!-- Toolbar Header for Detail View -->
-  <p-toolbar
-    id="organization-detail-toolbar"
-    styleClass="border-b border-surface-200 dark:border-surface-700 mb-0"
-  >
-    <ng-template pTemplate="start">
-      <div class="flex items-center gap-2">
-        <i class="pi pi-info-circle text-xl" aria-hidden="true"></i>
-        <h1
-          id="organization-detail-title"
-          class="text-xl font-semibold text-surface-900 dark:text-surface-0 m-0"
-        >
-          {{ 'organization.navigation.detail' | transloco }}
-        </h1>
-      </div>
-    </ng-template>
-    <ng-template pTemplate="end">
-      <div class="flex gap-2">
-        <p-button label="Edit" icon="pi pi-pencil" severity="secondary" outlined="true" />
-      </div>
-    </ng-template>
-  </p-toolbar>
+  } @else if (isViewMode()) {
+  <!-- VIEW MODE: Organization Detail -->
+  <div class="p-2 border-b border-surface-200 dark:border-surface-700">
+    <p-toolbar id="organization-detail-toolbar">
+      <ng-template pTemplate="start">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-building text-xl" aria-hidden="true"></i>
+          <h1
+            id="organization-detail-title"
+            class="text-xl font-semibold text-surface-900 dark:text-surface-0 m-0"
+          >
+            {{ organization()?.name || ('organization.detail.title' | transloco) }}
+          </h1>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="end">
+        <div class="flex gap-2">
+          <p-button
+            id="organization-edit-button"
+            [label]="'organization.detail.actions.edit' | transloco"
+            icon="pi pi-pencil"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="onOpenEditDialog()"
+            [disabled]="isLoading()"
+          />
+          <p-button
+            id="organization-invite-button"
+            [label]="'organization.detail.actions.invite' | transloco"
+            icon="pi pi-user-plus"
+            severity="primary"
+            [outlined]="true"
+            (onClick)="onOpenInviteDialog()"
+            [disabled]="isLoading()"
+          />
+          <p-button
+            id="organization-new-subsidiary-button"
+            [label]="'organization.detail.actions.newSubsidiary' | transloco"
+            icon="pi pi-plus"
+            severity="primary"
+            (onClick)="onNewSubsidiary()"
+            [disabled]="isLoading()"
+          />
+        </div>
+      </ng-template>
+    </p-toolbar>
+  </div>
 
   <!-- Content Area -->
   <div class="flex-1 overflow-auto">
-    <div class="p-6">
-      <p id="organization-detail-description" class="text-surface-700 dark:text-surface-300">
-        This is the organization information view. Here you can see organization details.
-      </p>
+    @if (isLoading()) {
+    <!-- Loading State -->
+    <div class="p-6 space-y-4">
+      <p-skeleton height="2rem" styleClass="mb-4"></p-skeleton>
+      <p-skeleton height="10rem"></p-skeleton>
+      <p-skeleton height="10rem"></p-skeleton>
     </div>
+    } @else if (organization()) {
+    <!-- Desktop Layout: 3-column -->
+    <div class="hidden lg:grid lg:grid-cols-12 gap-6 p-6 h-full">
+      <!-- Left Column: Info Panel (~320px) -->
+      <div class="col-span-3">
+        <p-card
+          id="organization-info-card"
+          [header]="'organization.detail.info.basicInfo' | transloco"
+          styleClass="h-fit"
+        >
+          <div class="space-y-4">
+            <!-- Tax ID -->
+            <div>
+              <label
+                id="org-info-taxId-label"
+                class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1"
+                >{{ 'organization.detail.info.taxId' | transloco }}</label
+              >
+              <div class="flex items-center gap-2">
+                <span id="org-info-taxId-value" class="text-surface-900 dark:text-surface-0">{{
+                  organization()!.taxId
+                }}</span>
+                <p-button
+                  id="org-info-taxId-copy"
+                  icon="pi pi-copy"
+                  [text]="true"
+                  [rounded]="true"
+                  size="small"
+                  severity="secondary"
+                  (onClick)="copyToClipboard(organization()!.taxId)"
+                  [pTooltip]="'organization.detail.info.copy' | transloco"
+                  [attr.aria-label]="'organization.detail.info.copy' | transloco"
+                />
+              </div>
+            </div>
+
+            <!-- Status -->
+            @if (organization()!.status) {
+            <div>
+              <label
+                id="org-info-status-label"
+                class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1"
+                >{{ 'organization.detail.info.status' | transloco }}</label
+              >
+              <p-tag
+                id="org-info-status-value"
+                [value]="organization()!.status"
+                severity="success"
+              ></p-tag>
+            </div>
+            }
+
+            <!-- International Name -->
+            <div>
+              <label
+                id="org-info-intlName-label"
+                class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1"
+                >{{ 'organization.detail.info.internationalName' | transloco }}</label
+              >
+              <span id="org-info-intlName-value" class="text-surface-900 dark:text-surface-0">{{
+                organization()!.internationalName
+              }}</span>
+            </div>
+
+            <!-- Address -->
+            <div>
+              <label
+                id="org-info-address-label"
+                class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1"
+                >{{ 'organization.detail.info.address' | transloco }}</label
+              >
+              <span id="org-info-address-value" class="text-surface-900 dark:text-surface-0">{{
+                organization()!.headquartersAddress
+              }}</span>
+            </div>
+
+            <!-- Legal Representative -->
+            <div>
+              <label
+                id="org-info-legalRep-label"
+                class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1"
+                >{{ 'organization.detail.info.legalRepresentative' | transloco }}</label
+              >
+              <span id="org-info-legalRep-value" class="text-surface-900 dark:text-surface-0">{{
+                organization()!.legalRepresentative
+              }}</span>
+            </div>
+
+            <!-- Contact Phone -->
+            <div>
+              <label
+                id="org-info-phone-label"
+                class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1"
+                >{{ 'organization.detail.info.contactPhone' | transloco }}</label
+              >
+              <div class="flex items-center gap-2">
+                <span id="org-info-phone-value" class="text-surface-900 dark:text-surface-0">{{
+                  organization()!.contactPhone
+                }}</span>
+                <p-button
+                  id="org-info-phone-copy"
+                  icon="pi pi-copy"
+                  [text]="true"
+                  [rounded]="true"
+                  size="small"
+                  severity="secondary"
+                  (onClick)="copyToClipboard(organization()!.contactPhone)"
+                  [pTooltip]="'organization.detail.info.copy' | transloco"
+                  [attr.aria-label]="'organization.detail.info.copy' | transloco"
+                />
+              </div>
+            </div>
+
+            <!-- Contact Email -->
+            <div>
+              <label
+                id="org-info-email-label"
+                class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1"
+                >{{ 'organization.detail.info.contactEmail' | transloco }}</label
+              >
+              <div class="flex items-center gap-2">
+                <span id="org-info-email-value" class="text-surface-900 dark:text-surface-0">{{
+                  organization()!.contactEmail
+                }}</span>
+                <p-button
+                  id="org-info-email-copy"
+                  icon="pi pi-copy"
+                  [text]="true"
+                  [rounded]="true"
+                  size="small"
+                  severity="secondary"
+                  (onClick)="copyToClipboard(organization()!.contactEmail)"
+                  [pTooltip]="'organization.detail.info.copy' | transloco"
+                  [attr.aria-label]="'organization.detail.info.copy' | transloco"
+                />
+              </div>
+            </div>
+
+            <!-- Founded Date -->
+            <div>
+              <label
+                id="org-info-founded-label"
+                class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1"
+                >{{ 'organization.detail.info.foundedDate' | transloco }}</label
+              >
+              <span id="org-info-founded-value" class="text-surface-900 dark:text-surface-0">{{
+                formatDate(organization()!.foundedDate)
+              }}</span>
+            </div>
+
+            <!-- Business Activities -->
+            @if (organization()!.businessActivities &&
+            organization()!.businessActivities!.length > 0) {
+            <div>
+              <label
+                id="org-info-activities-label"
+                class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1"
+                >{{ 'organization.detail.info.businessActivities' | transloco }}</label
+              >
+              <div id="org-info-activities-value" class="flex flex-wrap gap-2">
+                @for (activity of organization()!.businessActivities; track activity) {
+                <p-tag [value]="activity" severity="secondary"></p-tag>
+                }
+              </div>
+            </div>
+            }
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Main Column: Tabs -->
+      <div class="col-span-9">
+        <p-tabview
+          id="organization-detail-tabs"
+          [(activeIndex)]="activeTabIndex"
+          styleClass="h-full"
+        >
+          <!-- Overview Tab -->
+          <p-tabpanel [header]="'organization.detail.tabs.overview' | transloco">
+            <div id="organization-overview-tab" class="space-y-4">
+              <div>
+                <h2
+                  id="organization-overview-title"
+                  class="text-lg font-semibold text-surface-900 dark:text-surface-0 mb-4"
+                >
+                  {{ 'organization.detail.info.basicInfo' | transloco }}
+                </h2>
+                <p id="organization-overview-description" class="text-surface-700 dark:text-surface-300">
+                  {{ organization()!.name }} ({{ organization()!.internationalName }})
+                </p>
+                <p class="text-sm text-surface-600 dark:text-surface-400 mt-2">
+                  {{ 'organization.detail.info.createdAt' | transloco }}:
+                  {{ formatDate(organization()!.createdAt) }}
+                </p>
+                <p class="text-sm text-surface-600 dark:text-surface-400">
+                  {{ 'organization.detail.info.updatedAt' | transloco }}:
+                  {{ formatDate(organization()!.updatedAt) }}
+                </p>
+              </div>
+            </div>
+          </p-tabpanel>
+
+          <!-- Members Tab -->
+          <p-tabpanel [header]="'organization.detail.tabs.members' | transloco">
+            <div id="organization-members-tab" class="space-y-4">
+              <div class="flex justify-between items-center mb-4">
+                <h2
+                  id="organization-members-title"
+                  class="text-lg font-semibold text-surface-900 dark:text-surface-0"
+                >
+                  {{ 'organization.detail.members.title' | transloco }}
+                </h2>
+              </div>
+
+              @if (members().length > 0) {
+              <p-table
+                id="organization-members-table"
+                [value]="members()"
+                [paginator]="true"
+                [rows]="membersLimit()"
+                [totalRecords]="membersTotal()"
+                [lazy]="true"
+                styleClass="p-datatable-sm"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th id="members-table-header-name">
+                      {{ 'organization.detail.members.table.name' | transloco }}
+                    </th>
+                    <th id="members-table-header-email">
+                      {{ 'organization.detail.members.table.email' | transloco }}
+                    </th>
+                    <th id="members-table-header-role">
+                      {{ 'organization.detail.members.table.role' | transloco }}
+                    </th>
+                    <th id="members-table-header-status">
+                      {{ 'organization.detail.members.table.status' | transloco }}
+                    </th>
+                    <th id="members-table-header-joined">
+                      {{ 'organization.detail.members.table.joinedAt' | transloco }}
+                    </th>
+                    <th id="members-table-header-actions">
+                      {{ 'organization.detail.members.table.actions' | transloco }}
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-member>
+                  <tr>
+                    <td>{{ member.fullName }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>{{ member.role }}</td>
+                    <td>
+                      <p-tag
+                        [value]="'organization.detail.members.status.' + member.status | transloco"
+                        [severity]="getMemberStatusSeverity(member.status)"
+                      ></p-tag>
+                    </td>
+                    <td>{{ formatDate(member.joinedAt) }}</td>
+                    <td>
+                      <p-button
+                        icon="pi pi-trash"
+                        [text]="true"
+                        [rounded]="true"
+                        size="small"
+                        severity="danger"
+                        (onClick)="onRemoveMember(member.id)"
+                        [pTooltip]="'organization.detail.members.actions.remove' | transloco"
+                      />
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+              } @else {
+              <div id="organization-members-empty" class="text-center py-8">
+                <i class="pi pi-users text-4xl text-surface-400 mb-4"></i>
+                <p class="text-surface-600 dark:text-surface-400">
+                  {{ 'organization.detail.members.empty' | transloco }}
+                </p>
+              </div>
+              }
+            </div>
+          </p-tabpanel>
+
+          <!-- Relations & Structure Tab -->
+          <p-tabpanel [header]="'organization.detail.tabs.relations' | transloco">
+            <div id="organization-relations-tab" class="space-y-4">
+              <h2
+                id="organization-relations-title"
+                class="text-lg font-semibold text-surface-900 dark:text-surface-0 mb-4"
+              >
+                {{ 'organization.detail.relations.title' | transloco }}
+              </h2>
+
+              @if (relations().length > 0) {
+              <div id="organization-relations-list" class="space-y-3">
+                @for (relation of relations(); track relation.id) {
+                <p-card styleClass="cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800">
+                  <div class="flex justify-between items-center">
+                    <div>
+                      <h3 class="font-semibold text-surface-900 dark:text-surface-0">
+                        {{ relation.relatedOrganization.name }}
+                      </h3>
+                      <p class="text-sm text-surface-600 dark:text-surface-400">
+                        {{ relation.relatedOrganization.internationalName }}
+                      </p>
+                      <div class="flex gap-2 mt-2">
+                        <p-tag
+                          [value]="
+                            'organization.detail.relations.type.' + relation.relationType
+                              | transloco
+                          "
+                          severity="info"
+                        ></p-tag>
+                        @if (relation.sharePercentage) {
+                        <p-tag
+                          [value]="
+                            ('organization.detail.relations.sharePercentage' | transloco) +
+                            ': ' +
+                            relation.sharePercentage +
+                            '%'
+                          "
+                          severity="secondary"
+                        ></p-tag>
+                        }
+                      </div>
+                    </div>
+                    <p-button
+                      [label]="'organization.detail.relations.viewDetails' | transloco"
+                      icon="pi pi-arrow-right"
+                      severity="secondary"
+                      [outlined]="true"
+                      (onClick)="onViewRelatedOrg(relation.relatedOrganizationId)"
+                    />
+                  </div>
+                </p-card>
+                }
+              </div>
+              } @else {
+              <div id="organization-relations-empty" class="text-center py-8">
+                <i class="pi pi-sitemap text-4xl text-surface-400 mb-4"></i>
+                <p class="text-surface-600 dark:text-surface-400">
+                  {{ 'organization.detail.relations.empty' | transloco }}
+                </p>
+              </div>
+              }
+            </div>
+          </p-tabpanel>
+
+          <!-- Activity Log Tab -->
+          <p-tabpanel [header]="'organization.detail.tabs.activity' | transloco">
+            <div id="organization-activity-tab" class="space-y-4">
+              <h2
+                id="organization-activity-title"
+                class="text-lg font-semibold text-surface-900 dark:text-surface-0 mb-4"
+              >
+                {{ 'organization.detail.activity.title' | transloco }}
+              </h2>
+
+              @if (events().length > 0) {
+              <p-timeline id="organization-activity-timeline" [value]="events()" align="left">
+                <ng-template pTemplate="content" let-event>
+                  <div class="space-y-1">
+                    <h4 class="font-semibold text-surface-900 dark:text-surface-0">
+                      {{ event.type }}
+                    </h4>
+                    <p class="text-sm text-surface-700 dark:text-surface-300">
+                      {{ event.description }}
+                    </p>
+                    @if (event.username) {
+                    <p class="text-xs text-surface-600 dark:text-surface-400">
+                      by {{ event.username }}
+                    </p>
+                    }
+                    <p class="text-xs text-surface-500">{{ formatDate(event.createdAt) }}</p>
+                  </div>
+                </ng-template>
+              </p-timeline>
+              } @else {
+              <div id="organization-activity-empty" class="text-center py-8">
+                <i class="pi pi-history text-4xl text-surface-400 mb-4"></i>
+                <p class="text-surface-600 dark:text-surface-400">
+                  {{ 'organization.detail.activity.empty' | transloco }}
+                </p>
+              </div>
+              }
+            </div>
+          </p-tabpanel>
+
+          <!-- Documents Tab (Placeholder) -->
+          <p-tabpanel [header]="'organization.detail.tabs.documents' | transloco">
+            <div id="organization-documents-tab" class="text-center py-8">
+              <i class="pi pi-file text-4xl text-surface-400 mb-4"></i>
+              <p class="text-surface-600 dark:text-surface-400">Documents section coming soon</p>
+            </div>
+          </p-tabpanel>
+        </p-tabview>
+      </div>
+    </div>
+
+    <!-- Mobile Layout: Stacked -->
+    <div class="lg:hidden p-4 space-y-4">
+      <!-- Info Card -->
+      <p-card
+        id="organization-mobile-info-card"
+        [header]="'organization.detail.info.basicInfo' | transloco"
+      >
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">{{
+              'organization.detail.info.taxId' | transloco
+            }}</label>
+            <div class="flex items-center gap-2">
+              <span class="text-surface-900 dark:text-surface-0">{{ organization()!.taxId }}</span>
+              <p-button
+                icon="pi pi-copy"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                severity="secondary"
+                (onClick)="copyToClipboard(organization()!.taxId)"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-1">{{
+              'organization.detail.info.internationalName' | transloco
+            }}</label>
+            <span class="text-surface-900 dark:text-surface-0">{{
+              organization()!.internationalName
+            }}</span>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Tabs for Mobile -->
+      <p-tabview id="organization-mobile-tabs" [(activeIndex)]="activeTabIndex">
+        <!-- Same tab content as desktop but adapted for mobile -->
+        <p-tabpanel [header]="'organization.detail.tabs.overview' | transloco">
+          <div class="space-y-4">
+            <p>{{ organization()!.name }}</p>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel [header]="'organization.detail.tabs.members' | transloco">
+          @if (members().length > 0) {
+          <div class="space-y-3">
+            @for (member of members(); track member.id) {
+            <p-card>
+              <div class="space-y-2">
+                <h3 class="font-semibold">{{ member.fullName }}</h3>
+                <p class="text-sm text-surface-600">{{ member.email }}</p>
+                <div class="flex gap-2">
+                  <p-tag [value]="member.role" severity="info"></p-tag>
+                  <p-tag
+                    [value]="'organization.detail.members.status.' + member.status | transloco"
+                    [severity]="getMemberStatusSeverity(member.status)"
+                  ></p-tag>
+                </div>
+              </div>
+            </p-card>
+            }
+          </div>
+          } @else {
+          <div class="text-center py-8">
+            <i class="pi pi-users text-4xl text-surface-400 mb-4"></i>
+            <p>{{ 'organization.detail.members.empty' | transloco }}</p>
+          </div>
+          }
+        </p-tabpanel>
+
+        <p-tabpanel [header]="'organization.detail.tabs.relations' | transloco">
+          @if (relations().length > 0) {
+          <div class="space-y-3">
+            @for (relation of relations(); track relation.id) {
+            <p-card (click)="onViewRelatedOrg(relation.relatedOrganizationId)">
+              <div class="space-y-2">
+                <h3 class="font-semibold">{{ relation.relatedOrganization.name }}</h3>
+                <p class="text-sm">{{ relation.relatedOrganization.internationalName }}</p>
+                <p-tag
+                  [value]="
+                    'organization.detail.relations.type.' + relation.relationType | transloco
+                  "
+                ></p-tag>
+              </div>
+            </p-card>
+            }
+          </div>
+          } @else {
+          <div class="text-center py-8">
+            <i class="pi pi-sitemap text-4xl text-surface-400 mb-4"></i>
+            <p>{{ 'organization.detail.relations.empty' | transloco }}</p>
+          </div>
+          }
+        </p-tabpanel>
+
+        <p-tabpanel [header]="'organization.detail.tabs.activity' | transloco">
+          @if (events().length > 0) {
+          <div class="space-y-3">
+            @for (event of events(); track event.id) {
+            <p-card>
+              <div class="space-y-1">
+                <h4 class="font-semibold">{{ event.type }}</h4>
+                <p class="text-sm">{{ event.description }}</p>
+                <p class="text-xs text-surface-500">{{ formatDate(event.createdAt) }}</p>
+              </div>
+            </p-card>
+            }
+          </div>
+          } @else {
+          <div class="text-center py-8">
+            <i class="pi pi-history text-4xl text-surface-400 mb-4"></i>
+            <p>{{ 'organization.detail.activity.empty' | transloco }}</p>
+          </div>
+          }
+        </p-tabpanel>
+      </p-tabview>
+    </div>
+    }
   </div>
   }
 </div>
+
+<!-- Edit Dialog -->
+<p-dialog
+  id="organization-edit-dialog"
+  [header]="'organization.detail.edit.title' | transloco"
+  [(visible)]="showEditDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '50rem' }"
+  [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+>
+  <form [formGroup]="registrationForm" class="space-y-4">
+    <!-- Tax ID -->
+    <div>
+      <label for="edit-taxId" class="block text-sm font-medium mb-1">
+        {{ 'registerBusiness.form.taxId.label' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="edit-taxId"
+        type="text"
+        formControlName="taxId"
+        class="w-full"
+      />
+    </div>
+
+    <!-- Name -->
+    <div>
+      <label for="edit-name" class="block text-sm font-medium mb-1">
+        {{ 'registerBusiness.form.name.label' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="edit-name"
+        type="text"
+        formControlName="name"
+        class="w-full"
+      />
+    </div>
+
+    <!-- International Name -->
+    <div>
+      <label for="edit-internationalName" class="block text-sm font-medium mb-1">
+        {{ 'registerBusiness.form.internationalName.label' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="edit-internationalName"
+        type="text"
+        formControlName="internationalName"
+        class="w-full"
+      />
+    </div>
+
+    <!-- Address -->
+    <div>
+      <label for="edit-headquartersAddress" class="block text-sm font-medium mb-1">
+        {{ 'registerBusiness.form.headquartersAddress.label' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="edit-headquartersAddress"
+        type="text"
+        formControlName="headquartersAddress"
+        class="w-full"
+      />
+    </div>
+
+    <!-- Legal Representative -->
+    <div>
+      <label for="edit-legalRepresentative" class="block text-sm font-medium mb-1">
+        {{ 'registerBusiness.form.legalRepresentative.label' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="edit-legalRepresentative"
+        type="text"
+        formControlName="legalRepresentative"
+        class="w-full"
+      />
+    </div>
+
+    <!-- Contact Phone -->
+    <div>
+      <label for="edit-contactPhone" class="block text-sm font-medium mb-1">
+        {{ 'registerBusiness.form.contactPhone.label' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="edit-contactPhone"
+        type="tel"
+        formControlName="contactPhone"
+        class="w-full"
+      />
+    </div>
+
+    <!-- Contact Email -->
+    <div>
+      <label for="edit-contactEmail" class="block text-sm font-medium mb-1">
+        {{ 'registerBusiness.form.contactEmail.label' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="edit-contactEmail"
+        type="email"
+        formControlName="contactEmail"
+        class="w-full"
+      />
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      id="edit-dialog-cancel-button"
+      [label]="'organization.detail.actions.cancel' | transloco"
+      icon="pi pi-times"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="onCloseEditDialog()"
+    />
+    <p-button
+      id="edit-dialog-save-button"
+      [label]="'organization.detail.actions.save' | transloco"
+      icon="pi pi-check"
+      severity="primary"
+      (onClick)="onSaveEdit()"
+      [loading]="isSubmitting()"
+      [disabled]="!registrationForm.valid"
+    />
+  </ng-template>
+</p-dialog>
+
+<!-- Invite Member Dialog -->
+<p-dialog
+  id="organization-invite-dialog"
+  [header]="'organization.detail.members.invite.title' | transloco"
+  [(visible)]="showInviteDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '30rem' }"
+  [breakpoints]="{ '640px': '90vw' }"
+>
+  <form [formGroup]="inviteForm" class="space-y-4">
+    <!-- Email -->
+    <div>
+      <label for="invite-email" class="block text-sm font-medium mb-1">
+        {{ 'organization.detail.members.invite.email' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="invite-email"
+        type="email"
+        formControlName="email"
+        [placeholder]="'organization.detail.members.invite.emailPlaceholder' | transloco"
+        class="w-full"
+      />
+    </div>
+
+    <!-- Role -->
+    <div>
+      <label for="invite-role" class="block text-sm font-medium mb-1">
+        {{ 'organization.detail.members.invite.role' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="invite-role"
+        type="text"
+        formControlName="role"
+        [placeholder]="'organization.detail.members.invite.rolePlaceholder' | transloco"
+        class="w-full"
+      />
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      id="invite-dialog-cancel-button"
+      [label]="'organization.detail.actions.cancel' | transloco"
+      icon="pi pi-times"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="onCloseInviteDialog()"
+    />
+    <p-button
+      id="invite-dialog-send-button"
+      [label]="'organization.detail.members.invite.submit' | transloco"
+      icon="pi pi-send"
+      severity="primary"
+      (onClick)="onSendInvite()"
+      [loading]="isSubmitting()"
+      [disabled]="!inviteForm.valid"
+    />
+  </ng-template>
+</p-dialog>
