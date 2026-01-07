@@ -487,5 +487,16 @@
     "footer": {
       "helpText": "Need help? Contact our support team"
     }
+  },
+  "management": {
+    "title": "Management",
+    "navigation": {
+      "user": "User Management",
+      "toggleNavMode": "Toggle navigation mode",
+      "toggleMenu": "Toggle menu"
+    },
+    "tabs": {
+      "user": "Users"
+    }
   }
 }
