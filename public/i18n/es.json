@@ -413,7 +413,9 @@
     },
     "search": {
       "label": "Buscar usuarios",
-      "placeholder": "Buscar por nombre, correo o teléfono"
+      "placeholder": "Buscar por nombre, correo o teléfono",
+      "openSearch": "Abrir búsqueda",
+      "closeSearch": "Cerrar búsqueda"
     },
     "addButton": {
       "label": "Agregar nuevo usuario",
@@ -421,6 +423,18 @@
     },
     "actionsButton": {
       "label": "Abrir menú de acciones"
+    },
+    "refreshButton": {
+      "label": "Actualizar lista de usuarios",
+      "tooltip": "Actualizar"
+    },
+    "filterButton": {
+      "label": "Filtrar usuarios",
+      "tooltip": "Filtrar"
+    },
+    "exportButton": {
+      "label": "Exportar usuarios",
+      "tooltip": "Exportar"
     },
     "actions": {
       "downloadCSV": "Descargar CSV",
@@ -443,9 +457,17 @@
       "view": "Ver",
       "edit": "Editar"
     },
+    "mobileList": {
+      "itemActions": "Acciones de usuario",
+      "invite": "Invitar",
+      "disable": "Deshabilitar"
+    },
     "pagination": {
       "report": "Mostrando {first} a {last} de {totalRecords} usuarios",
-      "itemsPerPage": "Elementos por página:"
+      "itemsPerPage": "Elementos por página:",
+      "previous": "Página anterior",
+      "next": "Página siguiente",
+      "showing": "{first}–{last} de {total}"
     },
     "messages": {
       "loading": "Cargando usuarios...",
