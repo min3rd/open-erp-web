@@ -21,11 +21,11 @@ import { OrganizationService } from '../../services/organization-service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganizationSwitcher implements OnInit {
-  private tenantContextService = inject(OrganizationContextService);
+  private organizationContextService = inject(OrganizationContextService);
   private organizationService = inject(OrganizationService);
 
-  organizations = this.tenantContextService.userOrganizations;
-  selectedOrganization = this.tenantContextService.currentOrganization;
+  organizations = this.organizationContextService.userOrganizations;
+  selectedOrganization = this.organizationContextService.currentOrganization;
 
   loading = signal(false);
   error = signal<string | null>(null);
@@ -51,14 +51,14 @@ export class OrganizationSwitcher implements OnInit {
     }
 
     // Watch for changes to selected organization from context
-    this.tenantContextService.organizationChanged$.subscribe((org) => {
+    this.organizationContextService.organizationChanged$.subscribe((org) => {
       this.selectedOrgId.set(org?.id || null);
     });
   }
 
   onOrganizationChange(organizationId: string): void {
     if (organizationId) {
-      const success = this.tenantContextService.switchOrganization(organizationId);
+      const success = this.organizationContextService.switchOrganization(organizationId);
       if (!success) {
         this.error.set('Failed to switch organization');
       }
@@ -72,13 +72,13 @@ export class OrganizationSwitcher implements OnInit {
     // Call backend API to get user's organizations
     this.organizationService.getUserOrganizations().subscribe({
       next: (orgs) => {
-        const tenantOrgs: OrganizationMetadata[] = orgs.map((org) => ({
+        const mappedOrganizations: OrganizationMetadata[] = orgs.map((org) => ({
           id: org.id,
           name: org.name,
           internationalName: org.internationalName,
           taxId: org.taxId,
         }));
-        this.tenantContextService.setUserOrganizations(tenantOrgs);
+        this.organizationContextService.setUserOrganizations(mappedOrganizations);
         this.loading.set(false);
       },
       error: (err) => {

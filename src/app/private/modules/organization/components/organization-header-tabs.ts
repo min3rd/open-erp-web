@@ -11,10 +11,10 @@ import { OrganizationContextService } from '../../../../../core/services/organiz
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganizationHeaderTabs {
-  private tenantContextService = inject(OrganizationContextService);
+  private organizationContextService = inject(OrganizationContextService);
 
   router = inject(Router);
-  curentOrganization = this.tenantContextService.currentOrganization;
+  curentOrganization = this.organizationContextService.currentOrganization;
 
   isActive(route: string): boolean {
     return this.router.isActive(route, {

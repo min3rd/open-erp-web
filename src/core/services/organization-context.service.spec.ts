@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { TenantContextService, TenantOrganization } from './tenant-context.service';
+import { OrganizationContextService, OrganizationMetadata } from './organization-context.service';
 
-describe('TenantContextService', () => {
-  let service: TenantContextService;
+describe('OrganizationContextService', () => {
+  let service: OrganizationContextService;
 
-  const mockOrganizations: TenantOrganization[] = [
+  const mockOrganizations: OrganizationMetadata[] = [
     {
       id: 'org-1',
       name: 'Organization One',
@@ -22,7 +22,7 @@ describe('TenantContextService', () => {
   beforeEach(() => {
     localStorage.clear();
     TestBed.configureTestingModule({});
-    service = TestBed.inject(TenantContextService);
+    service = TestBed.inject(OrganizationContextService);
   });
 
   afterEach(() => {
@@ -80,7 +80,7 @@ describe('TenantContextService', () => {
   describe('Organization Change Events', () => {
     it('should emit organization changed event', (done) => {
       service.setUserOrganizations(mockOrganizations);
-      
+
       service.organizationChanged$.subscribe((org) => {
         expect(org).toEqual(mockOrganizations[1]);
         done();
@@ -94,39 +94,39 @@ describe('TenantContextService', () => {
     it('should persist current organization ID to localStorage', async () => {
       service.setUserOrganizations(mockOrganizations);
       service.setCurrentOrganization(mockOrganizations[1]);
-      
+
       // Wait for effect to run
       await new Promise((resolve) => setTimeout(resolve, 100));
-      
-      expect(localStorage.getItem('app.tenant.currentOrgId')).toBe('org-2');
+
+      expect(localStorage.getItem('app.organization.currentOrgId')).toBe('org-2');
     });
 
     it('should restore saved organization on initialization', async () => {
       // Set a saved org ID before creating service
-      localStorage.setItem('app.tenant.currentOrgId', 'org-2');
-      
+      localStorage.setItem('app.organization.currentOrgId', 'org-2');
+
       // Create new service instance
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({});
-      const newService = TestBed.inject(TenantContextService);
-      
+      const newService = TestBed.inject(OrganizationContextService);
+
       // Set organizations - should restore saved org
       newService.setUserOrganizations(mockOrganizations);
-      
+
       expect(newService.currentOrganization()).toEqual(mockOrganizations[1]);
     });
 
     it('should clear localStorage when clearing organization', async () => {
       service.setUserOrganizations(mockOrganizations);
       service.setCurrentOrganization(mockOrganizations[0]);
-      
+
       await new Promise((resolve) => setTimeout(resolve, 100));
-      expect(localStorage.getItem('app.tenant.currentOrgId')).toBeTruthy();
-      
+      expect(localStorage.getItem('app.organization.currentOrgId')).toBeTruthy();
+
       service.clearCurrentOrganization();
       await new Promise((resolve) => setTimeout(resolve, 100));
-      
-      expect(localStorage.getItem('app.tenant.currentOrgId')).toBeNull();
+
+      expect(localStorage.getItem('app.organization.currentOrgId')).toBeNull();
     });
   });
 });

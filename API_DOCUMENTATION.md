@@ -6,7 +6,7 @@ This document details the backend API endpoints used for the vertical layout imp
 ## Backend Repository
 The backend APIs are defined in the `open-erp-backend` repository at:
 ```
-open-erp-backend/apps/tenant/src/controllers/organization.controller.ts
+open-erp-backend/apps/organization/src/controllers/organization.controller.ts
 ```
 
 ## Organization Management Endpoints
@@ -216,14 +216,14 @@ The following localStorage keys are used by the vertical layout features:
 1. **`app.nav.mode`** - Navigation mode ('narrow' | 'sidebar')
 2. **`app.nav.width`** - Navigation width in pixels (56-320)
 3. **`app.language`** - Selected language code ('en' | 'es')
-4. **`app.tenant.currentOrgId`** - Current selected organization ID
+4. **`app.organization.currentOrgId`** - Current selected organization ID
 5. **`organization.nav.mode`** - Organization module nav mode (existing, kept for compatibility)
 
 ---
 
 ## Frontend Services
 
-### TenantContextService
+### organizationContextService
 Global service for managing organization context across the application.
 
 **Key Methods:**

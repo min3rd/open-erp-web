@@ -58,7 +58,7 @@ export class List implements OnInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private userService = inject(UserService);
-  private tenantContext = inject(OrganizationContextService);
+  private organizationContext = inject(OrganizationContextService);
   private messageService = inject(MessageService);
   private translocoService = inject(TranslocoService);
   private destroy$ = new Subject<void>();
@@ -81,7 +81,7 @@ export class List implements OnInit, OnDestroy {
     Math.ceil(this.totalRecords() / this.pageSize())
   );
   protected readonly hasSelection = computed(() => this.selectedUsers().length > 0);
-  protected readonly currentOrganization = computed(() => this.tenantContext.currentOrganization());
+  protected readonly currentOrganization = computed(() => this.organizationContext.currentOrganization());
   protected readonly allSelected = computed(() => 
     this.users().length > 0 && this.selectedUsers().length === this.users().length
   );
@@ -155,7 +155,7 @@ export class List implements OnInit, OnDestroy {
     });
 
     // Listen for organization changes
-    this.tenantContext.organizationChanged$
+    this.organizationContext.organizationChanged$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         if (this.scope() === 'organization') {

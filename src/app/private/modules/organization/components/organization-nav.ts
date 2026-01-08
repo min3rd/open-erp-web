@@ -31,14 +31,14 @@ import { OrganizationContextService } from '../../../../../core/services/organiz
 export class OrganizationNav implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private layoutService = inject(OrganizationLayoutService);
-  private tenantContextService = inject(OrganizationContextService);
+  private organizationContextService = inject(OrganizationContextService);
   private router = inject(Router);
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   navMode = this.layoutService.navMode;
 
-  currentOrganization = this.tenantContextService.currentOrganization;
+  currentOrganization = this.organizationContextService.currentOrganization;
 
   onToggleNavMode(): void {
     this.layoutService.toggleNavMode();
@@ -54,7 +54,7 @@ export class OrganizationNav implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.tenantContextService.organizationChanged$
+    this.organizationContextService.organizationChanged$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((org) => {
         this.cdr.markForCheck();

@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
-import { API_URI_TENANT } from '../constant';
+import { API_URI_ORGANIZATION } from '../constant';
 
 export interface User {
   id: string;
@@ -98,8 +98,8 @@ export class UserService {
     // }
     //
     // const endpoint = params.scope === 'organization'
-    //   ? `${API_URI_TENANT}/organizations/${params.organizationId}/members`
-    //   : `${API_URI_TENANT}/users`;
+    //   ? `${API_URI_ORGANIZATION}/organizations/${params.organizationId}/members`
+    //   : `${API_URI_ORGANIZATION}/users`;
     //
     // return this.http.get<UserListResponse>(endpoint, { params: httpParams });
   }
@@ -110,7 +110,7 @@ export class UserService {
   blockUsers(userIds: string[]): Observable<void> {
     // Mock implementation
     return of(void 0).pipe(delay(500));
-    // return this.http.post<void>(`${API_URI_TENANT}/users/bulk/block`, { userIds });
+    // return this.http.post<void>(`${API_URI_ORGANIZATION}/users/bulk/block`, { userIds });
   }
 
   /**
@@ -119,7 +119,7 @@ export class UserService {
   revokeLoginSessions(userIds: string[]): Observable<void> {
     // Mock implementation
     return of(void 0).pipe(delay(500));
-    // return this.http.post<void>(`${API_URI_TENANT}/users/bulk/revoke-sessions`, { userIds });
+    // return this.http.post<void>(`${API_URI_ORGANIZATION}/users/bulk/revoke-sessions`, { userIds });
   }
 
   /**
@@ -130,7 +130,7 @@ export class UserService {
     const csvContent = 'ID,Username,Email,Full Name,Phone,Status\n';
     const blob = new Blob([csvContent], { type: 'text/csv' });
     return of(blob).pipe(delay(500));
-    // return this.http.post(`${API_URI_TENANT}/users/export`, params, {
+    // return this.http.post(`${API_URI_ORGANIZATION}/users/export`, params, {
     //   responseType: 'blob',
     // });
   }
