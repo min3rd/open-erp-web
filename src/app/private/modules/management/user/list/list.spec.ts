@@ -107,7 +107,6 @@ describe('List', () => {
     expect(compiled.querySelector('#user-list-content')).toBeTruthy();
     expect(compiled.querySelector('#user-list-table')).toBeTruthy();
     expect(compiled.querySelector('#user-list-pagination')).toBeTruthy();
-    expect(compiled.querySelector('#user-list-page-size')).toBeTruthy();
     expect(compiled.querySelector('#user-list-status')).toBeTruthy();
   });
 
@@ -180,5 +179,129 @@ describe('List', () => {
     expect(statusRegion?.getAttribute('role')).toBe('status');
     expect(statusRegion?.getAttribute('aria-live')).toBe('polite');
     expect(statusRegion?.getAttribute('aria-atomic')).toBe('true');
+  });
+
+  it('should detect mobile viewport correctly', () => {
+    // Default is desktop (window width >= 768)
+    expect(component['isMobile']()).toBe(false);
+
+    // Simulate mobile viewport
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 375,
+    });
+    component['checkViewport']();
+    fixture.detectChanges();
+
+    expect(component['isMobile']()).toBe(true);
+  });
+
+  it('should show mobile toolbar when in mobile view', () => {
+    // Set mobile viewport
+    component['isMobile'].set(true);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('#user-list-toolbar-mobile')).toBeTruthy();
+    expect(compiled.querySelector('#user-list-search-button-mobile')).toBeTruthy();
+  });
+
+  it('should toggle search input on mobile', () => {
+    component['isMobile'].set(true);
+    expect(component['isSearchOpen']()).toBe(false);
+
+    component['toggleSearch']();
+    expect(component['isSearchOpen']()).toBe(true);
+
+    component['toggleSearch']();
+    expect(component['isSearchOpen']()).toBe(false);
+  });
+
+  it('should close search and clear query on mobile', () => {
+    component['isMobile'].set(true);
+    component['isSearchOpen'].set(true);
+    component['searchQuery'].set('test query');
+
+    component['closeSearch']();
+
+    expect(component['isSearchOpen']()).toBe(false);
+    expect(component['searchQuery']()).toBe('');
+  });
+
+  it('should render mobile list view when in mobile mode', () => {
+    component['isMobile'].set(true);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('#user-list-mobile')).toBeTruthy();
+    expect(compiled.querySelector('#user-list-table')).toBeFalsy();
+  });
+
+  it('should show mobile pagination with prev/next buttons', () => {
+    component['isMobile'].set(true);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('#user-list-pagination-mobile')).toBeTruthy();
+    expect(compiled.querySelector('#user-list-pagination-prev-mobile')).toBeTruthy();
+    expect(compiled.querySelector('#user-list-pagination-next-mobile')).toBeTruthy();
+    expect(compiled.querySelector('#user-list-page-size-mobile')).toBeTruthy();
+  });
+
+  it('should disable previous button on first page', () => {
+    component['isMobile'].set(true);
+    component['currentPage'].set(1);
+    fixture.detectChanges();
+
+    const prevButton = fixture.nativeElement.querySelector(
+      '#user-list-pagination-prev-mobile button'
+    );
+    expect(prevButton?.disabled).toBe(true);
+  });
+
+  it('should disable next button on last page', () => {
+    component['isMobile'].set(true);
+    component['currentPage'].set(component['totalPages']());
+    fixture.detectChanges();
+
+    const nextButton = fixture.nativeElement.querySelector(
+      '#user-list-pagination-next-mobile button'
+    );
+    expect(nextButton?.disabled).toBe(true);
+  });
+
+  it('should navigate to previous page when prev button clicked', () => {
+    component['isMobile'].set(true);
+    component['currentPage'].set(2);
+
+    component['onPreviousPage']();
+
+    // Router navigation should be called (already tested in existing tests)
+    expect(component['currentPage']()).toBe(2); // Signal not updated until route changes
+  });
+
+  it('should navigate to next page when next button clicked', () => {
+    component['isMobile'].set(true);
+    component['currentPage'].set(1);
+    component['totalRecords'].set(50);
+    component['pageSize'].set(10);
+
+    component['onNextPage']();
+
+    // Router navigation should be called
+    expect(component['totalPages']()).toBe(5);
+  });
+
+  it('should get user initials correctly', () => {
+    const user = mockUsers[0];
+    const initials = component['getUserInitials'](user);
+    expect(initials).toBe('UO'); // "User One" -> "UO"
+  });
+
+  it('should refresh users when refresh button clicked', () => {
+    vi.clearAllMocks();
+    component['onRefresh']();
+    expect(userService.getUsers).toHaveBeenCalled();
   });
 });

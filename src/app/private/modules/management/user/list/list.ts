@@ -8,6 +8,7 @@ import {
   OnDestroy,
   effect,
   ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
@@ -33,6 +34,7 @@ import { MessageService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { Select } from 'primeng/select';
 
 // Services
 import { UserService, User, GetUsersParams } from '../../../../../../core/services/user-service';
@@ -59,12 +61,14 @@ import { OrganizationContextService } from '../../../../../../core/services/orga
     PaginatorModule,
     InputGroupModule,
     InputGroupAddonModule,
+    Select,
   ],
   templateUrl: './list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class List implements OnInit, OnDestroy {
   @ViewChild('contextMenu') contextMenu!: ContextMenu;
+  @ViewChild('mobileSearchInput') mobileSearchInput?: ElementRef<HTMLInputElement>;
 
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -73,6 +77,10 @@ export class List implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private translocoService = inject(TranslocoService);
   private destroy$ = new Subject<void>();
+  private resizeHandler: (() => void) | null = null;
+  
+  // Constants
+  private readonly SEARCH_FOCUS_DELAY = 100; // Delay for focusing search input to ensure DOM is ready
 
   // State signals
   protected readonly users = signal<User[]>([]);
@@ -84,6 +92,8 @@ export class List implements OnInit, OnDestroy {
   protected readonly totalRecords = signal(0);
   protected readonly scope = signal<'global' | 'organization'>('global');
   protected readonly selectedUser = signal<User | null>(null);
+  protected readonly isMobile = signal(false);
+  protected readonly isSearchOpen = signal(false);
 
   // Computed values
   protected readonly totalPages = computed(() => Math.ceil(this.totalRecords() / this.pageSize()));
@@ -179,6 +189,22 @@ export class List implements OnInit, OnDestroy {
       this.currentPage.set(1); // Reset to first page on scope change
       this.loadUsers();
     });
+
+    // Detect mobile viewport
+    this.checkViewport();
+    if (typeof window !== 'undefined') {
+      this.resizeHandler = () => this.checkViewport();
+      window.addEventListener('resize', this.resizeHandler);
+    }
+
+    // Focus mobile search input when it opens
+    effect(() => {
+      if (this.isSearchOpen() && this.mobileSearchInput) {
+        setTimeout(() => {
+          this.mobileSearchInput?.nativeElement?.focus();
+        }, this.SEARCH_FOCUS_DELAY);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -207,6 +233,10 @@ export class List implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    
+    if (typeof window !== 'undefined' && this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler);
+    }
   }
 
   /**
@@ -540,5 +570,128 @@ export class List implements OnInit, OnDestroy {
       summary: this.translocoService.translate('userList.messages.notImplemented'),
       detail: this.translocoService.translate('userList.contextMenu.sendNotificationSoon'),
     });
+  }
+
+  /**
+   * Check viewport size to detect mobile
+   */
+  private checkViewport(): void {
+    if (typeof window !== 'undefined') {
+      this.isMobile.set(window.innerWidth < 768);
+    }
+  }
+
+  /**
+   * Toggle search input visibility on mobile
+   */
+  protected toggleSearch(): void {
+    this.isSearchOpen.set(!this.isSearchOpen());
+  }
+
+  /**
+   * Close search on mobile
+   */
+  protected closeSearch(): void {
+    this.isSearchOpen.set(false);
+    this.searchQuery.set('');
+    this.router.navigate(['../../../', 'all', 1, this.pageSize()], {
+      relativeTo: this.route,
+    });
+  }
+
+  /**
+   * Refresh user list
+   */
+  protected onRefresh(): void {
+    this.loadUsers();
+  }
+
+  /**
+   * Get user initials for avatar
+   */
+  protected getUserInitials(user: User): string {
+    if (!user.fullName) {
+      return '??';
+    }
+    
+    const nameParts = user.fullName
+      .split(' ')
+      .map(part => part.trim())
+      .filter(part => part.length > 0);
+      
+    if (nameParts.length === 0) {
+      return '??';
+    }
+    
+    return nameParts
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  }
+
+  /**
+   * Navigate to previous page
+   */
+  protected onPreviousPage(): void {
+    if (this.currentPage() > 1) {
+      const newPage = this.currentPage() - 1;
+      this.router.navigate(['../../..', this.searchQuery() || 'all', newPage, this.pageSize()], {
+        relativeTo: this.route,
+      });
+    }
+  }
+
+  /**
+   * Navigate to next page
+   */
+  protected onNextPage(): void {
+    if (this.currentPage() < this.totalPages()) {
+      const newPage = this.currentPage() + 1;
+      this.router.navigate(['../../..', this.searchQuery() || 'all', newPage, this.pageSize()], {
+        relativeTo: this.route,
+      });
+    }
+  }
+
+  /**
+   * Change page size
+   */
+  protected onPageSizeChangeMobile(event: { value: number }): void {
+    const newPageSize = event.value;
+    this.router.navigate(['../../..', this.searchQuery() || 'all', 1, newPageSize], {
+      relativeTo: this.route,
+    });
+  }
+
+  /**
+   * Get per-row menu items for mobile list
+   */
+  protected getRowMenuItems(user: User): MenuItem[] {
+    return [
+      {
+        label: this.translocoService.translate('userList.contextMenu.viewDetails'),
+        icon: 'pi pi-eye',
+        command: () => this.onViewUserDetails(user),
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.edit'),
+        icon: 'pi pi-pencil',
+        command: () => this.onEditUser(user),
+      },
+      {
+        separator: true,
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.block'),
+        icon: 'pi pi-ban',
+        command: () => this.onBlockUser(user),
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.revokeSession'),
+        icon: 'pi pi-sign-out',
+        command: () => this.onRevokeUserSession(user),
+      },
+    ];
   }
 }

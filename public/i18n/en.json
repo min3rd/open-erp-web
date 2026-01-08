@@ -507,7 +507,9 @@
     },
     "search": {
       "label": "Search users",
-      "placeholder": "Search by name, email, or phone"
+      "placeholder": "Search by name, email, or phone",
+      "openSearch": "Open search",
+      "closeSearch": "Close search"
     },
     "addButton": {
       "label": "Add new user",
@@ -515,6 +517,18 @@
     },
     "actionsButton": {
       "label": "Open actions menu"
+    },
+    "refreshButton": {
+      "label": "Refresh user list",
+      "tooltip": "Refresh"
+    },
+    "filterButton": {
+      "label": "Filter users",
+      "tooltip": "Filter"
+    },
+    "exportButton": {
+      "label": "Export users",
+      "tooltip": "Export"
     },
     "actions": {
       "downloadCSV": "Download CSV",
@@ -537,9 +551,17 @@
       "view": "View",
       "edit": "Edit"
     },
+    "mobileList": {
+      "itemActions": "User actions",
+      "invite": "Invite",
+      "disable": "Disable"
+    },
     "pagination": {
       "report": "Showing {first} to {last} of {totalRecords} users",
-      "itemsPerPage": "Items per page:"
+      "itemsPerPage": "Items per page:",
+      "previous": "Previous page",
+      "next": "Next page",
+      "showing": "{first}–{last} of {total}"
     },
     "messages": {
       "loading": "Loading users...",
