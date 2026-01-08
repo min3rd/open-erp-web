@@ -10,10 +10,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 // PrimeNG imports
 import { TableModule } from 'primeng/table';
@@ -42,6 +42,7 @@ import { OrganizationContextService } from '../../../../../../core/services/orga
   selector: 'management-user-list',
   imports: [
     CommonModule,
+    RouterOutlet,
     FormsModule,
     TranslocoModule,
     TableModule,
