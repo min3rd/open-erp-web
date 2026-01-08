@@ -74,9 +74,6 @@ export class List implements OnInit, OnDestroy {
   private translocoService = inject(TranslocoService);
   private destroy$ = new Subject<void>();
 
-  // Search subject for debouncing
-  private searchSubject$ = new Subject<string>();
-
   // State signals
   protected readonly users = signal<User[]>([]);
   protected readonly selectedUsers = signal<User[]>([]);
