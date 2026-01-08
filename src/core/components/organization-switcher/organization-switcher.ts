@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
-import { TenantContextService, TenantOrganization } from '../../services/tenant-context.service';
+import { OrganizationContextService, OrganizationMetadata } from '../../services/organization-context.service';
 import { OrganizationService } from '../../services/organization-service';
 
 @Component({
@@ -21,7 +21,7 @@ import { OrganizationService } from '../../services/organization-service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganizationSwitcher implements OnInit {
-  private tenantContextService = inject(TenantContextService);
+  private tenantContextService = inject(OrganizationContextService);
   private organizationService = inject(OrganizationService);
 
   organizations = this.tenantContextService.userOrganizations;
@@ -33,7 +33,7 @@ export class OrganizationSwitcher implements OnInit {
 
   // For dropdown display
   dropdownOptions = computed(() => {
-    return this.organizations().map((org: TenantOrganization) => ({
+    return this.organizations().map((org: OrganizationMetadata) => ({
       label: org.name,
       value: org.id,
       subtitle: org.taxId,
@@ -72,7 +72,7 @@ export class OrganizationSwitcher implements OnInit {
     // Call backend API to get user's organizations
     this.organizationService.getUserOrganizations().subscribe({
       next: (orgs) => {
-        const tenantOrgs: TenantOrganization[] = orgs.map((org) => ({
+        const tenantOrgs: OrganizationMetadata[] = orgs.map((org) => ({
           id: org.id,
           name: org.name,
           internationalName: org.internationalName,

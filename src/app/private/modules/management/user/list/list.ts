@@ -31,7 +31,7 @@ import { MenuItem } from 'primeng/api';
 
 // Services
 import { UserService, User, GetUsersParams } from '../../../../../../core/services/user-service';
-import { TenantContextService } from '../../../../../../core/services/tenant-context.service';
+import { OrganizationContextService } from '../../../../../../core/services/organization-context.service';
 
 @Component({
   selector: 'management-user-list',
@@ -58,7 +58,7 @@ export class List implements OnInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private userService = inject(UserService);
-  private tenantContext = inject(TenantContextService);
+  private tenantContext = inject(OrganizationContextService);
   private messageService = inject(MessageService);
   private destroy$ = new Subject<void>();
 
