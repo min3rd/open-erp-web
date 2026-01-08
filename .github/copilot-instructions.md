@@ -17,6 +17,28 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use `NgOptimizedImage` for all static images.
   - `NgOptimizedImage` does not work for inline base64 images.
 
+## Internationalization (i18n)
+
+- **MANDATORY**: Use Transloco for all user-facing text and messages
+- Never hardcode English or any language strings in templates or TypeScript files
+- All text must be translatable through Transloco translation keys
+- Define translation keys in `public/i18n/en.json` and `public/i18n/es.json`
+- Use the `transloco` pipe in templates: `{{ 'key.path' | transloco }}`
+- Use `TranslocoService.translate()` in TypeScript files for dynamic translations
+- For parameterized translations, use: `{{ 'key' | transloco: { param: value } }}`
+- Group related translations under logical namespaces (e.g., `userList.*`, `login.*`)
+
+## PrimeNG Component Templates
+
+- **MANDATORY**: Use the new PrimeNG template syntax with `#templateName` instead of `pTemplate="templateName"`
+- Examples of correct syntax:
+  - Toolbar: `<ng-template #start>` and `<ng-template #end>`
+  - Table: `<ng-template #header>`, `<ng-template #body>`, `<ng-template #empty>`
+  - SelectButton/Dropdown: `<ng-template #item>`
+  - Dialog: `<ng-template #header>`, `<ng-template #footer>`
+- Do NOT use the deprecated `pTemplate` directive syntax
+- Always consult the official PrimeNG documentation for the correct template names for each component
+
 ## Accessibility Requirements
 
 - It MUST pass all AXE checks.
@@ -48,6 +70,8 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use the async pipe to handle observables
 - Do not assume globals like (`new Date()`) are available.
 - Do not write arrow functions in templates (they are not supported).
+- **Do NOT use inline styles** - use Tailwind CSS utility classes instead
+- Avoid using `[style]` or `style=""` attributes; prefer class bindings and Tailwind classes
 
 ## DOM Element ID Requirements
 
