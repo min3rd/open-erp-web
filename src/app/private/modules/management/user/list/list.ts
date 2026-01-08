@@ -28,6 +28,8 @@ import { TooltipModule } from 'primeng/tooltip';
 import { PaginatorModule } from 'primeng/paginator';
 import { MessageService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 
 // Services
 import { UserService, User, GetUsersParams } from '../../../../../../core/services/user-service';
@@ -50,6 +52,8 @@ import { OrganizationContextService } from '../../../../../../core/services/orga
     TagModule,
     TooltipModule,
     PaginatorModule,
+    InputGroupModule,
+    InputGroupAddonModule,
   ],
   templateUrl: './list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -124,15 +128,6 @@ export class List implements OnInit, OnDestroy {
   }
 
   constructor() {
-    // Setup search debouncing
-    this.searchSubject$
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
-      .subscribe((query) => {
-        this.searchQuery.set(query);
-        this.currentPage.set(1); // Reset to first page on new search
-        this.loadUsers();
-      });
-
     // Load users when scope changes
     effect(() => {
       this.scope();
@@ -150,7 +145,7 @@ export class List implements OnInit, OnDestroy {
 
       this.currentPage.set(page);
       this.pageSize.set(limit);
-      this.searchQuery.set(search);
+      this.searchQuery.set(search === 'all' ? '' : search);
 
       // Load initial data
       this.loadUsers();
@@ -216,7 +211,7 @@ export class List implements OnInit, OnDestroy {
   protected onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     // Update URL with relative navigation
-    this.router.navigate(['../../../', input.value ?? 'all', 1, this.pageSize()], {
+    this.router.navigate(['../../../', input.value || 'all', 1, this.pageSize()], {
       relativeTo: this.route,
     });
   }

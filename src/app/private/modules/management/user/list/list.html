@@ -1,83 +1,76 @@
 <div class="flex h-full flex-col">
   <!-- Fixed Toolbar -->
-  <p-toolbar
-    id="user-list-toolbar"
-    class="border-b border-surface-200 dark:border-surface-700"
-  >
-    <ng-template #start>
-      <!-- Scope Toggle -->
-      <p-selectButton
-        id="user-list-scope-toggle"
-        [options]="scopeOptions"
-        [(ngModel)]="scope"
-        (onChange)="onScopeChange($event.value)"
-        [allowEmpty]="false"
-        optionLabel="label"
-        optionValue="value"
-        class="mr-4"
-        [attr.aria-label]="'userList.scopeToggle.label' | transloco"
-      >
-        <ng-template let-item #item>
-          <i [class]="item.icon"></i>
-          <span class="ml-2">{{ item.label | transloco }}</span>
-        </ng-template>
-      </p-selectButton>
+  <div class="p-2 border-b border-surface-200 dark:border-surface-700">
+    <p-toolbar id="user-list-toolbar">
+      <ng-template #start>
+        <!-- Scope Toggle -->
+        <p-selectButton
+          id="user-list-scope-toggle"
+          [options]="scopeOptions"
+          [(ngModel)]="scope"
+          (onChange)="onScopeChange($event.value)"
+          [allowEmpty]="false"
+          optionLabel="label"
+          optionValue="value"
+          class="mr-4"
+          [attr.aria-label]="'userList.scopeToggle.label' | transloco"
+        >
+          <ng-template let-item #item>
+            <i [class]="item.icon"></i>
+            <span class="ml-2">{{ item.label | transloco }}</span>
+          </ng-template>
+        </p-selectButton>
 
-      <!-- Search Input -->
-      <span class="p-input-icon-left">
-        <i class="pi pi-search"></i>
-        <input
-          id="user-list-search"
-          type="text"
-          pInputText
-          [placeholder]="'userList.search.placeholder' | transloco"
-          (input)="onSearchChange($event)"
-          [value]="searchQuery()"
-          class="w-80"
-          [attr.aria-label]="'userList.search.label' | transloco"
+        <!-- Search Input -->
+        <p-inputgroup>
+          <p-inputgroup-addon>
+            <i class="pi pi-search"></i>
+          </p-inputgroup-addon>
+          <input
+            id="user-list-search"
+            type="text"
+            pInputText
+            [placeholder]="'userList.search.placeholder' | transloco"
+            (input)="onSearchChange($event)"
+            [value]="searchQuery()"
+            class="w-80"
+            [attr.aria-label]="'userList.search.label' | transloco"
+          />
+        </p-inputgroup>
+      </ng-template>
+
+      <ng-template #end>
+        <!-- Add New Button -->
+        <p-button
+          id="user-list-add-button"
+          icon="pi pi-plus"
+          [rounded]="true"
+          [text]="true"
+          severity="primary"
+          (onClick)="onAddUser()"
+          [pTooltip]="'userList.addButton.tooltip' | transloco"
+          tooltipPosition="bottom"
+          [attr.aria-label]="'userList.addButton.label' | transloco"
         />
-      </span>
-    </ng-template>
 
-    <ng-template #end>
-      <!-- Add New Button -->
-      <p-button
-        id="user-list-add-button"
-        icon="pi pi-plus"
-        [rounded]="true"
-        [text]="true"
-        severity="primary"
-        (onClick)="onAddUser()"
-        [pTooltip]="'userList.addButton.tooltip' | transloco"
-        tooltipPosition="bottom"
-        [attr.aria-label]="'userList.addButton.label' | transloco"
-      />
-
-      <!-- Actions Menu -->
-      <p-button
-        id="user-list-actions-button"
-        icon="pi pi-ellipsis-v"
-        [rounded]="true"
-        [text]="true"
-        (onClick)="menu.toggle($event)"
-        [attr.aria-label]="'userList.actionsButton.label' | transloco"
-        aria-haspopup="true"
-        aria-controls="user-list-actions-menu"
-      />
-      <p-menu
-        #menu
-        id="user-list-actions-menu"
-        [model]="actionMenuItems"
-        [popup]="true"
-      />
-    </ng-template>
-  </p-toolbar>
+        <!-- Actions Menu -->
+        <p-button
+          id="user-list-actions-button"
+          icon="pi pi-ellipsis-v"
+          [rounded]="true"
+          [text]="true"
+          (onClick)="menu.toggle($event)"
+          [attr.aria-label]="'userList.actionsButton.label' | transloco"
+          aria-haspopup="true"
+          aria-controls="user-list-actions-menu"
+        />
+        <p-menu #menu id="user-list-actions-menu" [model]="actionMenuItems" [popup]="true" />
+      </ng-template>
+    </p-toolbar>
+  </div>
 
   <!-- Scrollable Content Area -->
-  <div
-    id="user-list-content"
-    class="flex-1 overflow-auto"
-  >
+  <div id="user-list-content" class="flex-1 overflow-auto">
     <!-- Table -->
     <p-table
       id="user-list-table"
@@ -141,17 +134,12 @@
           </td>
           <td>
             <div class="font-medium">{{ user.fullName }}</div>
-            <div class="text-sm text-surface-500 dark:text-surface-400">
-              @{{ user.username }}
-            </div>
+            <div class="text-sm text-surface-500 dark:text-surface-400">@{{ user.username }}</div>
           </td>
           <td>{{ user.email }}</td>
           <td>{{ user.phone || '-' }}</td>
           <td>
-            <p-tag
-              [value]="user.status | transloco"
-              [severity]="getStatusSeverity(user.status)"
-            />
+            <p-tag [value]="user.status | transloco" [severity]="getStatusSeverity(user.status)" />
           </td>
           <td>{{ formatDate(user.lastLogin || '') }}</td>
           <td>
@@ -183,14 +171,16 @@
         <tr>
           <td colspan="8" class="text-center py-8 text-surface-500">
             @if (isLoading()) {
-              <i class="pi pi-spin pi-spinner text-2xl"></i>
-              <p class="mt-2">{{ 'userList.messages.loading' | transloco }}</p>
+            <i class="pi pi-spin pi-spinner text-2xl"></i>
+            <p class="mt-2">{{ 'userList.messages.loading' | transloco }}</p>
             } @else if (searchQuery()) {
-              <i class="pi pi-search text-2xl"></i>
-              <p class="mt-2">{{ 'userList.messages.noResults' | transloco: { query: searchQuery() } }}</p>
+            <i class="pi pi-search text-2xl"></i>
+            <p class="mt-2">
+              {{ 'userList.messages.noResults' | transloco : { query: searchQuery() } }}
+            </p>
             } @else {
-              <i class="pi pi-users text-2xl"></i>
-              <p class="mt-2">{{ 'userList.messages.noUsers' | transloco }}</p>
+            <i class="pi pi-users text-2xl"></i>
+            <p class="mt-2">{{ 'userList.messages.noUsers' | transloco }}</p>
             }
           </td>
         </tr>
@@ -236,17 +226,11 @@
   </div>
 
   <!-- Screen Reader Status Announcements -->
-  <div
-    id="user-list-status"
-    role="status"
-    aria-live="polite"
-    aria-atomic="true"
-    class="sr-only"
-  >
+  <div id="user-list-status" role="status" aria-live="polite" aria-atomic="true" class="sr-only">
     @if (isLoading()) {
-      {{ 'userList.messages.loading' | transloco }}
+    {{ 'userList.messages.loading' | transloco }}
     } @else {
-      {{ 'userList.messages.usersLoaded' | transloco: { count: totalRecords() } }}
+    {{ 'userList.messages.usersLoaded' | transloco : { count: totalRecords() } }}
     }
   </div>
 </div>
