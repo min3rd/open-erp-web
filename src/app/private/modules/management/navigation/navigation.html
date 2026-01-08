@@ -278,7 +278,7 @@
     [closable]="true"
     [draggable]="false"
     [resizable]="false"
-    [style]="{ width: isMobile() ? '95vw' : '600px' }"
+    [style]="{ width: isMobile() ? '95vw' : '700px', maxHeight: '90vh' }"
     [header]="
       editorMode() === 'create'
         ? ('navigationManagement.editor.title.create' | transloco)
@@ -286,27 +286,16 @@
     "
     id="navigation-management-editor-dialog"
   >
-    <div class="p-4">
-      <p>{{ 'navigationManagement.editor.form.label.label' | transloco }}</p>
-      <!-- Editor form will be implemented in a separate component -->
-      <p class="text-surface-500 text-sm mt-2">
-        Editor form component to be implemented
-      </p>
+    <div class="overflow-auto" [style.maxHeight]="'70vh'">
+      <app-navigation-editor
+        [item]="selectedItem()"
+        [mode]="editorMode()"
+        [availableModules]="[]"
+        [availableParents]="globalNavigationItems()"
+        (save)="onSaveItem($event)"
+        (cancel)="onCloseEditor()"
+      />
     </div>
-    <ng-template #footer>
-      <p-button
-        id="navigation-management-editor-cancel"
-        [label]="'navigationManagement.editor.buttons.cancel' | transloco"
-        (onClick)="onCloseEditor()"
-        severity="secondary"
-      />
-      <p-button
-        id="navigation-management-editor-save"
-        [label]="'navigationManagement.editor.buttons.save' | transloco"
-        (onClick)="onCloseEditor()"
-        severity="primary"
-      />
-    </ng-template>
   </p-dialog>
 </div>
 

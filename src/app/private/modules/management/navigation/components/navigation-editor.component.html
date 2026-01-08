@@ -1,0 +1,343 @@
+<form
+  [formGroup]="form()"
+  (ngSubmit)="onSubmit()"
+  id="navigation-editor-form"
+  class="space-y-4"
+>
+  <!-- Label (Required) -->
+  <div class="flex flex-col gap-2">
+    <label for="navigation-editor-label" class="font-semibold">
+      {{ 'navigationManagement.editor.form.label.label' | transloco }}
+      <span class="text-red-500">*</span>
+    </label>
+    <input
+      id="navigation-editor-label"
+      type="text"
+      pInputText
+      formControlName="label"
+      [placeholder]="'navigationManagement.editor.form.label.placeholder' | transloco"
+      [class.p-invalid]="hasError('label')"
+      [attr.aria-label]="'navigationManagement.editor.form.label.label' | transloco"
+      [attr.aria-required]="true"
+    />
+    @if (hasError('label')) {
+    <small id="navigation-editor-label-error" class="text-red-500">
+      {{ getErrorMessage('label') }}
+    </small>
+    }
+  </div>
+
+  <!-- Icon -->
+  <div class="flex flex-col gap-2">
+    <label for="navigation-editor-icon" class="font-semibold">
+      {{ 'navigationManagement.editor.form.icon.label' | transloco }}
+    </label>
+    <input
+      id="navigation-editor-icon"
+      type="text"
+      pInputText
+      formControlName="icon"
+      [placeholder]="'navigationManagement.editor.form.icon.placeholder' | transloco"
+      [attr.aria-label]="'navigationManagement.editor.form.icon.label' | transloco"
+    />
+    <small id="navigation-editor-icon-help" class="text-surface-500">
+      {{ 'navigationManagement.editor.form.icon.help' | transloco }}
+    </small>
+  </div>
+
+  <!-- Subtitle -->
+  <div class="flex flex-col gap-2">
+    <label for="navigation-editor-subtitle" class="font-semibold">
+      {{ 'navigationManagement.editor.form.subtitle.label' | transloco }}
+    </label>
+    <input
+      id="navigation-editor-subtitle"
+      type="text"
+      pInputText
+      formControlName="subtitle"
+      [placeholder]="'navigationManagement.editor.form.subtitle.placeholder' | transloco"
+      [attr.aria-label]="'navigationManagement.editor.form.subtitle.label' | transloco"
+    />
+  </div>
+
+  <!-- Scope (Required) -->
+  <div class="flex flex-col gap-2">
+    <label for="navigation-editor-scope" class="font-semibold">
+      {{ 'navigationManagement.editor.form.scope.label' | transloco }}
+      <span class="text-red-500">*</span>
+    </label>
+    <p-select
+      id="navigation-editor-scope"
+      formControlName="scope"
+      [options]="scopeOptions"
+      optionLabel="label"
+      optionValue="value"
+      [attr.aria-label]="'navigationManagement.editor.form.scope.label' | transloco"
+      [attr.aria-required]="true"
+    >
+      <ng-template let-item #item>
+        <span>{{ item.label | transloco }}</span>
+      </ng-template>
+    </p-select>
+  </div>
+
+  <!-- Module Key (Required when scope is module) -->
+  @if (form().value.scope === 'module') {
+  <div class="flex flex-col gap-2">
+    <label for="navigation-editor-module-key" class="font-semibold">
+      {{ 'navigationManagement.editor.form.moduleKey.label' | transloco }}
+      <span class="text-red-500">*</span>
+    </label>
+    <p-select
+      id="navigation-editor-module-key"
+      formControlName="moduleKey"
+      [options]="availableModules()"
+      optionLabel="label"
+      optionValue="value"
+      [placeholder]="'navigationManagement.editor.form.moduleKey.placeholder' | transloco"
+      [class.p-invalid]="hasError('moduleKey')"
+      [attr.aria-label]="'navigationManagement.editor.form.moduleKey.label' | transloco"
+      [attr.aria-required]="true"
+    />
+    @if (hasError('moduleKey')) {
+    <small id="navigation-editor-module-key-error" class="text-red-500">
+      {{ getErrorMessage('moduleKey') }}
+    </small>
+    }
+  </div>
+  }
+
+  <!-- Router Link -->
+  <div class="flex flex-col gap-2">
+    <label for="navigation-editor-router-link" class="font-semibold">
+      {{ 'navigationManagement.editor.form.routerLink.label' | transloco }}
+    </label>
+    <input
+      id="navigation-editor-router-link"
+      type="text"
+      pInputText
+      formControlName="routerLink"
+      [placeholder]="'navigationManagement.editor.form.routerLink.placeholder' | transloco"
+      [attr.aria-label]="'navigationManagement.editor.form.routerLink.label' | transloco"
+    />
+    <small id="navigation-editor-router-link-help" class="text-surface-500">
+      {{ 'navigationManagement.editor.form.routerLink.help' | transloco }}
+    </small>
+  </div>
+
+  <!-- URL -->
+  <div class="flex flex-col gap-2">
+    <label for="navigation-editor-url" class="font-semibold">
+      {{ 'navigationManagement.editor.form.url.label' | transloco }}
+    </label>
+    <input
+      id="navigation-editor-url"
+      type="text"
+      pInputText
+      formControlName="url"
+      [placeholder]="'navigationManagement.editor.form.url.placeholder' | transloco"
+      [attr.aria-label]="'navigationManagement.editor.form.url.label' | transloco"
+    />
+    <small id="navigation-editor-url-help" class="text-surface-500">
+      {{ 'navigationManagement.editor.form.url.help' | transloco }}
+    </small>
+  </div>
+
+  <!-- Order -->
+  <div class="flex flex-col gap-2">
+    <label for="navigation-editor-order" class="font-semibold">
+      {{ 'navigationManagement.editor.form.order.label' | transloco }}
+    </label>
+    <p-inputnumber
+      id="navigation-editor-order"
+      formControlName="order"
+      [placeholder]="'navigationManagement.editor.form.order.placeholder' | transloco"
+      [showButtons]="true"
+      [attr.aria-label]="'navigationManagement.editor.form.order.label' | transloco"
+    />
+    <small id="navigation-editor-order-help" class="text-surface-500">
+      {{ 'navigationManagement.editor.form.order.help' | transloco }}
+    </small>
+  </div>
+
+  <!-- Checkboxes -->
+  <div class="flex flex-wrap gap-4">
+    <div class="flex items-center gap-2">
+      <p-checkbox
+        id="navigation-editor-visible"
+        formControlName="visible"
+        [binary]="true"
+        [attr.aria-label]="'navigationManagement.editor.form.visible.label' | transloco"
+      />
+      <label for="navigation-editor-visible" class="cursor-pointer">
+        {{ 'navigationManagement.editor.form.visible.label' | transloco }}
+      </label>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <p-checkbox
+        id="navigation-editor-disabled"
+        formControlName="disabled"
+        [binary]="true"
+        [attr.aria-label]="'navigationManagement.editor.form.disabled.label' | transloco"
+      />
+      <label for="navigation-editor-disabled" class="cursor-pointer">
+        {{ 'navigationManagement.editor.form.disabled.label' | transloco }}
+      </label>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <p-checkbox
+        id="navigation-editor-separator"
+        formControlName="separator"
+        [binary]="true"
+        [attr.aria-label]="'navigationManagement.editor.form.separator.label' | transloco"
+      />
+      <label for="navigation-editor-separator" class="cursor-pointer">
+        {{ 'navigationManagement.editor.form.separator.label' | transloco }}
+      </label>
+    </div>
+  </div>
+
+  <!-- Advanced Options Panel -->
+  <p-panel
+    id="navigation-editor-advanced-panel"
+    [header]="'Advanced Options' | transloco"
+    [toggleable]="true"
+    [collapsed]="true"
+  >
+    <div class="space-y-4">
+      <!-- Target -->
+      <div class="flex flex-col gap-2">
+        <label for="navigation-editor-target" class="font-semibold">
+          {{ 'navigationManagement.editor.form.target.label' | transloco }}
+        </label>
+        <input
+          id="navigation-editor-target"
+          type="text"
+          pInputText
+          formControlName="target"
+          [placeholder]="'navigationManagement.editor.form.target.placeholder' | transloco"
+          [attr.aria-label]="'navigationManagement.editor.form.target.label' | transloco"
+        />
+        <small id="navigation-editor-target-help" class="text-surface-500">
+          {{ 'navigationManagement.editor.form.target.help' | transloco }}
+        </small>
+      </div>
+
+      <!-- Badge -->
+      <div class="flex flex-col gap-2">
+        <label for="navigation-editor-badge" class="font-semibold">
+          {{ 'navigationManagement.editor.form.badge.label' | transloco }}
+        </label>
+        <input
+          id="navigation-editor-badge"
+          type="text"
+          pInputText
+          formControlName="badge"
+          [placeholder]="'navigationManagement.editor.form.badge.placeholder' | transloco"
+          [attr.aria-label]="'navigationManagement.editor.form.badge.label' | transloco"
+        />
+        <small id="navigation-editor-badge-help" class="text-surface-500">
+          {{ 'navigationManagement.editor.form.badge.help' | transloco }}
+        </small>
+      </div>
+
+      <!-- Tooltip -->
+      <div class="flex flex-col gap-2">
+        <label for="navigation-editor-tooltip" class="font-semibold">
+          {{ 'navigationManagement.editor.form.tooltip.label' | transloco }}
+        </label>
+        <input
+          id="navigation-editor-tooltip"
+          type="text"
+          pInputText
+          formControlName="tooltip"
+          [placeholder]="'navigationManagement.editor.form.tooltip.placeholder' | transloco"
+          [attr.aria-label]="'navigationManagement.editor.form.tooltip.label' | transloco"
+        />
+        <small id="navigation-editor-tooltip-help" class="text-surface-500">
+          {{ 'navigationManagement.editor.form.tooltip.help' | transloco }}
+        </small>
+      </div>
+
+      <!-- Shortcut -->
+      <div class="flex flex-col gap-2">
+        <label for="navigation-editor-shortcut" class="font-semibold">
+          {{ 'navigationManagement.editor.form.shortcut.label' | transloco }}
+        </label>
+        <input
+          id="navigation-editor-shortcut"
+          type="text"
+          pInputText
+          formControlName="shortcut"
+          [placeholder]="'navigationManagement.editor.form.shortcut.placeholder' | transloco"
+          [attr.aria-label]="'navigationManagement.editor.form.shortcut.label' | transloco"
+        />
+        <small id="navigation-editor-shortcut-help" class="text-surface-500">
+          {{ 'navigationManagement.editor.form.shortcut.help' | transloco }}
+        </small>
+      </div>
+
+      <!-- CSS Class -->
+      <div class="flex flex-col gap-2">
+        <label for="navigation-editor-class" class="font-semibold">
+          {{ 'navigationManagement.editor.form.class.label' | transloco }}
+        </label>
+        <input
+          id="navigation-editor-class"
+          type="text"
+          pInputText
+          formControlName="class"
+          [placeholder]="'navigationManagement.editor.form.class.placeholder' | transloco"
+          [attr.aria-label]="'navigationManagement.editor.form.class.label' | transloco"
+        />
+        <small id="navigation-editor-class-help" class="text-surface-500">
+          {{ 'navigationManagement.editor.form.class.help' | transloco }}
+        </small>
+      </div>
+
+      <!-- Metadata (JSON) -->
+      <div class="flex flex-col gap-2">
+        <label for="navigation-editor-meta" class="font-semibold">
+          {{ 'navigationManagement.editor.form.meta.label' | transloco }}
+        </label>
+        <textarea
+          id="navigation-editor-meta"
+          pTextarea
+          formControlName="meta"
+          [placeholder]="'navigationManagement.editor.form.meta.placeholder' | transloco"
+          rows="4"
+          [attr.aria-label]="'navigationManagement.editor.form.meta.label' | transloco"
+        ></textarea>
+        <small id="navigation-editor-meta-help" class="text-surface-500">
+          {{ 'navigationManagement.editor.form.meta.help' | transloco }}
+        </small>
+      </div>
+    </div>
+  </p-panel>
+
+  <!-- Form Actions -->
+  <div class="flex justify-end gap-2 pt-4 border-t border-surface-200 dark:border-surface-700">
+    <p-button
+      id="navigation-editor-cancel-button"
+      type="button"
+      [label]="'navigationManagement.editor.buttons.cancel' | transloco"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="onCancel()"
+      [attr.aria-label]="'navigationManagement.editor.buttons.cancel' | transloco"
+    />
+    @if (mode() !== 'view') {
+    <p-button
+      id="navigation-editor-save-button"
+      type="submit"
+      [label]="'navigationManagement.editor.buttons.save' | transloco"
+      severity="primary"
+      [loading]="isSubmitting()"
+      [disabled]="form().invalid || isSubmitting()"
+      [attr.aria-label]="'navigationManagement.editor.buttons.save' | transloco"
+    />
+    }
+  </div>
+</form>
