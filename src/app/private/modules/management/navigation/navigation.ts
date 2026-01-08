@@ -31,6 +31,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 // Services and DTOs
 import { NavigationManagementService } from './services/navigation-management.service';
 import { NavigationItemDto, CreateNavigationItemDto, UpdateNavigationItemDto } from './dto/navigation-item.dto';
+import { NavigationEditorComponent } from './components/navigation-editor.component';
 
 @Component({
   selector: 'management-navigation',
@@ -51,6 +52,7 @@ import { NavigationItemDto, CreateNavigationItemDto, UpdateNavigationItemDto } f
     ChipModule,
     PanelModule,
     SelectButtonModule,
+    NavigationEditorComponent,
   ],
   templateUrl: './navigation.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
