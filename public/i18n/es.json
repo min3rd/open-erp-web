@@ -404,5 +404,67 @@
     "tabs": {
       "user": "Usuarios"
     }
+  },
+  "userList": {
+    "scopeToggle": {
+      "label": "Seleccionar ámbito de usuarios",
+      "global": "Global",
+      "organization": "Organización"
+    },
+    "search": {
+      "label": "Buscar usuarios",
+      "placeholder": "Buscar por nombre, correo o teléfono"
+    },
+    "addButton": {
+      "label": "Agregar nuevo usuario",
+      "tooltip": "Agregar nuevo usuario"
+    },
+    "actionsButton": {
+      "label": "Abrir menú de acciones"
+    },
+    "actions": {
+      "downloadCSV": "Descargar CSV",
+      "importUsers": "Importar Usuarios",
+      "blockSelected": "Bloquear Seleccionados",
+      "revokeLoginSessions": "Revocar Sesiones de Inicio"
+    },
+    "table": {
+      "selectAll": "Seleccionar todos los usuarios de esta página",
+      "selectUser": "Seleccionar",
+      "avatar": "Avatar",
+      "fullName": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "phone": "Teléfono",
+      "status": "Estado",
+      "lastLogin": "Último Inicio de Sesión",
+      "actions": "Acciones",
+      "viewDetails": "Ver detalles",
+      "editUser": "Editar usuario",
+      "view": "Ver",
+      "edit": "Editar"
+    },
+    "pagination": {
+      "report": "Mostrando {first} a {last} de {totalRecords} usuarios",
+      "itemsPerPage": "Elementos por página:"
+    },
+    "messages": {
+      "loading": "Cargando usuarios...",
+      "loaded": "Cargados {{count}} usuarios",
+      "usersLoaded": "{{count}} usuarios cargados",
+      "noResults": "No se encontraron usuarios que coincidan con \"{{query}}\"",
+      "noUsers": "No hay usuarios disponibles",
+      "error": "Error",
+      "success": "Éxito",
+      "loadFailed": "Error al cargar usuarios",
+      "errorLoading": "Error al cargar usuarios",
+      "exportSuccess": "Usuarios exportados exitosamente",
+      "exportFailed": "Error al exportar usuarios",
+      "notImplemented": "No Implementado",
+      "importSoon": "La funcionalidad de importación de usuarios se implementará pronto",
+      "blockSuccess": "{{count}} usuario(s) bloqueado(s) exitosamente",
+      "blockFailed": "Error al bloquear usuarios",
+      "revokeSuccess": "Sesiones de inicio revocadas para {{count}} usuario(s)",
+      "revokeFailed": "Error al revocar sesiones de inicio"
+    }
   }
 }
