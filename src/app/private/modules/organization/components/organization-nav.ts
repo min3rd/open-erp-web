@@ -13,7 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { OrganizationLayoutService } from '../services/organization-layout.service';
 import { Subject, takeUntil } from 'rxjs';
-import { TenantContextService } from '../../../../../core/services/tenant-context.service';
+import { OrganizationContextService } from '../../../../../core/services/organization-context.service';
 
 @Component({
   selector: 'organization-nav',
@@ -31,7 +31,7 @@ import { TenantContextService } from '../../../../../core/services/tenant-contex
 export class OrganizationNav implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private layoutService = inject(OrganizationLayoutService);
-  private tenantContextService = inject(TenantContextService);
+  private tenantContextService = inject(OrganizationContextService);
   private router = inject(Router);
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();

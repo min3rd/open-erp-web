@@ -1,7 +1,7 @@
 import { Injectable, signal, effect } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
-export interface TenantOrganization {
+export interface OrganizationMetadata {
   id: string;
   name: string;
   internationalName: string;
@@ -11,17 +11,17 @@ export interface TenantOrganization {
 @Injectable({
   providedIn: 'root',
 })
-export class TenantContextService {
-  private readonly STORAGE_KEY = 'app.tenant.currentOrgId';
+export class OrganizationContextService {
+  private readonly STORAGE_KEY = 'app.organization.currentOrgId';
 
   // Current selected organization
-  private _currentOrganization = signal<TenantOrganization | null>(null);
+  private _currentOrganization = signal<OrganizationMetadata | null>(null);
 
   // Available organizations for the user
-  private _userOrganizations = signal<TenantOrganization[]>([]);
+  private _userOrganizations = signal<OrganizationMetadata[]>([]);
 
   // Subject for organization change events
-  private _organizationChanged$ = new Subject<TenantOrganization | null>();
+  private _organizationChanged$ = new Subject<OrganizationMetadata | null>();
 
   get currentOrganization() {
     return this._currentOrganization.asReadonly();
@@ -31,7 +31,7 @@ export class TenantContextService {
     return this._userOrganizations.asReadonly();
   }
 
-  get organizationChanged$(): Observable<TenantOrganization | null> {
+  get organizationChanged$(): Observable<OrganizationMetadata | null> {
     return this._organizationChanged$.asObservable();
   }
 
@@ -50,7 +50,7 @@ export class TenantContextService {
   /**
    * Set the list of organizations available to the user
    */
-  setUserOrganizations(organizations: TenantOrganization[]): void {
+  setUserOrganizations(organizations: OrganizationMetadata[]): void {
     this._userOrganizations.set(organizations);
 
     // If we have a saved org ID, try to restore it
@@ -72,7 +72,7 @@ export class TenantContextService {
   /**
    * Set the current active organization
    */
-  setCurrentOrganization(organization: TenantOrganization | null): void {
+  setCurrentOrganization(organization: OrganizationMetadata | null): void {
     this._currentOrganization.set(organization);
     this._organizationChanged$.next(organization);
   }
