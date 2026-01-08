@@ -125,7 +125,7 @@
             [label]="'verifyAccount.buttons.verify' | transloco"
             [disabled]="!verifyForm.valid || isSubmitting()"
             [loading]="isSubmitting()"
-            class="w-full"
+            styleClass="w-full"
             severity="primary"
             [attr.aria-busy]="isSubmitting()"
           />
@@ -135,7 +135,7 @@
             (onClick)="onResendCode()"
             [disabled]="resendCooldown() > 0 || isResending()"
             [loading]="isResending()"
-            class="w-full"
+            styleClass="w-full"
             severity="secondary"
             [attr.aria-busy]="isResending()"
           >
@@ -150,7 +150,7 @@
             id="verify-account-back-to-login-button"
             [label]="'verifyAccount.buttons.backToLogin' | transloco"
             (onClick)="navigateToLogin()"
-            class="w-full"
+            styleClass="w-full"
             severity="secondary"
           />
         </div>
