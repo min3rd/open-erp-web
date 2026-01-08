@@ -81,6 +81,9 @@ export class List implements OnInit, OnDestroy {
 
   // Search subject for debouncing
   private searchSubject$ = new Subject<string>();
+  
+  // Constants
+  private readonly SEARCH_FOCUS_DELAY = 100; // Delay for focusing search input to ensure DOM is ready
 
   // State signals
   protected readonly users = signal<User[]>([]);
@@ -202,7 +205,7 @@ export class List implements OnInit, OnDestroy {
       if (this.isSearchOpen() && this.mobileSearchInput) {
         setTimeout(() => {
           this.mobileSearchInput?.nativeElement?.focus();
-        }, 100);
+        }, this.SEARCH_FOCUS_DELAY);
       }
     });
   }
@@ -614,7 +617,11 @@ export class List implements OnInit, OnDestroy {
       return '??';
     }
     
-    const nameParts = user.fullName.split(' ').filter(part => part.length > 0);
+    const nameParts = user.fullName
+      .split(' ')
+      .map(part => part.trim())
+      .filter(part => part.length > 0);
+      
     if (nameParts.length === 0) {
       return '??';
     }
