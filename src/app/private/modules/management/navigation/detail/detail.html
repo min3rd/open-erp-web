@@ -1,0 +1,33 @@
+<p-drawer
+  [(visible)]="isOpen"
+  [position]="'right'"
+  [modal]="true"
+  [showCloseIcon]="true"
+  (onHide)="onClose()"
+  [style]="{ width: '100%', maxWidth: '700px' }"
+  id="navigation-detail-drawer"
+>
+  <ng-template #header>
+    <h3 class="text-xl font-semibold m-0">
+      {{ drawerTitle() }}
+    </h3>
+  </ng-template>
+
+  <div class="h-full overflow-auto">
+    @if (isLoading()) {
+    <div class="flex items-center justify-center h-32">
+      <i class="pi pi-spin pi-spinner text-2xl"></i>
+      <p class="ml-2">{{ 'navigationManagement.tree.loading' | transloco }}</p>
+    </div>
+    } @else {
+    <app-navigation-editor
+      [item]="item()"
+      [mode]="mode()"
+      [availableModules]="[]"
+      [availableParents]="[]"
+      (save)="onSave($event)"
+      (cancel)="onClose()"
+    />
+    }
+  </div>
+</p-drawer>
