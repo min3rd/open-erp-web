@@ -1,7 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, of, delay } from 'rxjs';
-import { API_URI_ORGANIZATION } from '../constant';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { API_URI_USER } from '../constant';
 
 export interface User {
   id: string;
@@ -38,100 +39,96 @@ export class UserService {
 
   /**
    * Get users list with pagination and filtering
-   * For now, this returns mock data. Replace with actual API call when backend is ready.
+   * Calls the real backend API
    */
   getUsers(params: GetUsersParams): Observable<UserListResponse> {
-    // Mock data for development
-    const mockUsers: User[] = Array.from({ length: 50 }, (_, i) => ({
-      id: `user-${i + 1}`,
-      username: `user${i + 1}`,
-      email: `user${i + 1}@example.com`,
-      fullName: `User ${i + 1} Full Name`,
-      phone: `+84${String(900000000 + i)}`,
-      avatar: `https://i.pravatar.cc/150?img=${(i % 70) + 1}`,
-      status: i % 5 === 0 ? 'inactive' : i % 7 === 0 ? 'blocked' : 'active',
-      lastLogin: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-      createdAt: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(),
-    }));
+    let httpParams = new HttpParams()
+      .set('page', (params.page || 1).toString())
+      .set('size', (params.limit || 10).toString());
 
-    // Apply search filter
-    let filtered = mockUsers;
     if (params.search) {
-      const searchLower = params.search.toLowerCase();
-      filtered = mockUsers.filter(
-        (user) =>
-          user.fullName.toLowerCase().includes(searchLower) ||
-          user.email.toLowerCase().includes(searchLower) ||
-          user.phone?.toLowerCase().includes(searchLower) ||
-          user.username.toLowerCase().includes(searchLower)
-      );
+      httpParams = httpParams.set('q', params.search);
     }
 
-    // Apply pagination
-    const page = params.page || 1;
-    const limit = params.limit || 10;
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedUsers = filtered.slice(startIndex, endIndex);
+    if (params.scope === 'organization' && params.organizationId) {
+      httpParams = httpParams.set('organizationId', params.organizationId);
+    }
 
-    const response: UserListResponse = {
-      data: paginatedUsers,
-      total: filtered.length,
-      page,
-      limit,
-    };
-
-    // Simulate network delay
-    return of(response).pipe(delay(300));
-
-    // When backend is ready, use this instead:
-    // let httpParams = new HttpParams()
-    //   .set('page', (params.page || 1).toString())
-    //   .set('limit', (params.limit || 10).toString());
-    //
-    // if (params.search) {
-    //   httpParams = httpParams.set('search', params.search);
-    // }
-    //
-    // if (params.scope === 'organization' && params.organizationId) {
-    //   httpParams = httpParams.set('organizationId', params.organizationId);
-    // }
-    //
-    // const endpoint = params.scope === 'organization'
-    //   ? `${API_URI_ORGANIZATION}/organizations/${params.organizationId}/members`
-    //   : `${API_URI_ORGANIZATION}/users`;
-    //
-    // return this.http.get<UserListResponse>(endpoint, { params: httpParams });
+    return this.http
+      .get<UserListResponse>(`${API_URI_USER}/v1/users`, { params: httpParams })
+      .pipe(catchError(this.handleError));
   }
 
   /**
    * Bulk action: Block selected users
    */
   blockUsers(userIds: string[]): Observable<void> {
-    // Mock implementation
-    return of(void 0).pipe(delay(500));
-    // return this.http.post<void>(`${API_URI_ORGANIZATION}/users/bulk/block`, { userIds });
+    return this.http
+      .post<void>(`${API_URI_USER}/v1/users/block`, { userIds })
+      .pipe(catchError(this.handleError));
   }
 
   /**
    * Bulk action: Revoke login sessions for selected users
    */
   revokeLoginSessions(userIds: string[]): Observable<void> {
-    // Mock implementation
-    return of(void 0).pipe(delay(500));
-    // return this.http.post<void>(`${API_URI_ORGANIZATION}/users/bulk/revoke-sessions`, { userIds });
+    return this.http
+      .post<void>(`${API_URI_USER}/v1/users/revoke-sessions`, { userIds })
+      .pipe(catchError(this.handleError));
   }
 
   /**
    * Export users to CSV
    */
   exportToCSV(params: GetUsersParams): Observable<Blob> {
-    // Mock implementation
-    const csvContent = 'ID,Username,Email,Full Name,Phone,Status\n';
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    return of(blob).pipe(delay(500));
-    // return this.http.post(`${API_URI_ORGANIZATION}/users/export`, params, {
-    //   responseType: 'blob',
-    // });
+    let httpParams = new HttpParams();
+
+    if (params.search) {
+      httpParams = httpParams.set('q', params.search);
+    }
+
+    if (params.scope === 'organization' && params.organizationId) {
+      httpParams = httpParams.set('organizationId', params.organizationId);
+    }
+
+    return this.http
+      .post(`${API_URI_USER}/v1/users/export`, params, {
+        params: httpParams,
+        responseType: 'blob',
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Handle HTTP errors
+   */
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An error occurred';
+
+    if (error.error instanceof ErrorEvent) {
+      // Client-side or network error
+      errorMessage = `Network error: ${error.error.message}`;
+    } else {
+      // Backend returned an unsuccessful response code
+      switch (error.status) {
+        case 401:
+          errorMessage = 'Unauthorized. Please login again.';
+          break;
+        case 403:
+          errorMessage = 'Forbidden. You do not have permission to perform this action.';
+          break;
+        case 404:
+          errorMessage = 'Resource not found.';
+          break;
+        case 500:
+          errorMessage = 'Internal server error. Please try again later.';
+          break;
+        default:
+          errorMessage = `Server error: ${error.status} - ${error.message}`;
+      }
+    }
+
+    console.error('UserService error:', errorMessage, error);
+    return throwError(() => new Error(errorMessage));
   }
 }

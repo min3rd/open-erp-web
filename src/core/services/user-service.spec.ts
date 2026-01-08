@@ -1,177 +1,300 @@
 import { TestBed } from '@angular/core/testing';
-import { UserService, GetUsersParams } from './user-service';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { UserService, GetUsersParams, UserListResponse } from './user-service';
+import { API_URI_USER } from '../constant';
 
 describe('UserService', () => {
   let service: UserService;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [UserService],
+      providers: [UserService, provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(UserService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should return users with pagination', async () => {
+  it('should return users with pagination', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
     };
 
-    const response = await new Promise((resolve) => {
-      service.getUsers(params).subscribe((res) => resolve(res));
+    const mockResponse: UserListResponse = {
+      data: [
+        {
+          id: 'user-1',
+          username: 'user1',
+          email: 'user1@example.com',
+          fullName: 'User One',
+          status: 'active',
+          createdAt: '2024-01-01T00:00:00.000Z',
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 10,
+    };
+
+    service.getUsers(params).subscribe((response) => {
+      expect(response).toEqual(mockResponse);
     });
 
-    expect(response).toBeTruthy();
-    expect((response as any).data).toBeTruthy();
-    expect((response as any).data.length).toBeLessThanOrEqual(10);
-    expect((response as any).page).toBe(1);
-    expect((response as any).limit).toBe(10);
-    expect((response as any).total).toBeGreaterThan(0);
+    const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=10`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
   });
 
-  it('should filter users by search query', async () => {
+  it('should filter users by search query', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
       search: 'user1',
     };
 
-    const response = await new Promise((resolve) => {
-      service.getUsers(params).subscribe((res) => resolve(res));
+    const mockResponse: UserListResponse = {
+      data: [
+        {
+          id: 'user-1',
+          username: 'user1',
+          email: 'user1@example.com',
+          fullName: 'User One',
+          status: 'active',
+          createdAt: '2024-01-01T00:00:00.000Z',
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 10,
+    };
+
+    service.getUsers(params).subscribe((response) => {
+      expect(response.data.length).toBeGreaterThan(0);
+      expect(response.data[0].username).toContain('user1');
     });
 
-    expect(response).toBeTruthy();
-    expect((response as any).data.length).toBeGreaterThan(0);
-
-    // At least one user should match the search
-    const hasMatch = (response as any).data.some(
-      (user: any) =>
-        user.fullName.toLowerCase().includes('user1') ||
-        user.email.toLowerCase().includes('user1') ||
-        user.username.toLowerCase().includes('user1')
-    );
-    expect(hasMatch).toBe(true);
+    const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=10&q=user1`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
   });
 
-  it('should return empty results when no users match search', async () => {
+  it('should return empty results when no users match search', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
       search: 'nonexistentuser12345',
     };
 
-    const response = await new Promise((resolve) => {
-      service.getUsers(params).subscribe((res) => resolve(res));
+    const mockResponse: UserListResponse = {
+      data: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    };
+
+    service.getUsers(params).subscribe((response) => {
+      expect(response.data.length).toBe(0);
+      expect(response.total).toBe(0);
     });
 
-    expect(response).toBeTruthy();
-    expect((response as any).data.length).toBe(0);
-    expect((response as any).total).toBe(0);
+    const req = httpMock.expectOne(
+      `${API_URI_USER}/v1/users?page=1&size=10&q=nonexistentuser12345`
+    );
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
   });
 
-  it('should handle different page sizes', async () => {
+  it('should handle different page sizes', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 25,
     };
 
-    const response = await new Promise((resolve) => {
-      service.getUsers(params).subscribe((res) => resolve(res));
+    const mockResponse: UserListResponse = {
+      data: [],
+      total: 0,
+      page: 1,
+      limit: 25,
+    };
+
+    service.getUsers(params).subscribe((response) => {
+      expect(response.limit).toBe(25);
     });
 
-    expect(response).toBeTruthy();
-    expect((response as any).data.length).toBeLessThanOrEqual(25);
-    expect((response as any).limit).toBe(25);
+    const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=25`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
   });
 
-  it('should handle pagination correctly', async () => {
-    const page1Params: GetUsersParams = {
+  it('should handle organization scope', () => {
+    const params: GetUsersParams = {
+      page: 1,
+      limit: 10,
+      scope: 'organization',
+      organizationId: 'org-123',
+    };
+
+    const mockResponse: UserListResponse = {
+      data: [],
+      total: 0,
       page: 1,
       limit: 10,
     };
 
-    const page1Response = await new Promise((resolve) => {
-      service.getUsers(page1Params).subscribe((res) => resolve(res));
+    service.getUsers(params).subscribe((response) => {
+      expect(response).toEqual(mockResponse);
     });
 
-    const page2Params: GetUsersParams = {
-      page: 2,
-      limit: 10,
-    };
-
-    const page2Response = await new Promise((resolve) => {
-      service.getUsers(page2Params).subscribe((res) => resolve(res));
-    });
-
-    expect((page2Response as any).page).toBe(2);
-    expect((page2Response as any).limit).toBe(10);
-
-    // Ensure different data on different pages (if there are enough users)
-    if ((page1Response as any).total > 10) {
-      expect((page1Response as any).data[0].id).not.toBe((page2Response as any).data[0]?.id);
-    }
+    const req = httpMock.expectOne(
+      `${API_URI_USER}/v1/users?page=1&size=10&organizationId=org-123`
+    );
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
   });
 
-  it('should block users', async () => {
+  it('should block users', () => {
     const userIds = ['user-1', 'user-2'];
 
-    const result = await new Promise((resolve) => {
-      service.blockUsers(userIds).subscribe((res) => resolve(res));
+    service.blockUsers(userIds).subscribe((result) => {
+      expect(result).toBeUndefined();
     });
 
-    expect(result).toBeUndefined();
+    const req = httpMock.expectOne(`${API_URI_USER}/v1/users/block`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ userIds });
+    req.flush(null);
   });
 
-  it('should revoke login sessions', async () => {
+  it('should revoke login sessions', () => {
     const userIds = ['user-1', 'user-2'];
 
-    const result = await new Promise((resolve) => {
-      service.revokeLoginSessions(userIds).subscribe((res) => resolve(res));
+    service.revokeLoginSessions(userIds).subscribe((result) => {
+      expect(result).toBeUndefined();
     });
 
-    expect(result).toBeUndefined();
+    const req = httpMock.expectOne(`${API_URI_USER}/v1/users/revoke-sessions`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ userIds });
+    req.flush(null);
   });
 
-  it('should export to CSV', async () => {
+  it('should export to CSV', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
     };
 
-    const blob = await new Promise((resolve) => {
-      service.exportToCSV(params).subscribe((res) => resolve(res));
+    const mockBlob = new Blob(['test'], { type: 'text/csv' });
+
+    service.exportToCSV(params).subscribe((blob) => {
+      expect(blob).toBeTruthy();
+      expect(blob instanceof Blob).toBe(true);
     });
 
-    expect(blob).toBeTruthy();
-    expect(blob instanceof Blob).toBe(true);
-    expect((blob as Blob).type).toBe('text/csv');
+    const req = httpMock.expectOne(`${API_URI_USER}/v1/users/export`);
+    expect(req.request.method).toBe('POST');
+    req.flush(mockBlob);
   });
 
-  it('should return users with correct structure', async () => {
+  it('should return users with correct structure', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 5,
     };
 
-    const response = await new Promise((resolve) => {
-      service.getUsers(params).subscribe((res) => resolve(res));
+    const mockResponse: UserListResponse = {
+      data: [
+        {
+          id: 'user-1',
+          username: 'user1',
+          email: 'user1@example.com',
+          fullName: 'User One',
+          status: 'active',
+          createdAt: '2024-01-01T00:00:00.000Z',
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 5,
+    };
+
+    service.getUsers(params).subscribe((response) => {
+      expect(response.data).toBeTruthy();
+      if (response.data.length > 0) {
+        const user = response.data[0];
+        expect(user.id).toBeTruthy();
+        expect(user.username).toBeTruthy();
+        expect(user.email).toBeTruthy();
+        expect(user.fullName).toBeTruthy();
+        expect(user.status).toBeTruthy();
+        expect(['active', 'inactive', 'blocked']).toContain(user.status);
+        expect(user.createdAt).toBeTruthy();
+      }
     });
 
-    expect((response as any).data).toBeTruthy();
+    const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=5`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockResponse);
+  });
 
-    if ((response as any).data.length > 0) {
-      const user = (response as any).data[0];
-      expect(user.id).toBeTruthy();
-      expect(user.username).toBeTruthy();
-      expect(user.email).toBeTruthy();
-      expect(user.fullName).toBeTruthy();
-      expect(user.status).toBeTruthy();
-      expect(['active', 'inactive', 'blocked']).toContain(user.status);
-      expect(user.createdAt).toBeTruthy();
-    }
+  it('should handle HTTP errors', () => {
+    const params: GetUsersParams = {
+      page: 1,
+      limit: 10,
+    };
+
+    service.getUsers(params).subscribe({
+      next: () => fail('should have failed with 500 error'),
+      error: (error) => {
+        expect(error.message).toContain('Internal server error');
+      },
+    });
+
+    const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=10`);
+    req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
+  });
+
+  it('should handle 401 unauthorized errors', () => {
+    const params: GetUsersParams = {
+      page: 1,
+      limit: 10,
+    };
+
+    service.getUsers(params).subscribe({
+      next: () => fail('should have failed with 401 error'),
+      error: (error) => {
+        expect(error.message).toContain('Unauthorized');
+      },
+    });
+
+    const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=10`);
+    req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+  });
+
+  it('should handle 403 forbidden errors', () => {
+    const params: GetUsersParams = {
+      page: 1,
+      limit: 10,
+    };
+
+    service.getUsers(params).subscribe({
+      next: () => fail('should have failed with 403 error'),
+      error: (error) => {
+        expect(error.message).toContain('Forbidden');
+      },
+    });
+
+    const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=10`);
+    req.flush('Forbidden', { status: 403, statusText: 'Forbidden' });
   });
 });
