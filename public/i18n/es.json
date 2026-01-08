@@ -593,5 +593,270 @@
       "revokeSuccess": "Sesión de inicio revocada para {{name}}",
       "sendNotificationSoon": "La funcionalidad de envío de notificaciones se implementará pronto"
     }
+  },
+  "navigationManagement": {
+    "title": "Gestión de Navegación",
+    "subtitle": "Administrar la estructura de navegación de la aplicación",
+    "tabs": {
+      "global": "Navegación Global",
+      "module": "Navegación de Módulo"
+    },
+    "toolbar": {
+      "addItem": "Agregar Elemento",
+      "addItemTooltip": "Crear un nuevo elemento de navegación",
+      "refresh": "Actualizar",
+      "refreshTooltip": "Recargar datos de navegación",
+      "preview": "Vista Previa",
+      "previewTooltip": "Vista previa del diseño de navegación",
+      "testPermissions": "Probar Permisos",
+      "testPermissionsTooltip": "Vista previa de navegación con permisos específicos",
+      "expandAll": "Expandir Todo",
+      "collapseAll": "Contraer Todo"
+    },
+    "tree": {
+      "noItems": "No hay elementos de navegación",
+      "noItemsDescription": "Haga clic en el botón agregar para crear su primer elemento de navegación",
+      "loading": "Cargando elementos de navegación...",
+      "dragToReorder": "Arrastrar para reordenar",
+      "dropHere": "Suelte aquí para mover el elemento"
+    },
+    "editor": {
+      "title": {
+        "create": "Crear Elemento de Navegación",
+        "edit": "Editar Elemento de Navegación",
+        "view": "Detalles del Elemento de Navegación"
+      },
+      "form": {
+        "label": {
+          "label": "Etiqueta",
+          "placeholder": "Ingrese la etiqueta de visualización",
+          "errors": {
+            "required": "La etiqueta es obligatoria"
+          }
+        },
+        "icon": {
+          "label": "Icono",
+          "placeholder": "ej., pi pi-home",
+          "help": "Nombre de clase de PrimeIcons"
+        },
+        "subtitle": {
+          "label": "Subtítulo",
+          "placeholder": "Subtítulo opcional"
+        },
+        "routerLink": {
+          "label": "Enlace del Enrutador",
+          "placeholder": "/ruta/al/destino",
+          "help": "Ruta interna de la aplicación"
+        },
+        "url": {
+          "label": "URL Externa",
+          "placeholder": "https://ejemplo.com",
+          "help": "Enlace externo (anula routerLink)"
+        },
+        "scope": {
+          "label": "Ámbito",
+          "global": "Global",
+          "module": "Módulo"
+        },
+        "moduleKey": {
+          "label": "Clave de Módulo",
+          "placeholder": "Seleccionar módulo",
+          "errors": {
+            "required": "La clave de módulo es obligatoria para el ámbito de módulo"
+          }
+        },
+        "order": {
+          "label": "Orden",
+          "placeholder": "0",
+          "help": "Orden de visualización (los números más bajos aparecen primero)"
+        },
+        "disabled": {
+          "label": "Deshabilitado",
+          "help": "El elemento no será clickeable"
+        },
+        "visible": {
+          "label": "Visible",
+          "help": "El elemento se mostrará en la navegación"
+        },
+        "separator": {
+          "label": "Separador",
+          "help": "Mostrar como línea separadora"
+        },
+        "target": {
+          "label": "Destino",
+          "placeholder": "_blank, _self, etc.",
+          "help": "Atributo de destino del enlace"
+        },
+        "badge": {
+          "label": "Insignia",
+          "placeholder": "Nuevo, 5, etc.",
+          "help": "Texto o número de la insignia"
+        },
+        "badgeClass": {
+          "label": "Clase de Insignia",
+          "placeholder": "Clases CSS",
+          "help": "Clases CSS personalizadas para la insignia"
+        },
+        "tooltip": {
+          "label": "Tooltip",
+          "placeholder": "Texto del tooltip",
+          "help": "Tooltip mostrado al pasar el mouse"
+        },
+        "tooltipPosition": {
+          "label": "Posición del Tooltip",
+          "top": "Arriba",
+          "bottom": "Abajo",
+          "left": "Izquierda",
+          "right": "Derecha"
+        },
+        "shortcut": {
+          "label": "Atajo de Teclado",
+          "placeholder": "Ctrl+S, Alt+N, etc.",
+          "help": "Atajo de teclado para activar el elemento"
+        },
+        "class": {
+          "label": "Clase CSS",
+          "placeholder": "clase-personalizada",
+          "help": "Clases CSS personalizadas"
+        },
+        "command": {
+          "label": "Comando",
+          "placeholder": "Nombre de función JavaScript",
+          "help": "Comando a ejecutar al hacer clic"
+        },
+        "permissions": {
+          "label": "Permisos",
+          "include": "Incluir Permisos",
+          "exclude": "Excluir Permisos",
+          "includePlaceholder": "Ingrese permisos para incluir",
+          "excludePlaceholder": "Ingrese permisos para excluir",
+          "help": "Controlar visibilidad basada en permisos de usuario"
+        },
+        "meta": {
+          "label": "Metadatos",
+          "placeholder": "{ \"clave\": \"valor\" }",
+          "help": "Metadatos adicionales en formato JSON",
+          "errors": {
+            "invalidJson": "Formato JSON inválido"
+          }
+        },
+        "parentItem": {
+          "label": "Elemento Padre",
+          "placeholder": "Seleccionar padre (ninguno para raíz)",
+          "none": "Ninguno (Nivel Raíz)"
+        }
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "close": "Cerrar"
+      },
+      "audit": {
+        "title": "Información de Auditoría",
+        "createdBy": "Creado por",
+        "createdAt": "Creado el",
+        "updatedBy": "Actualizado por",
+        "updatedAt": "Actualizado el"
+      }
+    },
+    "preview": {
+      "title": "Vista Previa de Navegación",
+      "mode": {
+        "label": "Modo de Vista Previa",
+        "vertical": "Vertical (Barra Lateral)",
+        "horizontal": "Horizontal (Barra Superior)",
+        "compact": "Compacto"
+      },
+      "permissions": {
+        "label": "Probar con Permisos",
+        "placeholder": "Ingrese nombres de permisos",
+        "help": "Vista previa de cómo aparece la navegación para usuarios con permisos específicos"
+      },
+      "noItems": "No hay elementos para mostrar"
+    },
+    "contextMenu": {
+      "addChild": "Agregar Elemento Hijo",
+      "edit": "Editar Elemento",
+      "duplicate": "Duplicar Elemento",
+      "delete": "Eliminar Elemento",
+      "moveUp": "Mover Arriba",
+      "moveDown": "Mover Abajo",
+      "moveTo": "Mover A...",
+      "copyId": "Copiar ID",
+      "viewJson": "Ver como JSON"
+    },
+    "moveDialog": {
+      "title": "Mover Elemento de Navegación",
+      "targetParent": "Padre Destino",
+      "targetScope": "Ámbito Destino",
+      "targetModule": "Módulo Destino",
+      "targetOrder": "Orden Destino",
+      "buttons": {
+        "move": "Mover",
+        "cancel": "Cancelar"
+      }
+    },
+    "deleteDialog": {
+      "title": "Eliminar Elemento de Navegación",
+      "message": "¿Está seguro de que desea eliminar \"{{label}}\"?",
+      "warning": "Esta acción no se puede deshacer. Todos los elementos hijos también se eliminarán.",
+      "buttons": {
+        "delete": "Eliminar",
+        "cancel": "Cancelar"
+      }
+    },
+    "permissionTestDialog": {
+      "title": "Probar Permisos de Navegación",
+      "description": "Ingrese nombres de permisos para previsualizar cómo aparece la navegación para usuarios con esos permisos.",
+      "permissions": {
+        "label": "Permisos",
+        "placeholder": "Ingrese nombres de permisos (uno por línea)",
+        "help": "Agregue nombres de permisos para probar"
+      },
+      "buttons": {
+        "preview": "Vista Previa",
+        "cancel": "Cancelar"
+      }
+    },
+    "messages": {
+      "loading": "Cargando navegación...",
+      "loaded": "Navegación cargada exitosamente",
+      "createSuccess": "Elemento de navegación creado exitosamente",
+      "createError": "Error al crear elemento de navegación",
+      "updateSuccess": "Elemento de navegación actualizado exitosamente",
+      "updateError": "Error al actualizar elemento de navegación",
+      "deleteSuccess": "Elemento de navegación eliminado exitosamente",
+      "deleteError": "Error al eliminar elemento de navegación",
+      "reorderSuccess": "Elementos de navegación reordenados exitosamente",
+      "reorderError": "Error al reordenar elementos de navegación",
+      "moveSuccess": "Elemento de navegación movido exitosamente",
+      "moveError": "Error al mover elemento de navegación",
+      "error": "Error",
+      "success": "Éxito",
+      "noModule": "Ningún módulo seleccionado",
+      "selectModule": "Por favor seleccione un módulo de la navegación global",
+      "invalidData": "Datos inválidos proporcionados",
+      "copiedToClipboard": "Copiado al portapapeles"
+    },
+    "validation": {
+      "requiredField": "Este campo es obligatorio",
+      "invalidUrl": "Por favor ingrese una URL válida",
+      "invalidJson": "Formato JSON inválido",
+      "invalidIcon": "Por favor use una clase PrimeIcons válida",
+      "duplicateLabel": "Ya existe un elemento de navegación con esta etiqueta",
+      "circularReference": "No se puede hacer que un elemento sea hijo de sí mismo"
+    },
+    "accessibility": {
+      "treeAria": "Árbol de elementos de navegación",
+      "itemAria": "Elemento de navegación {{label}}",
+      "expandAria": "Expandir {{label}}",
+      "collapseAria": "Contraer {{label}}",
+      "dragAria": "Arrastrar para reordenar {{label}}",
+      "dropAria": "Zona de soltar para {{label}}",
+      "selectedAria": "{{label}} está seleccionado",
+      "moveAria": "Mover {{label}}",
+      "deleteAria": "Eliminar {{label}}"
+    }
   }
 }
