@@ -593,5 +593,270 @@
       "revokeSuccess": "Login session revoked for {{name}}",
       "sendNotificationSoon": "Send notification functionality will be implemented soon"
     }
+  },
+  "navigationManagement": {
+    "title": "Navigation Management",
+    "subtitle": "Manage application navigation structure",
+    "tabs": {
+      "global": "Global Navigation",
+      "module": "Module Navigation"
+    },
+    "toolbar": {
+      "addItem": "Add Navigation Item",
+      "addItemTooltip": "Create a new navigation item",
+      "refresh": "Refresh",
+      "refreshTooltip": "Reload navigation data",
+      "preview": "Preview",
+      "previewTooltip": "Preview navigation layout",
+      "testPermissions": "Test Permissions",
+      "testPermissionsTooltip": "Preview navigation with specific permissions",
+      "expandAll": "Expand All",
+      "collapseAll": "Collapse All"
+    },
+    "tree": {
+      "noItems": "No navigation items",
+      "noItemsDescription": "Click the add button to create your first navigation item",
+      "loading": "Loading navigation items...",
+      "dragToReorder": "Drag to reorder",
+      "dropHere": "Drop here to move item"
+    },
+    "editor": {
+      "title": {
+        "create": "Create Navigation Item",
+        "edit": "Edit Navigation Item",
+        "view": "Navigation Item Details"
+      },
+      "form": {
+        "label": {
+          "label": "Label",
+          "placeholder": "Enter display label",
+          "errors": {
+            "required": "Label is required"
+          }
+        },
+        "icon": {
+          "label": "Icon",
+          "placeholder": "e.g., pi pi-home",
+          "help": "PrimeIcons class name"
+        },
+        "subtitle": {
+          "label": "Subtitle",
+          "placeholder": "Optional subtitle"
+        },
+        "routerLink": {
+          "label": "Router Link",
+          "placeholder": "/path/to/route",
+          "help": "Internal application route"
+        },
+        "url": {
+          "label": "External URL",
+          "placeholder": "https://example.com",
+          "help": "External link (overrides routerLink)"
+        },
+        "scope": {
+          "label": "Scope",
+          "global": "Global",
+          "module": "Module"
+        },
+        "moduleKey": {
+          "label": "Module Key",
+          "placeholder": "Select module",
+          "errors": {
+            "required": "Module key is required for module scope"
+          }
+        },
+        "order": {
+          "label": "Order",
+          "placeholder": "0",
+          "help": "Display order (lower numbers appear first)"
+        },
+        "disabled": {
+          "label": "Disabled",
+          "help": "Item will not be clickable"
+        },
+        "visible": {
+          "label": "Visible",
+          "help": "Item will be shown in navigation"
+        },
+        "separator": {
+          "label": "Separator",
+          "help": "Display as a separator line"
+        },
+        "target": {
+          "label": "Target",
+          "placeholder": "_blank, _self, etc.",
+          "help": "Link target attribute"
+        },
+        "badge": {
+          "label": "Badge",
+          "placeholder": "New, 5, etc.",
+          "help": "Badge text or number"
+        },
+        "badgeClass": {
+          "label": "Badge Class",
+          "placeholder": "CSS classes",
+          "help": "Custom CSS classes for badge"
+        },
+        "tooltip": {
+          "label": "Tooltip",
+          "placeholder": "Tooltip text",
+          "help": "Tooltip shown on hover"
+        },
+        "tooltipPosition": {
+          "label": "Tooltip Position",
+          "top": "Top",
+          "bottom": "Bottom",
+          "left": "Left",
+          "right": "Right"
+        },
+        "shortcut": {
+          "label": "Keyboard Shortcut",
+          "placeholder": "Ctrl+S, Alt+N, etc.",
+          "help": "Keyboard shortcut to activate item"
+        },
+        "class": {
+          "label": "CSS Class",
+          "placeholder": "custom-class",
+          "help": "Custom CSS classes"
+        },
+        "command": {
+          "label": "Command",
+          "placeholder": "JavaScript function name",
+          "help": "Command to execute on click"
+        },
+        "permissions": {
+          "label": "Permissions",
+          "include": "Include Permissions",
+          "exclude": "Exclude Permissions",
+          "includePlaceholder": "Enter permissions to include",
+          "excludePlaceholder": "Enter permissions to exclude",
+          "help": "Control visibility based on user permissions"
+        },
+        "meta": {
+          "label": "Metadata",
+          "placeholder": "{ \"key\": \"value\" }",
+          "help": "Additional metadata in JSON format",
+          "errors": {
+            "invalidJson": "Invalid JSON format"
+          }
+        },
+        "parentItem": {
+          "label": "Parent Item",
+          "placeholder": "Select parent (none for root)",
+          "none": "None (Root Level)"
+        }
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "close": "Close"
+      },
+      "audit": {
+        "title": "Audit Information",
+        "createdBy": "Created by",
+        "createdAt": "Created at",
+        "updatedBy": "Updated by",
+        "updatedAt": "Updated at"
+      }
+    },
+    "preview": {
+      "title": "Navigation Preview",
+      "mode": {
+        "label": "Preview Mode",
+        "vertical": "Vertical (Sidebar)",
+        "horizontal": "Horizontal (Top Bar)",
+        "compact": "Compact"
+      },
+      "permissions": {
+        "label": "Test with Permissions",
+        "placeholder": "Enter permission names",
+        "help": "Preview how navigation appears to users with specific permissions"
+      },
+      "noItems": "No items to preview"
+    },
+    "contextMenu": {
+      "addChild": "Add Child Item",
+      "edit": "Edit Item",
+      "duplicate": "Duplicate Item",
+      "delete": "Delete Item",
+      "moveUp": "Move Up",
+      "moveDown": "Move Down",
+      "moveTo": "Move To...",
+      "copyId": "Copy ID",
+      "viewJson": "View as JSON"
+    },
+    "moveDialog": {
+      "title": "Move Navigation Item",
+      "targetParent": "Target Parent",
+      "targetScope": "Target Scope",
+      "targetModule": "Target Module",
+      "targetOrder": "Target Order",
+      "buttons": {
+        "move": "Move",
+        "cancel": "Cancel"
+      }
+    },
+    "deleteDialog": {
+      "title": "Delete Navigation Item",
+      "message": "Are you sure you want to delete \"{{label}}\"?",
+      "warning": "This action cannot be undone. All child items will also be deleted.",
+      "buttons": {
+        "delete": "Delete",
+        "cancel": "Cancel"
+      }
+    },
+    "permissionTestDialog": {
+      "title": "Test Navigation Permissions",
+      "description": "Enter permission names to preview how the navigation appears to users with those permissions.",
+      "permissions": {
+        "label": "Permissions",
+        "placeholder": "Enter permission names (one per line)",
+        "help": "Add permission names to test"
+      },
+      "buttons": {
+        "preview": "Preview",
+        "cancel": "Cancel"
+      }
+    },
+    "messages": {
+      "loading": "Loading navigation...",
+      "loaded": "Navigation loaded successfully",
+      "createSuccess": "Navigation item created successfully",
+      "createError": "Failed to create navigation item",
+      "updateSuccess": "Navigation item updated successfully",
+      "updateError": "Failed to update navigation item",
+      "deleteSuccess": "Navigation item deleted successfully",
+      "deleteError": "Failed to delete navigation item",
+      "reorderSuccess": "Navigation items reordered successfully",
+      "reorderError": "Failed to reorder navigation items",
+      "moveSuccess": "Navigation item moved successfully",
+      "moveError": "Failed to move navigation item",
+      "error": "Error",
+      "success": "Success",
+      "noModule": "No module selected",
+      "selectModule": "Please select a module from the global navigation",
+      "invalidData": "Invalid data provided",
+      "copiedToClipboard": "Copied to clipboard"
+    },
+    "validation": {
+      "requiredField": "This field is required",
+      "invalidUrl": "Please enter a valid URL",
+      "invalidJson": "Invalid JSON format",
+      "invalidIcon": "Please use a valid PrimeIcons class",
+      "duplicateLabel": "A navigation item with this label already exists",
+      "circularReference": "Cannot make an item a child of itself"
+    },
+    "accessibility": {
+      "treeAria": "Navigation items tree",
+      "itemAria": "Navigation item {{label}}",
+      "expandAria": "Expand {{label}}",
+      "collapseAria": "Collapse {{label}}",
+      "dragAria": "Drag to reorder {{label}}",
+      "dropAria": "Drop zone for {{label}}",
+      "selectedAria": "{{label}} is selected",
+      "moveAria": "Move {{label}}",
+      "deleteAria": "Delete {{label}}"
+    }
   }
 }
