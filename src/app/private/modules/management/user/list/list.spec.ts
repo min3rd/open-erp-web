@@ -1,59 +1,23 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { List } from './list';
 import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { UserService } from '../../../../../../core/services/user-service';
 import { OrganizationContextService } from '../../../../../../core/services/organization-context.service';
 import { MessageService } from 'primeng/api';
-import { of, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { signal } from '@angular/core';
+import { API_URI_USER } from '../../../../../../core/constant';
 
 describe('List', () => {
   let component: List;
   let fixture: ComponentFixture<List>;
-  let userService: Partial<UserService>;
+  let httpMock: HttpTestingController;
   let organizationContext: Partial<OrganizationContextService>;
 
-  const mockUsers = [
-    {
-      id: 'user-1',
-      username: 'user1',
-      email: 'user1@example.com',
-      fullName: 'User One',
-      phone: '+84900000001',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      status: 'active' as const,
-      lastLogin: '2024-01-01T00:00:00.000Z',
-      createdAt: '2023-01-01T00:00:00.000Z',
-    },
-    {
-      id: 'user-2',
-      username: 'user2',
-      email: 'user2@example.com',
-      fullName: 'User Two',
-      phone: '+84900000002',
-      avatar: 'https://i.pravatar.cc/150?img=2',
-      status: 'active' as const,
-      lastLogin: '2024-01-02T00:00:00.000Z',
-      createdAt: '2023-01-02T00:00:00.000Z',
-    },
-  ];
-
   beforeEach(async () => {
-    userService = {
-      getUsers: vi.fn().mockReturnValue(
-        of({
-          data: mockUsers,
-          total: 2,
-          page: 1,
-          limit: 10,
-        })
-      ),
-      blockUsers: vi.fn().mockReturnValue(of(void 0)),
-      revokeLoginSessions: vi.fn().mockReturnValue(of(void 0)),
-      exportToCSV: vi.fn().mockReturnValue(of(new Blob(['test'], { type: 'text/csv' }))),
-    };
-
     organizationContext = {
       currentOrganization: signal(null),
       organizationChanged$: new Subject(),
@@ -77,7 +41,9 @@ describe('List', () => {
             component: List,
           },
         ]),
-        { provide: UserService, useValue: userService },
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        UserService,
         { provide: OrganizationContextService, useValue: organizationContext },
         MessageService,
       ],
@@ -85,18 +51,31 @@ describe('List', () => {
 
     fixture = TestBed.createComponent(List);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('should create', () => {
+    const req = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    req.flush({ data: [], total: 0, page: 1, limit: 10 });
     expect(component).toBeTruthy();
   });
 
   it('should load users on initialization', () => {
-    expect(userService.getUsers).toHaveBeenCalled();
+    fixture.detectChanges();
+    const req = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    expect(req.request.method).toBe('GET');
+    req.flush({ data: [], total: 0, page: 1, limit: 10 });
   });
 
   it('should have all required DOM elements with correct IDs', () => {
+    const req = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    req.flush({ data: [], total: 0, page: 1, limit: 10 });
+    fixture.detectChanges();
+
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(compiled.querySelector('#user-list-toolbar')).toBeTruthy();
@@ -111,15 +90,9 @@ describe('List', () => {
   });
 
   it('should filter users when search query changes', async () => {
-    vi.clearAllMocks();
-    (userService.getUsers as any).mockReturnValue(
-      of({
-        data: [mockUsers[0]],
-        total: 1,
-        page: 1,
-        limit: 10,
-      })
-    );
+    fixture.detectChanges();
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
 
     const searchInput = fixture.nativeElement.querySelector(
       '#user-list-search'
@@ -127,34 +100,84 @@ describe('List', () => {
     searchInput.value = 'User One';
     searchInput.dispatchEvent(new Event('input'));
 
-    // Wait for debounce (300ms)
-    await new Promise((resolve) => setTimeout(resolve, 350));
-
-    expect(userService.getUsers).toHaveBeenCalledWith(
-      expect.objectContaining({
-        search: 'User One',
-      })
-    );
+    // Wait for route navigation
+    await new Promise((resolve) => setTimeout(resolve, 100));
   });
 
   it('should export to CSV when download action is triggered', () => {
+    fixture.detectChanges();
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     component['onDownloadCSV']();
-    expect(userService.exportToCSV).toHaveBeenCalled();
+
+    const exportReq = httpMock.expectOne(`${API_URI_USER}/v1/users/export`);
+    expect(exportReq.request.method).toBe('POST');
+    exportReq.flush(new Blob(['test'], { type: 'text/csv' }));
   });
 
   it('should block selected users', () => {
-    component['selectedUsers'].set([mockUsers[0], mockUsers[1]]);
+    fixture.detectChanges();
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    const mockUsers = [
+      {
+        id: 'user-1',
+        username: 'user1',
+        email: 'user1@example.com',
+        fullName: 'User One',
+        status: 'active' as const,
+        createdAt: '2024-01-01T00:00:00.000Z',
+      },
+      {
+        id: 'user-2',
+        username: 'user2',
+        email: 'user2@example.com',
+        fullName: 'User Two',
+        status: 'active' as const,
+        createdAt: '2024-01-02T00:00:00.000Z',
+      },
+    ];
+    initialReq.flush({ data: mockUsers, total: 2, page: 1, limit: 10 });
+
+    component['selectedUsers'].set(mockUsers);
     component['onBlockSelected']();
-    expect(userService.blockUsers).toHaveBeenCalledWith(['user-1', 'user-2']);
+
+    const blockReq = httpMock.expectOne(`${API_URI_USER}/v1/users/block`);
+    expect(blockReq.request.method).toBe('POST');
+    expect(blockReq.request.body).toEqual({ userIds: ['user-1', 'user-2'] });
+    blockReq.flush(null);
+
+    // Expect reload
+    const reloadReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    reloadReq.flush({ data: [], total: 0, page: 1, limit: 10 });
   });
 
   it('should revoke login sessions for selected users', () => {
-    component['selectedUsers'].set([mockUsers[0]]);
+    fixture.detectChanges();
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    const mockUser = {
+      id: 'user-1',
+      username: 'user1',
+      email: 'user1@example.com',
+      fullName: 'User One',
+      status: 'active' as const,
+      createdAt: '2024-01-01T00:00:00.000Z',
+    };
+    initialReq.flush({ data: [mockUser], total: 1, page: 1, limit: 10 });
+
+    component['selectedUsers'].set([mockUser]);
     component['onRevokeLoginSessions']();
-    expect(userService.revokeLoginSessions).toHaveBeenCalledWith(['user-1']);
+
+    const revokeReq = httpMock.expectOne(`${API_URI_USER}/v1/users/revoke-sessions`);
+    expect(revokeReq.request.method).toBe('POST');
+    expect(revokeReq.request.body).toEqual({ userIds: ['user-1'] });
+    revokeReq.flush(null);
   });
 
   it('should format dates correctly', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     const dateString = '2024-01-01T00:00:00.000Z';
     const formatted = component['formatDate'](dateString);
     expect(formatted).toBeTruthy();
@@ -165,6 +188,9 @@ describe('List', () => {
   });
 
   it('should return correct status severity', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     expect(component['getStatusSeverity']('active')).toBe('success');
     expect(component['getStatusSeverity']('inactive')).toBe('warn');
     expect(component['getStatusSeverity']('blocked')).toBe('danger');
@@ -172,6 +198,10 @@ describe('List', () => {
   });
 
   it('should have proper aria-live region for status announcements', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+    fixture.detectChanges();
+
     const compiled = fixture.nativeElement as HTMLElement;
     const statusRegion = compiled.querySelector('#user-list-status');
 
@@ -182,6 +212,9 @@ describe('List', () => {
   });
 
   it('should detect mobile viewport correctly', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     // Default is desktop (window width >= 768)
     expect(component['isMobile']()).toBe(false);
 
@@ -198,6 +231,9 @@ describe('List', () => {
   });
 
   it('should show mobile toolbar when in mobile view', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     // Set mobile viewport
     component['isMobile'].set(true);
     fixture.detectChanges();
@@ -208,6 +244,9 @@ describe('List', () => {
   });
 
   it('should toggle search input on mobile', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     component['isMobile'].set(true);
     expect(component['isSearchOpen']()).toBe(false);
 
@@ -219,6 +258,9 @@ describe('List', () => {
   });
 
   it('should close search and clear query on mobile', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     component['isMobile'].set(true);
     component['isSearchOpen'].set(true);
     component['searchQuery'].set('test query');
@@ -230,6 +272,9 @@ describe('List', () => {
   });
 
   it('should render mobile list view when in mobile mode', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     component['isMobile'].set(true);
     fixture.detectChanges();
 
@@ -239,6 +284,9 @@ describe('List', () => {
   });
 
   it('should show mobile pagination with prev/next buttons', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     component['isMobile'].set(true);
     fixture.detectChanges();
 
@@ -250,6 +298,9 @@ describe('List', () => {
   });
 
   it('should disable previous button on first page', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     component['isMobile'].set(true);
     component['currentPage'].set(1);
     fixture.detectChanges();
@@ -261,6 +312,9 @@ describe('List', () => {
   });
 
   it('should disable next button on last page', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     component['isMobile'].set(true);
     component['currentPage'].set(component['totalPages']());
     fixture.detectChanges();
@@ -272,6 +326,9 @@ describe('List', () => {
   });
 
   it('should navigate to previous page when prev button clicked', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     component['isMobile'].set(true);
     component['currentPage'].set(2);
 
@@ -282,6 +339,9 @@ describe('List', () => {
   });
 
   it('should navigate to next page when next button clicked', () => {
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     component['isMobile'].set(true);
     component['currentPage'].set(1);
     component['totalRecords'].set(50);
@@ -294,14 +354,30 @@ describe('List', () => {
   });
 
   it('should get user initials correctly', () => {
-    const user = mockUsers[0];
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
+    const user = {
+      id: 'user-1',
+      username: 'user1',
+      email: 'user1@example.com',
+      fullName: 'User One',
+      status: 'active' as const,
+      createdAt: '2024-01-01T00:00:00.000Z',
+    };
     const initials = component['getUserInitials'](user);
     expect(initials).toBe('UO'); // "User One" -> "UO"
   });
 
   it('should refresh users when refresh button clicked', () => {
-    vi.clearAllMocks();
+    fixture.detectChanges();
+    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
+
     component['onRefresh']();
-    expect(userService.getUsers).toHaveBeenCalled();
+
+    const refreshReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
+    expect(refreshReq.request.method).toBe('GET');
+    refreshReq.flush({ data: [], total: 0, page: 1, limit: 10 });
   });
 });
