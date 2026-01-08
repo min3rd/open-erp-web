@@ -77,6 +77,7 @@ export class List implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private translocoService = inject(TranslocoService);
   private destroy$ = new Subject<void>();
+  private resizeHandler: (() => void) | null = null;
 
   // Search subject for debouncing
   private searchSubject$ = new Subject<string>();
@@ -192,7 +193,8 @@ export class List implements OnInit, OnDestroy {
     // Detect mobile viewport
     this.checkViewport();
     if (typeof window !== 'undefined') {
-      window.addEventListener('resize', () => this.checkViewport());
+      this.resizeHandler = () => this.checkViewport();
+      window.addEventListener('resize', this.resizeHandler);
     }
 
     // Focus mobile search input when it opens
@@ -232,8 +234,8 @@ export class List implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('resize', () => this.checkViewport());
+    if (typeof window !== 'undefined' && this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler);
     }
   }
 
@@ -608,8 +610,16 @@ export class List implements OnInit, OnDestroy {
    * Get user initials for avatar
    */
   protected getUserInitials(user: User): string {
-    return user.fullName
-      .split(' ')
+    if (!user.fullName) {
+      return '??';
+    }
+    
+    const nameParts = user.fullName.split(' ').filter(part => part.length > 0);
+    if (nameParts.length === 0) {
+      return '??';
+    }
+    
+    return nameParts
       .map((n) => n[0])
       .join('')
       .toUpperCase()
@@ -643,8 +653,8 @@ export class List implements OnInit, OnDestroy {
   /**
    * Change page size
    */
-  protected onPageSizeChangeMobile(event: any): void {
-    const newPageSize = parseInt(event.value, 10);
+  protected onPageSizeChangeMobile(event: { value: number }): void {
+    const newPageSize = event.value;
     this.router.navigate(['../../..', this.searchQuery() || 'all', 1, newPageSize], {
       relativeTo: this.route,
     });
