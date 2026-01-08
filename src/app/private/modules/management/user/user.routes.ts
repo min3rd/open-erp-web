@@ -11,7 +11,7 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'all/1/10',
+        redirectTo: 'all/1/100',
       },
       {
         path: ':filter',

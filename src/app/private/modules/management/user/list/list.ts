@@ -78,9 +78,6 @@ export class List implements OnInit, OnDestroy {
   private translocoService = inject(TranslocoService);
   private destroy$ = new Subject<void>();
   private resizeHandler: (() => void) | null = null;
-
-  // Search subject for debouncing
-  private searchSubject$ = new Subject<string>();
   
   // Constants
   private readonly SEARCH_FOCUS_DELAY = 100; // Delay for focusing search input to ensure DOM is ready

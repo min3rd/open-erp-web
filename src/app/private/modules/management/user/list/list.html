@@ -19,7 +19,7 @@
           >
             <ng-template let-item #item>
               <i [class]="item.icon"></i>
-              <span class="ml-2">{{ item.label | transloco }}</span>
+              <span class="ml-2 hidden md:block">{{ item.label | transloco }}</span>
             </ng-template>
           </p-selectButton>
 
