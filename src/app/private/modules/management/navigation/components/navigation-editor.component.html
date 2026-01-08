@@ -32,14 +32,27 @@
     <label for="navigation-editor-icon" class="font-semibold">
       {{ 'navigationManagement.editor.form.icon.label' | transloco }}
     </label>
-    <input
+    <p-autocomplete
       id="navigation-editor-icon"
-      type="text"
-      pInputText
       formControlName="icon"
+      [suggestions]="filteredIcons()"
+      (completeMethod)="filterIcons($event)"
+      field="name"
       [placeholder]="'navigationManagement.editor.form.icon.placeholder' | transloco"
       [attr.aria-label]="'navigationManagement.editor.form.icon.label' | transloco"
-    />
+      [dropdown]="true"
+      class="w-full"
+    >
+      <ng-template let-icon #item>
+        <div class="flex items-center gap-2">
+          <i [class]="icon.name" class="text-xl"></i>
+          <div class="flex flex-col">
+            <span class="font-semibold">{{ icon.label }}</span>
+            <small class="text-surface-500">{{ icon.name }}</small>
+          </div>
+        </div>
+      </ng-template>
+    </p-autocomplete>
     <small id="navigation-editor-icon-help" class="text-surface-500">
       {{ 'navigationManagement.editor.form.icon.help' | transloco }}
     </small>
@@ -76,6 +89,9 @@
       [attr.aria-required]="true"
     >
       <ng-template let-item #item>
+        <span>{{ item.label | transloco }}</span>
+      </ng-template>
+      <ng-template let-item #selectedItem>
         <span>{{ item.label | transloco }}</span>
       </ng-template>
     </p-select>

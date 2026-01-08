@@ -9,6 +9,7 @@ import {
   effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
@@ -22,6 +23,7 @@ import { ButtonModule } from 'primeng/button';
 import { ChipModule } from 'primeng/chip';
 import { PanelModule } from 'primeng/panel';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 // DTOs
 import {
@@ -29,6 +31,12 @@ import {
   CreateNavigationItemDto,
   UpdateNavigationItemDto,
 } from '../dto/navigation-item.dto';
+
+interface IconOption {
+  name: string;
+  label: string;
+  category: string;
+}
 
 @Component({
   selector: 'app-navigation-editor',
@@ -45,6 +53,7 @@ import {
     ChipModule,
     PanelModule,
     FloatLabelModule,
+    AutoCompleteModule,
   ],
   templateUrl: './navigation-editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,10 +71,15 @@ export class NavigationEditorComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private translocoService = inject(TranslocoService);
+  private http = inject(HttpClient);
 
   // Form
   protected readonly form = signal<FormGroup>(this.createForm());
   protected readonly isSubmitting = signal(false);
+
+  // Icons
+  protected readonly availableIcons = signal<IconOption[]>([]);
+  protected readonly filteredIcons = signal<IconOption[]>([]);
 
   // Options
   protected readonly scopeOptions = [
@@ -106,6 +120,9 @@ export class NavigationEditorComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Load icons
+    this.loadIcons();
+
     const currentItem = this.item();
     if (currentItem && this.mode() !== 'create') {
       this.patchForm(currentItem);
@@ -117,6 +134,41 @@ export class NavigationEditorComponent implements OnInit {
     } else {
       // Ensure form is enabled in create and edit modes
       this.form().enable();
+    }
+  }
+
+  /**
+   * Load icons from JSON file
+   */
+  private loadIcons(): void {
+    this.http.get<IconOption[]>('/data/common/icons.json').subscribe({
+      next: (icons) => {
+        this.availableIcons.set(icons);
+        this.filteredIcons.set(icons);
+      },
+      error: (error) => {
+        console.error('Failed to load icons:', error);
+      },
+    });
+  }
+
+  /**
+   * Filter icons based on search query
+   */
+  protected filterIcons(event: any): void {
+    const query = event.query.toLowerCase();
+    const allIcons = this.availableIcons();
+    
+    if (!query) {
+      this.filteredIcons.set(allIcons);
+    } else {
+      const filtered = allIcons.filter(
+        (icon) =>
+          icon.name.toLowerCase().includes(query) ||
+          icon.label.toLowerCase().includes(query) ||
+          icon.category.toLowerCase().includes(query)
+      );
+      this.filteredIcons.set(filtered);
     }
   }
 

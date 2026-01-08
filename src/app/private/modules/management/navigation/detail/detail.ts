@@ -122,11 +122,10 @@ export class NavigationDetail implements OnInit, OnDestroy {
    * Handle drawer close
    */
   protected onClose(): void {
-    this.isOpen.set(false);
-    // Navigate back to list
-    setTimeout(() => {
-      this.router.navigate(['../../'], { relativeTo: this.route });
-    }, 300); // Wait for drawer animation
+    // Navigate back immediately to close drawer properly
+    this.router.navigate(['../../'], { relativeTo: this.route }).then(() => {
+      this.isOpen.set(false);
+    });
   }
 
   /**
