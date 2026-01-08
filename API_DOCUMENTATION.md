@@ -1,13 +1,93 @@
 # Vertical Layout Improvements - API Documentation
 
 ## Overview
-This document details the backend API endpoints used for the vertical layout improvements in the Open ERP web application.
+This document details the backend API endpoints used in the Open ERP web application.
 
 ## Backend Repository
-The backend APIs are defined in the `open-erp-backend` repository at:
+The backend APIs are defined in the `open-erp-backend` repository.
+
+## User Management Endpoints
+
+### Base URL
 ```
-open-erp-backend/apps/organization/src/controllers/organization.controller.ts
+http://localhost:3002
 ```
+
+### 1. Get Users List
+**Endpoint:** `GET /v1/users`
+
+**Description:** Get paginated list of users with optional filtering
+
+**Query Parameters:**
+- `page` (number, default: 1) - Page number
+- `size` (number, default: 10) - Results per page
+- `q` (string, optional) - Search query for filtering by name, email, username, or phone
+- `organizationId` (string, optional) - Filter users by organization
+
+**Response:** `UserListResponse` (200 OK)
+```typescript
+{
+  data: User[];
+  total: number;
+  page: number;
+  limit: number;
+}
+```
+
+**Frontend Implementation:** `UserService.getUsers()`
+
+---
+
+### 2. Block Users
+**Endpoint:** `POST /v1/users/block`
+
+**Description:** Block multiple users
+
+**Request Body:**
+```typescript
+{
+  userIds: string[];
+}
+```
+
+**Response:** No content (200 OK)
+
+**Frontend Implementation:** `UserService.blockUsers()`
+
+---
+
+### 3. Revoke Login Sessions
+**Endpoint:** `POST /v1/users/revoke-sessions`
+
+**Description:** Revoke login sessions for multiple users
+
+**Request Body:**
+```typescript
+{
+  userIds: string[];
+}
+```
+
+**Response:** No content (200 OK)
+
+**Frontend Implementation:** `UserService.revokeLoginSessions()`
+
+---
+
+### 4. Export Users to CSV
+**Endpoint:** `POST /v1/users/export`
+
+**Description:** Export users list to CSV format
+
+**Query Parameters:**
+- `q` (string, optional) - Search query
+- `organizationId` (string, optional) - Filter by organization
+
+**Response:** Binary CSV file (200 OK)
+
+**Frontend Implementation:** `UserService.exportToCSV()`
+
+---
 
 ## Organization Management Endpoints
 
@@ -223,7 +303,18 @@ The following localStorage keys are used by the vertical layout features:
 
 ## Frontend Services
 
-### organizationContextService
+### UserService
+Service for managing users in the application.
+
+**Key Methods:**
+- `getUsers(params)` - Get paginated list of users with optional filtering
+- `blockUsers(userIds)` - Block multiple users
+- `revokeLoginSessions(userIds)` - Revoke login sessions
+- `exportToCSV(params)` - Export users to CSV
+
+---
+
+### OrganizationContextService
 Global service for managing organization context across the application.
 
 **Key Methods:**
@@ -252,13 +343,30 @@ Enhanced with resizable navigation support.
 
 ---
 
+## Authentication & Authorization
+
+All endpoints (except public ones) require authentication via JWT token.
+
+### Token Management
+- Tokens are automatically included in requests via HTTP interceptor
+- Access tokens are stored in localStorage (encrypted in production)
+- Refresh tokens are used to obtain new access tokens
+
+### Error Responses
+- **401 Unauthorized** - Invalid or expired token; redirects to login
+- **403 Forbidden** - User lacks permission; shows error message
+- **404 Not Found** - Resource not found
+- **500 Internal Server Error** - Server error; shows retry option
+
+---
+
 ## Notes
 
-1. All organization endpoints require authentication via JWT token
+1. All organization and user endpoints require authentication via JWT token
 2. The user must have appropriate permissions to perform operations
 3. The organization registration flow validates tax ID format (10-13 digits)
 4. VietQR API integration is optional and only works for Vietnamese businesses
-5. The frontend currently uses mock data for user organizations list - this needs to be replaced with actual API call once the backend endpoint is available
+5. The User List module no longer uses mock data - all data comes from the backend
 
 ---
 
