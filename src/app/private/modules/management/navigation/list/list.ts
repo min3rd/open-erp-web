@@ -177,7 +177,7 @@ export class NavigationList implements OnInit, OnDestroy {
    * Convert NavigationItemDto array to TreeNode array
    */
   private convertToTreeNodes(items: NavigationItemDto[]): TreeNode[] {
-    return items.map((item) => this.convertItemToTreeNode(item));
+    return (items || []).map((item) => this.convertItemToTreeNode(item));
   }
 
   /**
