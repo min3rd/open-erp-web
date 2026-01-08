@@ -1,0 +1,308 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+  computed,
+  inject,
+  OnInit,
+  OnDestroy,
+  effect,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { Subject, takeUntil } from 'rxjs';
+
+// PrimeNG imports
+import { TreeModule } from 'primeng/tree';
+import { TreeNode } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { ToolbarModule } from 'primeng/toolbar';
+import { TooltipModule } from 'primeng/tooltip';
+import { MessageService } from 'primeng/api';
+import { SelectButtonModule } from 'primeng/selectbutton';
+
+// Services and DTOs
+import { NavigationManagementService } from '../services/navigation-management.service';
+import { NavigationItemDto } from '../dto/navigation-item.dto';
+
+@Component({
+  selector: 'app-navigation-list',
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    FormsModule,
+    TranslocoModule,
+    TreeModule,
+    ButtonModule,
+    ToolbarModule,
+    TooltipModule,
+    SelectButtonModule,
+  ],
+  templateUrl: './list.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class NavigationList implements OnInit, OnDestroy {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private navigationService = inject(NavigationManagementService);
+  private messageService = inject(MessageService);
+  private translocoService = inject(TranslocoService);
+  private destroy$ = new Subject<void>();
+  private resizeHandler: (() => void) | null = null;
+
+  // State signals
+  protected readonly isMobile = signal(false);
+  protected readonly activeScope = signal<'global' | 'module'>('global');
+  protected readonly isLoading = signal(false);
+  protected readonly globalNavigationItems = signal<NavigationItemDto[]>([]);
+  protected readonly moduleNavigationItems = signal<NavigationItemDto[]>([]);
+  protected readonly selectedModule = signal<NavigationItemDto | null>(null);
+  protected readonly selectedItem = signal<NavigationItemDto | null>(null);
+
+  // Tab options for mobile
+  protected readonly scopeOptions = [
+    { label: 'navigationManagement.tabs.global', value: 'global' as const },
+    { label: 'navigationManagement.tabs.module', value: 'module' as const },
+  ];
+
+  // Computed values
+  protected readonly globalTreeNodes = computed(() =>
+    this.convertToTreeNodes(this.globalNavigationItems())
+  );
+  protected readonly moduleTreeNodes = computed(() =>
+    this.convertToTreeNodes(this.moduleNavigationItems())
+  );
+  protected readonly selectedTreeNode = signal<TreeNode | null>(null);
+
+  constructor() {
+    // Detect mobile viewport
+    this.checkViewport();
+    if (typeof window !== 'undefined') {
+      this.resizeHandler = () => this.checkViewport();
+      window.addEventListener('resize', this.resizeHandler);
+    }
+
+    // Watch route params for scope changes
+    effect(() => {
+      const scope = this.activeScope();
+      if (scope === 'global') {
+        this.loadGlobalNavigation();
+      } else if (this.selectedModule()?.moduleKey) {
+        this.loadModuleNavigation(this.selectedModule()!.moduleKey!);
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    // Subscribe to route params
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const scope = params['scope'] || 'global';
+      this.activeScope.set(scope as 'global' | 'module');
+    });
+
+    this.loadGlobalNavigation();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+
+    if (typeof window !== 'undefined' && this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler);
+    }
+  }
+
+  /**
+   * Check viewport size to detect mobile
+   */
+  private checkViewport(): void {
+    if (typeof window !== 'undefined') {
+      this.isMobile.set(window.innerWidth < 768);
+    }
+  }
+
+  /**
+   * Load global navigation items
+   */
+  protected loadGlobalNavigation(): void {
+    this.isLoading.set(true);
+    this.navigationService
+      .getGlobalNavigation({ includeHidden: true })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (items) => {
+          this.globalNavigationItems.set(items);
+          this.isLoading.set(false);
+        },
+        error: (error) => {
+          console.error('Failed to load global navigation:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translocoService.translate('navigationManagement.messages.error'),
+            detail: error.message,
+          });
+          this.isLoading.set(false);
+        },
+      });
+  }
+
+  /**
+   * Load module navigation items
+   */
+  protected loadModuleNavigation(moduleKey: string): void {
+    this.isLoading.set(true);
+    this.navigationService
+      .getModuleNavigation(moduleKey, { includeHidden: true })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (items) => {
+          this.moduleNavigationItems.set(items);
+          this.isLoading.set(false);
+        },
+        error: (error) => {
+          console.error('Failed to load module navigation:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translocoService.translate('navigationManagement.messages.error'),
+            detail: error.message,
+          });
+          this.isLoading.set(false);
+        },
+      });
+  }
+
+  /**
+   * Convert NavigationItemDto array to TreeNode array
+   */
+  private convertToTreeNodes(items: NavigationItemDto[]): TreeNode[] {
+    return items.map((item) => this.convertItemToTreeNode(item));
+  }
+
+  /**
+   * Convert a single NavigationItemDto to TreeNode
+   */
+  private convertItemToTreeNode(item: NavigationItemDto): TreeNode {
+    return {
+      key: item.id,
+      label: item.label,
+      data: item,
+      icon: item.icon,
+      children: item.items?.map((child) => this.convertItemToTreeNode(child)) || [],
+      expanded: false,
+      draggable: true,
+      droppable: true,
+    };
+  }
+
+  /**
+   * Handle scope change
+   */
+  protected onScopeChange(value: 'global' | 'module'): void {
+    this.router.navigate(['../', value], { relativeTo: this.route });
+  }
+
+  /**
+   * Handle tree node selection
+   */
+  protected onNodeSelect(event: any): void {
+    const node = event.node as TreeNode;
+    const item = node.data as NavigationItemDto;
+    this.selectedItem.set(item);
+    this.selectedTreeNode.set(node);
+
+    // If it's a module item in global navigation, load its module navigation
+    if (this.activeScope() === 'global' && item.scope === 'global' && item.moduleKey) {
+      this.selectedModule.set(item);
+      this.loadModuleNavigation(item.moduleKey);
+    }
+
+    // Navigate to view the item
+    this.router.navigate([item.id], { relativeTo: this.route });
+  }
+
+  /**
+   * Handle tree node unselection
+   */
+  protected onNodeUnselect(): void {
+    this.selectedItem.set(null);
+    this.selectedTreeNode.set(null);
+    // Navigate back to list
+    this.router.navigate(['./'], { relativeTo: this.route });
+  }
+
+  /**
+   * Navigate to add new item
+   */
+  protected onAddItem(): void {
+    this.router.navigate(['new'], { relativeTo: this.route });
+  }
+
+  /**
+   * Navigate to edit selected item
+   */
+  protected onEditItem(): void {
+    const item = this.selectedItem();
+    if (item) {
+      this.router.navigate([item.id, 'edit'], { relativeTo: this.route });
+    }
+  }
+
+  /**
+   * Delete selected item
+   */
+  protected onDeleteItem(): void {
+    const item = this.selectedItem();
+    if (!item) return;
+
+    if (
+      confirm(
+        this.translocoService.translate('navigationManagement.deleteDialog.message', {
+          label: item.label,
+        })
+      )
+    ) {
+      this.navigationService
+        .deleteNavigationItem(item.id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: this.translocoService.translate('navigationManagement.messages.success'),
+              detail: this.translocoService.translate(
+                'navigationManagement.messages.deleteSuccess'
+              ),
+            });
+            this.selectedItem.set(null);
+            this.loadGlobalNavigation();
+            if (this.selectedModule()?.moduleKey) {
+              this.loadModuleNavigation(this.selectedModule()!.moduleKey!);
+            }
+            // Navigate back to list
+            this.router.navigate(['./'], { relativeTo: this.route });
+          },
+          error: (error) => {
+            console.error('Failed to delete navigation item:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translocoService.translate('navigationManagement.messages.error'),
+              detail: error.message,
+            });
+          },
+        });
+    }
+  }
+
+  /**
+   * Refresh current navigation
+   */
+  protected onRefresh(): void {
+    if (this.activeScope() === 'global') {
+      this.loadGlobalNavigation();
+    } else if (this.selectedModule()?.moduleKey) {
+      this.loadModuleNavigation(this.selectedModule()!.moduleKey!);
+    }
+  }
+}

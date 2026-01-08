@@ -1,8 +1,8 @@
-<div id="navigation-management-container" class="flex flex-auto h-full">
+<div class="flex flex-auto h-full">
   <div class="flex h-full flex-col w-full">
     <!-- Fixed Toolbar -->
     <div class="p-2 border-b border-surface-200 dark:border-surface-700">
-      <p-toolbar id="navigation-management-toolbar">
+      <p-toolbar id="navigation-list-toolbar">
         <ng-template #start>
           <h2 class="text-xl font-semibold m-0">
             {{ 'navigationManagement.title' | transloco }}
@@ -12,7 +12,7 @@
         <ng-template #end>
           <!-- Add Item Button -->
           <p-button
-            id="navigation-management-add-button"
+            id="navigation-list-add-button"
             icon="pi pi-plus"
             [rounded]="true"
             [text]="true"
@@ -25,7 +25,7 @@
 
           <!-- Refresh Button -->
           <p-button
-            id="navigation-management-refresh-button"
+            id="navigation-list-refresh-button"
             icon="pi pi-refresh"
             [rounded]="true"
             [text]="true"
@@ -37,7 +37,7 @@
 
           <!-- Edit Button (enabled when item is selected) -->
           <p-button
-            id="navigation-management-edit-button"
+            id="navigation-list-edit-button"
             icon="pi pi-pencil"
             [rounded]="true"
             [text]="true"
@@ -50,7 +50,7 @@
 
           <!-- Delete Button (enabled when item is selected) -->
           <p-button
-            id="navigation-management-delete-button"
+            id="navigation-list-delete-button"
             icon="pi pi-trash"
             [rounded]="true"
             [text]="true"
@@ -66,13 +66,13 @@
     </div>
 
     <!-- Main Content Area with Two-Pane Layout -->
-    <div id="navigation-management-content" class="flex-1 overflow-hidden">
+    <div id="navigation-list-content" class="flex-1 overflow-hidden">
       @if (!isMobile()) {
       <!-- Desktop: Two-Pane Layout -->
       <div class="h-full flex">
         <!-- Left Pane: Global Navigation -->
         <div
-          id="navigation-management-global-pane"
+          id="navigation-list-global-pane"
           class="w-1/3 border-r border-surface-200 dark:border-surface-700 flex flex-col"
         >
           <div class="p-3 border-b border-surface-200 dark:border-surface-700">
@@ -81,7 +81,7 @@
             </h3>
           </div>
           <div class="flex-1 overflow-auto p-3">
-            @if (isLoading() && activeTab() === 'global') {
+            @if (isLoading() && activeScope() === 'global') {
             <div class="flex items-center justify-center h-32">
               <i class="pi pi-spin pi-spinner text-2xl"></i>
               <p class="ml-2">{{ 'navigationManagement.tree.loading' | transloco }}</p>
@@ -94,7 +94,7 @@
             </div>
             } @else {
             <p-tree
-              id="navigation-management-global-tree"
+              id="navigation-list-global-tree"
               [value]="globalTreeNodes()"
               selectionMode="single"
               [(selection)]="selectedTreeNode"
@@ -110,10 +110,7 @@
         </div>
 
         <!-- Right Pane: Module Navigation -->
-        <div
-          id="navigation-management-module-pane"
-          class="w-2/3 flex flex-col"
-        >
+        <div id="navigation-list-module-pane" class="w-2/3 flex flex-col">
           <div class="p-3 border-b border-surface-200 dark:border-surface-700">
             <h3 class="text-lg font-semibold m-0">
               {{ 'navigationManagement.tabs.module' | transloco }}
@@ -131,7 +128,7 @@
               <p class="mt-2">{{ 'navigationManagement.messages.noModule' | transloco }}</p>
               <p class="text-sm">{{ 'navigationManagement.messages.selectModule' | transloco }}</p>
             </div>
-            } @else if (isLoading() && activeTab() === 'module') {
+            } @else if (isLoading() && activeScope() === 'module') {
             <div class="flex items-center justify-center h-32">
               <i class="pi pi-spin pi-spinner text-2xl"></i>
               <p class="ml-2">{{ 'navigationManagement.tree.loading' | transloco }}</p>
@@ -144,7 +141,7 @@
             </div>
             } @else {
             <p-tree
-              id="navigation-management-module-tree"
+              id="navigation-list-module-tree"
               [value]="moduleTreeNodes()"
               selectionMode="single"
               [(selection)]="selectedTreeNode"
@@ -162,13 +159,13 @@
       } @else {
       <!-- Mobile: Single-Column with Tab Toggle -->
       <div class="h-full flex flex-col">
-        <!-- Tab Selector -->
+        <!-- Scope Selector -->
         <div class="p-3 border-b border-surface-200 dark:border-surface-700">
           <p-selectButton
-            id="navigation-management-tab-selector"
-            [options]="tabOptions"
-            [(ngModel)]="activeTab"
-            (onChange)="onTabChange($event.value)"
+            id="navigation-list-scope-selector"
+            [options]="scopeOptions"
+            [(ngModel)]="activeScope"
+            (onChange)="onScopeChange($event.value)"
             [allowEmpty]="false"
             optionLabel="label"
             optionValue="value"
@@ -183,9 +180,9 @@
 
         <!-- Tab Content -->
         <div class="flex-1 overflow-auto">
-          @if (activeTab() === 'global') {
+          @if (activeScope() === 'global') {
           <div class="p-3">
-            @if (isLoading() && activeTab() === 'global') {
+            @if (isLoading()) {
             <div class="flex items-center justify-center h-32">
               <i class="pi pi-spin pi-spinner text-2xl"></i>
               <p class="ml-2">{{ 'navigationManagement.tree.loading' | transloco }}</p>
@@ -200,7 +197,7 @@
             </div>
             } @else {
             <p-tree
-              id="navigation-management-global-tree-mobile"
+              id="navigation-list-global-tree-mobile"
               [value]="globalTreeNodes()"
               selectionMode="single"
               [(selection)]="selectedTreeNode"
@@ -223,7 +220,7 @@
                 {{ 'navigationManagement.messages.selectModule' | transloco }}
               </p>
             </div>
-            } @else if (isLoading() && activeTab() === 'module') {
+            } @else if (isLoading()) {
             <div class="flex items-center justify-center h-32">
               <i class="pi pi-spin pi-spinner text-2xl"></i>
               <p class="ml-2">{{ 'navigationManagement.tree.loading' | transloco }}</p>
@@ -238,7 +235,7 @@
             </div>
             } @else {
             <p-tree
-              id="navigation-management-module-tree-mobile"
+              id="navigation-list-module-tree-mobile"
               [value]="moduleTreeNodes()"
               selectionMode="single"
               [(selection)]="selectedTreeNode"
@@ -259,7 +256,7 @@
 
     <!-- Screen Reader Status Announcements -->
     <div
-      id="navigation-management-status"
+      id="navigation-list-status"
       role="status"
       aria-live="polite"
       aria-atomic="true"
@@ -271,31 +268,6 @@
     </div>
   </div>
 
-  <!-- Editor Dialog -->
-  <p-dialog
-    [(visible)]="isEditorOpen"
-    [modal]="true"
-    [closable]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [style]="{ width: isMobile() ? '95vw' : '700px', maxHeight: '90vh' }"
-    [header]="
-      editorMode() === 'create'
-        ? ('navigationManagement.editor.title.create' | transloco)
-        : ('navigationManagement.editor.title.edit' | transloco)
-    "
-    id="navigation-management-editor-dialog"
-  >
-    <div class="overflow-auto" [style.maxHeight]="'70vh'">
-      <app-navigation-editor
-        [item]="selectedItem()"
-        [mode]="editorMode()"
-        [availableModules]="[]"
-        [availableParents]="globalNavigationItems()"
-        (save)="onSaveItem($event)"
-        (cancel)="onCloseEditor()"
-      />
-    </div>
-  </p-dialog>
+  <!-- Detail Outlet (Drawer will be here) -->
+  <router-outlet></router-outlet>
 </div>
-

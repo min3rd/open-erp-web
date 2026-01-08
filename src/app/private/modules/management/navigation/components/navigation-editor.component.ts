@@ -111,9 +111,12 @@ export class NavigationEditorComponent implements OnInit {
       this.patchForm(currentItem);
     }
 
-    // Disable form in view mode
+    // Disable form in view mode only (not in create mode)
     if (this.mode() === 'view') {
       this.form().disable();
+    } else {
+      // Ensure form is enabled in create and edit modes
+      this.form().enable();
     }
   }
 
