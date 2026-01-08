@@ -146,9 +146,11 @@ export class List implements OnInit, OnDestroy {
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const page = parseInt(params['page'], 10) || 1;
       const limit = parseInt(params['limit'], 10) || 10;
+      const search = params['filter'] || '';
 
       this.currentPage.set(page);
       this.pageSize.set(limit);
+      this.searchQuery.set(search);
 
       // Load initial data
       this.loadUsers();
@@ -213,7 +215,10 @@ export class List implements OnInit, OnDestroy {
    */
   protected onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.searchSubject$.next(input.value);
+    // Update URL with relative navigation
+    this.router.navigate(['../../../', input.value ?? 'all', 1, this.pageSize()], {
+      relativeTo: this.route,
+    });
   }
 
   /**
@@ -403,6 +408,5 @@ export class List implements OnInit, OnDestroy {
   private announceStatus(message: string): void {
     // The status region in the template will announce this
     // This is handled by the aria-live region in the template
-    console.log('[A11y]', message);
   }
 }
