@@ -4,7 +4,7 @@
     id="user-list-toolbar"
     class="border-b border-surface-200 dark:border-surface-700"
   >
-    <ng-template pTemplate="start">
+    <ng-template #start>
       <!-- Scope Toggle -->
       <p-selectButton
         id="user-list-scope-toggle"
@@ -15,11 +15,11 @@
         optionLabel="label"
         optionValue="value"
         class="mr-4"
-        aria-label="Select user scope"
+        [attr.aria-label]="'userList.scopeToggle.label' | transloco"
       >
-        <ng-template let-item pTemplate>
+        <ng-template let-item #item>
           <i [class]="item.icon"></i>
-          <span class="ml-2">{{ item.label }}</span>
+          <span class="ml-2">{{ item.label | transloco }}</span>
         </ng-template>
       </p-selectButton>
 
@@ -30,16 +30,16 @@
           id="user-list-search"
           type="text"
           pInputText
-          placeholder="Search by name, email, or phone"
+          [placeholder]="'userList.search.placeholder' | transloco"
           (input)="onSearchChange($event)"
           [value]="searchQuery()"
           class="w-80"
-          aria-label="Search users"
+          [attr.aria-label]="'userList.search.label' | transloco"
         />
       </span>
     </ng-template>
 
-    <ng-template pTemplate="end">
+    <ng-template #end>
       <!-- Add New Button -->
       <p-button
         id="user-list-add-button"
@@ -48,9 +48,9 @@
         [text]="true"
         severity="primary"
         (onClick)="onAddUser()"
-        pTooltip="Add new user"
+        [pTooltip]="'userList.addButton.tooltip' | transloco"
         tooltipPosition="bottom"
-        aria-label="Add new user"
+        [attr.aria-label]="'userList.addButton.label' | transloco"
       />
 
       <!-- Actions Menu -->
@@ -60,7 +60,7 @@
         [rounded]="true"
         [text]="true"
         (onClick)="menu.toggle($event)"
-        aria-label="Open actions menu"
+        [attr.aria-label]="'userList.actionsButton.label' | transloco"
         aria-haspopup="true"
         aria-controls="user-list-actions-menu"
       />
@@ -87,49 +87,48 @@
       [rowHover]="true"
       dataKey="id"
       styleClass="p-datatable-sm"
-      [tableStyle]="{ 'min-width': '50rem' }"
       responsiveLayout="scroll"
     >
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <tr>
-          <th style="width: 4rem">
+          <th class="w-16">
             <p-checkbox
               [ngModel]="allSelected()"
               (onChange)="onToggleSelectAll($event)"
               [binary]="true"
-              aria-label="Select all users on this page"
+              [attr.aria-label]="'userList.table.selectAll' | transloco"
             />
           </th>
-          <th style="width: 4rem">Avatar</th>
+          <th class="w-16">{{ 'userList.table.avatar' | transloco }}</th>
           <th pSortableColumn="fullName">
-            Full Name
+            {{ 'userList.table.fullName' | transloco }}
             <p-sortIcon field="fullName" />
           </th>
           <th pSortableColumn="email">
-            Email
+            {{ 'userList.table.email' | transloco }}
             <p-sortIcon field="email" />
           </th>
           <th pSortableColumn="phone">
-            Phone
+            {{ 'userList.table.phone' | transloco }}
             <p-sortIcon field="phone" />
           </th>
           <th pSortableColumn="status">
-            Status
+            {{ 'userList.table.status' | transloco }}
             <p-sortIcon field="status" />
           </th>
-          <th>Last Login</th>
-          <th style="width: 8rem">Actions</th>
+          <th>{{ 'userList.table.lastLogin' | transloco }}</th>
+          <th class="w-32">{{ 'userList.table.actions' | transloco }}</th>
         </tr>
       </ng-template>
 
-      <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+      <ng-template #body let-user let-rowIndex="rowIndex">
         <tr [id]="'user-list-row-' + user.id">
           <td>
             <p-checkbox
               [(ngModel)]="selectedUsers"
               [value]="user"
               [binary]="false"
-              [aria-label]="'Select ' + user.fullName"
+              [attr.aria-label]="('userList.table.selectUser' | transloco) + ' ' + user.fullName"
             />
           </td>
           <td>
@@ -150,7 +149,7 @@
           <td>{{ user.phone || '-' }}</td>
           <td>
             <p-tag
-              [value]="user.status"
+              [value]="user.status | transloco"
               [severity]="getStatusSeverity(user.status)"
             />
           </td>
@@ -162,9 +161,9 @@
               [text]="true"
               size="small"
               severity="secondary"
-              pTooltip="View details"
+              [pTooltip]="'userList.table.viewDetails' | transloco"
               tooltipPosition="top"
-              [aria-label]="'View ' + user.fullName + ' details'"
+              [attr.aria-label]="('userList.table.view' | transloco) + ' ' + user.fullName"
             />
             <p-button
               icon="pi pi-pencil"
@@ -172,26 +171,26 @@
               [text]="true"
               size="small"
               severity="secondary"
-              pTooltip="Edit user"
+              [pTooltip]="'userList.table.editUser' | transloco"
               tooltipPosition="top"
-              [aria-label]="'Edit ' + user.fullName"
+              [attr.aria-label]="('userList.table.edit' | transloco) + ' ' + user.fullName"
             />
           </td>
         </tr>
       </ng-template>
 
-      <ng-template pTemplate="emptymessage">
+      <ng-template #empty>
         <tr>
           <td colspan="8" class="text-center py-8 text-surface-500">
             @if (isLoading()) {
               <i class="pi pi-spin pi-spinner text-2xl"></i>
-              <p class="mt-2">Loading users...</p>
+              <p class="mt-2">{{ 'userList.messages.loading' | transloco }}</p>
             } @else if (searchQuery()) {
               <i class="pi pi-search text-2xl"></i>
-              <p class="mt-2">No users found matching "{{ searchQuery() }}"</p>
+              <p class="mt-2">{{ 'userList.messages.noResults' | transloco: { query: searchQuery() } }}</p>
             } @else {
               <i class="pi pi-users text-2xl"></i>
-              <p class="mt-2">No users available</p>
+              <p class="mt-2">{{ 'userList.messages.noUsers' | transloco }}</p>
             }
           </td>
         </tr>
@@ -213,13 +212,13 @@
         [rowsPerPageOptions]="[10, 25, 50, 100]"
         (onPageChange)="onPageChange($event)"
         [showCurrentPageReport]="true"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+        [currentPageReportTemplate]="'userList.pagination.report' | transloco"
       />
 
       <!-- Page Size Selector -->
       <div id="user-list-page-size" class="flex items-center gap-2">
         <label for="page-size-select" class="text-sm text-surface-600 dark:text-surface-400">
-          Items per page:
+          {{ 'userList.pagination.itemsPerPage' | transloco }}
         </label>
         <select
           id="page-size-select"
@@ -245,9 +244,9 @@
     class="sr-only"
   >
     @if (isLoading()) {
-      Loading users...
+      {{ 'userList.messages.loading' | transloco }}
     } @else {
-      {{ totalRecords() }} users loaded
+      {{ 'userList.messages.usersLoaded' | transloco: { count: totalRecords() } }}
     }
   </div>
 </div>

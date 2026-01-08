@@ -11,7 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 
 // PrimeNG imports
@@ -60,6 +60,7 @@ export class List implements OnInit, OnDestroy {
   private userService = inject(UserService);
   private tenantContext = inject(OrganizationContextService);
   private messageService = inject(MessageService);
+  private translocoService = inject(TranslocoService);
   private destroy$ = new Subject<void>();
 
   // Search subject for debouncing
@@ -87,20 +88,20 @@ export class List implements OnInit, OnDestroy {
 
   // Scope options for toggle
   protected readonly scopeOptions = [
-    { label: 'Global', value: 'global', icon: 'pi pi-globe' },
-    { label: 'Organization', value: 'organization', icon: 'pi pi-building' },
+    { label: 'userList.scopeToggle.global', value: 'global', icon: 'pi pi-globe' },
+    { label: 'userList.scopeToggle.organization', value: 'organization', icon: 'pi pi-building' },
   ];
 
   // Actions menu items getter for reactive disabled state
   protected get actionMenuItems(): MenuItem[] {
     return [
       {
-        label: 'Download CSV',
+        label: this.translocoService.translate('userList.actions.downloadCSV'),
         icon: 'pi pi-download',
         command: () => this.onDownloadCSV(),
       },
       {
-        label: 'Import Users',
+        label: this.translocoService.translate('userList.actions.importUsers'),
         icon: 'pi pi-upload',
         command: () => this.onImportUsers(),
       },
@@ -108,13 +109,13 @@ export class List implements OnInit, OnDestroy {
         separator: true,
       },
       {
-        label: 'Block Selected',
+        label: this.translocoService.translate('userList.actions.blockSelected'),
         icon: 'pi pi-ban',
         command: () => this.onBlockSelected(),
         disabled: !this.hasSelection(),
       },
       {
-        label: 'Revoke Login Sessions',
+        label: this.translocoService.translate('userList.actions.revokeLoginSessions'),
         icon: 'pi pi-sign-out',
         command: () => this.onRevokeLoginSessions(),
         disabled: !this.hasSelection(),
@@ -190,17 +191,17 @@ export class List implements OnInit, OnDestroy {
         this.users.set(response.data);
         this.totalRecords.set(response.total);
         this.isLoading.set(false);
-        this.announceStatus(`Loaded ${response.data.length} users`);
+        this.announceStatus(this.translocoService.translate('userList.messages.loaded', { count: response.data.length }));
       },
       error: (error) => {
         console.error('Failed to load users:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to load users',
+          summary: this.translocoService.translate('userList.messages.error'),
+          detail: this.translocoService.translate('userList.messages.loadFailed'),
         });
         this.isLoading.set(false);
-        this.announceStatus('Error loading users');
+        this.announceStatus(this.translocoService.translate('userList.messages.errorLoading'));
       },
     });
   }
@@ -228,8 +229,8 @@ export class List implements OnInit, OnDestroy {
     const newPage = event.page + 1; // PrimeNG uses 0-based index
     const newPageSize = event.rows;
 
-    // Update URL
-    this.router.navigate(['/management/user', 'all', newPage, newPageSize]);
+    // Update URL with relative navigation
+    this.router.navigate(['..', 'all', newPage, newPageSize], { relativeTo: this.route });
   }
 
   /**
@@ -283,16 +284,16 @@ export class List implements OnInit, OnDestroy {
         window.URL.revokeObjectURL(url);
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Users exported successfully',
+          summary: this.translocoService.translate('userList.messages.success'),
+          detail: this.translocoService.translate('userList.messages.exportSuccess'),
         });
       },
       error: (error) => {
         console.error('Export failed:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to export users',
+          summary: this.translocoService.translate('userList.messages.error'),
+          detail: this.translocoService.translate('userList.messages.exportFailed'),
         });
       },
     });
@@ -304,8 +305,8 @@ export class List implements OnInit, OnDestroy {
   protected onImportUsers(): void {
     this.messageService.add({
       severity: 'info',
-      summary: 'Not Implemented',
-      detail: 'User import functionality will be implemented soon',
+      summary: this.translocoService.translate('userList.messages.notImplemented'),
+      detail: this.translocoService.translate('userList.messages.importSoon'),
     });
   }
 
@@ -320,8 +321,8 @@ export class List implements OnInit, OnDestroy {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: `${userIds.length} user(s) blocked successfully`,
+          summary: this.translocoService.translate('userList.messages.success'),
+          detail: this.translocoService.translate('userList.messages.blockSuccess', { count: userIds.length }),
         });
         this.selectedUsers.set([]);
         this.loadUsers();
@@ -330,8 +331,8 @@ export class List implements OnInit, OnDestroy {
         console.error('Block failed:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to block users',
+          summary: this.translocoService.translate('userList.messages.error'),
+          detail: this.translocoService.translate('userList.messages.blockFailed'),
         });
       },
     });
@@ -348,8 +349,8 @@ export class List implements OnInit, OnDestroy {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: `Login sessions revoked for ${userIds.length} user(s)`,
+          summary: this.translocoService.translate('userList.messages.success'),
+          detail: this.translocoService.translate('userList.messages.revokeSuccess', { count: userIds.length }),
         });
         this.selectedUsers.set([]);
       },
@@ -357,8 +358,8 @@ export class List implements OnInit, OnDestroy {
         console.error('Revoke failed:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to revoke login sessions',
+          summary: this.translocoService.translate('userList.messages.error'),
+          detail: this.translocoService.translate('userList.messages.revokeFailed'),
         });
       },
     });

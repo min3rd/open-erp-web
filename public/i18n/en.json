@@ -498,5 +498,67 @@
     "tabs": {
       "user": "Users"
     }
+  },
+  "userList": {
+    "scopeToggle": {
+      "label": "Select user scope",
+      "global": "Global",
+      "organization": "Organization"
+    },
+    "search": {
+      "label": "Search users",
+      "placeholder": "Search by name, email, or phone"
+    },
+    "addButton": {
+      "label": "Add new user",
+      "tooltip": "Add new user"
+    },
+    "actionsButton": {
+      "label": "Open actions menu"
+    },
+    "actions": {
+      "downloadCSV": "Download CSV",
+      "importUsers": "Import Users",
+      "blockSelected": "Block Selected",
+      "revokeLoginSessions": "Revoke Login Sessions"
+    },
+    "table": {
+      "selectAll": "Select all users on this page",
+      "selectUser": "Select",
+      "avatar": "Avatar",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "status": "Status",
+      "lastLogin": "Last Login",
+      "actions": "Actions",
+      "viewDetails": "View details",
+      "editUser": "Edit user",
+      "view": "View",
+      "edit": "Edit"
+    },
+    "pagination": {
+      "report": "Showing {first} to {last} of {totalRecords} users",
+      "itemsPerPage": "Items per page:"
+    },
+    "messages": {
+      "loading": "Loading users...",
+      "loaded": "Loaded {{count}} users",
+      "usersLoaded": "{{count}} users loaded",
+      "noResults": "No users found matching \"{{query}}\"",
+      "noUsers": "No users available",
+      "error": "Error",
+      "success": "Success",
+      "loadFailed": "Failed to load users",
+      "errorLoading": "Error loading users",
+      "exportSuccess": "Users exported successfully",
+      "exportFailed": "Failed to export users",
+      "notImplemented": "Not Implemented",
+      "importSoon": "User import functionality will be implemented soon",
+      "blockSuccess": "{{count}} user(s) blocked successfully",
+      "blockFailed": "Failed to block users",
+      "revokeSuccess": "Login sessions revoked for {{count}} user(s)",
+      "revokeFailed": "Failed to revoke login sessions"
+    }
   }
 }
