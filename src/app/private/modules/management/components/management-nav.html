@@ -13,7 +13,10 @@
     [class.justify-center]="navMode() === 'narrow'"
   >
     @if (navMode() === 'sidebar') {
-    <h2 id="management-nav-title" class="text-lg font-semibold text-surface-900 dark:text-surface-0">
+    <h2
+      id="management-nav-title"
+      class="text-lg font-semibold text-surface-900 dark:text-surface-0"
+    >
       {{ 'management.title' | transloco }}
     </h2>
     }
@@ -54,6 +57,32 @@
           <i class="pi pi-users text-xl" aria-hidden="true"></i>
           @if (navMode() === 'sidebar') {
           <span class="text-sm font-medium">{{ 'management.navigation.user' | transloco }}</span>
+          }
+        </a>
+      </li>
+
+      <!-- Navigation Management -->
+      <li id="management-nav-item-navigation">
+        <a
+          id="management-nav-link-navigation"
+          routerLink="navigation"
+          routerLinkActive="bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
+          [routerLinkActiveOptions]="{ exact: false }"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors text-surface-700 dark:text-surface-300"
+          [class.justify-center]="navMode() === 'narrow'"
+          [pTooltip]="
+            navMode() === 'narrow' ? ('management.navigation.navigation' | transloco) : ''
+          "
+          tooltipPosition="right"
+          [showDelay]="500"
+          [attr.aria-label]="'management.navigation.navigation' | transloco"
+          [attr.aria-current]="isActive('navigation') ? 'page' : null"
+        >
+          <i class="pi pi-bars text-xl" aria-hidden="true"></i>
+          @if (navMode() === 'sidebar') {
+          <span class="text-sm font-medium">{{
+            'management.navigation.navigation' | transloco
+          }}</span>
           }
         </a>
       </li>

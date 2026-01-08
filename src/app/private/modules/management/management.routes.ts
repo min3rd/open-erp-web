@@ -7,13 +7,17 @@ export const routes: Routes = [
     component: Management,
     children: [
       {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'user',
+      },
+      {
         path: 'user',
         loadChildren: () => import('./user/user.routes').then((m) => m.routes),
       },
       {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'user',
+        path: 'navigation',
+        loadChildren: () => import('./navigation/navigation.routes').then((m) => m.routes),
       },
     ],
   },

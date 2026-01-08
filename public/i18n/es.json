@@ -242,6 +242,100 @@
     "tabs": {
       "register": "Registrar",
       "info": "Información"
+    },
+    "detail": {
+      "actions": {
+        "cancel": "Cancelar",
+        "close": "Cerca",
+        "edit": "Editar",
+        "invite": "Invitar miembro",
+        "newSubsidiary": "Nueva filial",
+        "save": "Ahorrar"
+      },
+      "activity": {
+        "empty": "Ninguna actividad registrada",
+        "loadMore": "Cargar más",
+        "title": "Registro de actividad"
+      },
+      "edit": {
+        "error": "No se pudo actualizar la organización",
+        "success": "Organización actualizada con éxito",
+        "title": "Editar organización"
+      },
+      "info": {
+        "address": "Dirección de la sede",
+        "basicInfo": "Información básica",
+        "businessActivities": "Actividades de negocio",
+        "contactEmail": "Correo electrónico de contacto",
+        "contactPhone": "Teléfono de contacto",
+        "copied": "¡Copiado!",
+        "copy": "Copiar al portapapeles",
+        "createdAt": "Creado en",
+        "foundedDate": "Fecha de fundación",
+        "internationalName": "Nombre internacional",
+        "legalRepresentative": "Representante Legal",
+        "name": "Nombre comercial",
+        "noActivities": "No se enumeran actividades comerciales",
+        "status": "Estado",
+        "taxId": "Identificación fiscal",
+        "updatedAt": "Última actualización"
+      },
+      "loading": "Cargando detalles de la organización...",
+      "members": {
+        "actions": {
+          "promote": "Promover",
+          "remove": "Eliminar"
+        },
+        "empty": "No se encontraron miembros",
+        "invite": {
+          "email": "Dirección de correo electrónico",
+          "emailPlaceholder": "Introduzca la dirección de correo electrónico",
+          "error": "No se pudo enviar la invitación",
+          "role": "Role",
+          "rolePlaceholder": "Seleccionar rol",
+          "submit": "Enviar invitación",
+          "success": "Invitación enviada exitosamente",
+          "title": "Invitar miembro"
+        },
+        "status": {
+          "active": "Activo",
+          "inactive": "Inactivo",
+          "pending": "Pendiente"
+        },
+        "table": {
+          "actions": "Comportamiento",
+          "email": "Correo electrónico",
+          "joinedAt": "Unido",
+          "name": "Nombre",
+          "role": "Role",
+          "status": "Estado"
+        },
+        "title": "Miembros de la organización"
+      },
+      "notFound": "Organización no encontrada",
+      "relations": {
+        "children": "Subsidiarias",
+        "empty": "No se encontraron relaciones",
+        "parent": "Organización matriz",
+        "partners": "Fogonadura",
+        "sharePercentage": "Compartir",
+        "title": "Estructura organizativa",
+        "type": {
+          "joint_venture": "Empresa conjunta",
+          "parent": "Padre",
+          "partner": "Pareja",
+          "subsidiary": "Filial"
+        },
+        "viewDetails": "Ver detalles"
+      },
+      "tabs": {
+        "activity": "Registro de actividad",
+        "documents": "Documentos",
+        "members": "Miembros",
+        "overview": "Descripción general",
+        "relations": "Relaciones"
+      },
+      "title": "Detalles de la organización"
     }
   },
   "organizationSwitcher": {
@@ -399,7 +493,8 @@
     "navigation": {
       "user": "Gestión de Usuarios",
       "toggleNavMode": "Cambiar modo de navegación",
-      "toggleMenu": "Alternar menú"
+      "toggleMenu": "Alternar menú",
+      "navigation": "Gestión de Navegación"
     },
     "tabs": {
       "user": "Usuarios"

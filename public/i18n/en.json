@@ -493,7 +493,8 @@
     "navigation": {
       "user": "User Management",
       "toggleNavMode": "Toggle navigation mode",
-      "toggleMenu": "Toggle menu"
+      "toggleMenu": "Toggle menu",
+      "navigation": "Navigation Management"
     },
     "tabs": {
       "user": "Users"
