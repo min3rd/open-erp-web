@@ -455,7 +455,7 @@
           </div>
           <p-select
             id="user-list-page-size-mobile"
-            [options]="[10, 25, 50]"
+            [options]="[100, 200, 500, 1000]"
             [(ngModel)]="pageSize"
             (onChange)="onPageSizeChangeMobile($event)"
             [style]="{ width: '100px' }"
