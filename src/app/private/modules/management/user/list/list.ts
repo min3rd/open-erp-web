@@ -77,13 +77,13 @@ export class List implements OnInit, OnDestroy {
   protected readonly scope = signal<'global' | 'organization'>('global');
 
   // Computed values
-  protected readonly totalPages = computed(() =>
-    Math.ceil(this.totalRecords() / this.pageSize())
-  );
+  protected readonly totalPages = computed(() => Math.ceil(this.totalRecords() / this.pageSize()));
   protected readonly hasSelection = computed(() => this.selectedUsers().length > 0);
-  protected readonly currentOrganization = computed(() => this.organizationContext.currentOrganization());
-  protected readonly allSelected = computed(() => 
-    this.users().length > 0 && this.selectedUsers().length === this.users().length
+  protected readonly currentOrganization = computed(() =>
+    this.organizationContext.currentOrganization()
+  );
+  protected readonly allSelected = computed(
+    () => this.users().length > 0 && this.selectedUsers().length === this.users().length
   );
 
   // Scope options for toggle
@@ -146,22 +146,20 @@ export class List implements OnInit, OnDestroy {
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const page = parseInt(params['page'], 10) || 1;
       const limit = parseInt(params['limit'], 10) || 10;
-      
+
       this.currentPage.set(page);
       this.pageSize.set(limit);
-      
+
       // Load initial data
       this.loadUsers();
     });
 
     // Listen for organization changes
-    this.organizationContext.organizationChanged$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        if (this.scope() === 'organization') {
-          this.loadUsers();
-        }
-      });
+    this.organizationContext.organizationChanged$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.scope() === 'organization') {
+        this.loadUsers();
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -191,7 +189,11 @@ export class List implements OnInit, OnDestroy {
         this.users.set(response.data);
         this.totalRecords.set(response.total);
         this.isLoading.set(false);
-        this.announceStatus(this.translocoService.translate('userList.messages.loaded', { count: response.data.length }));
+        this.announceStatus(
+          this.translocoService.translate('userList.messages.loaded', {
+            count: response.data.length,
+          })
+        );
       },
       error: (error) => {
         console.error('Failed to load users:', error);
@@ -230,7 +232,9 @@ export class List implements OnInit, OnDestroy {
     const newPageSize = event.rows;
 
     // Update URL with relative navigation
-    this.router.navigate(['..', 'all', newPage, newPageSize], { relativeTo: this.route });
+    this.router.navigate(['../../..', this.searchQuery(), newPage, newPageSize], {
+      relativeTo: this.route,
+    });
   }
 
   /**
@@ -322,7 +326,9 @@ export class List implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'success',
           summary: this.translocoService.translate('userList.messages.success'),
-          detail: this.translocoService.translate('userList.messages.blockSuccess', { count: userIds.length }),
+          detail: this.translocoService.translate('userList.messages.blockSuccess', {
+            count: userIds.length,
+          }),
         });
         this.selectedUsers.set([]);
         this.loadUsers();
@@ -350,7 +356,9 @@ export class List implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'success',
           summary: this.translocoService.translate('userList.messages.success'),
-          detail: this.translocoService.translate('userList.messages.revokeSuccess', { count: userIds.length }),
+          detail: this.translocoService.translate('userList.messages.revokeSuccess', {
+            count: userIds.length,
+          }),
         });
         this.selectedUsers.set([]);
       },
