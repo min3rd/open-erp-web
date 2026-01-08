@@ -1,1 +1,312 @@
-<p>navigation works!</p>,
+<div id="navigation-management-container" class="flex flex-auto h-full">
+  <div class="flex h-full flex-col w-full">
+    <!-- Fixed Toolbar -->
+    <div class="p-2 border-b border-surface-200 dark:border-surface-700">
+      <p-toolbar id="navigation-management-toolbar">
+        <ng-template #start>
+          <h2 class="text-xl font-semibold m-0">
+            {{ 'navigationManagement.title' | transloco }}
+          </h2>
+        </ng-template>
+
+        <ng-template #end>
+          <!-- Add Item Button -->
+          <p-button
+            id="navigation-management-add-button"
+            icon="pi pi-plus"
+            [rounded]="true"
+            [text]="true"
+            severity="primary"
+            (onClick)="onAddItem()"
+            [pTooltip]="'navigationManagement.toolbar.addItemTooltip' | transloco"
+            tooltipPosition="bottom"
+            [attr.aria-label]="'navigationManagement.toolbar.addItem' | transloco"
+          />
+
+          <!-- Refresh Button -->
+          <p-button
+            id="navigation-management-refresh-button"
+            icon="pi pi-refresh"
+            [rounded]="true"
+            [text]="true"
+            (onClick)="onRefresh()"
+            [pTooltip]="'navigationManagement.toolbar.refreshTooltip' | transloco"
+            tooltipPosition="bottom"
+            [attr.aria-label]="'navigationManagement.toolbar.refresh' | transloco"
+          />
+
+          <!-- Edit Button (enabled when item is selected) -->
+          <p-button
+            id="navigation-management-edit-button"
+            icon="pi pi-pencil"
+            [rounded]="true"
+            [text]="true"
+            (onClick)="onEditItem()"
+            [disabled]="!selectedItem()"
+            [pTooltip]="'navigationManagement.editor.title.edit' | transloco"
+            tooltipPosition="bottom"
+            [attr.aria-label]="'navigationManagement.editor.title.edit' | transloco"
+          />
+
+          <!-- Delete Button (enabled when item is selected) -->
+          <p-button
+            id="navigation-management-delete-button"
+            icon="pi pi-trash"
+            [rounded]="true"
+            [text]="true"
+            severity="danger"
+            (onClick)="onDeleteItem()"
+            [disabled]="!selectedItem()"
+            [pTooltip]="'navigationManagement.contextMenu.delete' | transloco"
+            tooltipPosition="bottom"
+            [attr.aria-label]="'navigationManagement.contextMenu.delete' | transloco"
+          />
+        </ng-template>
+      </p-toolbar>
+    </div>
+
+    <!-- Main Content Area with Two-Pane Layout -->
+    <div id="navigation-management-content" class="flex-1 overflow-hidden">
+      @if (!isMobile()) {
+      <!-- Desktop: Two-Pane Layout -->
+      <div class="h-full flex">
+        <!-- Left Pane: Global Navigation -->
+        <div
+          id="navigation-management-global-pane"
+          class="w-1/3 border-r border-surface-200 dark:border-surface-700 flex flex-col"
+        >
+          <div class="p-3 border-b border-surface-200 dark:border-surface-700">
+            <h3 class="text-lg font-semibold m-0">
+              {{ 'navigationManagement.tabs.global' | transloco }}
+            </h3>
+          </div>
+          <div class="flex-1 overflow-auto p-3">
+            @if (isLoading() && activeTab() === 'global') {
+            <div class="flex items-center justify-center h-32">
+              <i class="pi pi-spin pi-spinner text-2xl"></i>
+              <p class="ml-2">{{ 'navigationManagement.tree.loading' | transloco }}</p>
+            </div>
+            } @else if (globalTreeNodes().length === 0) {
+            <div class="text-center py-8 text-surface-500">
+              <i class="pi pi-sitemap text-4xl"></i>
+              <p class="mt-2">{{ 'navigationManagement.tree.noItems' | transloco }}</p>
+              <p class="text-sm">{{ 'navigationManagement.tree.noItemsDescription' | transloco }}</p>
+            </div>
+            } @else {
+            <p-tree
+              id="navigation-management-global-tree"
+              [value]="globalTreeNodes()"
+              selectionMode="single"
+              [(selection)]="selectedTreeNode"
+              (onNodeSelect)="onNodeSelect($event)"
+              (onNodeUnselect)="onNodeUnselect()"
+              [draggableNodes]="true"
+              [droppableNodes]="true"
+              [loading]="isLoading()"
+              [attr.aria-label]="'navigationManagement.accessibility.treeAria' | transloco"
+            />
+            }
+          </div>
+        </div>
+
+        <!-- Right Pane: Module Navigation -->
+        <div
+          id="navigation-management-module-pane"
+          class="w-2/3 flex flex-col"
+        >
+          <div class="p-3 border-b border-surface-200 dark:border-surface-700">
+            <h3 class="text-lg font-semibold m-0">
+              {{ 'navigationManagement.tabs.module' | transloco }}
+              @if (selectedModule()) {
+              <span class="text-sm font-normal text-surface-500 ml-2">
+                ({{ selectedModule()?.label }})
+              </span>
+              }
+            </h3>
+          </div>
+          <div class="flex-1 overflow-auto p-3">
+            @if (!selectedModule()) {
+            <div class="text-center py-8 text-surface-500">
+              <i class="pi pi-info-circle text-4xl"></i>
+              <p class="mt-2">{{ 'navigationManagement.messages.noModule' | transloco }}</p>
+              <p class="text-sm">{{ 'navigationManagement.messages.selectModule' | transloco }}</p>
+            </div>
+            } @else if (isLoading() && activeTab() === 'module') {
+            <div class="flex items-center justify-center h-32">
+              <i class="pi pi-spin pi-spinner text-2xl"></i>
+              <p class="ml-2">{{ 'navigationManagement.tree.loading' | transloco }}</p>
+            </div>
+            } @else if (moduleTreeNodes().length === 0) {
+            <div class="text-center py-8 text-surface-500">
+              <i class="pi pi-sitemap text-4xl"></i>
+              <p class="mt-2">{{ 'navigationManagement.tree.noItems' | transloco }}</p>
+              <p class="text-sm">{{ 'navigationManagement.tree.noItemsDescription' | transloco }}</p>
+            </div>
+            } @else {
+            <p-tree
+              id="navigation-management-module-tree"
+              [value]="moduleTreeNodes()"
+              selectionMode="single"
+              [(selection)]="selectedTreeNode"
+              (onNodeSelect)="onNodeSelect($event)"
+              (onNodeUnselect)="onNodeUnselect()"
+              [draggableNodes]="true"
+              [droppableNodes]="true"
+              [loading]="isLoading()"
+              [attr.aria-label]="'navigationManagement.accessibility.treeAria' | transloco"
+            />
+            }
+          </div>
+        </div>
+      </div>
+      } @else {
+      <!-- Mobile: Single-Column with Tab Toggle -->
+      <div class="h-full flex flex-col">
+        <!-- Tab Selector -->
+        <div class="p-3 border-b border-surface-200 dark:border-surface-700">
+          <p-selectButton
+            id="navigation-management-tab-selector"
+            [options]="tabOptions"
+            [(ngModel)]="activeTab"
+            (onChange)="onTabChange($event.value)"
+            [allowEmpty]="false"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+            [attr.aria-label]="'navigationManagement.tabs.global' | transloco"
+          >
+            <ng-template let-item #item>
+              <span>{{ item.label | transloco }}</span>
+            </ng-template>
+          </p-selectButton>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="flex-1 overflow-auto">
+          @if (activeTab() === 'global') {
+          <div class="p-3">
+            @if (isLoading() && activeTab() === 'global') {
+            <div class="flex items-center justify-center h-32">
+              <i class="pi pi-spin pi-spinner text-2xl"></i>
+              <p class="ml-2">{{ 'navigationManagement.tree.loading' | transloco }}</p>
+            </div>
+            } @else if (globalTreeNodes().length === 0) {
+            <div class="text-center py-8 text-surface-500">
+              <i class="pi pi-sitemap text-4xl"></i>
+              <p class="mt-2">{{ 'navigationManagement.tree.noItems' | transloco }}</p>
+              <p class="text-sm">
+                {{ 'navigationManagement.tree.noItemsDescription' | transloco }}
+              </p>
+            </div>
+            } @else {
+            <p-tree
+              id="navigation-management-global-tree-mobile"
+              [value]="globalTreeNodes()"
+              selectionMode="single"
+              [(selection)]="selectedTreeNode"
+              (onNodeSelect)="onNodeSelect($event)"
+              (onNodeUnselect)="onNodeUnselect()"
+              [draggableNodes]="false"
+              [droppableNodes]="false"
+              [loading]="isLoading()"
+              [attr.aria-label]="'navigationManagement.accessibility.treeAria' | transloco"
+            />
+            }
+          </div>
+          } @else {
+          <div class="p-3">
+            @if (!selectedModule()) {
+            <div class="text-center py-8 text-surface-500">
+              <i class="pi pi-info-circle text-4xl"></i>
+              <p class="mt-2">{{ 'navigationManagement.messages.noModule' | transloco }}</p>
+              <p class="text-sm">
+                {{ 'navigationManagement.messages.selectModule' | transloco }}
+              </p>
+            </div>
+            } @else if (isLoading() && activeTab() === 'module') {
+            <div class="flex items-center justify-center h-32">
+              <i class="pi pi-spin pi-spinner text-2xl"></i>
+              <p class="ml-2">{{ 'navigationManagement.tree.loading' | transloco }}</p>
+            </div>
+            } @else if (moduleTreeNodes().length === 0) {
+            <div class="text-center py-8 text-surface-500">
+              <i class="pi pi-sitemap text-4xl"></i>
+              <p class="mt-2">{{ 'navigationManagement.tree.noItems' | transloco }}</p>
+              <p class="text-sm">
+                {{ 'navigationManagement.tree.noItemsDescription' | transloco }}
+              </p>
+            </div>
+            } @else {
+            <p-tree
+              id="navigation-management-module-tree-mobile"
+              [value]="moduleTreeNodes()"
+              selectionMode="single"
+              [(selection)]="selectedTreeNode"
+              (onNodeSelect)="onNodeSelect($event)"
+              (onNodeUnselect)="onNodeUnselect()"
+              [draggableNodes]="false"
+              [droppableNodes]="false"
+              [loading]="isLoading()"
+              [attr.aria-label]="'navigationManagement.accessibility.treeAria' | transloco"
+            />
+            }
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Screen Reader Status Announcements -->
+    <div
+      id="navigation-management-status"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      class="sr-only"
+    >
+      @if (isLoading()) {
+      {{ 'navigationManagement.tree.loading' | transloco }}
+      }
+    </div>
+  </div>
+
+  <!-- Editor Dialog -->
+  <p-dialog
+    [(visible)]="isEditorOpen"
+    [modal]="true"
+    [closable]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: isMobile() ? '95vw' : '600px' }"
+    [header]="
+      editorMode() === 'create'
+        ? ('navigationManagement.editor.title.create' | transloco)
+        : ('navigationManagement.editor.title.edit' | transloco)
+    "
+    id="navigation-management-editor-dialog"
+  >
+    <div class="p-4">
+      <p>{{ 'navigationManagement.editor.form.label.label' | transloco }}</p>
+      <!-- Editor form will be implemented in a separate component -->
+      <p class="text-surface-500 text-sm mt-2">
+        Editor form component to be implemented
+      </p>
+    </div>
+    <ng-template #footer>
+      <p-button
+        id="navigation-management-editor-cancel"
+        [label]="'navigationManagement.editor.buttons.cancel' | transloco"
+        (onClick)="onCloseEditor()"
+        severity="secondary"
+      />
+      <p-button
+        id="navigation-management-editor-save"
+        [label]="'navigationManagement.editor.buttons.save' | transloco"
+        (onClick)="onCloseEditor()"
+        severity="primary"
+      />
+    </ng-template>
+  </p-dialog>
+</div>
+
