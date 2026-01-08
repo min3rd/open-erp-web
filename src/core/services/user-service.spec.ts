@@ -253,15 +253,21 @@ describe('UserService', () => {
       limit: 10,
     };
 
+    let errorCaught = false;
     service.getUsers(params).subscribe({
-      next: () => fail('should have failed with 500 error'),
+      next: () => {
+        expect(errorCaught).toBe(true); // Should not reach here
+      },
       error: (error) => {
+        errorCaught = true;
         expect(error.message).toContain('Internal server error');
       },
     });
 
     const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=10`);
     req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
+    
+    expect(errorCaught).toBe(true);
   });
 
   it('should handle 401 unauthorized errors', () => {
@@ -270,15 +276,21 @@ describe('UserService', () => {
       limit: 10,
     };
 
+    let errorCaught = false;
     service.getUsers(params).subscribe({
-      next: () => fail('should have failed with 401 error'),
+      next: () => {
+        expect(errorCaught).toBe(true); // Should not reach here
+      },
       error: (error) => {
+        errorCaught = true;
         expect(error.message).toContain('Unauthorized');
       },
     });
 
     const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=10`);
     req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+    
+    expect(errorCaught).toBe(true);
   });
 
   it('should handle 403 forbidden errors', () => {
@@ -287,14 +299,20 @@ describe('UserService', () => {
       limit: 10,
     };
 
+    let errorCaught = false;
     service.getUsers(params).subscribe({
-      next: () => fail('should have failed with 403 error'),
+      next: () => {
+        expect(errorCaught).toBe(true); // Should not reach here
+      },
       error: (error) => {
+        errorCaught = true;
         expect(error.message).toContain('Forbidden');
       },
     });
 
     const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=10`);
     req.flush('Forbidden', { status: 403, statusText: 'Forbidden' });
+    
+    expect(errorCaught).toBe(true);
   });
 });

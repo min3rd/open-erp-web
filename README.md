@@ -2,6 +2,17 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
 
+## Backend Integration
+
+This frontend application integrates with the [open-erp-backend](https://github.com/min3rd/open-erp-backend) API. 
+
+**Important:** To use the full functionality of this application, you need to run the backend services. See [BACKEND_INTEGRATION.md](./BACKEND_INTEGRATION.md) for detailed instructions on:
+- Setting up the backend
+- Configuring API endpoints
+- Handling authentication
+- CORS configuration
+- Environment setup
+
 ## Development server
 
 To start a local development server, run:
@@ -11,6 +22,8 @@ ng serve
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+**Note:** The User List and other data-driven features require the backend to be running. Without the backend, you'll see API errors.
 
 ## Code scaffolding
 
