@@ -7,6 +7,7 @@ import {
   OnInit,
   OnDestroy,
   effect,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -20,6 +21,8 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MenuModule } from 'primeng/menu';
+import { ContextMenuModule } from 'primeng/contextmenu';
+import { ContextMenu } from 'primeng/contextmenu';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { AvatarModule } from 'primeng/avatar';
@@ -46,6 +49,7 @@ import { OrganizationContextService } from '../../../../../../core/services/orga
     InputTextModule,
     ToolbarModule,
     MenuModule,
+    ContextMenuModule,
     SelectButtonModule,
     CheckboxModule,
     AvatarModule,
@@ -59,6 +63,8 @@ import { OrganizationContextService } from '../../../../../../core/services/orga
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class List implements OnInit, OnDestroy {
+  @ViewChild('contextMenu') contextMenu!: ContextMenu;
+
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private userService = inject(UserService);
@@ -79,6 +85,7 @@ export class List implements OnInit, OnDestroy {
   protected readonly pageSize = signal(10);
   protected readonly totalRecords = signal(0);
   protected readonly scope = signal<'global' | 'organization'>('global');
+  protected readonly selectedUser = signal<User | null>(null);
 
   // Computed values
   protected readonly totalPages = computed(() => Math.ceil(this.totalRecords() / this.pageSize()));
@@ -123,6 +130,46 @@ export class List implements OnInit, OnDestroy {
         icon: 'pi pi-sign-out',
         command: () => this.onRevokeLoginSessions(),
         disabled: !this.hasSelection(),
+      },
+    ];
+  }
+
+  // Context menu items for row actions
+  protected get contextMenuItems(): MenuItem[] {
+    const user = this.selectedUser();
+    if (!user) return [];
+
+    return [
+      {
+        label: this.translocoService.translate('userList.contextMenu.viewDetails'),
+        icon: 'pi pi-eye',
+        command: () => this.onViewUserDetails(user),
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.edit'),
+        icon: 'pi pi-pencil',
+        command: () => this.onEditUser(user),
+      },
+      {
+        separator: true,
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.block'),
+        icon: 'pi pi-ban',
+        command: () => this.onBlockUser(user),
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.revokeSession'),
+        icon: 'pi pi-sign-out',
+        command: () => this.onRevokeUserSession(user),
+      },
+      {
+        separator: true,
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.sendNotification'),
+        icon: 'pi pi-send',
+        command: () => this.onSendNotification(user),
       },
     ];
   }
@@ -403,5 +450,97 @@ export class List implements OnInit, OnDestroy {
   private announceStatus(message: string): void {
     // The status region in the template will announce this
     // This is handled by the aria-live region in the template
+  }
+
+  /**
+   * Handle row click to navigate to user detail
+   */
+  protected onRowClick(user: User): void {
+    this.router.navigate([user.id], { relativeTo: this.route });
+  }
+
+  /**
+   * Handle row right-click to show context menu
+   */
+  protected onRowRightClick(event: MouseEvent, user: User): void {
+    event.preventDefault();
+    this.selectedUser.set(user);
+    this.contextMenu.show(event);
+  }
+
+  /**
+   * View user details
+   */
+  protected onViewUserDetails(user: User): void {
+    this.router.navigate([user.id], { relativeTo: this.route });
+  }
+
+  /**
+   * Edit user
+   */
+  protected onEditUser(user: User): void {
+    this.router.navigate([user.id, 'edit'], { relativeTo: this.route });
+  }
+
+  /**
+   * Block a single user
+   */
+  protected onBlockUser(user: User): void {
+    this.userService.blockUsers([user.id]).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: this.translocoService.translate('userList.messages.success'),
+          detail: this.translocoService.translate('userList.contextMenu.blockSuccess', {
+            name: user.fullName,
+          }),
+        });
+        this.loadUsers();
+      },
+      error: (error) => {
+        console.error('Block failed:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translocoService.translate('userList.messages.error'),
+          detail: this.translocoService.translate('userList.messages.blockFailed'),
+        });
+      },
+    });
+  }
+
+  /**
+   * Revoke login session for a single user
+   */
+  protected onRevokeUserSession(user: User): void {
+    this.userService.revokeLoginSessions([user.id]).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: this.translocoService.translate('userList.messages.success'),
+          detail: this.translocoService.translate('userList.contextMenu.revokeSuccess', {
+            name: user.fullName,
+          }),
+        });
+      },
+      error: (error) => {
+        console.error('Revoke failed:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: this.translocoService.translate('userList.messages.error'),
+          detail: this.translocoService.translate('userList.messages.revokeFailed'),
+        });
+      },
+    });
+  }
+
+  /**
+   * Send notification to user
+   */
+  protected onSendNotification(user: User): void {
+    this.messageService.add({
+      severity: 'info',
+      summary: this.translocoService.translate('userList.messages.notImplemented'),
+      detail: this.translocoService.translate('userList.contextMenu.sendNotificationSoon'),
+    });
   }
 }

@@ -559,6 +559,16 @@
       "blockFailed": "Failed to block users",
       "revokeSuccess": "Login sessions revoked for {{count}} user(s)",
       "revokeFailed": "Failed to revoke login sessions"
+    },
+    "contextMenu": {
+      "viewDetails": "View Details",
+      "edit": "Edit",
+      "block": "Block User",
+      "revokeSession": "Revoke Session",
+      "sendNotification": "Send Notification",
+      "blockSuccess": "{{name}} has been blocked successfully",
+      "revokeSuccess": "Login session revoked for {{name}}",
+      "sendNotificationSoon": "Send notification functionality will be implemented soon"
     }
   }
 }

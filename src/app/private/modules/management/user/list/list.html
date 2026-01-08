@@ -64,7 +64,13 @@
           aria-haspopup="true"
           aria-controls="user-list-actions-menu"
         />
-        <p-menu #menu id="user-list-actions-menu" [model]="actionMenuItems" [popup]="true" />
+        <p-menu
+          #menu
+          id="user-list-actions-menu"
+          [model]="actionMenuItems"
+          [popup]="true"
+          appendTo="body"
+        />
       </ng-template>
     </p-toolbar>
   </div>
@@ -110,18 +116,24 @@
             <p-sortIcon field="status" />
           </th>
           <th>{{ 'userList.table.lastLogin' | transloco }}</th>
-          <th class="w-32">{{ 'userList.table.actions' | transloco }}</th>
         </tr>
       </ng-template>
 
       <ng-template #body let-user let-rowIndex="rowIndex">
-        <tr [id]="'user-list-row-' + user.id">
-          <td>
+        <tr
+          [id]="'user-list-row-' + user.id"
+          (click)="onRowClick(user)"
+          (contextmenu)="onRowRightClick($event, user)"
+          class="cursor-pointer"
+        >
+          <td (click)="$event.stopPropagation()">
             <p-checkbox
               [(ngModel)]="selectedUsers"
               [value]="user"
               [binary]="false"
-              [attr.aria-label]="('userList.table.selectUser' | transloco) + ' ' + user.fullName"
+              [attr.aria-label]="
+                ('userList.table.selectUser' | transloco) + ' ' + user.fullName
+              "
             />
           </td>
           <td>
@@ -142,34 +154,12 @@
             <p-tag [value]="user.status | transloco" [severity]="getStatusSeverity(user.status)" />
           </td>
           <td>{{ formatDate(user.lastLogin || '') }}</td>
-          <td>
-            <p-button
-              icon="pi pi-eye"
-              [rounded]="true"
-              [text]="true"
-              size="small"
-              severity="secondary"
-              [pTooltip]="'userList.table.viewDetails' | transloco"
-              tooltipPosition="top"
-              [attr.aria-label]="('userList.table.view' | transloco) + ' ' + user.fullName"
-            />
-            <p-button
-              icon="pi pi-pencil"
-              [rounded]="true"
-              [text]="true"
-              size="small"
-              severity="secondary"
-              [pTooltip]="'userList.table.editUser' | transloco"
-              tooltipPosition="top"
-              [attr.aria-label]="('userList.table.edit' | transloco) + ' ' + user.fullName"
-            />
-          </td>
         </tr>
       </ng-template>
 
       <ng-template #empty>
         <tr>
-          <td colspan="8" class="text-center py-8 text-surface-500">
+          <td colspan="7" class="text-center py-8 text-surface-500">
             @if (isLoading()) {
             <i class="pi pi-spin pi-spinner text-2xl"></i>
             <p class="mt-2">{{ 'userList.messages.loading' | transloco }}</p>
@@ -186,6 +176,14 @@
         </tr>
       </ng-template>
     </p-table>
+
+    <!-- Context Menu for Row Actions -->
+    <p-contextMenu
+      #contextMenu
+      id="user-list-context-menu"
+      [model]="contextMenuItems"
+      appendTo="body"
+    />
   </div>
 
   <!-- Fixed Footer with Pagination -->

@@ -465,6 +465,16 @@
       "blockFailed": "Error al bloquear usuarios",
       "revokeSuccess": "Sesiones de inicio revocadas para {{count}} usuario(s)",
       "revokeFailed": "Error al revocar sesiones de inicio"
+    },
+    "contextMenu": {
+      "viewDetails": "Ver Detalles",
+      "edit": "Editar",
+      "block": "Bloquear Usuario",
+      "revokeSession": "Revocar Sesión",
+      "sendNotification": "Enviar Notificación",
+      "blockSuccess": "{{name}} ha sido bloqueado exitosamente",
+      "revokeSuccess": "Sesión de inicio revocada para {{name}}",
+      "sendNotificationSoon": "La funcionalidad de envío de notificaciones se implementará pronto"
     }
   }
 }
