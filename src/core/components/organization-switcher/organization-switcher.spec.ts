@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OrganizationSwitcher } from './organization-switcher';
-import { TenantContextService } from '../../services/tenant-context.service';
+import { OrganizationContextService } from '../../services/organization-context.service';
 import { OrganizationService } from '../../services/organization-service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -9,20 +9,20 @@ import { getTranslocoModule } from '../../testing/transloco-testing.module';
 describe('OrganizationSwitcher', () => {
   let component: OrganizationSwitcher;
   let fixture: ComponentFixture<OrganizationSwitcher>;
-  let tenantContextService: TenantContextService;
+  let orgContextService: OrganizationContextService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [OrganizationSwitcher, getTranslocoModule()],
       providers: [
-        TenantContextService,
+        OrganizationContextService,
         OrganizationService,
         provideHttpClient(),
         provideHttpClientTesting(),
       ],
     }).compileComponents();
 
-    tenantContextService = TestBed.inject(TenantContextService);
+    orgContextService = TestBed.inject(OrganizationContextService);
     fixture = TestBed.createComponent(OrganizationSwitcher);
     component = fixture.componentInstance;
   });
@@ -31,7 +31,7 @@ describe('OrganizationSwitcher', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display organizations from tenant context', () => {
+  it('should display organizations from organization context', () => {
     const mockOrgs = [
       {
         id: 'org-1',
@@ -41,14 +41,14 @@ describe('OrganizationSwitcher', () => {
       },
     ];
 
-    tenantContextService.setUserOrganizations(mockOrgs);
+    orgContextService.setUserOrganizations(mockOrgs);
     fixture.detectChanges();
 
     expect(component.organizations().length).toBe(1);
     expect(component.dropdownOptions().length).toBe(1);
   });
 
-  it('should call tenantContextService when organization changes', () => {
+  it('should call organizationContextService when organization changes', () => {
     const mockOrgs = [
       {
         id: 'org-1',
@@ -64,12 +64,12 @@ describe('OrganizationSwitcher', () => {
       },
     ];
 
-    tenantContextService.setUserOrganizations(mockOrgs);
-    spyOn(tenantContextService, 'switchOrganization').and.returnValue(true);
+    orgContextService.setUserOrganizations(mockOrgs);
+    spyOn(orgContextService, 'switchOrganization').and.returnValue(true);
 
     component.onOrganizationChange('org-2');
 
-    expect(tenantContextService.switchOrganization).toHaveBeenCalledWith('org-2');
+    expect(orgContextService.switchOrganization).toHaveBeenCalledWith('org-2');
   });
 
   it('should set error when organization switch fails', () => {
@@ -82,8 +82,8 @@ describe('OrganizationSwitcher', () => {
       },
     ];
 
-    tenantContextService.setUserOrganizations(mockOrgs);
-    spyOn(tenantContextService, 'switchOrganization').and.returnValue(false);
+    orgContextService.setUserOrganizations(mockOrgs);
+    spyOn(orgContextService, 'switchOrganization').and.returnValue(false);
 
     component.onOrganizationChange('invalid-id');
 

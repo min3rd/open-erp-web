@@ -3,7 +3,7 @@ import { List } from './list';
 import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { UserService } from '../../../../../../core/services/user-service';
-import { TenantContextService } from '../../../../../../core/services/tenant-context.service';
+import { OrganizationContextService } from '../../../../../../core/services/organization-context.service';
 import { MessageService } from 'primeng/api';
 import { of, Subject } from 'rxjs';
 import { signal } from '@angular/core';
@@ -12,7 +12,7 @@ describe('List', () => {
   let component: List;
   let fixture: ComponentFixture<List>;
   let userService: Partial<UserService>;
-  let tenantContext: Partial<TenantContextService>;
+  let organizationContext: Partial<OrganizationContextService>;
 
   const mockUsers = [
     {
@@ -54,7 +54,7 @@ describe('List', () => {
       exportToCSV: vi.fn().mockReturnValue(of(new Blob(['test'], { type: 'text/csv' }))),
     };
 
-    tenantContext = {
+    organizationContext = {
       currentOrganization: signal(null),
       organizationChanged$: new Subject(),
     };
@@ -78,7 +78,7 @@ describe('List', () => {
           },
         ]),
         { provide: UserService, useValue: userService },
-        { provide: TenantContextService, useValue: tenantContext },
+        { provide: OrganizationContextService, useValue: organizationContext },
         MessageService,
       ],
     }).compileComponents();

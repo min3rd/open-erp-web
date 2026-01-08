@@ -176,7 +176,7 @@ Examples:
 
 ### Services Used
 - ✅ `UserService` - User data management (new)
-- ✅ `TenantContextService` - Organization context
+- ✅ `OrganizationContextService` - Organization context
 - ✅ `MessageService` - Toast notifications (PrimeNG)
 - ✅ `Router/ActivatedRoute` - Navigation
 

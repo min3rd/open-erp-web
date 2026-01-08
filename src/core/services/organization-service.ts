@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, catchError, map, of } from 'rxjs';
-import { API_URI_TENANT } from '../constant';
+import { API_URI_ORGANIZATION } from '../constant';
 
 export interface VietQRBusinessResponse {
   code: string;
@@ -146,7 +146,7 @@ export class OrganizationService {
     version: string = 'v1'
   ): Observable<OrganizationResponse> {
     return this.httpClient.post<OrganizationResponse>(
-      `${API_URI_TENANT}/${version}/organizations`,
+      `${API_URI_ORGANIZATION}/${version}/organizations`,
       dto
     );
   }
@@ -156,7 +156,7 @@ export class OrganizationService {
    */
   getOrganization(id: string, version: string = 'v1'): Observable<OrganizationResponse> {
     return this.httpClient.get<OrganizationResponse>(
-      `${API_URI_TENANT}/${version}/organizations/${id}`
+      `${API_URI_ORGANIZATION}/${version}/organizations/${id}`
     );
   }
 
@@ -169,7 +169,7 @@ export class OrganizationService {
     version: string = 'v1'
   ): Observable<OrganizationResponse> {
     return this.httpClient.patch<OrganizationResponse>(
-      `${API_URI_TENANT}/${version}/organizations/${id}`,
+      `${API_URI_ORGANIZATION}/${version}/organizations/${id}`,
       dto
     );
   }
@@ -188,7 +188,7 @@ export class OrganizationService {
       total: number;
       page: number;
       limit: number;
-    }>(`${API_URI_TENANT}/${version}/organizations/${id}/members`, {
+    }>(`${API_URI_ORGANIZATION}/${version}/organizations/${id}/members`, {
       params: { page: page.toString(), limit: limit.toString() },
     });
   }
@@ -201,7 +201,7 @@ export class OrganizationService {
     version: string = 'v1'
   ): Observable<OrganizationRelation[]> {
     return this.httpClient.get<OrganizationRelation[]>(
-      `${API_URI_TENANT}/${version}/organizations/${id}/relations`
+      `${API_URI_ORGANIZATION}/${version}/organizations/${id}/relations`
     );
   }
 
@@ -219,7 +219,7 @@ export class OrganizationService {
       total: number;
       page: number;
       limit: number;
-    }>(`${API_URI_TENANT}/${version}/organizations/${id}/events`, {
+    }>(`${API_URI_ORGANIZATION}/${version}/organizations/${id}/events`, {
       params: { page: page.toString(), limit: limit.toString() },
     });
   }
@@ -233,7 +233,7 @@ export class OrganizationService {
     version: string = 'v1'
   ): Observable<OrganizationMember> {
     return this.httpClient.post<OrganizationMember>(
-      `${API_URI_TENANT}/${version}/organizations/${id}/members/invite`,
+      `${API_URI_ORGANIZATION}/${version}/organizations/${id}/members/invite`,
       dto
     );
   }
@@ -247,7 +247,7 @@ export class OrganizationService {
     version: string = 'v1'
   ): Observable<void> {
     return this.httpClient.delete<void>(
-      `${API_URI_TENANT}/${version}/organizations/${organizationId}/members/${memberId}`
+      `${API_URI_ORGANIZATION}/${version}/organizations/${organizationId}/members/${memberId}`
     );
   }
 
@@ -256,7 +256,7 @@ export class OrganizationService {
    */
   getUserOrganizations(version: string = 'v1'): Observable<OrganizationResponse[]> {
     return this.httpClient.get<OrganizationResponse[]>(
-      `${API_URI_TENANT}/${version}/organizations`
+      `${API_URI_ORGANIZATION}/${version}/organizations`
     );
   }
 }

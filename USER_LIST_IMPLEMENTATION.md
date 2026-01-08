@@ -23,7 +23,7 @@ A fully functional user management interface with the following capabilities:
 ##### Scope Toggle
 - **Global Scope**: Shows all users in the system
 - **Organization Scope**: Shows only users in the current organization
-- Integrated with `TenantContextService` for organization context
+- Integrated with `OrganizationContextService` for organization context
 
 ##### Pagination
 - Server-side pagination support
@@ -131,7 +131,7 @@ The component reads pagination parameters from the URL and updates the URL when 
 ### Computed Values
 - `totalPages` - Calculated from totalRecords and pageSize
 - `hasSelection` - Whether any users are selected
-- `currentOrganization` - Current organization from TenantContext
+- `currentOrganization` - Current organization from OrganizationContext
 
 ## Testing
 
@@ -160,7 +160,7 @@ Two test suites have been created:
 ## Integration with Existing Code
 
 ### Dependencies
-- `TenantContextService`: For organization context
+- `OrganizationContextService`: For organization context
 - `MessageService`: For toast notifications (PrimeNG)
 - `Router/ActivatedRoute`: For navigation and route parameters
 
