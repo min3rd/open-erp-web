@@ -111,6 +111,7 @@ export class NavigationService {
       .pipe(
         map((response) => {
           const navigationData = unwrap(response);
+          // The API wraps data in ApiSingleData format with item property containing NavigationListResponse
           const items = navigationData?.item?.items || [];
           const menuItems = this.mapNavigationItemsToMenuItems(items);
           this._modules.next(menuItems);
@@ -188,6 +189,7 @@ export class NavigationService {
       .pipe(
         map((response) => {
           const navigationData = unwrap(response);
+          // The API wraps data in ApiSingleData format with item property containing NavigationListResponse
           const items = navigationData?.item?.items || [];
           const menuItems = this.mapNavigationItemsToMenuItems(items);
           
@@ -254,9 +256,7 @@ export class NavigationService {
 
     // Handle routerLink (can be string or string array)
     if (item.routerLink) {
-      menuItem.routerLink = typeof item.routerLink === 'string' 
-        ? [item.routerLink] 
-        : item.routerLink;
+      menuItem.routerLink = this.normalizeRouterLink(item.routerLink);
     }
 
     // Handle external URL
@@ -264,11 +264,11 @@ export class NavigationService {
       menuItem.url = item.url;
     }
 
-    // Handle command
+    // Handle command - note: command execution would need to be implemented 
+    // based on specific application requirements
     if (item.command) {
       menuItem.command = () => {
-        console.log(`Command executed: ${item.command}`);
-        // Could be enhanced to support dynamic command execution
+        console.warn(`Command execution not implemented: ${item.command}`);
       };
     }
 
@@ -278,5 +278,12 @@ export class NavigationService {
     }
 
     return menuItem;
+  }
+
+  /**
+   * Normalize routerLink to always be an array
+   */
+  private normalizeRouterLink(routerLink: string | string[]): string[] {
+    return typeof routerLink === 'string' ? [routerLink] : routerLink;
   }
 }
