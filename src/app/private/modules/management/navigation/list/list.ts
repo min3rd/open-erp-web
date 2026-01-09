@@ -113,12 +113,25 @@ export class NavigationList implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Subscribe to route params
+    // Subscribe to route params to detect selected item
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const scope = params['scope'] || 'global';
       this.activeScope.set(scope as 'global' | 'module');
+      
+      // Check if an item ID is in the route
+      const itemId = params['id'];
+      if (itemId && itemId !== 'new') {
+        // Try to find and select the item (will work after global nav is loaded)
+        this.findAndSelectItemById(itemId);
+      } else {
+        // Clear selection if navigating away from an item
+        this.selectedItem.set(null);
+        this.selectedModule.set(null);
+        this.moduleNavigationItems.set([]);
+      }
     });
-
+    
+    // Load global navigation
     this.loadGlobalNavigation();
   }
 
@@ -199,6 +212,12 @@ export class NavigationList implements OnInit, OnDestroy {
         this.globalNavigationItems.set(items);
         this.isLoading.set(false);
         this.cdr.markForCheck();
+        
+        // After loading, check if there's an item ID in the route and select it
+        const itemId = this.route.snapshot.params['id'];
+        if (itemId && itemId !== 'new' && items.length > 0) {
+          this.findAndSelectItemById(itemId);
+        }
       });
   }
 
@@ -451,6 +470,25 @@ export class NavigationList implements OnInit, OnDestroy {
           this.isLoading.set(false);
         },
       });
+  }
+
+  /**
+   * Find and select an item by ID from the loaded navigation
+   */
+  private findAndSelectItemById(itemId: string): void {
+    const globalItems = this.globalNavigationItems();
+    const item = this.findItemById(globalItems, itemId);
+    
+    if (item) {
+      this.selectedItem.set(item);
+      
+      // If the item has a moduleKey, load its module navigation
+      if (item.moduleKey) {
+        this.selectedModule.set(item);
+        this.loadModuleNavigation(item.moduleKey);
+        this.cdr.markForCheck();
+      }
+    }
   }
 
   /**
