@@ -8,6 +8,7 @@ import {
   OnDestroy,
   effect,
   ChangeDetectorRef,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
@@ -23,6 +24,9 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { ContextMenuModule } from 'primeng/contextmenu';
+import { ContextMenu } from 'primeng/contextmenu';
+import { MenuItem } from 'primeng/api';
 
 // Services and DTOs
 import { NavigationManagementService } from '../services/navigation-management.service';
@@ -40,6 +44,7 @@ import { NavigationItemDto } from '../dto/navigation-item.dto';
     ToolbarModule,
     TooltipModule,
     SelectButtonModule,
+    ContextMenuModule,
   ],
   providers: [TreeDragDropService],
   templateUrl: './list.html',
@@ -55,6 +60,9 @@ export class NavigationList implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private resizeHandler: (() => void) | null = null;
 
+  // Context menu reference
+  @ViewChild('contextMenu') contextMenu!: ContextMenu;
+
   // State signals
   protected readonly isMobile = signal(false);
   protected readonly activeScope = signal<'global' | 'module'>('global');
@@ -69,6 +77,9 @@ export class NavigationList implements OnInit, OnDestroy {
     { label: 'navigationManagement.tabs.global', value: 'global' as const },
     { label: 'navigationManagement.tabs.module', value: 'module' as const },
   ];
+
+  // Context menu items
+  protected readonly contextMenuItems = signal<MenuItem[]>([]);
 
   // Computed values
   protected readonly globalTreeNodes = computed(() =>
@@ -86,6 +97,9 @@ export class NavigationList implements OnInit, OnDestroy {
       this.resizeHandler = () => this.checkViewport();
       window.addEventListener('resize', this.resizeHandler);
     }
+
+    // Initialize context menu items
+    this.initializeContextMenu();
 
     // Watch route params for scope changes
     effect(() => {
@@ -123,6 +137,50 @@ export class NavigationList implements OnInit, OnDestroy {
   private checkViewport(): void {
     if (typeof window !== 'undefined') {
       this.isMobile.set(window.innerWidth < 768);
+    }
+  }
+
+  /**
+   * Initialize context menu items
+   */
+  private initializeContextMenu(): void {
+    this.contextMenuItems.set([
+      {
+        label: this.translocoService.translate('navigationManagement.contextMenu.edit'),
+        icon: 'pi pi-pencil',
+        command: () => this.onEditItem(),
+      },
+      {
+        label: this.translocoService.translate('navigationManagement.contextMenu.delete'),
+        icon: 'pi pi-trash',
+        command: () => this.onDeleteItem(),
+      },
+      {
+        separator: true,
+      },
+      {
+        label: this.translocoService.translate('navigationManagement.contextMenu.moveUp'),
+        icon: 'pi pi-arrow-up',
+        command: () => this.onMoveUp(),
+      },
+      {
+        label: this.translocoService.translate('navigationManagement.contextMenu.moveDown'),
+        icon: 'pi pi-arrow-down',
+        command: () => this.onMoveDown(),
+      },
+    ]);
+  }
+
+  /**
+   * Handle context menu show event
+   */
+  protected onContextMenu(event: any): void {
+    // The event.node contains the tree node that was right-clicked
+    if (event.node) {
+      const node = event.node as TreeNode;
+      const item = node.data as NavigationItemDto;
+      this.selectedItem.set(item);
+      this.selectedTreeNode.set(node);
     }
   }
 
