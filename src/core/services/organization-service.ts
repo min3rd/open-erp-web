@@ -289,7 +289,7 @@ export class OrganizationService {
   }
 
   /**
-   * Get users that the current user belongs to
+   * Get organizations that the current user belongs to
    */
   getUserOrganizations(version: string = 'v1'): Observable<OrganizationResponse[]> {
     return this.httpClient
