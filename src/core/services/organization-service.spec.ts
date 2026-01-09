@@ -1,7 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { OrganizationService, CreateOrganizationDto, OrganizationType, OrganizationStatus } from './organization-service';
+import {
+  OrganizationService,
+  CreateOrganizationDto,
+  OrganizationType,
+  OrganizationStatus,
+} from './organization-service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { wrapSuccess } from '../api';
 
 describe('OrganizationService - New Field Tests', () => {
   let service: OrganizationService;
@@ -163,6 +169,113 @@ describe('OrganizationService - New Field Tests', () => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
+    });
+  });
+
+  describe('API Envelope Support', () => {
+    it('should handle new API envelope format for createOrganization', () => {
+      const dto: CreateOrganizationDto = {
+        taxId: '1234567890',
+        name: 'Test Company',
+        internationalName: 'Test Company Ltd',
+        headquartersAddress: '123 Test Street',
+        legalRepresentative: 'John Doe',
+        contactPhone: '0901234567',
+        contactEmail: 'test@example.com',
+        foundedDate: new Date().toISOString(),
+        type: 'company',
+        status: 'active',
+        country: 'VN',
+      };
+
+      const mockOrg = {
+        id: '123',
+        ...dto,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const apiResponse = wrapSuccess(
+        {
+          mode: 'create' as const,
+          item: mockOrg,
+        },
+        'Organization created successfully'
+      );
+
+      service.createOrganization(dto).subscribe((response) => {
+        expect(response.id).toBe('123');
+        expect(response.name).toBe('Test Company');
+      });
+
+      const req = httpMock.expectOne((request) => request.url.includes('/organizations'));
+      expect(req.request.method).toBe('POST');
+      req.flush(apiResponse);
+    });
+
+    it('should handle new API envelope format for getOrganization', () => {
+      const mockOrg = {
+        id: '123',
+        taxId: '1234567890',
+        name: 'Test Company',
+        internationalName: 'Test Company Ltd',
+        headquartersAddress: '123 Test Street',
+        legalRepresentative: 'John Doe',
+        contactPhone: '0901234567',
+        contactEmail: 'test@example.com',
+        foundedDate: new Date().toISOString(),
+        type: 'company' as OrganizationType,
+        status: 'active' as OrganizationStatus,
+        country: 'VN',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const apiResponse = wrapSuccess({
+        mode: 'get' as const,
+        item: mockOrg,
+      });
+
+      service.getOrganization('123').subscribe((response) => {
+        expect(response.id).toBe('123');
+        expect(response.name).toBe('Test Company');
+      });
+
+      const req = httpMock.expectOne((request) => request.url.includes('/organizations/123'));
+      expect(req.request.method).toBe('GET');
+      req.flush(apiResponse);
+    });
+
+    it('should handle new API envelope format for getUserOrganizations', () => {
+      const mockOrgs = [
+        {
+          id: '1',
+          taxId: '1234567890',
+          name: 'Company 1',
+          internationalName: 'Company 1 Ltd',
+          headquartersAddress: '123 Street',
+          legalRepresentative: 'John Doe',
+          contactPhone: '0901234567',
+          contactEmail: 'test@example.com',
+          foundedDate: new Date().toISOString(),
+          type: 'company' as OrganizationType,
+          status: 'active' as OrganizationStatus,
+          country: 'VN',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ];
+
+      const apiResponse = wrapSuccess(mockOrgs, 'Organizations retrieved successfully');
+
+      service.getUserOrganizations().subscribe((response) => {
+        expect(response).toHaveLength(1);
+        expect(response[0].id).toBe('1');
+      });
+
+      const req = httpMock.expectOne((request) => request.url.includes('/v1/organizations'));
+      expect(req.request.method).toBe('GET');
+      req.flush(apiResponse);
     });
   });
 });

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, catchError, map, of } from 'rxjs';
 import { API_URI_ORGANIZATION } from '../constant';
+import { ApiResponse, ApiSingleResponse, isApiResponse, unwrap, wrapSuccess } from '../api';
 
 export interface VietQRBusinessResponse {
   code: string;
@@ -145,19 +146,43 @@ export class OrganizationService {
     dto: CreateOrganizationDto,
     version: string = 'v1'
   ): Observable<OrganizationResponse> {
-    return this.httpClient.post<OrganizationResponse>(
-      `${API_URI_ORGANIZATION}/${version}/organizations`,
-      dto
-    );
+    return this.httpClient
+      .post<ApiSingleResponse<OrganizationResponse> | OrganizationResponse>(
+        `${API_URI_ORGANIZATION}/${version}/organizations`,
+        dto
+      )
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            const data = unwrap(response as ApiSingleResponse<OrganizationResponse>);
+            return data.item!;
+          }
+          // Legacy format
+          console.warn('OrganizationService: Received legacy response format for createOrganization');
+          return response as OrganizationResponse;
+        })
+      );
   }
 
   /**
    * Get organization by ID
    */
   getOrganization(id: string, version: string = 'v1'): Observable<OrganizationResponse> {
-    return this.httpClient.get<OrganizationResponse>(
-      `${API_URI_ORGANIZATION}/${version}/organizations/${id}`
-    );
+    return this.httpClient
+      .get<ApiSingleResponse<OrganizationResponse> | OrganizationResponse>(
+        `${API_URI_ORGANIZATION}/${version}/organizations/${id}`
+      )
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            const data = unwrap(response as ApiSingleResponse<OrganizationResponse>);
+            return data.item!;
+          }
+          // Legacy format
+          console.warn('OrganizationService: Received legacy response format for getOrganization');
+          return response as OrganizationResponse;
+        })
+      );
   }
 
   /**
@@ -168,10 +193,22 @@ export class OrganizationService {
     dto: UpdateOrganizationDto,
     version: string = 'v1'
   ): Observable<OrganizationResponse> {
-    return this.httpClient.patch<OrganizationResponse>(
-      `${API_URI_ORGANIZATION}/${version}/organizations/${id}`,
-      dto
-    );
+    return this.httpClient
+      .patch<ApiSingleResponse<OrganizationResponse> | OrganizationResponse>(
+        `${API_URI_ORGANIZATION}/${version}/organizations/${id}`,
+        dto
+      )
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            const data = unwrap(response as ApiSingleResponse<OrganizationResponse>);
+            return data.item!;
+          }
+          // Legacy format
+          console.warn('OrganizationService: Received legacy response format for updateOrganization');
+          return response as OrganizationResponse;
+        })
+      );
   }
 
   /**
@@ -252,11 +289,22 @@ export class OrganizationService {
   }
 
   /**
-   * Get organizations that the current user belongs to
+   * Get users that the current user belongs to
    */
   getUserOrganizations(version: string = 'v1'): Observable<OrganizationResponse[]> {
-    return this.httpClient.get<OrganizationResponse[]>(
-      `${API_URI_ORGANIZATION}/${version}/organizations`
-    );
+    return this.httpClient
+      .get<ApiResponse<OrganizationResponse[]> | OrganizationResponse[]>(
+        `${API_URI_ORGANIZATION}/${version}/organizations`
+      )
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            return unwrap(response as ApiResponse<OrganizationResponse[]>);
+          }
+          // Legacy format
+          console.warn('OrganizationService: Received legacy response format for getUserOrganizations');
+          return response as OrganizationResponse[];
+        })
+      );
   }
 }
