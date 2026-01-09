@@ -111,9 +111,12 @@
   <!-- Modules navigation -->
   <div id="vertical-navigation-modules" class="flex-1 overflow-y-auto py-2">
     @if (items && items.length > 0) {
-      <ul class="space-y-1 px-2" role="list">
-        @for (item of items; track item.id || $index) {
-        <li [attr.id]="'vertical-navigation-item-' + (item.id || $index)">
+      <p-menu
+        [model]="items"
+        [styleClass]="(navMode() === 'narrow' && !isMobile()) ? 'p-menu-narrow' : ''"
+        id="vertical-navigation-menu"
+      >
+        <ng-template #item let-item let-hasSubmenu="hasSubmenu">
           <a
             [routerLink]="item.routerLink"
             routerLinkActive="bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
@@ -125,6 +128,7 @@
             [showDelay]="500"
             [attr.aria-label]="item.label || ''"
             [attr.aria-current]="isItemActive(item) ? 'page' : null"
+            [attr.id]="'vertical-navigation-link-' + (item.id || '')"
             pRipple
           >
             <i [class]="(item.icon || 'pi pi-circle') + ' text-xl'" aria-hidden="true"></i>
@@ -140,9 +144,8 @@
             </span>
             }
           </a>
-        </li>
-        }
-      </ul>
+        </ng-template>
+      </p-menu>
     }
   </div>
 

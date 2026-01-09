@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable, isDevMode } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { API_URI_CONFIG } from '../constant';
@@ -30,7 +30,7 @@ export interface NavigationItemDto {
   class?: string;
   order: number;
   scope: 'global' | 'module';
-  module?: string;
+  moduleId?: string;
   meta?: Record<string, any>;
 }
 
@@ -71,35 +71,6 @@ export class NavigationService {
    * Load global navigation (modules/root menu)
    */
   loadModules(version: string = 'v1'): Observable<MenuItem[]> {
-    if (isDevMode()) {
-      // Mock data for development
-      return of([
-        {
-          id: 'dashboard',
-          label: 'Dashboard',
-          icon: 'pi pi-home',
-          routerLink: ['/dashboard'],
-        },
-        {
-          id: 'modules-organization',
-          label: 'Organization',
-          icon: 'pi pi-building',
-          routerLink: ['/modules/organization'],
-        },
-        {
-          id: 'modules-management',
-          label: 'Management',
-          icon: 'pi pi-cog',
-          routerLink: ['/modules/management'],
-        },
-      ]).pipe(
-        map((modules) => {
-          this._modules.next(modules);
-          return modules;
-        })
-      );
-    }
-
     // Call backend navigation API for global scope
     return this.httpClient
       .get<ApiSingleResponse<NavigationListResponse>>(
@@ -133,51 +104,6 @@ export class NavigationService {
     moduleKey: string,
     version: string = 'v1'
   ): Observable<MenuItem[]> {
-    if (isDevMode()) {
-      // Mock data for development
-      const mockData: Record<string, MenuItem[]> = {
-        organization: [
-          {
-            id: 'organization-register',
-            label: 'organization.navigation.register',
-            icon: 'pi pi-building',
-            routerLink: ['/modules/organization/new'],
-          },
-          {
-            id: 'organization-detail',
-            label: 'organization.navigation.detail',
-            icon: 'pi pi-info-circle',
-            routerLink: ['/modules/organization/detail'],
-          },
-        ],
-        management: [
-          {
-            id: 'management-user',
-            label: 'management.navigation.user',
-            icon: 'pi pi-users',
-            routerLink: ['/modules/management/user'],
-          },
-          {
-            id: 'management-navigation',
-            label: 'management.navigation.navigation',
-            icon: 'pi pi-bars',
-            routerLink: ['/modules/management/navigation'],
-          },
-        ],
-      };
-
-      const items = mockData[moduleKey] || [];
-      return of(items).pipe(
-        tap((menuItems) => {
-          if (!this._moduleNavigation.has(moduleKey)) {
-            this._moduleNavigation.set(moduleKey, new BehaviorSubject<MenuItem[]>(menuItems));
-          } else {
-            this._moduleNavigation.get(moduleKey)!.next(menuItems);
-          }
-        })
-      );
-    }
-
     // Call backend navigation API for module scope
     return this.httpClient
       .get<ApiSingleResponse<NavigationListResponse>>(

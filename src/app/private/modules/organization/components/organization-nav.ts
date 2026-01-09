@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
+import { MenuModule } from 'primeng/menu';
 import { OrganizationLayoutService } from '../services/organization-layout.service';
 import { Subject, takeUntil } from 'rxjs';
 import { OrganizationContextService } from '../../../../../core/services/organization-context.service';
@@ -25,6 +26,7 @@ import { MenuItem } from 'primeng/api';
     TranslocoModule,
     ButtonModule,
     TooltipModule,
+    MenuModule,
   ],
   templateUrl: './organization-nav.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -39,9 +39,12 @@
   <!-- Navigation items -->
   <div id="management-nav-items" class="flex-1 overflow-y-auto py-2">
     @if (items && items.length > 0) {
-      <ul class="space-y-1 px-2" role="list">
-        @for (item of items; track item.id || $index) {
-        <li [attr.id]="'management-nav-item-' + (item.id || $index)">
+      <p-menu
+        [model]="items"
+        [styleClass]="navMode() === 'narrow' ? 'p-menu-narrow' : ''"
+        id="management-nav-menu"
+      >
+        <ng-template #item let-item let-hasSubmenu="hasSubmenu">
           <a
             [routerLink]="item.routerLink"
             routerLinkActive="bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
@@ -53,6 +56,7 @@
             [showDelay]="500"
             [attr.aria-label]="item.label || ''"
             [attr.aria-current]="isItemActive(item) ? 'page' : null"
+            [attr.id]="'management-nav-link-' + (item.id || '')"
           >
             <i [class]="(item.icon || 'pi pi-circle') + ' text-xl'" aria-hidden="true"></i>
             @if (navMode() === 'sidebar') {
@@ -67,9 +71,8 @@
             </span>
             }
           </a>
-        </li>
-        }
-      </ul>
+        </ng-template>
+      </p-menu>
     } @else {
       <div class="p-4 text-center text-surface-500 dark:text-surface-400">
         <p class="text-sm">{{ 'management.navigation.noItems' | transloco }}</p>
