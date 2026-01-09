@@ -285,15 +285,26 @@ export class NavigationList implements OnInit, OnDestroy {
     this.selectedItem.set(item);
     this.selectedTreeNode.set(node);
 
-    // If it's a module item in global navigation, load its module navigation
-    if (item.id) {
+    // Determine navigation path based on context
+    // If selecting from global tree and item has children (is a module)
+    const isGlobalModule = item.scope === 'global' && item.id;
+    
+    if (isGlobalModule) {
+      // This is a top-level module item in global navigation
       this.selectedModule.set(item);
       this.loadModuleNavigation(item.id);
       this.cdr.markForCheck();
+      
+      // Navigate to the module view
+      this.router.navigate(['modules', item.id], { relativeTo: this.route });
+    } else if (this.selectedModule()?.id) {
+      // This is a child item within a module - navigate with module context
+      const moduleId = this.selectedModule()!.id;
+      this.router.navigate(['modules', moduleId, item.id], { relativeTo: this.route });
+    } else {
+      // Fallback for other cases
+      this.router.navigate([item.id], { relativeTo: this.route });
     }
-
-    // Navigate to view the item
-    this.router.navigate(['modules', item.id], { relativeTo: this.route });
   }
 
   /**
