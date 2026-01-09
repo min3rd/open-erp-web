@@ -13,7 +13,10 @@
     [class.justify-center]="navMode() === 'narrow'"
   >
     @if (navMode() === 'sidebar') {
-    <h2 id="organization-nav-title" class="text-lg font-semibold text-surface-900 dark:text-surface-0">
+    <h2
+      id="organization-nav-title"
+      class="text-lg font-semibold text-surface-900 dark:text-surface-0"
+    >
       {{ 'organization.title' | transloco }}
     </h2>
     }
@@ -36,43 +39,47 @@
   <!-- Navigation items -->
   <div id="organization-nav-items" class="flex-1 overflow-y-auto py-2">
     @if (items && items.length > 0) {
-      <ul class="space-y-1 px-2" role="list">
-        @for (item of items; track item.id || $index) {
-        <li [attr.id]="'organization-nav-item-' + (item.id || $index)">
-          <a
-            [routerLink]="item.routerLink"
-            routerLinkActive="bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
-            [routerLinkActiveOptions]="{ exact: false }"
-            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors text-surface-700 dark:text-surface-300"
-            [class.justify-center]="navMode() === 'narrow'"
-            [class.flex-col]="navMode() === 'narrow'"
-            [class.gap-0]="navMode() === 'narrow'"
-            [pTooltip]="navMode() === 'narrow' ? (item.label || '') : ''"
-            tooltipPosition="right"
-            [showDelay]="500"
-            [attr.aria-label]="item.label || ''"
-            [attr.aria-current]="isItemActive(item) ? 'page' : null"
+    <ul class="space-y-1 px-2" role="list">
+      @for (item of items; track item.id || $index) {
+      <li [attr.id]="'organization-nav-item-' + (item.id || $index)">
+        <a
+          [routerLink]="item.routerLink"
+          routerLinkActive="bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
+          [routerLinkActiveOptions]="{ exact: false }"
+          class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors text-surface-700 dark:text-surface-300"
+          [class.justify-center]="navMode() === 'narrow'"
+          [class.flex-col]="navMode() === 'narrow'"
+          [class.gap-0]="navMode() === 'narrow'"
+          [pTooltip]="navMode() === 'narrow' ? item.label || '' : ''"
+          tooltipPosition="right"
+          [showDelay]="500"
+          [attr.aria-label]="item.label || ''"
+          [attr.aria-current]="isItemActive(item) ? 'page' : null"
+        >
+          <i [class]="(item.icon || 'pi pi-circle') + ' text-xl'" aria-hidden="true"></i>
+          @if (navMode() === 'sidebar') {
+          <span class="text-sm font-medium">{{ item.label || '' }}</span>
+          } @if (item.badge) {
+          <span
+            class="ml-auto bg-primary-500 text-white text-xs px-2 py-0.5 rounded-full"
+            [class]="item.badgeStyleClass || ''"
           >
-            <i [class]="(item.icon || 'pi pi-circle') + ' text-xl'" aria-hidden="true"></i>
-            @if (navMode() === 'sidebar') {
-            <span class="text-sm font-medium">{{ item.label || '' }}</span>
-            }
-            @if (item.badge) {
-            <span 
-              class="ml-auto bg-primary-500 text-white text-xs px-2 py-0.5 rounded-full"
-              [class]="item.badgeStyleClass || ''"
-            >
-              {{ item.badge }}
-            </span>
-            }
-          </a>
-        </li>
-        }
-      </ul>
-    } @else {
-      <div class="p-4 text-center text-surface-500 dark:text-surface-400">
-        <p class="text-sm">{{ 'organization.navigation.noItems' | transloco }}</p>
-      </div>
-    }
+            {{ item.badge }}
+          </span>
+          }
+        </a>
+      </li>
+      }
+    </ul>
+    } @else { @if(navMode() === 'sidebar') {
+    <div class="flex p-2 text-center gap-2 text-red-500">
+      <i class="pi pi-exclamation-triangle"></i>
+      <p class="text-sm truncate">{{ 'organization.navigation.noItems' | transloco }}</p>
+    </div>
+    }@else {
+    <div class="flex flex-auto w-full justify-center text-red-500">
+      <i class="pi pi-exclamation-triangle"></i>
+    </div>
+    } }
   </div>
 </nav>
