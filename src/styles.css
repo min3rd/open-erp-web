@@ -4,3 +4,17 @@
 @import 'tailwindcss-primeui';
 
 @import 'primeicons/primeicons.css';
+
+.nav-panel .p-panelmenu-header-link,
+.nav-panel .p-panelmenu-item-link {
+  width: 100%;
+}
+
+.nav-panel--narrow .p-panelmenu-header-label,
+.nav-panel--narrow .p-panelmenu-item-label {
+  display: none;
+}
+
+.nav-item--active {
+  font-weight: 600;
+}

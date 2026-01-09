@@ -13,10 +13,19 @@ import { ButtonModule } from 'primeng/button';
 import { LayoutService } from '../../services/layout-service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
+import { SidebarModule } from 'primeng/sidebar';
 
 @Component({
   selector: 'layout-vertical',
-  imports: [CommonModule, RouterOutlet, VerticalNavigation, QuickChat, ButtonModule, TranslocoModule],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    VerticalNavigation,
+    QuickChat,
+    ButtonModule,
+    TranslocoModule,
+    SidebarModule,
+  ],
   templateUrl: './vertical.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {

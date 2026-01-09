@@ -213,7 +213,13 @@
   "navigation": {
     "main": "Main navigation",
     "menu": "Navigation menu",
-    "toggle": "Toggle navigation menu"
+    "toggle": "Toggle navigation menu",
+    "globalMenu": "Modules",
+    "moduleMenu": "Module navigation",
+    "moduleMenuEmpty": "Select a module to view its navigation",
+    "dashboard": "Dashboard",
+    "management": "Management",
+    "organization": "Organization"
   },
   "quickChat": {
     "title": "Messages",

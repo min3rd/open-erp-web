@@ -38,38 +38,31 @@
   </div>
 
   <!-- Navigation Sidebar -->
+  @if (isMobile()) {
+  <p-sidebar
+    id="vertical-layout-sidebar"
+    position="left"
+    [visible]="sidebarVisible()"
+    [modal]="true"
+    [dismissible]="true"
+    [blockScroll]="true"
+    [ariaLabel]="'navigation.menu' | transloco"
+    (onHide)="layoutService.setSidebarVisible(false)"
+    (onShow)="layoutService.setSidebarVisible(true)"
+    [styleClass]="'bg-surface-0 dark:bg-surface-900 border-r border-surface-200 dark:border-surface-700 w-80 max-w-full'"
+  >
+    <layout-vertical-navigation [isMobile]="isMobile()"></layout-vertical-navigation>
+  </p-sidebar>
+  } @else {
   <div
     id="vertical-layout-sidebar"
-    [class.hidden]="!sidebarVisible() && isMobile()"
-    [class.fixed]="isMobile()"
-    [class.z-50]="isMobile()"
-    [class.inset-0]="isMobile()"
+    class="flex flex-col flex-auto h-full bg-surface-0 dark:bg-surface-900 border-r border-surface-200 dark:border-surface-700"
     role="dialog"
-    class="flex flex-col flex-auto h-full"
-    [attr.aria-hidden]="!sidebarVisible() && isMobile()"
     [attr.aria-label]="'navigation.menu' | transloco"
   >
-    <!-- Overlay for mobile -->
-    @if (isMobile() && sidebarVisible()) {
-    <div
-      id="vertical-layout-sidebar-overlay"
-      (click)="toggleSidebar()"
-      class="fixed inset-0 bg-black/50 animate-fade-in animate-duration-300"
-      aria-hidden="true"
-    ></div>
-    }
-
-    <!-- Sidebar content -->
-    <div
-      id="vertical-layout-sidebar-content"
-      [class.animate-fadeinleft]="isMobile() && sidebarVisible()"
-      [class.animate-fadeoutleft]="isMobile() && !sidebarVisible()"
-      [class.flex-col]="isMobile()"
-      class="flex h-full bg-surface-0 dark:bg-surface-900 border-r border-surface-200 dark:border-surface-700 w-80 md:w-auto z-50"
-    >
-      <layout-vertical-navigation [isMobile]="isMobile()"></layout-vertical-navigation>
-    </div>
+    <layout-vertical-navigation [isMobile]="isMobile()"></layout-vertical-navigation>
   </div>
+  }
 
   <!-- Content Area -->
   <main
