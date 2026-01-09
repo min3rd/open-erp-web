@@ -99,9 +99,9 @@ export class NavigationManagementService {
   createNavigationItem(dto: CreateNavigationItemDto): Observable<NavigationItemDto> {
     return this.http.post<NavigationItemDto>(this.baseUrl, dto).pipe(
       tap((createdItem) => {
-        this.invalidateCache(dto.scope, dto.moduleKey);
+        this.invalidateCache(dto.scope, dto.moduleId);
         // Trigger refetch for the affected scope
-        this.refetchCache(dto.scope, dto.moduleKey);
+        this.refetchCache(dto.scope, dto.moduleId);
       }),
       catchError(this.handleError)
     );
