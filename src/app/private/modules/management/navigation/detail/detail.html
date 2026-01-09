@@ -13,7 +13,7 @@
     </h3>
   </ng-template>
 
-  <div class="h-full flex flex-col">
+  <div class="h-full">
     @if (isLoading()) {
     <div class="flex items-center justify-center h-32">
       <i class="pi pi-spin pi-spinner text-2xl"></i>
@@ -27,9 +27,35 @@
       [defaultModule]="defaultModule()"
       [availableModules]="[]"
       [availableParents]="[]"
-      (save)="onSave($event)"
-      (cancel)="onClose()"
+      (formValid)="onFormValidChange($event)"
+      (formData)="onFormDataChange($event)"
     />
     }
   </div>
+
+  <ng-template #footer>
+    <div class="flex justify-end gap-2">
+      <p-button
+        id="navigation-detail-cancel-button"
+        type="button"
+        [label]="'navigationManagement.editor.buttons.cancel' | transloco"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="onClose()"
+        [attr.aria-label]="'navigationManagement.editor.buttons.cancel' | transloco"
+      />
+      @if (mode() !== 'view') {
+      <p-button
+        id="navigation-detail-save-button"
+        type="button"
+        [label]="'navigationManagement.editor.buttons.save' | transloco"
+        severity="primary"
+        [loading]="isSaving()"
+        [disabled]="!isFormValid() || isSaving()"
+        (onClick)="onSubmit()"
+        [attr.aria-label]="'navigationManagement.editor.buttons.save' | transloco"
+      />
+      }
+    </div>
+  </ng-template>
 </p-drawer>

@@ -43,6 +43,9 @@ export class NavigationDetail implements OnInit, OnDestroy {
   // State signals
   protected readonly isOpen = signal(true);
   protected readonly isLoading = signal(false);
+  protected readonly isSaving = signal(false);
+  protected readonly isFormValid = signal(false);
+  protected readonly formData = signal<any>(null);
   protected readonly item = signal<NavigationItemDto | null>(null);
   protected readonly mode = signal<'create' | 'edit' | 'view'>('view');
   protected readonly defaultScope = signal<'global' | 'module'>('global');
@@ -130,19 +133,47 @@ export class NavigationDetail implements OnInit, OnDestroy {
    * Handle drawer close
    */
   protected onClose(): void {
-    // Navigate back immediately to close drawer properly
-    this.router.navigate(['../../'], { relativeTo: this.route }).then(() => {
+    // Determine how many levels to go back based on context
+    const moduleId = this.route.snapshot.params['moduleId'];
+    const itemId = this.route.snapshot.params['id'];
+    
+    // If we're viewing/editing an item within a module, go back to the module view
+    // Otherwise go back to the global list
+    const navigateUp = moduleId && itemId ? '../../../' : '../../';
+    
+    this.router.navigate([navigateUp], { relativeTo: this.route }).then(() => {
       this.isOpen.set(false);
     });
   }
 
   /**
-   * Handle save
+   * Handle form valid state change
    */
-  protected onSave(dto: CreateNavigationItemDto | UpdateNavigationItemDto): void {
+  protected onFormValidChange(isValid: boolean): void {
+    this.isFormValid.set(isValid);
+  }
+
+  /**
+   * Handle form data change
+   */
+  protected onFormDataChange(data: any): void {
+    this.formData.set(data);
+  }
+
+  /**
+   * Handle submit button click
+   */
+  protected onSubmit(): void {
+    const data = this.formData();
+    if (!data) {
+      return;
+    }
+
+    this.isSaving.set(true);
+
     if (this.mode() === 'create') {
       this.navigationService
-        .createNavigationItem(dto as CreateNavigationItemDto)
+        .createNavigationItem(data as CreateNavigationItemDto)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
@@ -153,6 +184,7 @@ export class NavigationDetail implements OnInit, OnDestroy {
                 'navigationManagement.messages.createSuccess'
               ),
             });
+            this.isSaving.set(false);
             this.onClose();
           },
           error: (error) => {
@@ -162,11 +194,12 @@ export class NavigationDetail implements OnInit, OnDestroy {
               summary: this.translocoService.translate('navigationManagement.messages.error'),
               detail: error.message,
             });
+            this.isSaving.set(false);
           },
         });
     } else if (this.mode() === 'edit' && this.item()) {
       this.navigationService
-        .updateNavigationItem(this.item()!.id, dto as UpdateNavigationItemDto)
+        .updateNavigationItem(this.item()!.id, data as UpdateNavigationItemDto)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
@@ -177,6 +210,7 @@ export class NavigationDetail implements OnInit, OnDestroy {
                 'navigationManagement.messages.updateSuccess'
               ),
             });
+            this.isSaving.set(false);
             this.onClose();
           },
           error: (error) => {
@@ -186,6 +220,7 @@ export class NavigationDetail implements OnInit, OnDestroy {
               summary: this.translocoService.translate('navigationManagement.messages.error'),
               detail: error.message,
             });
+            this.isSaving.set(false);
           },
         });
     }
