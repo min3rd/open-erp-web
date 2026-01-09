@@ -1,8 +1,15 @@
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { API_URI_USER } from '../constant';
+import {
+  ApiPaginatedResponse,
+  ApiResponse,
+  unwrap,
+  isApiResponse,
+  ApiResponseError,
+} from '../api';
 
 export interface User {
   id: string;
@@ -21,6 +28,7 @@ export interface UserListResponse {
   total: number;
   page: number;
   limit: number;
+  totalPages?: number;
 }
 
 export interface GetUsersParams {
@@ -39,7 +47,7 @@ export class UserService {
 
   /**
    * Get users list with pagination and filtering
-   * Calls the real backend API
+   * Calls the real backend API with new standardized envelope structure
    */
   getUsers(params: GetUsersParams): Observable<UserListResponse> {
     let httpParams = new HttpParams()
@@ -55,8 +63,29 @@ export class UserService {
     }
 
     return this.http
-      .get<UserListResponse>(`${API_URI_USER}/v1/users`, { params: httpParams })
-      .pipe(catchError(this.handleError));
+      .get<ApiPaginatedResponse<User> | UserListResponse>(`${API_URI_USER}/v1/users`, {
+        params: httpParams,
+      })
+      .pipe(
+        map((response) => {
+          // Check if response is the new API envelope format
+          if (isApiResponse(response)) {
+            const data = unwrap(response as ApiPaginatedResponse<User>);
+            // Transform from ApiPaginatedData to UserListResponse
+            return {
+              data: data.items,
+              total: data.total,
+              page: data.page,
+              limit: data.limit,
+              totalPages: data.totalPages,
+            };
+          }
+          // Legacy format - return as-is
+          console.warn('UserService: Received legacy response format. Migration to API envelope pending.');
+          return response as UserListResponse;
+        }),
+        catchError(this.handleError)
+      );
   }
 
   /**
@@ -64,8 +93,19 @@ export class UserService {
    */
   blockUsers(userIds: string[]): Observable<void> {
     return this.http
-      .post<void>(`${API_URI_USER}/v1/users/block`, { userIds })
-      .pipe(catchError(this.handleError));
+      .post<ApiResponse<void> | void>(`${API_URI_USER}/v1/users/block`, { userIds })
+      .pipe(
+        map((response) => {
+          // Check if response is the new API envelope format
+          if (isApiResponse(response)) {
+            unwrap(response as ApiResponse<void>);
+            return;
+          }
+          // Legacy format - return as-is
+          return response as void;
+        }),
+        catchError(this.handleError)
+      );
   }
 
   /**
@@ -73,8 +113,19 @@ export class UserService {
    */
   revokeLoginSessions(userIds: string[]): Observable<void> {
     return this.http
-      .post<void>(`${API_URI_USER}/v1/users/revoke-sessions`, { userIds })
-      .pipe(catchError(this.handleError));
+      .post<ApiResponse<void> | void>(`${API_URI_USER}/v1/users/revoke-sessions`, { userIds })
+      .pipe(
+        map((response) => {
+          // Check if response is the new API envelope format
+          if (isApiResponse(response)) {
+            unwrap(response as ApiResponse<void>);
+            return;
+          }
+          // Legacy format - return as-is
+          return response as void;
+        }),
+        catchError(this.handleError)
+      );
   }
 
   /**
@@ -102,29 +153,50 @@ export class UserService {
   /**
    * Handle HTTP errors
    */
-  private handleError(error: HttpErrorResponse): Observable<never> {
+  private handleError(error: HttpErrorResponse | ApiResponseError): Observable<never> {
     let errorMessage = 'An error occurred';
 
-    if (error.error instanceof ErrorEvent) {
-      // Client-side or network error
-      errorMessage = `Network error: ${error.error.message}`;
-    } else {
-      // Backend returned an unsuccessful response code
-      switch (error.status) {
-        case 401:
-          errorMessage = 'Unauthorized. Please login again.';
-          break;
-        case 403:
-          errorMessage = 'Forbidden. You do not have permission to perform this action.';
-          break;
-        case 404:
-          errorMessage = 'Resource not found.';
-          break;
-        case 500:
-          errorMessage = 'Internal server error. Please try again later.';
-          break;
-        default:
-          errorMessage = `Server error: ${error.status} - ${error.message}`;
+    // Handle ApiResponseError from unwrap
+    if (error instanceof ApiResponseError) {
+      errorMessage = error.message;
+      console.error('UserService API error:', errorMessage, error);
+      return throwError(() => error);
+    }
+
+    // Handle HTTP errors
+    if (error instanceof HttpErrorResponse) {
+      if (error.error instanceof ErrorEvent) {
+        // Client-side or network error
+        errorMessage = `Network error: ${error.error.message}`;
+      } else {
+        // Check if error response has API envelope
+        if (isApiResponse(error.error)) {
+          try {
+            unwrap(error.error);
+          } catch (apiError) {
+            if (apiError instanceof ApiResponseError) {
+              return throwError(() => apiError);
+            }
+          }
+        }
+
+        // Backend returned an unsuccessful response code
+        switch (error.status) {
+          case 401:
+            errorMessage = 'Unauthorized. Please login again.';
+            break;
+          case 403:
+            errorMessage = 'Forbidden. You do not have permission to perform this action.';
+            break;
+          case 404:
+            errorMessage = 'Resource not found.';
+            break;
+          case 500:
+            errorMessage = 'Internal server error. Please try again later.';
+            break;
+          default:
+            errorMessage = `Server error: ${error.status} - ${error.message}`;
+        }
       }
     }
 
