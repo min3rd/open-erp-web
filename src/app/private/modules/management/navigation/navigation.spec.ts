@@ -1,16 +1,17 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Navigation } from './navigation';
+import { provideRouter } from '@angular/router';
+import { NavigationList } from './list/list';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { NavigationManagementService } from './services/navigation-management.service';
 import { MessageService } from 'primeng/api';
 import { API_URI_CONFIG } from '../../../../../core/constant';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
-describe('Navigation', () => {
-  let component: Navigation;
-  let fixture: ComponentFixture<Navigation>;
+describe('NavigationList', () => {
+  let component: NavigationList;
+  let fixture: ComponentFixture<NavigationList>;
   let httpMock: HttpTestingController;
   const baseUrl = `${API_URI_CONFIG}/v1/navigations`;
 
@@ -41,7 +42,7 @@ describe('Navigation', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        Navigation,
+        NavigationList,
         TranslocoTestingModule.forRoot({
           langs: { en: {}, es: {} },
           translocoConfig: {
@@ -53,12 +54,13 @@ describe('Navigation', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideRouter([]),
         NavigationManagementService,
         MessageService,
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Navigation);
+    fixture = TestBed.createComponent(NavigationList);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
   });
@@ -68,17 +70,17 @@ describe('Navigation', () => {
   });
 
   it('should create', () => {
-    const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: [], total: 0 });
     expect(component).toBeTruthy();
   });
 
   it('should load global navigation on init', () => {
-    fixture.detectChanges();
-
+    // Set up cache to return items
+    const service = TestBed.inject(NavigationManagementService);
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
     expect(req.request.method).toBe('GET');
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
+
+    fixture.detectChanges();
 
     expect(component['globalNavigationItems']().length).toBe(2);
     expect(component['globalNavigationItems']()[0].label).toBe('Dashboard');
@@ -86,19 +88,18 @@ describe('Navigation', () => {
 
   it('should have required DOM elements with unique IDs', () => {
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.querySelector('#navigation-management-container')).toBeTruthy();
-    expect(compiled.querySelector('#navigation-management-toolbar')).toBeTruthy();
-    expect(compiled.querySelector('#navigation-management-add-button')).toBeTruthy();
-    expect(compiled.querySelector('#navigation-management-refresh-button')).toBeTruthy();
-    expect(compiled.querySelector('#navigation-management-edit-button')).toBeTruthy();
-    expect(compiled.querySelector('#navigation-management-delete-button')).toBeTruthy();
-    expect(compiled.querySelector('#navigation-management-content')).toBeTruthy();
-    expect(compiled.querySelector('#navigation-management-status')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-toolbar')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-add-button')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-refresh-button')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-edit-button')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-delete-button')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-content')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-status')).toBeTruthy();
   });
 
   it('should show loading state', () => {
@@ -106,42 +107,42 @@ describe('Navigation', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const statusRegion = compiled.querySelector('#navigation-management-status');
+    const statusRegion = compiled.querySelector('#navigation-list-status');
     expect(statusRegion?.textContent).toContain('Loading');
 
     // Complete the request
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: [], total: 0 });
+    req.flush({ items: [], scope: 'global', total: 0 });
   });
 
   it('should display desktop two-pane layout', () => {
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
 
     component['isMobile'].set(false);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('#navigation-management-global-pane')).toBeTruthy();
-    expect(compiled.querySelector('#navigation-management-module-pane')).toBeTruthy();
-    expect(compiled.querySelector('#navigation-management-global-tree')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-global-pane')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-module-pane')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-global-tree')).toBeTruthy();
   });
 
   it('should display mobile single-column layout with tabs', () => {
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
 
     component['isMobile'].set(true);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('#navigation-management-tab-selector')).toBeTruthy();
-    expect(compiled.querySelector('#navigation-management-global-tree-mobile')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-scope-selector')).toBeTruthy();
+    expect(compiled.querySelector('#navigation-list-global-tree-mobile')).toBeTruthy();
   });
 
   it('should convert navigation items to tree nodes', () => {
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
 
     expect(component['globalTreeNodes']().length).toBe(2);
     expect(component['globalTreeNodes']()[0].label).toBe('Dashboard');
@@ -150,7 +151,7 @@ describe('Navigation', () => {
 
   it('should handle node selection', () => {
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
 
     const mockEvent = {
       node: {
@@ -168,7 +169,7 @@ describe('Navigation', () => {
 
   it('should load module navigation when module item is selected', () => {
     const req1 = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req1.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req1.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
 
     const moduleItem = mockGlobalNavigationItems[1];
     const mockEvent = {
@@ -179,54 +180,21 @@ describe('Navigation', () => {
       },
     };
 
-    component['activeTab'].set('global');
+    component['activeScope'].set('global');
     component['onNodeSelect'](mockEvent);
 
     const req2 = httpMock.expectOne(
       `${baseUrl}/module/${moduleItem.moduleKey}?includeHidden=true`
     );
     expect(req2.request.method).toBe('GET');
-    req2.flush({ data: [], total: 0 });
+    req2.flush({ items: [], scope: 'module', total: 0 });
 
     expect(component['selectedModule']()).toEqual(moduleItem);
   });
 
-  it('should open editor in create mode', () => {
-    const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
-
-    component['onAddItem']();
-
-    expect(component['isEditorOpen']()).toBe(true);
-    expect(component['editorMode']()).toBe('create');
-    expect(component['selectedItem']()).toBeNull();
-  });
-
-  it('should open editor in edit mode when item is selected', () => {
-    const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
-
-    component['selectedItem'].set(mockGlobalNavigationItems[0]);
-    component['onEditItem']();
-
-    expect(component['isEditorOpen']()).toBe(true);
-    expect(component['editorMode']()).toBe('edit');
-  });
-
-  it('should not open editor in edit mode when no item is selected', () => {
-    const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
-
-    component['selectedItem'].set(null);
-    component['isEditorOpen'].set(false);
-    component['onEditItem']();
-
-    expect(component['isEditorOpen']()).toBe(false);
-  });
-
   it('should delete navigation item', () => {
     const req1 = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req1.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req1.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
 
     component['selectedItem'].set(mockGlobalNavigationItems[0]);
 
@@ -241,14 +209,14 @@ describe('Navigation', () => {
 
     // Expect reload
     const req3 = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req3.flush({ data: [], total: 0 });
+    req3.flush({ items: [], scope: 'global', total: 0 });
 
     expect(component['selectedItem']()).toBeNull();
   });
 
   it('should not delete when user cancels confirmation', () => {
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
 
     component['selectedItem'].set(mockGlobalNavigationItems[0]);
 
@@ -263,64 +231,23 @@ describe('Navigation', () => {
 
   it('should refresh current navigation', () => {
     const req1 = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req1.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req1.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
 
-    component['activeTab'].set('global');
+    component['activeScope'].set('global');
     component['onRefresh']();
 
     const req2 = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
     expect(req2.request.method).toBe('GET');
-    req2.flush({ data: mockGlobalNavigationItems, total: 2 });
-  });
-
-  it('should close editor', () => {
-    const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
-
-    component['isEditorOpen'].set(true);
-    component['selectedItem'].set(mockGlobalNavigationItems[0]);
-
-    component['onCloseEditor']();
-
-    expect(component['isEditorOpen']()).toBe(false);
-    expect(component['selectedItem']()).toBeNull();
-  });
-
-  it('should handle tab change on mobile', () => {
-    const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
-
-    component['isMobile'].set(true);
-    component['onTabChange']('module');
-
-    expect(component['activeTab']()).toBe('module');
-  });
-
-  it('should detect mobile viewport correctly', () => {
-    const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
-
-    // Default is desktop (window width >= 768)
-    expect(component['isMobile']()).toBe(false);
-
-    // Simulate mobile viewport
-    Object.defineProperty(window, 'innerWidth', {
-      writable: true,
-      configurable: true,
-      value: 375,
-    });
-    component['checkViewport']();
-
-    expect(component['isMobile']()).toBe(true);
+    req2.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
   });
 
   it('should have proper aria-live region for status announcements', () => {
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const statusRegion = compiled.querySelector('#navigation-management-status');
+    const statusRegion = compiled.querySelector('#navigation-list-status');
 
     expect(statusRegion).toBeTruthy();
     expect(statusRegion?.getAttribute('role')).toBe('status');
@@ -330,12 +257,16 @@ describe('Navigation', () => {
 
   it('should disable edit and delete buttons when no item is selected', () => {
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const editButton = compiled.querySelector('#navigation-management-edit-button button') as HTMLButtonElement;
-    const deleteButton = compiled.querySelector('#navigation-management-delete-button button') as HTMLButtonElement;
+    const editButton = compiled.querySelector(
+      '#navigation-list-edit-button button'
+    ) as HTMLButtonElement;
+    const deleteButton = compiled.querySelector(
+      '#navigation-list-delete-button button'
+    ) as HTMLButtonElement;
 
     expect(editButton?.disabled).toBe(true);
     expect(deleteButton?.disabled).toBe(true);
@@ -343,16 +274,39 @@ describe('Navigation', () => {
 
   it('should enable edit and delete buttons when item is selected', () => {
     const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
-    req.flush({ data: mockGlobalNavigationItems, total: 2 });
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
 
     component['selectedItem'].set(mockGlobalNavigationItems[0]);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const editButton = compiled.querySelector('#navigation-management-edit-button button') as HTMLButtonElement;
-    const deleteButton = compiled.querySelector('#navigation-management-delete-button button') as HTMLButtonElement;
+    const editButton = compiled.querySelector(
+      '#navigation-list-edit-button button'
+    ) as HTMLButtonElement;
+    const deleteButton = compiled.querySelector(
+      '#navigation-list-delete-button button'
+    ) as HTMLButtonElement;
 
     expect(editButton?.disabled).toBe(false);
     expect(deleteButton?.disabled).toBe(false);
+  });
+
+  it('should enable move up/down buttons for keyboard accessibility', () => {
+    const req = httpMock.expectOne(`${baseUrl}/global?includeHidden=true`);
+    req.flush({ items: mockGlobalNavigationItems, scope: 'global', total: 2 });
+
+    component['selectedItem'].set(mockGlobalNavigationItems[0]);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const moveUpButton = compiled.querySelector(
+      '#navigation-list-move-up-button'
+    ) as HTMLElement;
+    const moveDownButton = compiled.querySelector(
+      '#navigation-list-move-down-button'
+    ) as HTMLElement;
+
+    expect(moveUpButton).toBeTruthy();
+    expect(moveDownButton).toBeTruthy();
   });
 });

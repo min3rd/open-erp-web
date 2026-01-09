@@ -45,12 +45,12 @@ describe('NavigationManagementService', () => {
   describe('getGlobalNavigation', () => {
     it('should retrieve global navigation items', () => {
       const mockResponse = {
-        data: [mockNavigationItem],
+        items: [mockNavigationItem],
         total: 1,
       };
 
       service.getGlobalNavigation().subscribe((items) => {
-        expect(items).toEqual(mockResponse.data);
+        expect(items).toEqual(mockResponse.items);
         expect(items.length).toBe(1);
         expect(items[0].label).toBe('Dashboard');
       });
@@ -62,7 +62,7 @@ describe('NavigationManagementService', () => {
 
     it('should include hidden items when specified', () => {
       const mockResponse = {
-        data: [mockNavigationItem],
+        items: [mockNavigationItem],
         total: 1,
       };
 
@@ -93,12 +93,12 @@ describe('NavigationManagementService', () => {
     it('should retrieve module navigation items', () => {
       const moduleKey = 'user-management';
       const mockResponse = {
-        data: [mockNavigationItem],
+        items: [mockNavigationItem],
         total: 1,
       };
 
       service.getModuleNavigation(moduleKey).subscribe((items) => {
-        expect(items).toEqual(mockResponse.data);
+        expect(items).toEqual(mockResponse.items);
         expect(items.length).toBe(1);
       });
 
@@ -241,12 +241,12 @@ describe('NavigationManagementService', () => {
         permissions: ['user.read', 'user.write'],
       };
       const mockResponse = {
-        data: [mockNavigationItem],
+        items: [mockNavigationItem],
         total: 1,
       };
 
       service.previewNavigationWithPermissions('global', permissions).subscribe((items) => {
-        expect(items).toEqual(mockResponse.data);
+        expect(items).toEqual(mockResponse.items);
       });
 
       const req = httpMock.expectOne(`${baseUrl}/preview/global`);
@@ -261,14 +261,14 @@ describe('NavigationManagementService', () => {
       };
       const moduleKey = 'user-management';
       const mockResponse = {
-        data: [mockNavigationItem],
+        items: [mockNavigationItem],
         total: 1,
       };
 
       service
         .previewNavigationWithPermissions('module', permissions, moduleKey)
         .subscribe((items) => {
-          expect(items).toEqual(mockResponse.data);
+          expect(items).toEqual(mockResponse.items);
         });
 
       const req = httpMock.expectOne(`${baseUrl}/preview/module/${moduleKey}`);
@@ -281,7 +281,7 @@ describe('NavigationManagementService', () => {
   describe('caching', () => {
     it('should cache global navigation items', () => {
       const mockResponse = {
-        data: [mockNavigationItem],
+        items: [mockNavigationItem],
         total: 1,
       };
 
@@ -290,14 +290,14 @@ describe('NavigationManagementService', () => {
       req.flush(mockResponse);
 
       service.getCachedGlobalNavigation().subscribe((cached) => {
-        expect(cached).toEqual(mockResponse.data);
+        expect(cached).toEqual(mockResponse.items);
       });
     });
 
     it('should cache module navigation items', () => {
       const moduleKey = 'user-management';
       const mockResponse = {
-        data: [mockNavigationItem],
+        items: [mockNavigationItem],
         total: 1,
       };
 
@@ -306,7 +306,7 @@ describe('NavigationManagementService', () => {
       req.flush(mockResponse);
 
       service.getCachedModuleNavigation(moduleKey).subscribe((cached) => {
-        expect(cached).toEqual(mockResponse.data);
+        expect(cached).toEqual(mockResponse.items);
       });
     });
   });
@@ -314,7 +314,9 @@ describe('NavigationManagementService', () => {
   describe('error handling', () => {
     it('should handle 400 Bad Request', () => {
       service.createNavigationItem({ label: 'Test', scope: 'global', order: 0 }).subscribe({
-        next: () => throw new Error('should have failed'),
+        next: () => {
+          throw new Error('should have failed');
+        },
         error: (error) => {
           expect(error.message).toContain('Bad request');
         },
@@ -326,7 +328,9 @@ describe('NavigationManagementService', () => {
 
     it('should handle 401 Unauthorized', () => {
       service.getGlobalNavigation().subscribe({
-        next: () => throw new Error('should have failed'),
+        next: () => {
+          throw new Error('should have failed');
+        },
         error: (error) => {
           expect(error.message).toContain('Unauthorized');
         },
@@ -338,7 +342,9 @@ describe('NavigationManagementService', () => {
 
     it('should handle 404 Not Found', () => {
       service.getNavigationItem('non-existent').subscribe({
-        next: () => throw new Error('should have failed'),
+        next: () => {
+          throw new Error('should have failed');
+        },
         error: (error) => {
           expect(error.message).toContain('not found');
         },
