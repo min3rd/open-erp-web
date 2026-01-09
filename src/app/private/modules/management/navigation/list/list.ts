@@ -301,4 +301,227 @@ export class NavigationList implements OnInit, OnDestroy {
       this.loadModuleNavigation(this.selectedModule()!.moduleKey!);
     }
   }
+
+  /**
+   * Handle drag & drop reorder
+   */
+  protected onNodeDrop(event: any): void {
+    // Extract drag and drop nodes
+    const dragNode = event.dragNode as TreeNode;
+    const dropNode = event.dropNode as TreeNode;
+    const dragItem = dragNode.data as NavigationItemDto;
+    const dropItem = dropNode?.data as NavigationItemDto;
+    const dropIndex = event.index;
+
+    // Show loading state
+    this.isLoading.set(true);
+
+    // Determine new parent and order
+    let newParentId: string | null = null;
+    let newOrder = 0;
+
+    if (dropNode) {
+      // Dropped on a node
+      if (event.dropIndex === undefined) {
+        // Dropped as child
+        newParentId = dropItem.id;
+        newOrder = dropItem.items?.length || 0;
+      } else {
+        // Dropped as sibling
+        newParentId = this.findParentId(dropItem);
+        newOrder = dropIndex;
+      }
+    } else {
+      // Dropped at root level
+      newParentId = null;
+      newOrder = dropIndex;
+    }
+
+    // Call backend reorder API
+    const reorderPayload = [
+      {
+        id: dragItem.id,
+        newOrder,
+        newParentId,
+      },
+    ];
+
+    this.navigationService
+      .reorderNavigationItems(reorderPayload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translocoService.translate('navigationManagement.messages.success'),
+            detail: this.translocoService.translate(
+              'navigationManagement.messages.reorderSuccess'
+            ),
+          });
+          // Refresh to get updated data from backend
+          if (this.activeScope() === 'global') {
+            this.loadGlobalNavigation();
+          } else if (this.selectedModule()?.moduleKey) {
+            this.loadModuleNavigation(this.selectedModule()!.moduleKey!);
+          }
+          this.isLoading.set(false);
+        },
+        error: (error) => {
+          console.error('Failed to reorder navigation items:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translocoService.translate('navigationManagement.messages.error'),
+            detail: this.translocoService.translate('navigationManagement.messages.reorderError'),
+          });
+          // Rollback by refreshing from backend
+          if (this.activeScope() === 'global') {
+            this.loadGlobalNavigation();
+          } else if (this.selectedModule()?.moduleKey) {
+            this.loadModuleNavigation(this.selectedModule()!.moduleKey!);
+          }
+          this.isLoading.set(false);
+        },
+      });
+  }
+
+  /**
+   * Find parent ID of a navigation item
+   */
+  private findParentId(item: NavigationItemDto): string | null {
+    // Search in global navigation
+    const parent = this.findParentInTree(this.globalNavigationItems(), item.id);
+    if (parent) return parent.id;
+
+    // Search in module navigation
+    const moduleParent = this.findParentInTree(this.moduleNavigationItems(), item.id);
+    if (moduleParent) return moduleParent.id;
+
+    return null;
+  }
+
+  /**
+   * Find parent item in tree recursively
+   */
+  private findParentInTree(
+    items: NavigationItemDto[],
+    childId: string
+  ): NavigationItemDto | null {
+    for (const item of items) {
+      if (item.items?.some((child) => child.id === childId)) {
+        return item;
+      }
+      if (item.items) {
+        const parent = this.findParentInTree(item.items, childId);
+        if (parent) return parent;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Move item up in order (keyboard accessible alternative to drag & drop)
+   */
+  protected onMoveUp(): void {
+    const item = this.selectedItem();
+    if (!item) return;
+
+    const siblings = this.getSiblings(item);
+    const currentIndex = siblings.findIndex((s) => s.id === item.id);
+
+    if (currentIndex > 0) {
+      const newOrder = siblings[currentIndex - 1].order;
+      this.updateItemOrder(item.id, newOrder);
+    }
+  }
+
+  /**
+   * Move item down in order (keyboard accessible alternative to drag & drop)
+   */
+  protected onMoveDown(): void {
+    const item = this.selectedItem();
+    if (!item) return;
+
+    const siblings = this.getSiblings(item);
+    const currentIndex = siblings.findIndex((s) => s.id === item.id);
+
+    if (currentIndex < siblings.length - 1) {
+      const newOrder = siblings[currentIndex + 1].order;
+      this.updateItemOrder(item.id, newOrder);
+    }
+  }
+
+  /**
+   * Get siblings of an item (items with same parent)
+   */
+  private getSiblings(item: NavigationItemDto): NavigationItemDto[] {
+    const parentId = this.findParentId(item);
+    const items =
+      this.activeScope() === 'global'
+        ? this.globalNavigationItems()
+        : this.moduleNavigationItems();
+
+    if (!parentId) {
+      // Root level items
+      return items;
+    } else {
+      // Find parent and return its children
+      const parent = this.findItemById(items, parentId);
+      return parent?.items || [];
+    }
+  }
+
+  /**
+   * Find item by ID in tree recursively
+   */
+  private findItemById(items: NavigationItemDto[], id: string): NavigationItemDto | null {
+    for (const item of items) {
+      if (item.id === id) return item;
+      if (item.items) {
+        const found = this.findItemById(item.items, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Update item order via API
+   */
+  private updateItemOrder(itemId: string, newOrder: number): void {
+    this.isLoading.set(true);
+
+    const reorderPayload = [
+      {
+        id: itemId,
+        newOrder,
+        newParentId: this.findParentId(this.selectedItem()!),
+      },
+    ];
+
+    this.navigationService
+      .reorderNavigationItems(reorderPayload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translocoService.translate('navigationManagement.messages.success'),
+            detail: this.translocoService.translate(
+              'navigationManagement.messages.reorderSuccess'
+            ),
+          });
+          // Refresh to get updated data
+          this.onRefresh();
+        },
+        error: (error) => {
+          console.error('Failed to update item order:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translocoService.translate('navigationManagement.messages.error'),
+            detail: this.translocoService.translate('navigationManagement.messages.reorderError'),
+          });
+          this.isLoading.set(false);
+        },
+      });
+  }
 }

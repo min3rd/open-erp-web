@@ -23,6 +23,32 @@
             [attr.aria-label]="'navigationManagement.toolbar.addItem' | transloco"
           />
 
+          <!-- Move Up Button (keyboard accessible alternative) -->
+          <p-button
+            id="navigation-list-move-up-button"
+            icon="pi pi-arrow-up"
+            [rounded]="true"
+            [text]="true"
+            (onClick)="onMoveUp()"
+            [disabled]="!selectedItem()"
+            [pTooltip]="'navigationManagement.contextMenu.moveUp' | transloco"
+            tooltipPosition="bottom"
+            [attr.aria-label]="'navigationManagement.contextMenu.moveUp' | transloco"
+          />
+
+          <!-- Move Down Button (keyboard accessible alternative) -->
+          <p-button
+            id="navigation-list-move-down-button"
+            icon="pi pi-arrow-down"
+            [rounded]="true"
+            [text]="true"
+            (onClick)="onMoveDown()"
+            [disabled]="!selectedItem()"
+            [pTooltip]="'navigationManagement.contextMenu.moveDown' | transloco"
+            tooltipPosition="bottom"
+            [attr.aria-label]="'navigationManagement.contextMenu.moveDown' | transloco"
+          />
+
           <!-- Refresh Button -->
           <p-button
             id="navigation-list-refresh-button"
@@ -102,6 +128,7 @@
               [(selection)]="selectedTreeNode"
               (onNodeSelect)="onNodeSelect($event)"
               (onNodeUnselect)="onNodeUnselect()"
+              (onNodeDrop)="onNodeDrop($event)"
               [draggableNodes]="true"
               [droppableNodes]="true"
               draggableScope="self"
@@ -154,6 +181,7 @@
               [(selection)]="selectedTreeNode"
               (onNodeSelect)="onNodeSelect($event)"
               (onNodeUnselect)="onNodeUnselect()"
+              (onNodeDrop)="onNodeDrop($event)"
               [draggableNodes]="true"
               [droppableNodes]="true"
               [loading]="isLoading()"

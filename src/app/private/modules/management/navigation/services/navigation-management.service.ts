@@ -93,7 +93,11 @@ export class NavigationManagementService {
    */
   createNavigationItem(dto: CreateNavigationItemDto): Observable<NavigationItemDto> {
     return this.http.post<NavigationItemDto>(this.baseUrl, dto).pipe(
-      tap(() => this.invalidateCache(dto.scope, dto.moduleKey)),
+      tap((createdItem) => {
+        this.invalidateCache(dto.scope, dto.moduleKey);
+        // Trigger refetch for the affected scope
+        this.refetchCache(dto.scope, dto.moduleKey);
+      }),
       catchError(this.handleError)
     );
   }
@@ -103,7 +107,11 @@ export class NavigationManagementService {
    */
   updateNavigationItem(id: string, dto: UpdateNavigationItemDto): Observable<NavigationItemDto> {
     return this.http.patch<NavigationItemDto>(`${this.baseUrl}/${id}`, dto).pipe(
-      tap((item) => this.invalidateCache(item.scope, item.moduleKey)),
+      tap((item) => {
+        this.invalidateCache(item.scope, item.moduleKey);
+        // Trigger refetch for the affected scope
+        this.refetchCache(item.scope, item.moduleKey);
+      }),
       catchError(this.handleError)
     );
   }
@@ -113,7 +121,11 @@ export class NavigationManagementService {
    */
   deleteNavigationItem(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
-      tap(() => this.invalidateAllCaches()),
+      tap(() => {
+        this.invalidateAllCaches();
+        // Trigger refetch for all scopes
+        this.refetchAllCaches();
+      }),
       catchError(this.handleError)
     );
   }
@@ -123,7 +135,11 @@ export class NavigationManagementService {
    */
   reorderNavigationItems(items: ReorderNavigationItemDto[]): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/reorder`, { items }).pipe(
-      tap(() => this.invalidateAllCaches()),
+      tap(() => {
+        this.invalidateAllCaches();
+        // Trigger refetch for all scopes
+        this.refetchAllCaches();
+      }),
       catchError(this.handleError)
     );
   }
@@ -133,7 +149,11 @@ export class NavigationManagementService {
    */
   moveNavigationItem(dto: MoveNavigationItemDto): Observable<NavigationItemDto> {
     return this.http.post<NavigationItemDto>(`${this.baseUrl}/move`, dto).pipe(
-      tap(() => this.invalidateAllCaches()),
+      tap(() => {
+        this.invalidateAllCaches();
+        // Trigger refetch for all scopes
+        this.refetchAllCaches();
+      }),
       catchError(this.handleError)
     );
   }
@@ -197,6 +217,30 @@ export class NavigationManagementService {
   private invalidateAllCaches(): void {
     this.globalNavigationCache$.next(null);
     this.moduleNavigationCache$.forEach((cache) => cache.next(null));
+  }
+
+  /**
+   * Refetch cache for specific scope/module
+   */
+  private refetchCache(scope: 'global' | 'module', moduleKey?: string): void {
+    if (scope === 'global') {
+      this.getGlobalNavigation({ includeHidden: true }).subscribe();
+    } else if (moduleKey) {
+      this.getModuleNavigation(moduleKey, { includeHidden: true }).subscribe();
+    }
+  }
+
+  /**
+   * Refetch all caches
+   */
+  private refetchAllCaches(): void {
+    // Refetch global navigation
+    this.getGlobalNavigation({ includeHidden: true }).subscribe();
+    
+    // Refetch all module navigations that have been loaded
+    this.moduleNavigationCache$.forEach((cache, moduleKey) => {
+      this.getModuleNavigation(moduleKey, { includeHidden: true }).subscribe();
+    });
   }
 
   /**
