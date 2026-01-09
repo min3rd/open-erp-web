@@ -20,15 +20,12 @@ export interface NavigationItemDto {
   badge?: string | number;
   badgeClass?: string;
   tooltip?: string;
-  tooltipPosition?: 'top' | 'bottom' | 'left' | 'right';
   shortcut?: string;
   class?: string;
   order: number;
   scope: 'global' | 'module';
-  moduleKey?: string;
+  module?: string;
   meta?: Record<string, any>;
-  visible?: boolean;
-  separator?: boolean;
   createdAt?: string;
   updatedAt?: string;
   createdBy?: string;

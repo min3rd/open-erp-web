@@ -100,24 +100,24 @@
   <!-- Module Key (Required when scope is module) -->
   @if (form().value.scope === 'module') {
   <div class="flex flex-col gap-2">
-    <label for="navigation-editor-module-key" class="font-semibold">
+    <label for="navigation-editor-module" class="font-semibold">
       {{ 'navigationManagement.editor.form.moduleKey.label' | transloco }}
       <span class="text-red-500">*</span>
     </label>
     <p-select
-      id="navigation-editor-module-key"
-      formControlName="moduleKey"
+      id="navigation-editor-module"
+      formControlName="module"
       [options]="availableModules()"
       optionLabel="label"
       optionValue="value"
       [placeholder]="'navigationManagement.editor.form.moduleKey.placeholder' | transloco"
-      [class.p-invalid]="hasError('moduleKey')"
+      [class.p-invalid]="hasError('module')"
       [attr.aria-label]="'navigationManagement.editor.form.moduleKey.label' | transloco"
       [attr.aria-required]="true"
     />
-    @if (hasError('moduleKey')) {
-    <small id="navigation-editor-module-key-error" class="text-red-500">
-      {{ getErrorMessage('moduleKey') }}
+    @if (hasError('module')) {
+    <small id="navigation-editor-module-error" class="text-red-500">
+      {{ getErrorMessage('module') }}
     </small>
     }
   </div>
@@ -180,18 +180,6 @@
   <div class="flex flex-wrap gap-4">
     <div class="flex items-center gap-2">
       <p-checkbox
-        id="navigation-editor-visible"
-        formControlName="visible"
-        [binary]="true"
-        [attr.aria-label]="'navigationManagement.editor.form.visible.label' | transloco"
-      />
-      <label for="navigation-editor-visible" class="cursor-pointer">
-        {{ 'navigationManagement.editor.form.visible.label' | transloco }}
-      </label>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <p-checkbox
         id="navigation-editor-disabled"
         formControlName="disabled"
         [binary]="true"
@@ -199,18 +187,6 @@
       />
       <label for="navigation-editor-disabled" class="cursor-pointer">
         {{ 'navigationManagement.editor.form.disabled.label' | transloco }}
-      </label>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <p-checkbox
-        id="navigation-editor-separator"
-        formControlName="separator"
-        [binary]="true"
-        [attr.aria-label]="'navigationManagement.editor.form.separator.label' | transloco"
-      />
-      <label for="navigation-editor-separator" class="cursor-pointer">
-        {{ 'navigationManagement.editor.form.separator.label' | transloco }}
       </label>
     </div>
   </div>
