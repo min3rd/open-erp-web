@@ -117,7 +117,7 @@ export class NavigationList implements OnInit, OnDestroy {
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const scope = params['scope'] || 'global';
       this.activeScope.set(scope as 'global' | 'module');
-      
+
       // Check if an item ID is in the route
       const itemId = params['id'];
       if (itemId && itemId !== 'new') {
@@ -130,7 +130,7 @@ export class NavigationList implements OnInit, OnDestroy {
         this.moduleNavigationItems.set([]);
       }
     });
-    
+
     // Load global navigation
     this.loadGlobalNavigation();
   }
@@ -212,7 +212,7 @@ export class NavigationList implements OnInit, OnDestroy {
         this.globalNavigationItems.set(items);
         this.isLoading.set(false);
         this.cdr.markForCheck();
-        
+
         // After loading, check if there's an item ID in the route and select it
         const itemId = this.route.snapshot.params['id'];
         if (itemId && itemId !== 'new' && items.length > 0) {
@@ -286,14 +286,14 @@ export class NavigationList implements OnInit, OnDestroy {
     this.selectedTreeNode.set(node);
 
     // If it's a module item in global navigation, load its module navigation
-    if (item.moduleKey) {
+    if (item.id) {
       this.selectedModule.set(item);
-      this.loadModuleNavigation(item.moduleKey);
+      this.loadModuleNavigation(item.id);
       this.cdr.markForCheck();
     }
 
     // Navigate to view the item
-    this.router.navigate([item.id], { relativeTo: this.route });
+    this.router.navigate(['modules', item.id], { relativeTo: this.route });
   }
 
   /**
@@ -313,10 +313,12 @@ export class NavigationList implements OnInit, OnDestroy {
    */
   protected onAddItem(): void {
     const selected = this.selectedItem();
-    
+
     // If we're viewing a module item, navigate to add under that module
-    if (selected && selected.moduleKey) {
-      this.router.navigate(['modules', selected.moduleKey, 'new'], { relativeTo: this.route });
+    if (selected) {
+      this.router.navigate(['/modules/management/navigation/global/modules', selected.id, 'new'], {
+        relativeTo: this.route,
+      });
     } else {
       // Otherwise, add to global navigation
       this.router.navigate(['new'], { relativeTo: this.route });
@@ -442,9 +444,7 @@ export class NavigationList implements OnInit, OnDestroy {
           this.messageService.add({
             severity: 'success',
             summary: this.translocoService.translate('navigationManagement.messages.success'),
-            detail: this.translocoService.translate(
-              'navigationManagement.messages.reorderSuccess'
-            ),
+            detail: this.translocoService.translate('navigationManagement.messages.reorderSuccess'),
           });
           // Refresh to get updated data from backend
           if (this.activeScope() === 'global') {
@@ -478,10 +478,10 @@ export class NavigationList implements OnInit, OnDestroy {
   private findAndSelectItemById(itemId: string): void {
     const globalItems = this.globalNavigationItems();
     const item = this.findItemById(globalItems, itemId);
-    
+
     if (item) {
       this.selectedItem.set(item);
-      
+
       // If the item has a moduleKey, load its module navigation
       if (item.moduleKey) {
         this.selectedModule.set(item);
@@ -509,10 +509,7 @@ export class NavigationList implements OnInit, OnDestroy {
   /**
    * Find parent item in tree recursively
    */
-  private findParentInTree(
-    items: NavigationItemDto[],
-    childId: string
-  ): NavigationItemDto | null {
+  private findParentInTree(items: NavigationItemDto[], childId: string): NavigationItemDto | null {
     for (const item of items) {
       if (item.items?.some((child) => child.id === childId)) {
         return item;
@@ -563,9 +560,7 @@ export class NavigationList implements OnInit, OnDestroy {
   private getSiblings(item: NavigationItemDto): NavigationItemDto[] {
     const parentId = this.findParentId(item);
     const items =
-      this.activeScope() === 'global'
-        ? this.globalNavigationItems()
-        : this.moduleNavigationItems();
+      this.activeScope() === 'global' ? this.globalNavigationItems() : this.moduleNavigationItems();
 
     if (!parentId) {
       // Root level items
@@ -613,9 +608,7 @@ export class NavigationList implements OnInit, OnDestroy {
           this.messageService.add({
             severity: 'success',
             summary: this.translocoService.translate('navigationManagement.messages.success'),
-            detail: this.translocoService.translate(
-              'navigationManagement.messages.reorderSuccess'
-            ),
+            detail: this.translocoService.translate('navigationManagement.messages.reorderSuccess'),
           });
           // Refresh to get updated data
           this.onRefresh();
