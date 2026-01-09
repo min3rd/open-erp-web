@@ -101,6 +101,7 @@ export interface NavigationListResponse {
   items: NavigationItemDto[];
   scope: 'global' | 'module';
   total: number;
+  moduleId?: string;
 }
 
 /**

@@ -13,6 +13,7 @@ import {
   GetNavigationParams,
   PermissionSet,
 } from '../dto/navigation-item.dto';
+import { ApiSingleResponse } from '../../../../../../core/api';
 
 /**
  * Service for managing navigation items
@@ -39,10 +40,12 @@ export class NavigationManagementService {
     }
 
     return this.http
-      .get<NavigationListResponse>(`${this.baseUrl}/global`, { params: httpParams })
+      .get<ApiSingleResponse<NavigationListResponse>>(`${this.baseUrl}/global`, {
+        params: httpParams,
+      })
       .pipe(
-        map((response) => {
-          return response.items;
+        map((response: ApiSingleResponse<NavigationListResponse>) => {
+          return response.data?.item?.items || [];
         }),
         tap((items) => this.globalNavigationCache$.next(items)),
         catchError(this.handleError)
@@ -53,7 +56,7 @@ export class NavigationManagementService {
    * Get module-specific navigation items
    */
   getModuleNavigation(
-    moduleKey: string,
+    moduleId: string,
     params?: GetNavigationParams
   ): Observable<NavigationItemDto[]> {
     let httpParams = new HttpParams();
@@ -62,17 +65,19 @@ export class NavigationManagementService {
     }
 
     return this.http
-      .get<NavigationListResponse>(`${this.baseUrl}/module/${moduleKey}`, { params: httpParams })
+      .get<ApiSingleResponse<NavigationListResponse>>(`${this.baseUrl}/module/${moduleId}`, {
+        params: httpParams,
+      })
       .pipe(
-        map((response) => response.items),
+        map((response) => response.data?.item?.items || []),
         tap((items) => {
-          if (!this.moduleNavigationCache$.has(moduleKey)) {
+          if (!this.moduleNavigationCache$.has(moduleId)) {
             this.moduleNavigationCache$.set(
-              moduleKey,
+              moduleId,
               new BehaviorSubject<NavigationItemDto[] | null>(items)
             );
           } else {
-            this.moduleNavigationCache$.get(moduleKey)!.next(items);
+            this.moduleNavigationCache$.get(moduleId)!.next(items);
           }
         }),
         catchError(this.handleError)
@@ -236,7 +241,7 @@ export class NavigationManagementService {
   private refetchAllCaches(): void {
     // Refetch global navigation
     this.getGlobalNavigation({ includeHidden: true }).subscribe();
-    
+
     // Refetch all module navigations that have been loaded
     this.moduleNavigationCache$.forEach((cache, moduleKey) => {
       this.getModuleNavigation(moduleKey, { includeHidden: true }).subscribe();

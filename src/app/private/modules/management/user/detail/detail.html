@@ -4,7 +4,7 @@
   [modal]="true"
   [showCloseIcon]="true"
   (onHide)="onClose()"
-  styleClass="!w-full md:!w-80 lg:!w-[30rem]"
+  styleClass="!w-full md:!w-80 lg:!w-[60rem]"
   id="user-detail-drawer"
   [attr.aria-label]="'userDetail.drawer.label' | transloco"
 >
@@ -127,6 +127,7 @@
           [attr.aria-label]="'userDetail.actions.invite' | transloco"
         />
         <p-button
+          #userDetailMoreButton
           id="user-detail-more-button"
           icon="pi pi-ellipsis-v"
           [text]="true"
@@ -140,7 +141,7 @@
           id="user-detail-more-menu"
           [model]="actionMenuItems"
           [popup]="true"
-          appendTo="user-detail-drawer"
+          appendTo="userDetailMoreButton"
         />
       </div>
       <p-button
