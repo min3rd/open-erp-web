@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
+import { MenuModule } from 'primeng/menu';
 import { ManagementLayoutService } from '../services/management-layout.service';
 import { NavigationService } from '../../../../../core/services/navigation-service';
 import { MenuItem } from 'primeng/api';
@@ -24,6 +25,7 @@ import { Subject, takeUntil } from 'rxjs';
     TranslocoModule,
     ButtonModule,
     TooltipModule,
+    MenuModule,
   ],
   templateUrl: './management-nav.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
