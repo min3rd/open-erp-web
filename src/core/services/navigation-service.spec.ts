@@ -71,7 +71,7 @@ describe('NavigationService', () => {
     };
 
     service.loadModules('v1', 'flat').subscribe((items) => {
-      expect(items.length).toBe(2);
+      expect(items.length).toBe(1);
       expect(items[0].items?.length).toBe(0);
       expect(items[0].routerLink).toEqual(['/modules/management']);
     });

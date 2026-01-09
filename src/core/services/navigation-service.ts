@@ -221,6 +221,7 @@ export class NavigationService {
         ? [item.routerLink]
         : undefined;
 
+    const badgeValue = item.badge;
     const mapped: MenuItem = {
       id: this.buildItemId(scope, item, moduleKey),
       label: item.label,
@@ -229,7 +230,10 @@ export class NavigationService {
       url: item.url,
       target: item.target,
       disabled: item.disabled,
-      badge: item.badge !== undefined ? String(item.badge) : undefined,
+      badge:
+        typeof badgeValue === 'string' || typeof badgeValue === 'number'
+          ? String(badgeValue)
+          : undefined,
       badgeStyleClass: item.badgeClass,
       tooltip: item.tooltip,
       styleClass: item.class,

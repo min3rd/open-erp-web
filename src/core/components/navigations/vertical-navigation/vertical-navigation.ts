@@ -54,6 +54,7 @@ export class VerticalNavigation implements OnInit, OnDestroy {
   moduleItems = signal<MenuItem[]>([]);
   navMode = this.layoutService.navMode;
   navWidth = this.layoutService.navWidth;
+  private itemIdCounter = 0;
 
   // For resize functionality
   isResizing = signal(false);
@@ -263,11 +264,8 @@ export class VerticalNavigation implements OnInit, OnDestroy {
 
   private slugify(value: string): string {
     if (!value) {
-      const randomSuffix =
-        typeof crypto !== 'undefined' && 'randomUUID' in crypto
-          ? crypto.randomUUID()
-          : Date.now().toString(36);
-      return `nav-item-${randomSuffix}`;
+      this.itemIdCounter += 1;
+      return `nav-item-${this.itemIdCounter}`;
     }
     return value
       .toString()
