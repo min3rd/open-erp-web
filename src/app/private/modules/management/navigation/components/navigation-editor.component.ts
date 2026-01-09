@@ -256,6 +256,16 @@ export class NavigationEditorComponent implements OnInit {
       normalizedRouterLink = parts.length ? `/${parts.join('/')}` : undefined;
     }
 
+    // Extract icon name from object if needed (AutoComplete binds the whole object)
+    let iconName: string | undefined;
+    if (formValue.icon) {
+      if (typeof formValue.icon === 'string') {
+        iconName = formValue.icon;
+      } else if (typeof formValue.icon === 'object' && formValue.icon.name) {
+        iconName = formValue.icon.name;
+      }
+    }
+
     // Generate ID from label if not provided (backend requires `id` on create)
     const generateId = (label: string) => {
       const slug = String(label || '')
@@ -270,7 +280,7 @@ export class NavigationEditorComponent implements OnInit {
     const dto: any = {
       id: generateId(formValue.label),
       label: formValue.label,
-      icon: formValue.icon || undefined,
+      icon: iconName || undefined,
       subtitle: formValue.subtitle || undefined,
       // backend expects string routerLink
       routerLink: normalizedRouterLink,

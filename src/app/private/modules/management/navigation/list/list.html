@@ -1,4 +1,12 @@
 <div class="flex flex-auto h-full">
+  <!-- Context Menu -->
+  <p-contextMenu
+    #contextMenu
+    id="navigation-list-context-menu"
+    [model]="contextMenuItems()"
+    [attr.aria-label]="'navigationManagement.contextMenu.label' | transloco"
+  />
+
   <div class="flex h-full flex-col w-full">
     <!-- Fixed Toolbar -->
     <div class="p-2 border-b border-surface-200 dark:border-surface-700">
@@ -129,6 +137,8 @@
               (onNodeSelect)="onNodeSelect($event)"
               (onNodeUnselect)="onNodeUnselect()"
               (onNodeDrop)="onNodeDrop($event)"
+              (onNodeContextMenuSelect)="onContextMenu($event)"
+              [contextMenu]="contextMenu"
               [draggableNodes]="true"
               [droppableNodes]="true"
               draggableScope="self"
@@ -182,6 +192,8 @@
               (onNodeSelect)="onNodeSelect($event)"
               (onNodeUnselect)="onNodeUnselect()"
               (onNodeDrop)="onNodeDrop($event)"
+              (onNodeContextMenuSelect)="onContextMenu($event)"
+              [contextMenu]="contextMenu"
               [draggableNodes]="true"
               [droppableNodes]="true"
               [loading]="isLoading()"

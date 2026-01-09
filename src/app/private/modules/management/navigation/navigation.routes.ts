@@ -86,6 +86,11 @@ export const routes: Routes = [
         loadComponent: () => import('./list/list').then((m) => m.NavigationList),
         children: [
           {
+            path: 'new',
+            pathMatch: 'full',
+            loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
+          },
+          {
             path: ':id',
             resolve: [detailResolver],
             // detail view for global navigation item
