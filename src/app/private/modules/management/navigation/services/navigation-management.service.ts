@@ -108,9 +108,9 @@ export class NavigationManagementService {
   updateNavigationItem(id: string, dto: UpdateNavigationItemDto): Observable<NavigationItemDto> {
     return this.http.patch<NavigationItemDto>(`${this.baseUrl}/${id}`, dto).pipe(
       tap((item) => {
-        this.invalidateCache(item.scope, item.moduleKey);
+        this.invalidateCache(item.scope, item.module);
         // Trigger refetch for the affected scope
-        this.refetchCache(item.scope, item.moduleKey);
+        this.refetchCache(item.scope, item.module);
       }),
       catchError(this.handleError)
     );

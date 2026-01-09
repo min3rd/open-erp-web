@@ -10,7 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { Subject, takeUntil } from 'rxjs';
+import { last, Subject, takeUntil } from 'rxjs';
 
 // PrimeNG imports
 import { DrawerModule } from 'primeng/drawer';
@@ -28,13 +28,7 @@ import { NavigationEditorComponent } from '../components/navigation-editor.compo
 
 @Component({
   selector: 'app-navigation-detail',
-  imports: [
-    CommonModule,
-    TranslocoModule,
-    DrawerModule,
-    ButtonModule,
-    NavigationEditorComponent,
-  ],
+  imports: [CommonModule, TranslocoModule, DrawerModule, ButtonModule, NavigationEditorComponent],
   templateUrl: './detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -78,7 +72,7 @@ export class NavigationDetail implements OnInit, OnDestroy {
         // Create mode
         this.mode.set('create');
         this.item.set(null);
-        
+
         // Detect context from route
         if (moduleId) {
           // Creating in module context
@@ -195,5 +189,14 @@ export class NavigationDetail implements OnInit, OnDestroy {
           },
         });
     }
+  }
+
+  get availableModules() {
+    return [
+      {
+        label: this.defaultModule() || 'Default Module',
+        value: this.defaultModule() || 'default-module',
+      },
+    ];
   }
 }

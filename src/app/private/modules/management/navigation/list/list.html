@@ -164,7 +164,7 @@
               }
             </h3>
           </div>
-          <div class="flex-1 overflow-auto p-3">
+          <div class="flex-1 overflow-auto">
             @if (!selectedModule()) {
             <div class="text-center py-8 text-surface-500">
               <i class="pi pi-info-circle text-4xl"></i>
@@ -199,6 +199,7 @@
               [droppableNodes]="true"
               [loading]="isLoading()"
               [attr.aria-label]="'navigationManagement.accessibility.treeAria' | transloco"
+              class="h-full"
             />
             }
           </div>

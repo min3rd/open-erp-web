@@ -133,21 +133,21 @@ export class NavigationEditorComponent implements OnInit {
       // In create mode, apply default values based on context
       const scope = this.defaultScope();
       const module = this.defaultModule();
-      
+
       this.form().patchValue({
         scope: scope,
-        moduleKey: module || '',
+        module: module || '',
       });
-      
+
       // If creating in global context, disable scope field
       if (scope === 'global') {
         this.form().get('scope')?.disable();
       }
-      
+
       // If creating in module context, set moduleKey and make it required
       if (scope === 'module' && module) {
-        this.form().get('moduleKey')?.setValue(module);
-        this.form().get('moduleKey')?.disable();
+        this.form().get('module')?.setValue(module);
+        this.form().get('module')?.disable();
       }
     }
 
@@ -181,7 +181,7 @@ export class NavigationEditorComponent implements OnInit {
   protected filterIcons(event: any): void {
     const query = event.query.toLowerCase();
     const allIcons = this.availableIcons();
-    
+
     if (!query) {
       this.filteredIcons.set(allIcons);
     } else {
@@ -200,17 +200,16 @@ export class NavigationEditorComponent implements OnInit {
    */
   private createForm(): FormGroup {
     return this.fb.group({
+      id: [''],
       label: ['', [Validators.required]],
       icon: [''],
       subtitle: [''],
       routerLink: ['/'],
       url: [''],
       scope: ['global', [Validators.required]],
-      moduleKey: [''],
+      module: [''],
       order: [0],
       disabled: [false],
-      visible: [true],
-      separator: [false],
       target: [''],
       badge: [''],
       badgeClass: [''],
@@ -228,22 +227,22 @@ export class NavigationEditorComponent implements OnInit {
    */
   private patchForm(item: NavigationItemDto): void {
     this.form().patchValue({
+      id: item.id,
       label: item.label,
       icon: item.icon || '',
       subtitle: item.subtitle || '',
-      routerLink: Array.isArray(item.routerLink) ? item.routerLink.join('/') : item.routerLink || '',
+      routerLink: Array.isArray(item.routerLink)
+        ? item.routerLink.join('/')
+        : item.routerLink || '',
       url: item.url || '',
       scope: item.scope,
-      moduleKey: item.moduleKey || '',
+      module: item.module || '',
       order: item.order,
       disabled: item.disabled || false,
-      visible: item.visible !== false,
-      separator: item.separator || false,
       target: item.target || '',
       badge: item.badge || '',
       badgeClass: item.badgeClass || '',
       tooltip: item.tooltip || '',
-      tooltipPosition: item.tooltipPosition || 'top',
       shortcut: item.shortcut || '',
       class: item.class || '',
       command: item.command || '',
@@ -308,9 +307,8 @@ export class NavigationEditorComponent implements OnInit {
       // backend expects string routerLink
       routerLink: normalizedRouterLink,
       url: formValue.url || undefined,
-      scope: formValue.scope,
-      // map frontend moduleKey -> backend `module` field
-      module: formValue.moduleKey || undefined,
+      scope: formValue.scope || this.defaultScope() || undefined,
+      module: formValue.module || this.defaultModule() || undefined,
       order: formValue.order || 0,
       disabled: formValue.disabled || false,
       target: formValue.target || undefined,
