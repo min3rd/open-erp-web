@@ -265,7 +265,8 @@ export class NavigationService {
     }
 
     // Handle command - note: command execution would need to be implemented 
-    // based on specific application requirements
+    // based on specific application requirements. Currently logs warning only.
+    // TODO: Implement command execution strategy if needed
     if (item.command) {
       menuItem.command = () => {
         console.warn(`Command execution not implemented: ${item.command}`);

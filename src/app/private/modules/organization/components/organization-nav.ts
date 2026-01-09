@@ -125,8 +125,15 @@ export class OrganizationNav implements OnInit, OnDestroy {
     if (item.routerLink) {
       const routerLink = this.normalizeRouterLink(item.routerLink);
       
-      // Use prefix match for active state
-      updatedItem.styleClass = currentUrl.startsWith(routerLink)
+      // Use router.isActive for accurate matching (handles exact and subset paths)
+      const isActive = this.router.isActive(routerLink, {
+        paths: 'subset',
+        queryParams: 'ignored',
+        fragment: 'ignored',
+        matrixParams: 'ignored',
+      });
+      
+      updatedItem.styleClass = isActive
         ? `${item.styleClass || ''} p-menuitem-link-active`.trim()
         : (item.styleClass || '').replace('p-menuitem-link-active', '').trim();
     }
