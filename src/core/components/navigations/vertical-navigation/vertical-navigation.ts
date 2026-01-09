@@ -18,9 +18,10 @@ import { ButtonModule } from 'primeng/button';
 import { LayoutService } from '../../../services/layout-service';
 import { OrganizationSwitcher } from '../../organization-switcher/organization-switcher';
 import { LanguageSelector } from '../../language-selector/language-selector';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
 import { RippleModule } from 'primeng/ripple';
+import { MenuModule } from 'primeng/menu';
 
 @Component({
   selector: 'layout-vertical-navigation',
@@ -34,6 +35,7 @@ import { RippleModule } from 'primeng/ripple';
     TooltipModule,
     RouterModule,
     RippleModule,
+    MenuModule,
   ],
   templateUrl: './vertical-navigation.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,7 +50,7 @@ export class VerticalNavigation implements OnInit, OnDestroy {
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  items: MenuItem[] | undefined;
+  items: MenuItem[] = [];
   navMode = this.layoutService.navMode;
   navWidth = this.layoutService.navWidth;
 
@@ -56,15 +58,77 @@ export class VerticalNavigation implements OnInit, OnDestroy {
   isResizing = signal(false);
 
   ngOnInit() {
+    // Load navigation items
     this.navigationService.modules$.pipe(takeUntil(this._unsubscribeAll)).subscribe((modules) => {
-      this.items = modules;
+      this.items = modules || [];
+      this.updateActiveStates();
       this.cdr.markForCheck();
+    });
+
+    // Update active states on route changes
+    this.router.events.pipe(takeUntil(this._unsubscribeAll)).subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.updateActiveStates();
+        this.cdr.markForCheck();
+      }
     });
   }
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
+  }
+
+  /**
+   * Update active states for menu items based on current route
+   */
+  private updateActiveStates(): void {
+    const currentUrl = this.router.url;
+    this.items = this.items.map((item) => this.updateItemActiveState(item, currentUrl));
+  }
+
+  /**
+   * Recursively update active state for menu item and its children
+   */
+  private updateItemActiveState(item: MenuItem, currentUrl: string): MenuItem {
+    const updatedItem = { ...item };
+
+    // Check if this item is active
+    if (item.routerLink) {
+      const routerLink = Array.isArray(item.routerLink) 
+        ? item.routerLink.join('/') 
+        : item.routerLink;
+      
+      // Use prefix match for active state
+      updatedItem.styleClass = currentUrl.startsWith(routerLink)
+        ? `${item.styleClass || ''} p-menuitem-link-active`.trim()
+        : (item.styleClass || '').replace('p-menuitem-link-active', '').trim();
+    }
+
+    // Update children recursively
+    if (item.items && item.items.length > 0) {
+      updatedItem.items = item.items.map((child) => this.updateItemActiveState(child, currentUrl));
+    }
+
+    return updatedItem;
+  }
+
+  /**
+   * Check if a menu item is active based on router state
+   */
+  isItemActive(item: MenuItem): boolean {
+    if (!item.routerLink) return false;
+    
+    const routerLink = Array.isArray(item.routerLink) 
+      ? item.routerLink.join('/') 
+      : item.routerLink;
+    
+    return this.router.isActive(routerLink, {
+      paths: 'subset',
+      queryParams: 'ignored',
+      fragment: 'ignored',
+      matrixParams: 'ignored',
+    });
   }
 
   logOut(): void {

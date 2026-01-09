@@ -237,7 +237,8 @@
       "register": "Registrar Organización",
       "detail": "Ver Información",
       "toggleNavMode": "Alternar modo de navegación",
-      "toggleMenu": "Alternar menú"
+      "toggleMenu": "Alternar menú",
+      "noItems": "No hay elementos de navegación disponibles"
     },
     "tabs": {
       "register": "Registrar",
@@ -494,7 +495,8 @@
       "user": "Gestión de Usuarios",
       "toggleNavMode": "Cambiar modo de navegación",
       "toggleMenu": "Alternar menú",
-      "navigation": "Gestión de Navegación"
+      "navigation": "Gestión de Navegación",
+      "noItems": "No hay elementos de navegación disponibles"
     },
     "tabs": {
       "user": "Usuarios"

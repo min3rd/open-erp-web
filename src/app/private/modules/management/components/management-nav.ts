@@ -1,21 +1,26 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   inject,
+  OnDestroy,
+  OnInit,
 } from '@angular/core';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ManagementLayoutService } from '../services/management-layout.service';
+import { NavigationService } from '../../../../../core/services/navigation-service';
+import { MenuItem } from 'primeng/api';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'management-nav',
   imports: [
     CommonModule,
-    RouterLink,
-    RouterLinkActive,
+    RouterModule,
     TranslocoModule,
     ButtonModule,
     TooltipModule,
@@ -23,11 +28,43 @@ import { ManagementLayoutService } from '../services/management-layout.service';
   templateUrl: './management-nav.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ManagementNav {
+export class ManagementNav implements OnInit, OnDestroy {
   private layoutService = inject(ManagementLayoutService);
+  private navigationService = inject(NavigationService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   navMode = this.layoutService.navMode;
+  items: MenuItem[] = [];
+
+  ngOnInit(): void {
+    // Load module navigation
+    this.navigationService.getModuleNavigation$('management')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((items) => {
+        this.items = items || [];
+        this.updateActiveStates();
+        this.cdr.markForCheck();
+      });
+
+    // Load module navigation data
+    this.navigationService.loadModuleNavigation('management').subscribe();
+
+    // Update active states on route changes
+    this.router.events.pipe(takeUntil(this._unsubscribeAll)).subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.updateActiveStates();
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
+  }
 
   onToggleNavMode(): void {
     this.layoutService.toggleNavMode();
@@ -40,5 +77,57 @@ export class ManagementNav {
       fragment: 'ignored',
       matrixParams: 'ignored',
     });
+  }
+
+  /**
+   * Check if a menu item is active based on router state
+   */
+  isItemActive(item: MenuItem): boolean {
+    if (!item.routerLink) return false;
+    
+    const routerLink = Array.isArray(item.routerLink) 
+      ? item.routerLink.join('/') 
+      : item.routerLink;
+    
+    return this.router.isActive(routerLink, {
+      paths: 'subset',
+      queryParams: 'ignored',
+      fragment: 'ignored',
+      matrixParams: 'ignored',
+    });
+  }
+
+  /**
+   * Update active states for menu items based on current route
+   */
+  private updateActiveStates(): void {
+    const currentUrl = this.router.url;
+    this.items = this.items.map((item) => this.updateItemActiveState(item, currentUrl));
+  }
+
+  /**
+   * Recursively update active state for menu item and its children
+   */
+  private updateItemActiveState(item: MenuItem, currentUrl: string): MenuItem {
+    const updatedItem = { ...item };
+
+    // Check if this item is active
+    if (item.routerLink) {
+      const routerLink = Array.isArray(item.routerLink) 
+        ? item.routerLink.join('/') 
+        : item.routerLink;
+      
+      // Use prefix match for active state
+      updatedItem.styleClass = currentUrl.startsWith(routerLink)
+        ? `${item.styleClass || ''} p-menuitem-link-active`.trim()
+        : (item.styleClass || '').replace('p-menuitem-link-active', '').trim();
+    }
+
+    // Update children recursively
+    if (item.items && item.items.length > 0) {
+      updatedItem.items = item.items.map((child) => this.updateItemActiveState(child, currentUrl));
+    }
+
+    return updatedItem;
   }
 }
