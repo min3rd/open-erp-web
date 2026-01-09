@@ -64,6 +64,9 @@ export class NavigationEditorComponent implements OnInit {
   readonly mode = input<'create' | 'edit' | 'view'>('create');
   readonly availableModules = input<{ label: string; value: string }[]>([]);
   readonly availableParents = input<NavigationItemDto[]>([]);
+  // Context inputs for auto-filling form based on user context
+  readonly defaultScope = input<'global' | 'module'>('global');
+  readonly defaultModule = input<string | null>(null);
 
   // Outputs
   readonly save = output<CreateNavigationItemDto | UpdateNavigationItemDto>();
@@ -126,13 +129,33 @@ export class NavigationEditorComponent implements OnInit {
     const currentItem = this.item();
     if (currentItem && this.mode() !== 'create') {
       this.patchForm(currentItem);
+    } else if (this.mode() === 'create') {
+      // In create mode, apply default values based on context
+      const scope = this.defaultScope();
+      const module = this.defaultModule();
+      
+      this.form().patchValue({
+        scope: scope,
+        moduleKey: module || '',
+      });
+      
+      // If creating in global context, disable scope field
+      if (scope === 'global') {
+        this.form().get('scope')?.disable();
+      }
+      
+      // If creating in module context, set moduleKey and make it required
+      if (scope === 'module' && module) {
+        this.form().get('moduleKey')?.setValue(module);
+        this.form().get('moduleKey')?.disable();
+      }
     }
 
     // Disable form in view mode only (not in create mode)
     if (this.mode() === 'view') {
       this.form().disable();
-    } else {
-      // Ensure form is enabled in create and edit modes
+    } else if (this.mode() !== 'create') {
+      // Ensure form is enabled in edit mode
       this.form().enable();
     }
   }

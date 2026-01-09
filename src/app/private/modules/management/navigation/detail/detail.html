@@ -23,6 +23,8 @@
     <app-navigation-editor
       [item]="item()"
       [mode]="mode()"
+      [defaultScope]="defaultScope()"
+      [defaultModule]="defaultModule()"
       [availableModules]="[]"
       [availableParents]="[]"
       (save)="onSave($event)"
