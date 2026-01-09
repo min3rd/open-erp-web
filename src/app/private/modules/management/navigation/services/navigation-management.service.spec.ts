@@ -124,6 +124,7 @@ describe('NavigationManagementService', () => {
   describe('createNavigationItem', () => {
     it('should create a new navigation item', () => {
       const createDto: CreateNavigationItemDto = {
+        id: 'nav-new',
         label: 'New Item',
         icon: 'pi pi-plus',
         scope: 'global',
@@ -142,6 +143,7 @@ describe('NavigationManagementService', () => {
 
     it('should invalidate cache after creation', () => {
       const createDto: CreateNavigationItemDto = {
+        id: 'nav-cache',
         label: 'New Item',
         scope: 'global',
         order: 1,
@@ -162,6 +164,7 @@ describe('NavigationManagementService', () => {
   describe('updateNavigationItem', () => {
     it('should update an existing navigation item', () => {
       const updateDto: UpdateNavigationItemDto = {
+        id: 'nav-1',
         label: 'Updated Label',
       };
 
@@ -313,7 +316,7 @@ describe('NavigationManagementService', () => {
 
   describe('error handling', () => {
     it('should handle 400 Bad Request', () => {
-      service.createNavigationItem({ label: 'Test', scope: 'global', order: 0 }).subscribe({
+      service.createNavigationItem({ id: 'nav-error', label: 'Test', scope: 'global', order: 0 }).subscribe({
         next: () => {
           throw new Error('should have failed');
         },
