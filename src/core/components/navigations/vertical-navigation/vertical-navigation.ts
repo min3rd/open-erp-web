@@ -155,7 +155,7 @@ export class VerticalNavigation implements OnInit, OnDestroy {
       return (
         currentUrl === routerLink ||
         currentUrl.startsWith(`${routerLink}/`) ||
-        currentUrl.startsWith(routerLink)
+        currentUrl.startsWith(`${routerLink}?`)
       );
     }
 
@@ -268,7 +268,6 @@ export class VerticalNavigation implements OnInit, OnDestroy {
       return `nav-item-${this.itemIdCounter}`;
     }
     return value
-      .toString()
       .trim()
       .replace(/[^a-zA-Z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '')

@@ -170,8 +170,9 @@ export class NavigationService {
       }
     }
 
-    if ((response as ApiSingleResponse<any>)?.data?.item?.items) {
-      return (response as ApiSingleResponse<any>).data?.item?.items ?? [];
+    const singleResponse = response as ApiSingleResponse<any>;
+    if (singleResponse?.data?.item?.items) {
+      return singleResponse.data?.item?.items ?? [];
     }
 
     console.warn('NavigationService: Unable to extract navigation items, returning empty array');
@@ -289,7 +290,7 @@ export class NavigationService {
       : `navigation-${scope}-${normalized}`;
   }
 
-  private normalizeBadge(badge: unknown): string | undefined {
+  private normalizeBadge(badge: string | number | null | undefined): string | undefined {
     if (typeof badge === 'string' || typeof badge === 'number') {
       return String(badge);
     }
