@@ -263,7 +263,11 @@ export class VerticalNavigation implements OnInit, OnDestroy {
 
   private slugify(value: string): string {
     if (!value) {
-      return 'item';
+      const randomSuffix =
+        typeof crypto !== 'undefined' && 'randomUUID' in crypto
+          ? crypto.randomUUID()
+          : Date.now().toString(36);
+      return `nav-item-${randomSuffix}`;
     }
     return value
       .toString()

@@ -69,10 +69,6 @@ export class NavigationService {
     return this._modules.asObservable();
   }
 
-  get items$(): Observable<MenuItem[] | null> {
-    return this._modules.asObservable();
-  }
-
   getModuleNavigation$(moduleKey: string): Observable<MenuItem[] | null> {
     return this.resolveModuleSubject(moduleKey).asObservable();
   }
@@ -182,7 +178,12 @@ export class NavigationService {
   }
 
   private normalizeToTree(items: NavigationApiItem[], format: 'tree' | 'flat'): NavigationApiItem[] {
-    if (format === 'tree' || items.some((item) => item.items?.length)) {
+    if (format === 'tree') {
+      return items;
+    }
+
+    const hasNestedItems = items.some((item) => item.items?.length);
+    if (hasNestedItems) {
       return items;
     }
 
