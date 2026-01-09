@@ -49,7 +49,23 @@ export class AuditLogs implements OnInit, OnDestroy {
       if (data['userDetail']) {
         const userData = data['userDetail'] as UserDetail;
         this.user.set(userData);
-        this.loadActivityLogs(userData.id);
+      }
+    });
+
+    // Get activity logs from route resolver
+    this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      if (data['activityLogs']) {
+        const logsData = data['activityLogs'];
+        this.activityLogs.set(logsData.data);
+        this.currentPage.set(logsData.page);
+        this.totalLogs.set(logsData.total);
+        this.hasMore.set(logsData.data.length < logsData.total);
+      } else {
+        // If no data from resolver, load it
+        const userData = this.user();
+        if (userData) {
+          this.loadActivityLogs(userData.id);
+        }
       }
     });
   }

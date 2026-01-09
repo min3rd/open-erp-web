@@ -596,12 +596,14 @@
   },
   "userDetail": {
     "drawer": {
-      "label": "User Details"
+      "label": "User Details",
+      "title": "User Details"
     },
     "tabs": {
       "general": "General",
       "roles": "Roles & Memberships",
-      "activity": "Activity Log"
+      "activity": "Activity Log",
+      "password": "Reset Password"
     },
     "general": {
       "profile": "Profile Information",
@@ -634,6 +636,7 @@
       "edit": "Edit",
       "close": "Close",
       "more": "More Actions",
+      "invite": "Invite",
       "sendInvitation": "Send Invitation",
       "resetPassword": "Reset Password",
       "disable": "Disable User",
