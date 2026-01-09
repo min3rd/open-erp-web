@@ -8,14 +8,20 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute, RouterOutlet, NavigationEnd } from '@angular/router';
+import {
+  Router,
+  ActivatedRoute,
+  RouterOutlet,
+  NavigationEnd,
+  RouterLinkWithHref,
+} from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Subject, takeUntil, filter } from 'rxjs';
 
 // PrimeNG imports
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
+import { TabsModule } from 'primeng/tabs';
 import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -34,15 +40,12 @@ import { UserDetailService, UserDetail } from '../services/user-detail.service';
     TranslocoModule,
     DrawerModule,
     ButtonModule,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
+    TabsModule,
     AvatarModule,
     TagModule,
     TooltipModule,
     MenuModule,
+    RouterLinkWithHref,
   ],
   templateUrl: './detail.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -159,13 +162,11 @@ export class Detail implements OnInit, OnDestroy {
     });
 
     // Subscribe to user updates from service
-    this.userDetailService.userUpdated$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((updatedUser) => {
-        if (updatedUser && updatedUser.id === this.user()?.id) {
-          this.user.set(updatedUser);
-        }
-      });
+    this.userDetailService.userUpdated$.pipe(takeUntil(this.destroy$)).subscribe((updatedUser) => {
+      if (updatedUser && updatedUser.id === this.user()?.id) {
+        this.user.set(updatedUser);
+      }
+    });
 
     // Sync active tab with current route
     this.router.events
@@ -251,7 +252,7 @@ export class Detail implements OnInit, OnDestroy {
   protected onTabChange(event: any): void {
     const newTab = event.value;
     this.activeTab.set(newTab);
-    
+
     // Navigate to the corresponding route
     switch (newTab) {
       case 'general':
@@ -423,4 +424,3 @@ export class Detail implements OnInit, OnDestroy {
       });
   }
 }
-

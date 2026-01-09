@@ -43,6 +43,11 @@ export const routes: Routes = [
                     children: [
                       {
                         path: '',
+                        pathMatch: 'full',
+                        redirectTo: 'general',
+                      },
+                      {
+                        path: 'general',
                         component: General,
                       },
                       {
