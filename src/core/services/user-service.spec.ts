@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { UserService, GetUsersParams, UserListResponse } from './user-service';
 import { API_URI_USER } from '../constant';
+import { ApiPaginatedResponse, wrapSuccess } from '../api';
 
 describe('UserService', () => {
   let service: UserService;
@@ -314,5 +315,104 @@ describe('UserService', () => {
     req.flush('Forbidden', { status: 403, statusText: 'Forbidden' });
     
     expect(errorCaught).toBe(true);
+  });
+
+  describe('API Envelope Support', () => {
+    it('should handle new API envelope format for paginated users', () => {
+      const params: GetUsersParams = {
+        page: 1,
+        limit: 10,
+      };
+
+      const mockApiResponse: ApiPaginatedResponse<any> = wrapSuccess({
+        items: [
+          {
+            id: 'user-1',
+            username: 'user1',
+            email: 'user1@example.com',
+            fullName: 'User One',
+            status: 'active',
+            createdAt: '2024-01-01T00:00:00.000Z',
+          },
+        ],
+        page: 1,
+        limit: 10,
+        total: 1,
+        totalPages: 1,
+      });
+
+      service.getUsers(params).subscribe((response) => {
+        expect(response.data).toBeDefined();
+        expect(response.data.length).toBe(1);
+        expect(response.total).toBe(1);
+        expect(response.page).toBe(1);
+        expect(response.limit).toBe(10);
+        expect(response.totalPages).toBe(1);
+      });
+
+      const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=10`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockApiResponse);
+    });
+
+    it('should handle API envelope error response', () => {
+      const params: GetUsersParams = {
+        page: 1,
+        limit: 10,
+      };
+
+      const mockErrorResponse = {
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Authentication required',
+          timestamp: '2024-01-01T00:00:00.000Z',
+        },
+      };
+
+      let errorCaught = false;
+      service.getUsers(params).subscribe({
+        next: () => {
+          expect.fail('Should have thrown error');
+        },
+        error: (error) => {
+          errorCaught = true;
+          expect(error.message).toContain('Authentication required');
+        },
+      });
+
+      const req = httpMock.expectOne(`${API_URI_USER}/v1/users?page=1&size=10`);
+      req.flush(mockErrorResponse);
+
+      expect(errorCaught).toBe(true);
+    });
+
+    it('should handle new API envelope for blockUsers', () => {
+      const userIds = ['user-1', 'user-2'];
+      const mockApiResponse = wrapSuccess(undefined, 'Users blocked successfully');
+
+      service.blockUsers(userIds).subscribe((result) => {
+        expect(result).toBeUndefined();
+      });
+
+      const req = httpMock.expectOne(`${API_URI_USER}/v1/users/block`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ userIds });
+      req.flush(mockApiResponse);
+    });
+
+    it('should handle new API envelope for revokeLoginSessions', () => {
+      const userIds = ['user-1', 'user-2'];
+      const mockApiResponse = wrapSuccess(undefined, 'Sessions revoked successfully');
+
+      service.revokeLoginSessions(userIds).subscribe((result) => {
+        expect(result).toBeUndefined();
+      });
+
+      const req = httpMock.expectOne(`${API_URI_USER}/v1/users/revoke-sessions`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ userIds });
+      req.flush(mockApiResponse);
+    });
   });
 });
