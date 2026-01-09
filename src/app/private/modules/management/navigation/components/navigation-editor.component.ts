@@ -69,8 +69,8 @@ export class NavigationEditorComponent implements OnInit {
   readonly defaultModule = input<string | null>(null);
 
   // Outputs
-  readonly save = output<CreateNavigationItemDto | UpdateNavigationItemDto>();
-  readonly cancel = output<void>();
+  readonly formValid = output<boolean>();
+  readonly formData = output<CreateNavigationItemDto | UpdateNavigationItemDto>();
 
   private fb = inject(FormBuilder);
   private translocoService = inject(TranslocoService);
@@ -157,6 +157,20 @@ export class NavigationEditorComponent implements OnInit {
     } else if (this.mode() !== 'create') {
       // Ensure form is enabled in edit mode
       this.form().enable();
+    }
+
+    // Emit form validity and data on changes
+    this.form().valueChanges.subscribe(() => {
+      this.formValid.emit(this.form().valid);
+      if (this.form().valid) {
+        this.formData.emit(this.buildDto());
+      }
+    });
+
+    // Emit initial state
+    this.formValid.emit(this.form().valid);
+    if (this.form().valid) {
+      this.formData.emit(this.buildDto());
     }
   }
 
@@ -261,14 +275,10 @@ export class NavigationEditorComponent implements OnInit {
   /**
    * Handle form submission
    */
-  protected onSubmit(): void {
-    if (this.form().invalid) {
-      this.form().markAllAsTouched();
-      return;
-    }
-
-    this.isSubmitting.set(true);
-
+  /**
+   * Build DTO from form values
+   */
+  private buildDto(): CreateNavigationItemDto | UpdateNavigationItemDto {
     const formValue = this.form().value;
 
     // Normalize routerLink to string (backend expects a string path)
@@ -334,15 +344,7 @@ export class NavigationEditorComponent implements OnInit {
       }
     }
 
-    this.save.emit(dto);
-    this.isSubmitting.set(false);
-  }
-
-  /**
-   * Handle cancel
-   */
-  protected onCancel(): void {
-    this.cancel.emit();
+    return dto;
   }
 
   /**

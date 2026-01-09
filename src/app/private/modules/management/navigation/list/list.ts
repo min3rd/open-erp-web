@@ -341,7 +341,15 @@ export class NavigationList implements OnInit, OnDestroy {
    */
   protected onEditItem(): void {
     const item = this.selectedItem();
-    if (item) {
+    if (!item) return;
+
+    // Check if we're in module context
+    const module = this.selectedModule();
+    if (module && module.id) {
+      // Editing a module navigation item - include module in path
+      this.router.navigate(['modules', module.id, item.id, 'edit'], { relativeTo: this.route });
+    } else {
+      // Editing a global navigation item
       this.router.navigate([item.id, 'edit'], { relativeTo: this.route });
     }
   }
@@ -493,13 +501,35 @@ export class NavigationList implements OnInit, OnDestroy {
     if (item) {
       this.selectedItem.set(item);
 
-      // If the item has a moduleKey, load its module navigation
+      // Find the corresponding tree node and set it as selected
+      const treeNode = this.findTreeNodeById(this.globalTreeNodes(), itemId);
+      if (treeNode) {
+        this.selectedTreeNode.set(treeNode);
+      }
+
+      // If the item has a module field, load its module navigation
       if (item.module) {
         this.selectedModule.set(item);
         this.loadModuleNavigation(item.module);
         this.cdr.markForCheck();
       }
     }
+  }
+
+  /**
+   * Find a tree node by ID recursively
+   */
+  private findTreeNodeById(nodes: TreeNode[], id: string): TreeNode | null {
+    for (const node of nodes) {
+      if (node.data?.id === id) {
+        return node;
+      }
+      if (node.children) {
+        const found = this.findTreeNodeById(node.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
   }
 
   /**

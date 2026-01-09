@@ -1,12 +1,8 @@
-<div class="h-full flex flex-col">
-  <!-- Scrollable Form Body -->
-  <div class="flex-1 overflow-auto">
-    <form
-      [formGroup]="form()"
-      (ngSubmit)="onSubmit()"
-      id="navigation-editor-form"
-      class="space-y-4 p-4"
-    >
+<form
+  [formGroup]="form()"
+  id="navigation-editor-form"
+  class="space-y-4 p-4"
+>
   <!-- Label (Required) -->
   <div class="flex flex-col gap-2">
     <label for="navigation-editor-label" class="font-semibold">
@@ -311,33 +307,4 @@
       </div>
     </div>
   </p-panel>
-    </form>
-  </div>
-
-  <!-- Fixed Form Actions Footer -->
-  <div class="flex-shrink-0 p-4 border-t border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900">
-    <div class="flex justify-end gap-2">
-      <p-button
-        id="navigation-editor-cancel-button"
-        type="button"
-        [label]="'navigationManagement.editor.buttons.cancel' | transloco"
-        severity="secondary"
-        [outlined]="true"
-        (onClick)="onCancel()"
-        [attr.aria-label]="'navigationManagement.editor.buttons.cancel' | transloco"
-      />
-      @if (mode() !== 'view') {
-      <p-button
-        id="navigation-editor-save-button"
-        type="button"
-        [label]="'navigationManagement.editor.buttons.save' | transloco"
-        severity="primary"
-        [loading]="isSubmitting()"
-        [disabled]="form().invalid || isSubmitting()"
-        (onClick)="onSubmit()"
-        [attr.aria-label]="'navigationManagement.editor.buttons.save' | transloco"
-      />
-      }
-    </div>
-  </div>
-</div>
+</form>
