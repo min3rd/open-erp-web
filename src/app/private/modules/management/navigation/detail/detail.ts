@@ -51,6 +51,8 @@ export class NavigationDetail implements OnInit, OnDestroy {
   protected readonly isLoading = signal(false);
   protected readonly item = signal<NavigationItemDto | null>(null);
   protected readonly mode = signal<'create' | 'edit' | 'view'>('view');
+  protected readonly defaultScope = signal<'global' | 'module'>('global');
+  protected readonly defaultModule = signal<string | null>(null);
 
   // Computed values
   protected readonly drawerTitle = computed(() => {
@@ -68,6 +70,7 @@ export class NavigationDetail implements OnInit, OnDestroy {
     // Subscribe to route params
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const id = params['id'];
+      const moduleId = params['moduleId']; // Check if we're in a module context
       const isEditRoute = this.route.snapshot.url.some((segment) => segment.path === 'edit');
       const isNewRoute = this.route.snapshot.url.some((segment) => segment.path === 'new');
 
@@ -75,6 +78,17 @@ export class NavigationDetail implements OnInit, OnDestroy {
         // Create mode
         this.mode.set('create');
         this.item.set(null);
+        
+        // Detect context from route
+        if (moduleId) {
+          // Creating in module context
+          this.defaultScope.set('module');
+          this.defaultModule.set(moduleId);
+        } else {
+          // Creating in global context
+          this.defaultScope.set('global');
+          this.defaultModule.set(null);
+        }
       } else if (id) {
         // View or edit mode
         if (isEditRoute) {
