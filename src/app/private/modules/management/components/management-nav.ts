@@ -50,7 +50,9 @@ export class ManagementNav implements OnInit, OnDestroy {
       });
 
     // Load module navigation data
-    this.navigationService.loadModuleNavigation('management').subscribe();
+    this.navigationService.loadModuleNavigation('management')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe();
 
     // Update active states on route changes
     this.router.events.pipe(takeUntil(this._unsubscribeAll)).subscribe((event) => {
@@ -85,9 +87,7 @@ export class ManagementNav implements OnInit, OnDestroy {
   isItemActive(item: MenuItem): boolean {
     if (!item.routerLink) return false;
     
-    const routerLink = Array.isArray(item.routerLink) 
-      ? item.routerLink.join('/') 
-      : item.routerLink;
+    const routerLink = this.normalizeRouterLink(item.routerLink);
     
     return this.router.isActive(routerLink, {
       paths: 'subset',
@@ -113,9 +113,7 @@ export class ManagementNav implements OnInit, OnDestroy {
 
     // Check if this item is active
     if (item.routerLink) {
-      const routerLink = Array.isArray(item.routerLink) 
-        ? item.routerLink.join('/') 
-        : item.routerLink;
+      const routerLink = this.normalizeRouterLink(item.routerLink);
       
       // Use prefix match for active state
       updatedItem.styleClass = currentUrl.startsWith(routerLink)
@@ -129,5 +127,13 @@ export class ManagementNav implements OnInit, OnDestroy {
     }
 
     return updatedItem;
+  }
+
+  /**
+   * Normalize routerLink to a string path
+   */
+  private normalizeRouterLink(routerLink: string | any[] | undefined): string {
+    if (!routerLink) return '';
+    return Array.isArray(routerLink) ? routerLink.join('/') : routerLink;
   }
 }

@@ -95,9 +95,7 @@ export class VerticalNavigation implements OnInit, OnDestroy {
 
     // Check if this item is active
     if (item.routerLink) {
-      const routerLink = Array.isArray(item.routerLink) 
-        ? item.routerLink.join('/') 
-        : item.routerLink;
+      const routerLink = this.normalizeRouterLink(item.routerLink);
       
       // Use prefix match for active state
       updatedItem.styleClass = currentUrl.startsWith(routerLink)
@@ -119,9 +117,7 @@ export class VerticalNavigation implements OnInit, OnDestroy {
   isItemActive(item: MenuItem): boolean {
     if (!item.routerLink) return false;
     
-    const routerLink = Array.isArray(item.routerLink) 
-      ? item.routerLink.join('/') 
-      : item.routerLink;
+    const routerLink = this.normalizeRouterLink(item.routerLink);
     
     return this.router.isActive(routerLink, {
       paths: 'subset',
@@ -129,6 +125,14 @@ export class VerticalNavigation implements OnInit, OnDestroy {
       fragment: 'ignored',
       matrixParams: 'ignored',
     });
+  }
+
+  /**
+   * Normalize routerLink to a string path
+   */
+  private normalizeRouterLink(routerLink: string | any[] | undefined): string {
+    if (!routerLink) return '';
+    return Array.isArray(routerLink) ? routerLink.join('/') : routerLink;
   }
 
   logOut(): void {
