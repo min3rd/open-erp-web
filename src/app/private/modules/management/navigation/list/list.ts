@@ -267,9 +267,10 @@ export class NavigationList implements OnInit, OnDestroy {
     this.selectedTreeNode.set(node);
 
     // If it's a module item in global navigation, load its module navigation
-    if (this.activeScope() === 'global' && item.scope === 'global' && item.moduleKey) {
+    if (item.moduleKey) {
       this.selectedModule.set(item);
       this.loadModuleNavigation(item.moduleKey);
+      this.cdr.markForCheck();
     }
 
     // Navigate to view the item
@@ -282,6 +283,8 @@ export class NavigationList implements OnInit, OnDestroy {
   protected onNodeUnselect(): void {
     this.selectedItem.set(null);
     this.selectedTreeNode.set(null);
+    this.selectedModule.set(null);
+    this.moduleNavigationItems.set([]);
     // Navigate back to list
     this.router.navigate(['./'], { relativeTo: this.route });
   }
@@ -290,7 +293,15 @@ export class NavigationList implements OnInit, OnDestroy {
    * Navigate to add new item
    */
   protected onAddItem(): void {
-    this.router.navigate(['new'], { relativeTo: this.route });
+    const selected = this.selectedItem();
+    
+    // If we're viewing a module item, navigate to add under that module
+    if (selected && selected.moduleKey) {
+      this.router.navigate(['modules', selected.moduleKey, 'new'], { relativeTo: this.route });
+    } else {
+      // Otherwise, add to global navigation
+      this.router.navigate(['new'], { relativeTo: this.route });
+    }
   }
 
   /**
