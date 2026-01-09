@@ -101,7 +101,8 @@ export interface UpdateNavigationItemDto {
  * Response DTO for navigation list queries
  */
 export interface NavigationListResponse {
-  data: NavigationItemDto[];
+  items: NavigationItemDto[];
+  scope: 'global' | 'module';
   total: number;
 }
 

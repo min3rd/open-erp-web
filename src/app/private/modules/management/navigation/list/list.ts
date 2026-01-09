@@ -7,6 +7,7 @@ import {
   OnInit,
   OnDestroy,
   effect,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
@@ -44,6 +45,7 @@ import { NavigationItemDto } from '../dto/navigation-item.dto';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavigationList implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private navigationService = inject(NavigationManagementService);
@@ -129,22 +131,15 @@ export class NavigationList implements OnInit, OnDestroy {
   protected loadGlobalNavigation(): void {
     this.isLoading.set(true);
     this.navigationService
-      .getGlobalNavigation({ includeHidden: true })
+      .getCachedGlobalNavigation()
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (items) => {
-          this.globalNavigationItems.set(items);
-          this.isLoading.set(false);
-        },
-        error: (error) => {
-          console.error('Failed to load global navigation:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translocoService.translate('navigationManagement.messages.error'),
-            detail: error.message,
-          });
-          this.isLoading.set(false);
-        },
+      .subscribe((items) => {
+        if (!items) {
+          return;
+        }
+        this.globalNavigationItems.set(items);
+        this.isLoading.set(false);
+        this.cdr.markForCheck();
       });
   }
 

@@ -41,7 +41,9 @@ export class NavigationManagementService {
     return this.http
       .get<NavigationListResponse>(`${this.baseUrl}/global`, { params: httpParams })
       .pipe(
-        map((response) => response.data),
+        map((response) => {
+          return response.items;
+        }),
         tap((items) => this.globalNavigationCache$.next(items)),
         catchError(this.handleError)
       );
@@ -50,7 +52,10 @@ export class NavigationManagementService {
   /**
    * Get module-specific navigation items
    */
-  getModuleNavigation(moduleKey: string, params?: GetNavigationParams): Observable<NavigationItemDto[]> {
+  getModuleNavigation(
+    moduleKey: string,
+    params?: GetNavigationParams
+  ): Observable<NavigationItemDto[]> {
     let httpParams = new HttpParams();
     if (params?.includeHidden) {
       httpParams = httpParams.set('includeHidden', 'true');
@@ -59,7 +64,7 @@ export class NavigationManagementService {
     return this.http
       .get<NavigationListResponse>(`${this.baseUrl}/module/${moduleKey}`, { params: httpParams })
       .pipe(
-        map((response) => response.data),
+        map((response) => response.items),
         tap((items) => {
           if (!this.moduleNavigationCache$.has(moduleKey)) {
             this.moduleNavigationCache$.set(
@@ -78,67 +83,59 @@ export class NavigationManagementService {
    * Get a single navigation item by ID
    */
   getNavigationItem(id: string): Observable<NavigationItemDto> {
-    return this.http.get<NavigationItemDto>(`${this.baseUrl}/${id}`).pipe(catchError(this.handleError));
+    return this.http
+      .get<NavigationItemDto>(`${this.baseUrl}/${id}`)
+      .pipe(catchError(this.handleError));
   }
 
   /**
    * Create a new navigation item
    */
   createNavigationItem(dto: CreateNavigationItemDto): Observable<NavigationItemDto> {
-    return this.http
-      .post<NavigationItemDto>(this.baseUrl, dto)
-      .pipe(
-        tap(() => this.invalidateCache(dto.scope, dto.moduleKey)),
-        catchError(this.handleError)
-      );
+    return this.http.post<NavigationItemDto>(this.baseUrl, dto).pipe(
+      tap(() => this.invalidateCache(dto.scope, dto.moduleKey)),
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Update an existing navigation item
    */
   updateNavigationItem(id: string, dto: UpdateNavigationItemDto): Observable<NavigationItemDto> {
-    return this.http
-      .patch<NavigationItemDto>(`${this.baseUrl}/${id}`, dto)
-      .pipe(
-        tap((item) => this.invalidateCache(item.scope, item.moduleKey)),
-        catchError(this.handleError)
-      );
+    return this.http.patch<NavigationItemDto>(`${this.baseUrl}/${id}`, dto).pipe(
+      tap((item) => this.invalidateCache(item.scope, item.moduleKey)),
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Delete a navigation item
    */
   deleteNavigationItem(id: string): Observable<void> {
-    return this.http
-      .delete<void>(`${this.baseUrl}/${id}`)
-      .pipe(
-        tap(() => this.invalidateAllCaches()),
-        catchError(this.handleError)
-      );
+    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
+      tap(() => this.invalidateAllCaches()),
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Reorder navigation items (change order within parent)
    */
   reorderNavigationItems(items: ReorderNavigationItemDto[]): Observable<void> {
-    return this.http
-      .post<void>(`${this.baseUrl}/reorder`, { items })
-      .pipe(
-        tap(() => this.invalidateAllCaches()),
-        catchError(this.handleError)
-      );
+    return this.http.post<void>(`${this.baseUrl}/reorder`, { items }).pipe(
+      tap(() => this.invalidateAllCaches()),
+      catchError(this.handleError)
+    );
   }
 
   /**
    * Move a navigation item to a new parent or scope
    */
   moveNavigationItem(dto: MoveNavigationItemDto): Observable<NavigationItemDto> {
-    return this.http
-      .post<NavigationItemDto>(`${this.baseUrl}/move`, dto)
-      .pipe(
-        tap(() => this.invalidateAllCaches()),
-        catchError(this.handleError)
-      );
+    return this.http.post<NavigationItemDto>(`${this.baseUrl}/move`, dto).pipe(
+      tap(() => this.invalidateAllCaches()),
+      catchError(this.handleError)
+    );
   }
 
   /**
@@ -149,16 +146,15 @@ export class NavigationManagementService {
     permissions: PermissionSet,
     moduleKey?: string
   ): Observable<NavigationItemDto[]> {
-    const url = scope === 'global' 
-      ? `${this.baseUrl}/preview/global` 
-      : `${this.baseUrl}/preview/module/${moduleKey}`;
+    const url =
+      scope === 'global'
+        ? `${this.baseUrl}/preview/global`
+        : `${this.baseUrl}/preview/module/${moduleKey}`;
 
-    return this.http
-      .post<NavigationListResponse>(url, permissions)
-      .pipe(
-        map((response) => response.data),
-        catchError(this.handleError)
-      );
+    return this.http.post<NavigationListResponse>(url, permissions).pipe(
+      map((response) => response.items),
+      catchError(this.handleError)
+    );
   }
 
   /**

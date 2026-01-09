@@ -180,7 +180,7 @@ export class NavigationEditorComponent implements OnInit {
       label: ['', [Validators.required]],
       icon: [''],
       subtitle: [''],
-      routerLink: [''],
+      routerLink: ['/'],
       url: [''],
       scope: ['global', [Validators.required]],
       moduleKey: [''],
@@ -192,7 +192,6 @@ export class NavigationEditorComponent implements OnInit {
       badge: [''],
       badgeClass: [''],
       tooltip: [''],
-      tooltipPosition: ['top'],
       shortcut: [''],
       class: [''],
       command: [''],
@@ -249,23 +248,42 @@ export class NavigationEditorComponent implements OnInit {
     this.isSubmitting.set(true);
 
     const formValue = this.form().value;
-    const dto: CreateNavigationItemDto | UpdateNavigationItemDto = {
+
+    // Normalize routerLink to string (backend expects a string path)
+    let normalizedRouterLink: string | undefined;
+    if (formValue.routerLink) {
+      const parts = String(formValue.routerLink).split('/').filter(Boolean);
+      normalizedRouterLink = parts.length ? `/${parts.join('/')}` : undefined;
+    }
+
+    // Generate ID from label if not provided (backend requires `id` on create)
+    const generateId = (label: string) => {
+      const slug = String(label || '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9_-]/g, '')
+        .slice(0, 100);
+      return slug || `nav-${Date.now()}`;
+    };
+
+    const dto: any = {
+      id: generateId(formValue.label),
       label: formValue.label,
       icon: formValue.icon || undefined,
       subtitle: formValue.subtitle || undefined,
-      routerLink: formValue.routerLink ? formValue.routerLink.split('/').filter(Boolean) : undefined,
+      // backend expects string routerLink
+      routerLink: normalizedRouterLink,
       url: formValue.url || undefined,
       scope: formValue.scope,
-      moduleKey: formValue.moduleKey || undefined,
+      // map frontend moduleKey -> backend `module` field
+      module: formValue.moduleKey || undefined,
       order: formValue.order || 0,
       disabled: formValue.disabled || false,
-      visible: formValue.visible !== false,
-      separator: formValue.separator || false,
       target: formValue.target || undefined,
       badge: formValue.badge || undefined,
       badgeClass: formValue.badgeClass || undefined,
       tooltip: formValue.tooltip || undefined,
-      tooltipPosition: formValue.tooltipPosition || undefined,
       shortcut: formValue.shortcut || undefined,
       class: formValue.class || undefined,
       command: formValue.command || undefined,
@@ -274,7 +292,7 @@ export class NavigationEditorComponent implements OnInit {
         include: this.includePermissions().length > 0 ? this.includePermissions() : undefined,
         exclude: this.excludePermissions().length > 0 ? this.excludePermissions() : undefined,
       },
-    };
+    } as CreateNavigationItemDto | UpdateNavigationItemDto;
 
     // Parse metadata if provided
     if (formValue.meta) {

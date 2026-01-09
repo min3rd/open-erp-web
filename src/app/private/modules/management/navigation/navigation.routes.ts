@@ -1,5 +1,12 @@
-import { Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot, Routes } from '@angular/router';
 import { Navigation } from './navigation';
+import { inject } from '@angular/core';
+import { NavigationManagementService } from './services/navigation-management.service';
+
+const listResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+  const navigationManagementService = inject(NavigationManagementService);
+  return navigationManagementService.getGlobalNavigation({ includeHidden: true });
+};
 
 export const routes: Routes = [
   {
@@ -13,6 +20,7 @@ export const routes: Routes = [
       },
       {
         path: ':scope',
+        resolve: [listResolver],
         loadComponent: () => import('./list/list').then((m) => m.NavigationList),
         children: [
           {
@@ -36,4 +44,3 @@ export const routes: Routes = [
     ],
   },
 ];
-
