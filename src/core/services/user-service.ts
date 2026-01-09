@@ -28,7 +28,7 @@ export interface UserListResponse {
   total: number;
   page: number;
   limit: number;
-  totalPages?: number;
+  totalPages: number;
 }
 
 export interface GetUsersParams {
@@ -98,6 +98,8 @@ export class UserService {
         map((response) => {
           // Check if response is the new API envelope format
           if (isApiResponse(response)) {
+            // unwrap will throw ApiResponseError if response.success is false
+            // This is the intended error handling behavior
             unwrap(response as ApiResponse<void>);
             return;
           }
@@ -118,6 +120,8 @@ export class UserService {
         map((response) => {
           // Check if response is the new API envelope format
           if (isApiResponse(response)) {
+            // unwrap will throw ApiResponseError if response.success is false
+            // This is the intended error handling behavior
             unwrap(response as ApiResponse<void>);
             return;
           }

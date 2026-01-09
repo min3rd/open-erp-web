@@ -29,6 +29,7 @@ describe('UserService', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
+      totalPages: 1,
     };
 
     const mockResponse: UserListResponse = {
@@ -45,6 +46,8 @@ describe('UserService', () => {
       total: 1,
       page: 1,
       limit: 10,
+      totalPages: 1,
+      totalPages: 1,
     };
 
     service.getUsers(params).subscribe((response) => {
@@ -60,6 +63,7 @@ describe('UserService', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
+      totalPages: 1,
       search: 'user1',
     };
 
@@ -77,6 +81,7 @@ describe('UserService', () => {
       total: 1,
       page: 1,
       limit: 10,
+      totalPages: 1,
     };
 
     service.getUsers(params).subscribe((response) => {
@@ -93,6 +98,7 @@ describe('UserService', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
+      totalPages: 1,
       search: 'nonexistentuser12345',
     };
 
@@ -101,6 +107,7 @@ describe('UserService', () => {
       total: 0,
       page: 1,
       limit: 10,
+      totalPages: 1,
     };
 
     service.getUsers(params).subscribe((response) => {
@@ -119,6 +126,7 @@ describe('UserService', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 25,
+      totalPages: 1,
     };
 
     const mockResponse: UserListResponse = {
@@ -126,6 +134,7 @@ describe('UserService', () => {
       total: 0,
       page: 1,
       limit: 25,
+      totalPages: 1,
     };
 
     service.getUsers(params).subscribe((response) => {
@@ -141,6 +150,7 @@ describe('UserService', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
+      totalPages: 1,
       scope: 'organization',
       organizationId: 'org-123',
     };
@@ -150,6 +160,7 @@ describe('UserService', () => {
       total: 0,
       page: 1,
       limit: 10,
+      totalPages: 1,
     };
 
     service.getUsers(params).subscribe((response) => {
@@ -193,6 +204,7 @@ describe('UserService', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
+      totalPages: 1,
     };
 
     const mockBlob = new Blob(['test'], { type: 'text/csv' });
@@ -211,6 +223,7 @@ describe('UserService', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 5,
+      totalPages: 1,
     };
 
     const mockResponse: UserListResponse = {
@@ -227,6 +240,7 @@ describe('UserService', () => {
       total: 1,
       page: 1,
       limit: 5,
+      totalPages: 1,
     };
 
     service.getUsers(params).subscribe((response) => {
@@ -252,6 +266,7 @@ describe('UserService', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
+      totalPages: 1,
     };
 
     let errorCaught = false;
@@ -275,6 +290,7 @@ describe('UserService', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
+      totalPages: 1,
     };
 
     let errorCaught = false;
@@ -298,6 +314,7 @@ describe('UserService', () => {
     const params: GetUsersParams = {
       page: 1,
       limit: 10,
+      totalPages: 1,
     };
 
     let errorCaught = false;
@@ -322,6 +339,7 @@ describe('UserService', () => {
       const params: GetUsersParams = {
         page: 1,
         limit: 10,
+      totalPages: 1,
       };
 
       const mockApiResponse: ApiPaginatedResponse<any> = wrapSuccess({
@@ -337,6 +355,7 @@ describe('UserService', () => {
         ],
         page: 1,
         limit: 10,
+      totalPages: 1,
         total: 1,
         totalPages: 1,
       });
@@ -359,6 +378,7 @@ describe('UserService', () => {
       const params: GetUsersParams = {
         page: 1,
         limit: 10,
+      totalPages: 1,
       };
 
       const mockErrorResponse = {
