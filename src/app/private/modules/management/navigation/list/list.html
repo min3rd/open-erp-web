@@ -80,7 +80,7 @@
               {{ 'navigationManagement.tabs.global' | transloco }}
             </h3>
           </div>
-          <div class="flex-1 overflow-auto p-3">
+          <div class="flex-1 overflow-auto">
             @if (isLoading() && activeScope() === 'global') {
             <div class="flex items-center justify-center h-32">
               <i class="pi pi-spin pi-spinner text-2xl"></i>
@@ -108,6 +108,7 @@
               droppableScope="self"
               [loading]="isLoading()"
               [attr.aria-label]="'navigationManagement.accessibility.treeAria' | transloco"
+              class="h-full"
             />
             }
           </div>

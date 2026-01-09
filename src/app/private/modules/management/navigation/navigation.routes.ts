@@ -31,22 +31,40 @@ export const routes: Routes = [
         loadComponent: () => import('./list/list').then((m) => m.NavigationList),
         children: [
           {
-            path: ':moduleKey',
-            resolve: [moduleListResolver],
+            path: ':id',
+            // detail view for global navigation item
             children: [
               {
-                path: 'new',
+                path: 'edit',
                 pathMatch: 'full',
+                // edit global navigation item
                 loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
               },
+            ],
+          },
+          {
+            path: 'modules',
+            children: [
               {
-                path: ':id',
-                loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
+                path: ':moduleKey',
+                resolve: [moduleListResolver],
                 children: [
                   {
-                    path: 'edit',
+                    path: 'new',
                     pathMatch: 'full',
                     loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
+                  },
+                  {
+                    path: ':id',
+                    loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
+                    children: [
+                      {
+                        path: 'edit',
+                        pathMatch: 'full',
+                        loadComponent: () =>
+                          import('./detail/detail').then((m) => m.NavigationDetail),
+                      },
+                    ],
                   },
                 ],
               },
