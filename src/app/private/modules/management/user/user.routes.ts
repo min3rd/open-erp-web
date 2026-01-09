@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 import { User } from './user';
 import { List } from './list/list';
 import { Detail } from './detail/detail';
+import { General } from './general/general';
+import { EditorForm } from './editor-form/editor-form';
+import { RolesAssignment } from './roles-assignment/roles-assignment';
+import { ResetPassword } from './reset-password/reset-password';
+import { AuditLogs } from './audit-logs/audit-logs';
 
 export const routes: Routes = [
   {
@@ -26,16 +31,27 @@ export const routes: Routes = [
                   {
                     path: 'new',
                     pathMatch: 'full',
-                    component: Detail,
+                    component: EditorForm,
                   },
                   {
                     path: ':id',
                     component: Detail,
                     children: [
                       {
-                        path: 'edit',
-                        pathMatch: 'full',
-                        component: Detail,
+                        path: '',
+                        component: General,
+                      },
+                      {
+                        path: 'roles-assignment',
+                        component: RolesAssignment,
+                      },
+                      {
+                        path: 'reset-password',
+                        component: ResetPassword,
+                      },
+                      {
+                        path: 'audit-logs',
+                        component: AuditLogs,
                       },
                     ],
                   },
