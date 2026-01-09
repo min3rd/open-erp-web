@@ -237,7 +237,8 @@
       "register": "Register Organization",
       "detail": "View Information",
       "toggleNavMode": "Toggle navigation mode",
-      "toggleMenu": "Toggle menu"
+      "toggleMenu": "Toggle menu",
+      "noItems": "No navigation items available"
     },
     "tabs": {
       "register": "Register",
@@ -494,7 +495,8 @@
       "user": "User Management",
       "toggleNavMode": "Toggle navigation mode",
       "toggleMenu": "Toggle menu",
-      "navigation": "Navigation Management"
+      "navigation": "Navigation Management",
+      "noItems": "No navigation items available"
     },
     "tabs": {
       "user": "Users"
