@@ -110,15 +110,15 @@ export class NavigationEditorComponent implements OnInit {
       }
     });
 
-    // Watch scope changes to toggle moduleKey required
+    // Watch scope changes to toggle moduleId required
     effect(() => {
       const formValue = this.form().value;
       if (formValue.scope === 'module') {
-        this.form().get('moduleKey')?.setValidators([Validators.required]);
+        this.form().get('moduleId')?.setValidators([Validators.required]);
       } else {
-        this.form().get('moduleKey')?.clearValidators();
+        this.form().get('moduleId')?.clearValidators();
       }
-      this.form().get('moduleKey')?.updateValueAndValidity();
+      this.form().get('moduleId')?.updateValueAndValidity();
     });
   }
 
@@ -144,7 +144,7 @@ export class NavigationEditorComponent implements OnInit {
         this.form().get('scope')?.disable();
       }
 
-      // If creating in module context, set moduleKey and make it required
+      // If creating in module context, set moduleId and make it required
       if (scope === 'module' && module) {
         this.form().get('module')?.setValue(module);
         this.form().get('module')?.disable();
@@ -221,7 +221,7 @@ export class NavigationEditorComponent implements OnInit {
       routerLink: ['/'],
       url: [''],
       scope: ['global', [Validators.required]],
-      module: [''],
+      moduleId: [''],
       order: [0],
       disabled: [false],
       target: [''],
@@ -250,7 +250,7 @@ export class NavigationEditorComponent implements OnInit {
         : item.routerLink || '',
       url: item.url || '',
       scope: item.scope,
-      module: item.module || '',
+      moduleId: item.moduleId || '',
       order: item.order,
       disabled: item.disabled || false,
       target: item.target || '',
@@ -318,7 +318,7 @@ export class NavigationEditorComponent implements OnInit {
       routerLink: normalizedRouterLink,
       url: formValue.url || undefined,
       scope: formValue.scope || this.defaultScope() || undefined,
-      module: formValue.module || this.defaultModule() || undefined,
+      moduleId: formValue.moduleId || this.defaultModule() || undefined,
       order: formValue.order || 0,
       disabled: formValue.disabled || false,
       target: formValue.target || undefined,

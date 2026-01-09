@@ -6,6 +6,7 @@ import {
   OnInit,
   OnDestroy,
   computed,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -33,6 +34,7 @@ import { NavigationEditorComponent } from '../components/navigation-editor.compo
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavigationDetail implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private navigationService = inject(NavigationManagementService);
@@ -95,6 +97,8 @@ export class NavigationDetail implements OnInit, OnDestroy {
         }
         this.loadItem(id);
       }
+
+      this.cdr.markForCheck();
     });
   }
 
