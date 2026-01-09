@@ -48,6 +48,7 @@ export const routes: Routes = [
           },
           {
             path: 'modules',
+            pathMatch: 'full',
             children: [
               {
                 path: ':moduleKey',
