@@ -36,6 +36,7 @@ export interface NavigationItemDto {
  * Request DTO for creating a new navigation item
  */
 export interface CreateNavigationItemDto {
+  id: string;
   label: string;
   icon?: string;
   subtitle?: string;
@@ -52,22 +53,20 @@ export interface CreateNavigationItemDto {
   badge?: string | number;
   badgeClass?: string;
   tooltip?: string;
-  tooltipPosition?: 'top' | 'bottom' | 'left' | 'right';
   shortcut?: string;
   class?: string;
   order?: number;
   scope: 'global' | 'module';
-  moduleKey?: string;
+  moduleId?: string;
   meta?: Record<string, any>;
-  visible?: boolean;
-  separator?: boolean;
 }
 
 /**
  * Request DTO for updating an existing navigation item
  */
 export interface UpdateNavigationItemDto {
-  label?: string;
+  id: string;
+  label: string;
   icon?: string;
   subtitle?: string;
   routerLink?: string | string[];
@@ -83,15 +82,12 @@ export interface UpdateNavigationItemDto {
   badge?: string | number;
   badgeClass?: string;
   tooltip?: string;
-  tooltipPosition?: 'top' | 'bottom' | 'left' | 'right';
   shortcut?: string;
   class?: string;
   order?: number;
   scope?: 'global' | 'module';
-  moduleKey?: string;
+  moduleId?: string;
   meta?: Record<string, any>;
-  visible?: boolean;
-  separator?: boolean;
 }
 
 /**
