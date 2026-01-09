@@ -73,9 +73,17 @@
       </ng-template>
     </p-select>
   </div>
-  } @else {
-  <div id="organization-switcher-empty" class="p-3 text-sm text-surface-600 dark:text-surface-400">
-    {{ 'organizationSwitcher.noOrganizations' | transloco }}
+  } @else { @if(showLabel()){
+  <div id="organization-switcher-empty" class="flex items-center gap-2 p-3 text-sm text-red-500">
+    <i class="pi pi-exclamation-triangle"></i>
+    <div class="truncate">
+      {{ 'organizationSwitcher.noOrganizations' | transloco }}
+    </div>
   </div>
-  }
+
+  } @else {
+  <div class="flex flex-auto w-full justify-center p-3 text-red-500">
+    <i class="pi pi-exclamation-triangle"></i>
+  </div>
+  } }
 </div>
