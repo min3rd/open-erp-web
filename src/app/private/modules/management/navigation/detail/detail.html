@@ -13,7 +13,7 @@
     </h3>
   </ng-template>
 
-  <div class="h-full overflow-auto">
+  <div class="h-full flex flex-col">
     @if (isLoading()) {
     <div class="flex items-center justify-center h-32">
       <i class="pi pi-spin pi-spinner text-2xl"></i>
@@ -25,7 +25,7 @@
       [mode]="mode()"
       [defaultScope]="defaultScope()"
       [defaultModule]="defaultModule()"
-      [availableModules]="availableModules"
+      [availableModules]="[]"
       [availableParents]="[]"
       (save)="onSave($event)"
       (cancel)="onClose()"
