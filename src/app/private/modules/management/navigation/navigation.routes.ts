@@ -1,4 +1,4 @@
-import { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 import { Navigation } from './navigation';
 import { inject } from '@angular/core';
 import { NavigationManagementService } from './services/navigation-management.service';
@@ -14,6 +14,8 @@ const moduleListResolver = (route: ActivatedRouteSnapshot, state: RouterStateSna
     includeHidden: true,
   });
 };
+
+const detailResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {};
 
 export const routes: Routes = [
   {
@@ -32,11 +34,13 @@ export const routes: Routes = [
         children: [
           {
             path: ':id',
+            resolve: [detailResolver],
             // detail view for global navigation item
             children: [
               {
                 path: 'edit',
                 pathMatch: 'full',
+                resolve: [detailResolver],
                 // edit global navigation item
                 loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
               },
@@ -56,11 +60,13 @@ export const routes: Routes = [
                   },
                   {
                     path: ':id',
+                    resolve: [detailResolver],
                     loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
                     children: [
                       {
                         path: 'edit',
                         pathMatch: 'full',
+                        resolve: [detailResolver],
                         loadComponent: () =>
                           import('./detail/detail').then((m) => m.NavigationDetail),
                       },
