@@ -17,7 +17,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 // PrimeNG imports
 import { TreeModule } from 'primeng/tree';
-import { TreeNode } from 'primeng/api';
+import { TreeDragDropService, TreeNode } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
@@ -41,6 +41,7 @@ import { NavigationItemDto } from '../dto/navigation-item.dto';
     TooltipModule,
     SelectButtonModule,
   ],
+  providers: [TreeDragDropService],
   templateUrl: './list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

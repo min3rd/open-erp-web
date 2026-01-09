@@ -3,9 +3,16 @@ import { Navigation } from './navigation';
 import { inject } from '@angular/core';
 import { NavigationManagementService } from './services/navigation-management.service';
 
-const listResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+const globalListResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const navigationManagementService = inject(NavigationManagementService);
   return navigationManagementService.getGlobalNavigation({ includeHidden: true });
+};
+
+const moduleListResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+  const navigationManagementService = inject(NavigationManagementService);
+  return navigationManagementService.getModuleNavigation(route.params['moduleKey'], {
+    includeHidden: true,
+  });
 };
 
 export const routes: Routes = [
@@ -19,23 +26,29 @@ export const routes: Routes = [
         redirectTo: 'global',
       },
       {
-        path: ':scope',
-        resolve: [listResolver],
+        path: 'global',
+        resolve: [globalListResolver],
         loadComponent: () => import('./list/list').then((m) => m.NavigationList),
         children: [
           {
-            path: 'new',
-            pathMatch: 'full',
-            loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
-          },
-          {
-            path: ':id',
-            loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
+            path: ':moduleKey',
+            resolve: [moduleListResolver],
             children: [
               {
-                path: 'edit',
+                path: 'new',
                 pathMatch: 'full',
                 loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
+              },
+              {
+                path: ':id',
+                loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
+                children: [
+                  {
+                    path: 'edit',
+                    pathMatch: 'full',
+                    loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
+                  },
+                ],
               },
             ],
           },

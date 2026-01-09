@@ -90,7 +90,9 @@
             <div class="text-center py-8 text-surface-500">
               <i class="pi pi-sitemap text-4xl"></i>
               <p class="mt-2">{{ 'navigationManagement.tree.noItems' | transloco }}</p>
-              <p class="text-sm">{{ 'navigationManagement.tree.noItemsDescription' | transloco }}</p>
+              <p class="text-sm">
+                {{ 'navigationManagement.tree.noItemsDescription' | transloco }}
+              </p>
             </div>
             } @else {
             <p-tree
@@ -102,6 +104,8 @@
               (onNodeUnselect)="onNodeUnselect()"
               [draggableNodes]="true"
               [droppableNodes]="true"
+              draggableScope="self"
+              droppableScope="self"
               [loading]="isLoading()"
               [attr.aria-label]="'navigationManagement.accessibility.treeAria' | transloco"
             />
@@ -137,7 +141,9 @@
             <div class="text-center py-8 text-surface-500">
               <i class="pi pi-sitemap text-4xl"></i>
               <p class="mt-2">{{ 'navigationManagement.tree.noItems' | transloco }}</p>
-              <p class="text-sm">{{ 'navigationManagement.tree.noItemsDescription' | transloco }}</p>
+              <p class="text-sm">
+                {{ 'navigationManagement.tree.noItemsDescription' | transloco }}
+              </p>
             </div>
             } @else {
             <p-tree
