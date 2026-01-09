@@ -21,7 +21,7 @@ import { LanguageSelector } from '../../language-selector/language-selector';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
 import { RippleModule } from 'primeng/ripple';
-import { MenuModule } from 'primeng/menu';
+import { NavigationMenu } from '../../navigation-menu/navigation-menu';
 
 @Component({
   selector: 'layout-vertical-navigation',
@@ -35,7 +35,7 @@ import { MenuModule } from 'primeng/menu';
     TooltipModule,
     RouterModule,
     RippleModule,
-    MenuModule,
+    NavigationMenu,
   ],
   templateUrl: './vertical-navigation.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

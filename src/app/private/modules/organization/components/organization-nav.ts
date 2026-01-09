@@ -16,6 +16,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { OrganizationContextService } from '../../../../../core/services/organization-context.service';
 import { NavigationService } from '../../../../../core/services/navigation-service';
 import { MenuItem } from 'primeng/api';
+import { NavigationMenu } from '../../../../../core/components/navigation-menu/navigation-menu';
 
 @Component({
   selector: 'organization-nav',
@@ -25,6 +26,7 @@ import { MenuItem } from 'primeng/api';
     TranslocoModule,
     ButtonModule,
     TooltipModule,
+    NavigationMenu,
   ],
   templateUrl: './organization-nav.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -15,6 +15,7 @@ import { ManagementLayoutService } from '../services/management-layout.service';
 import { NavigationService } from '../../../../../core/services/navigation-service';
 import { MenuItem } from 'primeng/api';
 import { Subject, takeUntil } from 'rxjs';
+import { NavigationMenu } from '../../../../../core/components/navigation-menu/navigation-menu';
 
 @Component({
   selector: 'management-nav',
@@ -24,6 +25,7 @@ import { Subject, takeUntil } from 'rxjs';
     TranslocoModule,
     ButtonModule,
     TooltipModule,
+    NavigationMenu,
   ],
   templateUrl: './management-nav.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
