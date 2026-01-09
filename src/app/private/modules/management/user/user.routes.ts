@@ -8,6 +8,8 @@ import { RolesAssignment } from './roles-assignment/roles-assignment';
 import { ResetPassword } from './reset-password/reset-password';
 import { AuditLogs } from './audit-logs/audit-logs';
 import { userDetailResolver } from './resolvers/user-detail.resolver';
+import { userMembershipsResolver } from './resolvers/user-memberships.resolver';
+import { userActivityLogsResolver } from './resolvers/user-activity-logs.resolver';
 
 export const routes: Routes = [
   {
@@ -46,6 +48,7 @@ export const routes: Routes = [
                       {
                         path: 'roles-assignment',
                         component: RolesAssignment,
+                        resolve: { memberships: userMembershipsResolver },
                       },
                       {
                         path: 'reset-password',
@@ -54,6 +57,7 @@ export const routes: Routes = [
                       {
                         path: 'audit-logs',
                         component: AuditLogs,
+                        resolve: { activityLogs: userActivityLogsResolver },
                       },
                     ],
                   },

@@ -596,12 +596,14 @@
   },
   "userDetail": {
     "drawer": {
-      "label": "Detalles del Usuario"
+      "label": "Detalles del Usuario",
+      "title": "Detalles del Usuario"
     },
     "tabs": {
       "general": "General",
       "roles": "Roles y Membresías",
-      "activity": "Registro de Actividad"
+      "activity": "Registro de Actividad",
+      "password": "Restablecer Contraseña"
     },
     "general": {
       "profile": "Información del Perfil",
@@ -634,6 +636,7 @@
       "edit": "Editar",
       "close": "Cerrar",
       "more": "Más Acciones",
+      "invite": "Invitar",
       "sendInvitation": "Enviar Invitación",
       "resetPassword": "Restablecer Contraseña",
       "disable": "Deshabilitar Usuario",

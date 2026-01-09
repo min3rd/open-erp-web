@@ -45,7 +45,19 @@ export class RolesAssignment implements OnInit, OnDestroy {
       if (data['userDetail']) {
         const userData = data['userDetail'] as UserDetail;
         this.user.set(userData);
-        this.loadMemberships(userData.id);
+      }
+    });
+
+    // Get memberships from route resolver
+    this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      if (data['memberships']) {
+        this.memberships.set(data['memberships']);
+      } else {
+        // If no data from resolver, load it
+        const userData = this.user();
+        if (userData) {
+          this.loadMemberships(userData.id);
+        }
       }
     });
 

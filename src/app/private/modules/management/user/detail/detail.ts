@@ -8,13 +8,14 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
+import { Router, ActivatedRoute, RouterOutlet, NavigationEnd } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, filter } from 'rxjs';
 
 // PrimeNG imports
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -33,6 +34,11 @@ import { UserDetailService, UserDetail } from '../services/user-detail.service';
     TranslocoModule,
     DrawerModule,
     ButtonModule,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
     AvatarModule,
     TagModule,
     TooltipModule,
@@ -54,6 +60,7 @@ export class Detail implements OnInit, OnDestroy {
   protected readonly isLoading = signal(false);
   protected readonly user = signal<UserDetail | null>(null);
   protected readonly isMobile = signal(false);
+  protected readonly activeTab = signal<string>('general');
 
   // Computed values
   protected readonly userInitials = computed(() => {
@@ -96,11 +103,6 @@ export class Detail implements OnInit, OnDestroy {
     if (!currentUser) return [];
 
     return [
-      {
-        label: this.translocoService.translate('userDetail.actions.sendInvitation'),
-        icon: 'pi pi-send',
-        command: () => this.onSendInvitation(),
-      },
       {
         label: this.translocoService.translate('userDetail.actions.resetPassword'),
         icon: 'pi pi-key',
@@ -164,11 +166,40 @@ export class Detail implements OnInit, OnDestroy {
           this.user.set(updatedUser);
         }
       });
+
+    // Sync active tab with current route
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.updateActiveTabFromRoute();
+      });
+
+    // Set initial tab
+    this.updateActiveTabFromRoute();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Update active tab based on current route
+   */
+  private updateActiveTabFromRoute(): void {
+    const currentUrl = this.router.url;
+    if (currentUrl.includes('/roles-assignment')) {
+      this.activeTab.set('roles-assignment');
+    } else if (currentUrl.includes('/reset-password')) {
+      this.activeTab.set('reset-password');
+    } else if (currentUrl.includes('/audit-logs')) {
+      this.activeTab.set('audit-logs');
+    } else {
+      this.activeTab.set('general');
+    }
   }
 
   /**
@@ -212,6 +243,30 @@ export class Detail implements OnInit, OnDestroy {
    */
   protected onEdit(): void {
     this.router.navigate(['edit'], { relativeTo: this.route });
+  }
+
+  /**
+   * Handle tab change
+   */
+  protected onTabChange(event: any): void {
+    const newTab = event.value;
+    this.activeTab.set(newTab);
+    
+    // Navigate to the corresponding route
+    switch (newTab) {
+      case 'general':
+        this.router.navigate(['.'], { relativeTo: this.route });
+        break;
+      case 'roles-assignment':
+        this.router.navigate(['roles-assignment'], { relativeTo: this.route });
+        break;
+      case 'reset-password':
+        this.router.navigate(['reset-password'], { relativeTo: this.route });
+        break;
+      case 'audit-logs':
+        this.router.navigate(['audit-logs'], { relativeTo: this.route });
+        break;
+    }
   }
 
   /**
