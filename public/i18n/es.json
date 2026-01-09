@@ -611,7 +611,24 @@
       "lastLogin": "Último Inicio de Sesión",
       "createdAt": "Creado el",
       "updatedAt": "Actualizado el",
-      "never": "Nunca"
+      "never": "Nunca",
+      "additionalInfo": "Información Adicional",
+      "roles": "Roles",
+      "permissions": "Permisos",
+      "noData": "No hay datos adicionales disponibles"
+    },
+    "roles": {
+      "title": "Membresías de Organización",
+      "organization": "Organización",
+      "role": "Rol",
+      "status": "Estado",
+      "joinedAt": "Se unió",
+      "noMemberships": "No se encontraron membresías de organización"
+    },
+    "activity": {
+      "title": "Historial de Actividad",
+      "loadMore": "Cargar Más",
+      "noActivity": "No se encontraron registros de actividad"
     },
     "actions": {
       "edit": "Editar",

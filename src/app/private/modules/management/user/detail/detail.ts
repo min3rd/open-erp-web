@@ -15,7 +15,6 @@ import { Subject, takeUntil } from 'rxjs';
 // PrimeNG imports
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
-import { TabViewModule } from 'primeng/tabview';
 import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -34,7 +33,6 @@ import { UserDetailService, UserDetail } from '../services/user-detail.service';
     TranslocoModule,
     DrawerModule,
     ButtonModule,
-    TabViewModule,
     AvatarModule,
     TagModule,
     TooltipModule,
@@ -55,7 +53,6 @@ export class Detail implements OnInit, OnDestroy {
   protected readonly isOpen = signal(true);
   protected readonly isLoading = signal(false);
   protected readonly user = signal<UserDetail | null>(null);
-  protected readonly activeTabIndex = signal(0);
   protected readonly isMobile = signal(false);
 
   // Computed values
@@ -66,13 +63,13 @@ export class Detail implements OnInit, OnDestroy {
     }
     const nameParts = currentUser.fullName
       .split(' ')
-      .map((part) => part.trim())
-      .filter((part) => part.length > 0);
+      .map((part: string) => part.trim())
+      .filter((part: string) => part.length > 0);
     if (nameParts.length === 0) {
       return '??';
     }
     return nameParts
-      .map((n) => n[0])
+      .map((n: string) => n[0])
       .join('')
       .toUpperCase()
       .substring(0, 2);
@@ -167,22 +164,6 @@ export class Detail implements OnInit, OnDestroy {
           this.user.set(updatedUser);
         }
       });
-
-    // Map child route to tab index
-    this.route.url.pipe(takeUntil(this.destroy$)).subscribe((urlSegments) => {
-      const lastSegment = urlSegments[urlSegments.length - 1]?.path;
-      switch (lastSegment) {
-        case 'roles-assignment':
-          this.activeTabIndex.set(1);
-          break;
-        case 'audit-logs':
-          this.activeTabIndex.set(2);
-          break;
-        default:
-          this.activeTabIndex.set(0);
-          break;
-      }
-    });
   }
 
   ngOnDestroy(): void {
@@ -231,28 +212,6 @@ export class Detail implements OnInit, OnDestroy {
    */
   protected onEdit(): void {
     this.router.navigate(['edit'], { relativeTo: this.route });
-  }
-
-  /**
-   * Handle tab change
-   */
-  protected onTabChange(event: { index: number }): void {
-    this.activeTabIndex.set(event.index);
-    const userId = this.user()?.id;
-    if (!userId) return;
-
-    // Navigate to the appropriate child route
-    switch (event.index) {
-      case 0:
-        this.router.navigate(['.'], { relativeTo: this.route });
-        break;
-      case 1:
-        this.router.navigate(['roles-assignment'], { relativeTo: this.route });
-        break;
-      case 2:
-        this.router.navigate(['audit-logs'], { relativeTo: this.route });
-        break;
-    }
   }
 
   /**
