@@ -106,8 +106,8 @@ export class NavigationList implements OnInit, OnDestroy {
       const scope = this.activeScope();
       if (scope === 'global') {
         this.loadGlobalNavigation();
-      } else if (this.selectedModule()?.module) {
-        this.loadModuleNavigation(this.selectedModule()!.module!);
+      } else if (this.selectedModule()?.moduleId) {
+        this.loadModuleNavigation(this.selectedModule()!.moduleId!);
       }
     });
   }
@@ -382,8 +382,8 @@ export class NavigationList implements OnInit, OnDestroy {
             });
             this.selectedItem.set(null);
             this.loadGlobalNavigation();
-            if (this.selectedModule()?.module) {
-              this.loadModuleNavigation(this.selectedModule()!.module!);
+            if (this.selectedModule()?.moduleId) {
+              this.loadModuleNavigation(this.selectedModule()!.moduleId!);
             }
             // Navigate back to list
             this.router.navigate(['./'], { relativeTo: this.route });
@@ -406,8 +406,8 @@ export class NavigationList implements OnInit, OnDestroy {
   protected onRefresh(): void {
     if (this.activeScope() === 'global') {
       this.loadGlobalNavigation();
-    } else if (this.selectedModule()?.module) {
-      this.loadModuleNavigation(this.selectedModule()!.module!);
+    } else if (this.selectedModule()?.moduleId) {
+      this.loadModuleNavigation(this.selectedModule()!.moduleId!);
     }
   }
 
@@ -468,8 +468,8 @@ export class NavigationList implements OnInit, OnDestroy {
           // Refresh to get updated data from backend
           if (this.activeScope() === 'global') {
             this.loadGlobalNavigation();
-          } else if (this.selectedModule()?.module) {
-            this.loadModuleNavigation(this.selectedModule()!.module!);
+          } else if (this.selectedModule()?.moduleId) {
+            this.loadModuleNavigation(this.selectedModule()!.moduleId!);
           }
           this.isLoading.set(false);
         },
@@ -483,8 +483,8 @@ export class NavigationList implements OnInit, OnDestroy {
           // Rollback by refreshing from backend
           if (this.activeScope() === 'global') {
             this.loadGlobalNavigation();
-          } else if (this.selectedModule()?.module) {
-            this.loadModuleNavigation(this.selectedModule()!.module!);
+          } else if (this.selectedModule()?.moduleId) {
+            this.loadModuleNavigation(this.selectedModule()!.moduleId!);
           }
           this.isLoading.set(false);
         },
@@ -508,9 +508,9 @@ export class NavigationList implements OnInit, OnDestroy {
       }
 
       // If the item has a module field, load its module navigation
-      if (item.module) {
+      if (item.moduleId) {
         this.selectedModule.set(item);
-        this.loadModuleNavigation(item.module);
+        this.loadModuleNavigation(item.moduleId);
         this.cdr.markForCheck();
       }
     }

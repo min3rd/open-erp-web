@@ -24,7 +24,7 @@ export interface NavigationItemDto {
   class?: string;
   order: number;
   scope: 'global' | 'module';
-  module?: string;
+  moduleId?: string;
   meta?: Record<string, any>;
   createdAt?: string;
   updatedAt?: string;

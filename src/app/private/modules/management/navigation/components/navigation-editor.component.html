@@ -99,13 +99,13 @@
   <!-- Module Key (Required when scope is module) -->
   @if (form().value.scope === 'module') {
   <div class="flex flex-col gap-2">
-    <label for="navigation-editor-module" class="font-semibold">
+    <label for="navigation-editor-module-id" class="font-semibold">
       {{ 'navigationManagement.editor.form.moduleKey.label' | transloco }}
       <span class="text-red-500">*</span>
     </label>
     <p-select
-      id="navigation-editor-module"
-      formControlName="module"
+      id="navigation-editor-module-id"
+      formControlName="moduleId"
       [options]="availableModules()"
       optionLabel="label"
       optionValue="value"
@@ -115,7 +115,7 @@
       [attr.aria-required]="true"
     />
     @if (hasError('module')) {
-    <small id="navigation-editor-module-error" class="text-red-500">
+    <small id="navigation-editor-module-id-error" class="text-red-500">
       {{ getErrorMessage('module') }}
     </small>
     }
