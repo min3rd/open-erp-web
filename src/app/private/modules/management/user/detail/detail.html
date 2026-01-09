@@ -4,7 +4,7 @@
   [modal]="true"
   [showCloseIcon]="true"
   (onHide)="onClose()"
-  [class]="isMobile() ? 'w-full' : 'w-full md:max-w-[700px]'"
+  styleClass="!w-full md:!w-80 lg:!w-[30rem]"
   id="user-detail-drawer"
   [attr.aria-label]="'userDetail.drawer.label' | transloco"
 >
@@ -25,7 +25,7 @@
       <p class="ml-2">{{ 'userDetail.messages.loading' | transloco }}</p>
     </div>
     } @else if (user()) {
-    
+
     <!-- General Detail Header: Fullname, Email, Avatar,... -->
     <div class="border-b border-surface-200 dark:border-surface-700 p-4" id="user-detail-header">
       <div class="flex items-center gap-4">
@@ -65,41 +65,38 @@
     <div class="flex-1 flex flex-col overflow-hidden">
       <p-tabs [(value)]="activeTab" (onChange)="onTabChange($event)" id="user-detail-tabs">
         <p-tablist id="user-detail-tablist">
-          <p-tab value="general" id="user-detail-tab-general">
+          <p-tab [routerLink]="['general']" value="general" id="user-detail-tab-general">
             <i class="pi pi-user mr-2"></i>
             {{ 'userDetail.tabs.general' | transloco }}
           </p-tab>
-          <p-tab value="roles-assignment" id="user-detail-tab-roles">
+          <p-tab
+            [routerLink]="['roles-assignment']"
+            value="roles-assignment"
+            id="user-detail-tab-roles"
+          >
             <i class="pi pi-users mr-2"></i>
             {{ 'userDetail.tabs.roles' | transloco }}
           </p-tab>
-          <p-tab value="reset-password" id="user-detail-tab-password">
+          <p-tab
+            [routerLink]="['reset-password']"
+            value="reset-password"
+            id="user-detail-tab-password"
+          >
             <i class="pi pi-key mr-2"></i>
             {{ 'userDetail.tabs.password' | transloco }}
           </p-tab>
-          <p-tab value="audit-logs" id="user-detail-tab-logs">
+          <p-tab [routerLink]="['audit-logs']" value="audit-logs" id="user-detail-tab-logs">
             <i class="pi pi-history mr-2"></i>
             {{ 'userDetail.tabs.activity' | transloco }}
           </p-tab>
         </p-tablist>
-        
+
         <p-tabpanels class="flex-1 overflow-auto">
-          <p-tabpanel value="general" id="user-detail-panel-general">
-            <router-outlet></router-outlet>
-          </p-tabpanel>
-          <p-tabpanel value="roles-assignment" id="user-detail-panel-roles">
-            <router-outlet></router-outlet>
-          </p-tabpanel>
-          <p-tabpanel value="reset-password" id="user-detail-panel-password">
-            <router-outlet></router-outlet>
-          </p-tabpanel>
-          <p-tabpanel value="audit-logs" id="user-detail-panel-logs">
-            <router-outlet></router-outlet>
-          </p-tabpanel>
+          <router-outlet></router-outlet>
         </p-tabpanels>
       </p-tabs>
     </div>
-    
+
     } @else {
     <!-- No User Data -->
     <div class="flex items-center justify-center h-32">
@@ -143,7 +140,7 @@
           id="user-detail-more-menu"
           [model]="actionMenuItems"
           [popup]="true"
-          appendTo="body"
+          appendTo="user-detail-drawer"
         />
       </div>
       <p-button
@@ -157,4 +154,3 @@
     </div>
   </ng-template>
 </p-drawer>
-
