@@ -611,7 +611,24 @@
       "lastLogin": "Last Login",
       "createdAt": "Created At",
       "updatedAt": "Updated At",
-      "never": "Never"
+      "never": "Never",
+      "additionalInfo": "Additional Information",
+      "roles": "Roles",
+      "permissions": "Permissions",
+      "noData": "No additional data available"
+    },
+    "roles": {
+      "title": "Organization Memberships",
+      "organization": "Organization",
+      "role": "Role",
+      "status": "Status",
+      "joinedAt": "Joined",
+      "noMemberships": "No organization memberships found"
+    },
+    "activity": {
+      "title": "Activity History",
+      "loadMore": "Load More",
+      "noActivity": "No activity logs found"
     },
     "actions": {
       "edit": "Edit",

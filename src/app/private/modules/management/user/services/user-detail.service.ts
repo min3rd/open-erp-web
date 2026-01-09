@@ -2,15 +2,15 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { API_URI_USER } from '../../../../../core/constant';
+import { API_URI_USER } from '../../../../../../core/constant';
 import {
   ApiResponse,
   ApiSingleResponse,
   unwrap,
   isApiResponse,
   ApiResponseError,
-} from '../../../../../core/api';
-import { User } from '../../../../../core/services/user-service';
+} from '../../../../../../core/api';
+import { User } from '../../../../../../core/services/user-service';
 
 /**
  * Extended user detail interface with additional fields
