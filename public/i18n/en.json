@@ -594,6 +594,49 @@
       "sendNotificationSoon": "Send notification functionality will be implemented soon"
     }
   },
+  "userDetail": {
+    "drawer": {
+      "label": "User Details"
+    },
+    "tabs": {
+      "general": "General",
+      "roles": "Roles & Memberships",
+      "activity": "Activity Log"
+    },
+    "general": {
+      "profile": "Profile Information",
+      "email": "Email",
+      "username": "Username",
+      "phone": "Phone",
+      "lastLogin": "Last Login",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "never": "Never"
+    },
+    "actions": {
+      "edit": "Edit",
+      "close": "Close",
+      "more": "More Actions",
+      "sendInvitation": "Send Invitation",
+      "resetPassword": "Reset Password",
+      "disable": "Disable User",
+      "enable": "Enable User",
+      "impersonate": "Impersonate User"
+    },
+    "messages": {
+      "loading": "Loading user details...",
+      "error": "Error",
+      "success": "Success",
+      "noData": "No user data available",
+      "loadFailed": "Failed to load user details",
+      "invitationSent": "Invitation sent successfully",
+      "passwordReset": "Password reset email sent successfully",
+      "userDisabled": "User has been disabled successfully",
+      "userEnabled": "User has been enabled successfully",
+      "impersonating": "Impersonating User",
+      "impersonatingDetail": "Now impersonating {{name}}"
+    }
+  },
   "navigationManagement": {
     "title": "Navigation Management",
     "subtitle": "Manage application navigation structure",

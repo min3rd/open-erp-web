@@ -594,6 +594,49 @@
       "sendNotificationSoon": "La funcionalidad de envío de notificaciones se implementará pronto"
     }
   },
+  "userDetail": {
+    "drawer": {
+      "label": "Detalles del Usuario"
+    },
+    "tabs": {
+      "general": "General",
+      "roles": "Roles y Membresías",
+      "activity": "Registro de Actividad"
+    },
+    "general": {
+      "profile": "Información del Perfil",
+      "email": "Correo Electrónico",
+      "username": "Nombre de Usuario",
+      "phone": "Teléfono",
+      "lastLogin": "Último Inicio de Sesión",
+      "createdAt": "Creado el",
+      "updatedAt": "Actualizado el",
+      "never": "Nunca"
+    },
+    "actions": {
+      "edit": "Editar",
+      "close": "Cerrar",
+      "more": "Más Acciones",
+      "sendInvitation": "Enviar Invitación",
+      "resetPassword": "Restablecer Contraseña",
+      "disable": "Deshabilitar Usuario",
+      "enable": "Habilitar Usuario",
+      "impersonate": "Suplantar Usuario"
+    },
+    "messages": {
+      "loading": "Cargando detalles del usuario...",
+      "error": "Error",
+      "success": "Éxito",
+      "noData": "No hay datos de usuario disponibles",
+      "loadFailed": "No se pudieron cargar los detalles del usuario",
+      "invitationSent": "Invitación enviada exitosamente",
+      "passwordReset": "Correo de restablecimiento de contraseña enviado exitosamente",
+      "userDisabled": "Usuario ha sido deshabilitado exitosamente",
+      "userEnabled": "Usuario ha sido habilitado exitosamente",
+      "impersonating": "Suplantando Usuario",
+      "impersonatingDetail": "Ahora suplantando a {{name}}"
+    }
+  },
   "navigationManagement": {
     "title": "Gestión de Navegación",
     "subtitle": "Administrar la estructura de navegación de la aplicación",
