@@ -3,6 +3,7 @@ import { inject, Injectable, isDevMode } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { BehaviorSubject, map, Observable, of } from 'rxjs';
 import { API_URI_CONFIG } from '../constant';
+import { ApiResponse, isApiResponse, unwrap } from '../api';
 
 @Injectable({
   providedIn: 'root',
@@ -51,11 +52,21 @@ export class NavigationService {
         })
       );
     }
-    return this.httpClient.get<MenuItem[]>(`${API_URI_CONFIG}/${version}/configs/modules`).pipe(
-      map((modules) => {
-        this._modules.next(modules);
-        return modules;
-      })
-    );
+    return this.httpClient
+      .get<ApiResponse<MenuItem[]> | MenuItem[]>(`${API_URI_CONFIG}/${version}/configs/modules`)
+      .pipe(
+        map((response) => {
+          let modules: MenuItem[];
+          if (isApiResponse(response)) {
+            modules = unwrap(response as ApiResponse<MenuItem[]>);
+          } else {
+            // Legacy format
+            console.warn('NavigationService: Received legacy response format for loadModules');
+            modules = response as MenuItem[];
+          }
+          this._modules.next(modules);
+          return modules;
+        })
+      );
   }
 }
