@@ -39,6 +39,7 @@ interface NavigationApiItem {
   providedIn: 'root',
 })
 export class NavigationService {
+  private static readonly DEFAULT_MODULE_CACHE_KEY = 'navigation-module-default';
   private httpClient = inject(HttpClient);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
@@ -98,7 +99,7 @@ export class NavigationService {
     const targetCache =
       scope === 'global'
         ? this._modules
-        : this.resolveModuleSubject(moduleKey ?? 'default-module-cache');
+        : this.resolveModuleSubject(moduleKey ?? NavigationService.DEFAULT_MODULE_CACHE_KEY);
 
     if (!options?.forceRefresh && targetCache.value) {
       return of(targetCache.value);
@@ -221,7 +222,6 @@ export class NavigationService {
         ? [item.routerLink]
         : undefined;
 
-    const badgeValue = item.badge;
     const mapped: MenuItem = {
       id: this.buildItemId(scope, item, moduleKey),
       label: item.label,
@@ -230,15 +230,11 @@ export class NavigationService {
       url: item.url,
       target: item.target,
       disabled: item.disabled,
-      badge:
-        typeof badgeValue === 'string' || typeof badgeValue === 'number'
-          ? String(badgeValue)
-          : undefined,
+      badge: this.normalizeBadge(item.badge),
       badgeStyleClass: item.badgeClass,
       tooltip: item.tooltip,
       styleClass: item.class,
       items: item.items?.map((child) => this.mapNavigationItem(child, scope, moduleKey)),
-      automationId: this.buildAutomationId(scope, item, moduleKey),
       state: {
         scope,
         moduleKey,
@@ -293,12 +289,11 @@ export class NavigationService {
       : `navigation-${scope}-${normalized}`;
   }
 
-  private buildAutomationId(
-    scope: NavigationScope,
-    item: NavigationApiItem,
-    moduleKey?: string
-  ): string {
-    return `${this.buildItemId(scope, item, moduleKey)}-automation`;
+  private normalizeBadge(badge: unknown): string | undefined {
+    if (typeof badge === 'string' || typeof badge === 'number') {
+      return String(badge);
+    }
+    return undefined;
   }
 
   private resolveModuleSubject(moduleKey: string): BehaviorSubject<MenuItem[] | null> {

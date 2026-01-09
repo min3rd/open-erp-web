@@ -209,8 +209,8 @@ export class VerticalNavigation implements OnInit, OnDestroy {
         'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800',
       ];
 
-      if (item.linkClass) {
-        baseClasses.push(item.linkClass);
+      if (item.styleClass) {
+        baseClasses.push(item.styleClass);
       }
 
       if (active) {
@@ -222,8 +222,8 @@ export class VerticalNavigation implements OnInit, OnDestroy {
       return {
         ...item,
         items: childItems,
-        linkClass: baseClasses.join(' '),
-        ariaCurrent: active ? 'page' : undefined,
+        styleClass: baseClasses.join(' '),
+        ariaCurrent: active ? 'page' : null,
         command: (event) => {
           if (typeof item.command === 'function') {
             item.command(event);
@@ -282,7 +282,7 @@ export class VerticalNavigation implements OnInit, OnDestroy {
 
     return {
       id: this.itemId(item),
-      'aria-current': this.isItemActive(item) ? 'page' : undefined,
+      'aria-current': this.isItemActive(item) ? 'page' : null,
       'aria-label': item.tooltip || item.label,
     };
   }
