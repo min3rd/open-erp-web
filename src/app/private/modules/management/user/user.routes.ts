@@ -7,6 +7,7 @@ import { EditorForm } from './editor-form/editor-form';
 import { RolesAssignment } from './roles-assignment/roles-assignment';
 import { ResetPassword } from './reset-password/reset-password';
 import { AuditLogs } from './audit-logs/audit-logs';
+import { userDetailResolver } from './resolvers/user-detail.resolver';
 
 export const routes: Routes = [
   {
@@ -36,6 +37,7 @@ export const routes: Routes = [
                   {
                     path: ':id',
                     component: Detail,
+                    resolve: { userDetail: userDetailResolver },
                     children: [
                       {
                         path: '',
