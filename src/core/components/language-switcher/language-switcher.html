@@ -4,60 +4,34 @@
   <!-- Sidebar Mode -->
   <div class="flex flex-col gap-2 p-2" id="language-switcher-sidebar-mode">
     <label
-      for="language-switcher-toggle"
+      for="language-switcher-select-button"
       class="block text-xs font-medium text-surface-600 dark:text-surface-400"
     >
       {{ 'languageSelector.label' | transloco }}
     </label>
 
-    <!-- Quick Toggle VI/EN -->
-    <div class="flex items-center gap-2" id="language-switcher-toggle-group">
-      <button
-        id="language-switcher-vi-button"
-        type="button"
-        (click)="isVietnamese() || togglePrimaryLanguage()"
-        [class.bg-primary-500]="isVietnamese()"
-        [class.text-white]="isVietnamese()"
-        [class.bg-surface-100]="!isVietnamese()"
-        [class.text-surface-700]="!isVietnamese()"
-        [class.dark:bg-surface-700]="!isVietnamese()"
-        [class.dark:text-surface-300]="!isVietnamese()"
-        class="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg hover:opacity-90 transition-all font-medium text-sm"
-        [attr.aria-pressed]="isVietnamese()"
-        [attr.aria-label]="'Tiếng Việt'"
-      >
-        <img
-          [src]="getFlagUrl('VN')"
-          alt="Vietnamese flag"
-          class="w-5 h-5 rounded-sm"
-          aria-hidden="true"
-        />
-        <span>VI</span>
-      </button>
-
-      <button
-        id="language-switcher-en-button"
-        type="button"
-        (click)="!isVietnamese() || togglePrimaryLanguage()"
-        [class.bg-primary-500]="!isVietnamese()"
-        [class.text-white]="!isVietnamese()"
-        [class.bg-surface-100]="isVietnamese()"
-        [class.text-surface-700]="isVietnamese()"
-        [class.dark:bg-surface-700]="isVietnamese()"
-        [class.dark:text-surface-300]="isVietnamese()"
-        class="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg hover:opacity-90 transition-all font-medium text-sm"
-        [attr.aria-pressed]="!isVietnamese()"
-        [attr.aria-label]="'English'"
-      >
-        <img
-          [src]="getFlagUrl('GB')"
-          alt="English flag"
-          class="w-5 h-5 rounded-sm"
-          aria-hidden="true"
-        />
-        <span>EN</span>
-      </button>
-    </div>
+    <!-- SelectButton for VI/EN Toggle -->
+    <p-selectbutton
+      id="language-switcher-select-button"
+      [options]="primaryLanguageOptions()"
+      [(ngModel)]="selectedLanguage"
+      (ngModelChange)="onPrimaryLanguageChange($event)"
+      optionLabel="label"
+      optionValue="value"
+      [attr.aria-label]="'languageSelector.ariaLabel' | transloco"
+    >
+      <ng-template let-item #item>
+        <div class="flex items-center justify-center gap-2">
+          <img
+            [src]="getFlagForLanguageCode(item.value)"
+            [alt]="item.label"
+            class="w-4 h-4 rounded-sm"
+            aria-hidden="true"
+          />
+          <span class="text-sm">{{ item.label }}</span>
+        </div>
+      </ng-template>
+    </p-selectbutton>
 
     <!-- More Languages Button -->
     <p-button
@@ -103,18 +77,20 @@
 
           <!-- Search -->
           <div class="px-2">
-            <span class="p-input-icon-left w-full">
-              <i class="pi pi-search" aria-hidden="true"></i>
+            <p-inputgroup>
+              <p-inputgroup-addon>
+                <i class="pi pi-search" aria-hidden="true"></i>
+              </p-inputgroup-addon>
               <input
                 id="language-switcher-narrow-search"
                 pInputText
                 type="text"
                 [(ngModel)]="searchQuery"
                 [placeholder]="'languageSelector.searchLanguages' | transloco"
-                class="w-full text-sm"
+                class="text-sm"
                 [attr.aria-label]="'languageSelector.searchLanguages' | transloco"
               />
-            </span>
+            </p-inputgroup>
           </div>
 
           <!-- Language List -->
@@ -185,18 +161,19 @@
 
   <div class="flex flex-col gap-3" id="language-switcher-dialog-content">
     <!-- Search -->
-    <span class="p-input-icon-left w-full">
-      <i class="pi pi-search" aria-hidden="true"></i>
+    <p-inputgroup>
+      <p-inputgroup-addon>
+        <i class="pi pi-search" aria-hidden="true"></i>
+      </p-inputgroup-addon>
       <input
         id="language-switcher-dialog-search"
         pInputText
         type="text"
         [(ngModel)]="searchQuery"
         [placeholder]="'languageSelector.searchLanguages' | transloco"
-        class="w-full"
         [attr.aria-label]="'languageSelector.searchLanguages' | transloco"
       />
-    </span>
+    </p-inputgroup>
 
     <!-- Language Grid -->
     <div class="max-h-96 overflow-y-auto" id="language-switcher-dialog-list" role="listbox">

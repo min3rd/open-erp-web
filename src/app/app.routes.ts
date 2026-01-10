@@ -6,15 +6,18 @@ import { inject } from '@angular/core';
 import { NavigationService } from '../core/services/navigation-service';
 import { AuthService } from '../core/services/auth-service';
 import { ChatService } from '../core/services/chat-service';
+import { LanguageService } from '../core/services/language.service';
 
 const initializeData = () => {
   const navigationService = inject(NavigationService);
   const authService = inject(AuthService);
   const chatService = inject(ChatService);
+  const languageService = inject(LanguageService);
   return forkJoin([
     navigationService.loadModules(),
     authService.me(),
     chatService.loadConversations(),
+    languageService.loadLanguages(),
   ]);
 };
 

@@ -7,6 +7,7 @@ import {
   input,
   output,
   computed,
+  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
@@ -15,13 +16,10 @@ import { Dialog } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
 import { Popover } from 'primeng/popover';
-import { ToggleButton } from 'primeng/togglebutton';
-
-export interface LanguageOption {
-  code: string;
-  label: string;
-  flagCode: string;
-}
+import { SelectButton } from 'primeng/selectbutton';
+import { InputGroup } from 'primeng/inputgroup';
+import { InputGroupAddon } from 'primeng/inputgroupaddon';
+import { LanguageService, LanguageOption } from '../../services/language.service';
 
 @Component({
   selector: 'language-switcher',
@@ -33,33 +31,20 @@ export interface LanguageOption {
     FormsModule,
     InputText,
     Popover,
-    ToggleButton,
+    SelectButton,
+    InputGroup,
+    InputGroupAddon,
   ],
   templateUrl: './language-switcher.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LanguageSwitcher {
+export class LanguageSwitcher implements OnInit {
   private translocoService = inject(TranslocoService);
+  private languageService = inject(LanguageService);
   private readonly STORAGE_KEY = 'app.lang';
 
   // Inputs
   mode = input<'sidebar' | 'narrow'>('sidebar');
-  languages = input<LanguageOption[]>([
-    { code: 'vi', label: 'Tiếng Việt', flagCode: 'VN' },
-    { code: 'en', label: 'English', flagCode: 'GB' },
-    { code: 'es', label: 'Español', flagCode: 'ES' },
-    { code: 'fr', label: 'Français', flagCode: 'FR' },
-    { code: 'de', label: 'Deutsch', flagCode: 'DE' },
-    { code: 'ja', label: '日本語', flagCode: 'JP' },
-    { code: 'ko', label: '한국어', flagCode: 'KR' },
-    { code: 'zh', label: '中文', flagCode: 'CN' },
-    { code: 'pt', label: 'Português', flagCode: 'PT' },
-    { code: 'ru', label: 'Русский', flagCode: 'RU' },
-    { code: 'ar', label: 'العربية', flagCode: 'SA' },
-    { code: 'hi', label: 'हिन्दी', flagCode: 'IN' },
-    { code: 'it', label: 'Italiano', flagCode: 'IT' },
-    { code: 'th', label: 'ไทย', flagCode: 'TH' },
-  ]);
   current = input<string>(this.loadLanguage());
 
   // Outputs
@@ -67,29 +52,42 @@ export class LanguageSwitcher {
 
   // State
   selectedLanguage = signal<string>(this.loadLanguage());
+  allLanguages = signal<LanguageOption[]>([]);
   showAllLanguagesDialog = signal(false);
   searchQuery = signal('');
 
   // Computed
   currentLanguageOption = computed(() => {
     const code = this.selectedLanguage();
-    return this.languages().find((lang) => lang.code === code) || this.languages()[1];
+    return this.allLanguages().find((lang) => lang.code === code) || this.allLanguages()[0];
   });
 
   primaryLanguages = computed(() => {
-    return this.languages().filter((lang) => lang.code === 'vi' || lang.code === 'en');
+    return this.allLanguages().filter((lang) => lang.code === 'vi' || lang.code === 'en');
+  });
+
+  primaryLanguageOptions = computed(() => {
+    return this.primaryLanguages().map((lang) => ({
+      label: lang.label,
+      value: lang.code,
+      icon: `flag-icon-${lang.flagCode.toLowerCase()}`,
+    }));
   });
 
   filteredLanguages = computed(() => {
     const query = this.searchQuery().toLowerCase();
-    if (!query) return this.languages();
-    return this.languages().filter(
+    if (!query) return this.allLanguages();
+    return this.allLanguages().filter(
       (lang) => lang.label.toLowerCase().includes(query) || lang.code.toLowerCase().includes(query)
     );
   });
 
-  // Quick toggle between VI and EN
-  isVietnamese = computed(() => this.selectedLanguage() === 'vi');
+  ngOnInit(): void {
+    // Load languages from service
+    this.languageService.loadLanguages().subscribe((languages) => {
+      this.allLanguages.set(languages);
+    });
+  }
 
   constructor() {
     // Set the initial language
@@ -119,9 +117,15 @@ export class LanguageSwitcher {
     return `https://flagsapi.com/${flagCode}/flat/64.png`;
   }
 
-  togglePrimaryLanguage(): void {
-    const newLang = this.isVietnamese() ? 'en' : 'vi';
-    this.selectedLanguage.set(newLang);
+  getFlagForLanguageCode(code: string): string {
+    const lang = this.primaryLanguages().find(l => l.code === code);
+    return this.getFlagUrl(lang?.flagCode || 'VN');
+  }
+
+  onPrimaryLanguageChange(code: string): void {
+    if (code) {
+      this.selectedLanguage.set(code);
+    }
   }
 
   selectLanguage(code: string): void {
@@ -144,6 +148,7 @@ export class LanguageSwitcher {
     if (typeof window === 'undefined' || !window.localStorage) {
       return 'vi';
     }
+
     const saved = localStorage.getItem(this.STORAGE_KEY);
     return saved || 'vi';
   }
