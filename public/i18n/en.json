@@ -345,12 +345,22 @@
     "ariaLabel": "Select current organization",
     "taxId": "Tax ID",
     "loading": "Loading organizations...",
-    "noOrganizations": "No organizations available"
+    "noOrganizations": "No organizations available",
+    "search": "Search organizations...",
+    "createNew": "Register Organization",
+    "selectOrganization": "Select an organization",
+    "currentOrganization": "Current organization"
   },
   "languageSelector": {
     "label": "Language",
     "placeholder": "Select language",
-    "ariaLabel": "Select language"
+    "ariaLabel": "Select language",
+    "currentLanguage": "Current language",
+    "changeLanguage": "Change language",
+    "allLanguages": "All Languages",
+    "closeDialog": "Close",
+    "searchLanguages": "Search languages...",
+    "selectLanguage": "Select a language"
   },
   "verticalNav": {
     "registerOrganization": "Register Organization",

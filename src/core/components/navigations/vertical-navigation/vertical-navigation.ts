@@ -17,7 +17,7 @@ import { User } from '../../user/user';
 import { ButtonModule } from 'primeng/button';
 import { LayoutService } from '../../../services/layout-service';
 import { OrganizationSwitcher } from '../../organization-switcher/organization-switcher';
-import { LanguageSelector } from '../../language-selector/language-selector';
+import { LanguageSwitcher } from '../../language-switcher/language-switcher';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
 import { RippleModule } from 'primeng/ripple';
@@ -31,7 +31,7 @@ import { NavigationMenu } from '../../navigation-menu/navigation-menu';
     User,
     ButtonModule,
     OrganizationSwitcher,
-    LanguageSelector,
+    LanguageSwitcher,
     TooltipModule,
     RouterModule,
     RippleModule,
