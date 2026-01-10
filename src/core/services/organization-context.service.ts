@@ -6,6 +6,8 @@ export interface OrganizationMetadata {
   name: string;
   internationalName: string;
   taxId: string;
+  logoUrl?: string;
+  code?: string;
 }
 
 @Injectable({

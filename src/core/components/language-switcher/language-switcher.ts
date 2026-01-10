@@ -14,7 +14,7 @@ import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
-import { OverlayPanel } from 'primeng/overlaypanel';
+import { Popover } from 'primeng/popover';
 import { ToggleButton } from 'primeng/togglebutton';
 
 export interface LanguageOption {
@@ -32,7 +32,7 @@ export interface LanguageOption {
     Dialog,
     FormsModule,
     InputText,
-    OverlayPanel,
+    Popover,
     ToggleButton,
   ],
   templateUrl: './language-switcher.html',

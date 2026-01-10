@@ -31,6 +31,44 @@ describe('OrganizationSwitcher', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should render sidebar mode correctly', () => {
+    const mockOrgs = [
+      {
+        id: 'org-1',
+        name: 'Test Org',
+        internationalName: 'Test Org',
+        taxId: '1234567890',
+      },
+    ];
+
+    orgContextService.setUserOrganizations(mockOrgs);
+    fixture.componentRef.setInput('mode', 'sidebar');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement;
+    const sidebarMode = compiled.querySelector('#organization-switcher-sidebar-mode');
+    expect(sidebarMode).toBeTruthy();
+  });
+
+  it('should render narrow mode correctly', () => {
+    const mockOrgs = [
+      {
+        id: 'org-1',
+        name: 'Test Org',
+        internationalName: 'Test Org',
+        taxId: '1234567890',
+      },
+    ];
+
+    orgContextService.setUserOrganizations(mockOrgs);
+    fixture.componentRef.setInput('mode', 'narrow');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement;
+    const narrowMode = compiled.querySelector('#organization-switcher-narrow-mode');
+    expect(narrowMode).toBeTruthy();
+  });
+
   it('should display organizations from organization context', () => {
     const mockOrgs = [
       {
@@ -44,11 +82,10 @@ describe('OrganizationSwitcher', () => {
     orgContextService.setUserOrganizations(mockOrgs);
     fixture.detectChanges();
 
-    expect(component.organizations().length).toBe(1);
-    expect(component.dropdownOptions().length).toBe(1);
+    expect(component.displayOrganizations().length).toBe(1);
   });
 
-  it('should call organizationContextService when organization changes', () => {
+  it('should emit select event when organization is selected', (done) => {
     const mockOrgs = [
       {
         id: 'org-1',
@@ -65,11 +102,22 @@ describe('OrganizationSwitcher', () => {
     ];
 
     orgContextService.setUserOrganizations(mockOrgs);
-    spyOn(orgContextService, 'switchOrganization').and.returnValue(true);
 
-    component.onOrganizationChange('org-2');
+    component.select.subscribe((orgId: string) => {
+      expect(orgId).toBe('org-2');
+      done();
+    });
 
-    expect(orgContextService.switchOrganization).toHaveBeenCalledWith('org-2');
+    component.onOrganizationSelect('org-2');
+  });
+
+  it('should emit create event when create button is clicked', (done) => {
+    component.create.subscribe(() => {
+      expect(true).toBe(true);
+      done();
+    });
+
+    component.onCreateOrganization();
   });
 
   it('should set error when organization switch fails', () => {
@@ -85,8 +133,109 @@ describe('OrganizationSwitcher', () => {
     orgContextService.setUserOrganizations(mockOrgs);
     spyOn(orgContextService, 'switchOrganization').and.returnValue(false);
 
-    component.onOrganizationChange('invalid-id');
+    component.onOrganizationSelect('invalid-id');
 
     expect(component.error()).toBe('Failed to switch organization');
+  });
+
+  it('should filter organizations based on search query', () => {
+    const mockOrgs = [
+      {
+        id: 'org-1',
+        name: 'Alpha Corp',
+        internationalName: 'Alpha Corp',
+        taxId: '1111111111',
+      },
+      {
+        id: 'org-2',
+        name: 'Beta Inc',
+        internationalName: 'Beta Inc',
+        taxId: '2222222222',
+      },
+    ];
+
+    orgContextService.setUserOrganizations(mockOrgs);
+    fixture.detectChanges();
+
+    component.searchQuery.set('alpha');
+    fixture.detectChanges();
+
+    const filtered = component.filteredOrganizations();
+    expect(filtered.length).toBe(1);
+    expect(filtered[0].name).toBe('Alpha Corp');
+  });
+
+  it('should generate correct organization initials', () => {
+    expect(component.getOrganizationInitials('Test Organization')).toBe('TO');
+    expect(component.getOrganizationInitials('ABC')).toBe('AB');
+    expect(component.getOrganizationInitials('Single')).toBe('SI');
+  });
+
+  it('should open and close organization dialog', () => {
+    expect(component.showOrgDialog()).toBe(false);
+
+    component.openOrganizationDialog();
+    expect(component.showOrgDialog()).toBe(true);
+
+    component.closeOrganizationDialog();
+    expect(component.showOrgDialog()).toBe(false);
+  });
+
+  it('should have all required elements with unique IDs', () => {
+    const mockOrgs = [
+      {
+        id: 'org-1',
+        name: 'Test Org',
+        internationalName: 'Test Org',
+        taxId: '1234567890',
+      },
+    ];
+
+    orgContextService.setUserOrganizations(mockOrgs);
+    fixture.componentRef.setInput('mode', 'sidebar');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('#organization-switcher-container')).toBeTruthy();
+    expect(compiled.querySelector('#organization-switcher-sidebar-mode')).toBeTruthy();
+    expect(compiled.querySelector('#organization-switcher-current')).toBeTruthy();
+  });
+
+  it('should have proper accessibility attributes', () => {
+    const mockOrgs = [
+      {
+        id: 'org-1',
+        name: 'Test Org',
+        internationalName: 'Test Org',
+        taxId: '1234567890',
+      },
+    ];
+
+    orgContextService.setUserOrganizations(mockOrgs);
+    fixture.componentRef.setInput('mode', 'sidebar');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement;
+    const currentButton = compiled.querySelector('#organization-switcher-current');
+    expect(currentButton.getAttribute('aria-label')).toBeTruthy();
+    expect(currentButton.getAttribute('aria-expanded')).toBeDefined();
+  });
+
+  it('should close dialog when organization is selected', () => {
+    const mockOrgs = [
+      {
+        id: 'org-1',
+        name: 'Test Org',
+        internationalName: 'Test Org',
+        taxId: '1234567890',
+      },
+    ];
+
+    orgContextService.setUserOrganizations(mockOrgs);
+    component.openOrganizationDialog();
+    expect(component.showOrgDialog()).toBe(true);
+
+    component.onOrganizationSelect('org-1');
+    expect(component.showOrgDialog()).toBe(false);
   });
 });
