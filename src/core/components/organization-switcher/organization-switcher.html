@@ -110,18 +110,20 @@
           @if (searchable()) {
           <!-- Search -->
           <div class="px-2">
-            <span class="p-input-icon-left w-full">
-              <i class="pi pi-search" aria-hidden="true"></i>
+            <p-inputgroup>
+              <p-inputgroup-addon>
+                <i class="pi pi-search" aria-hidden="true"></i>
+              </p-inputgroup-addon>
               <input
                 id="organization-switcher-narrow-search"
                 pInputText
                 type="text"
                 [(ngModel)]="searchQuery"
                 [placeholder]="'organizationSwitcher.search' | transloco"
-                class="w-full text-sm"
+                class="text-sm"
                 [attr.aria-label]="'organizationSwitcher.search' | transloco"
               />
-            </span>
+            </p-inputgroup>
           </div>
           }
 
@@ -246,18 +248,19 @@
   <div class="flex flex-col gap-3" id="organization-switcher-dialog-content">
     @if (searchable()) {
     <!-- Search -->
-    <span class="p-input-icon-left w-full">
-      <i class="pi pi-search" aria-hidden="true"></i>
+    <p-inputgroup>
+      <p-inputgroup-addon>
+        <i class="pi pi-search" aria-hidden="true"></i>
+      </p-inputgroup-addon>
       <input
         id="organization-switcher-dialog-search"
         pInputText
         type="text"
         [(ngModel)]="searchQuery"
         [placeholder]="'organizationSwitcher.search' | transloco"
-        class="w-full"
         [attr.aria-label]="'organizationSwitcher.search' | transloco"
       />
-    </span>
+    </p-inputgroup>
     }
 
     <!-- Organization List -->

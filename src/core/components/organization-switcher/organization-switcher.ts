@@ -18,6 +18,8 @@ import { OrganizationService } from '../../services/organization-service';
 import { Popover } from 'primeng/popover';
 import { InputText } from 'primeng/inputtext';
 import { Dialog } from 'primeng/dialog';
+import { InputGroup } from 'primeng/inputgroup';
+import { InputGroupAddon } from 'primeng/inputgroupaddon';
 
 export interface OrganizationOption {
   id: string;
@@ -36,6 +38,8 @@ export interface OrganizationOption {
     Popover,
     InputText,
     Dialog,
+    InputGroup,
+    InputGroupAddon,
   ],
   templateUrl: './organization-switcher.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

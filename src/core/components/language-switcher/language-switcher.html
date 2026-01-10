@@ -10,41 +10,39 @@
       {{ 'languageSelector.label' | transloco }}
     </label>
 
-    <!-- SelectButton for VI/EN Toggle -->
-    <p-selectbutton
-      id="language-switcher-select-button"
-      [options]="primaryLanguageOptions()"
-      [(ngModel)]="selectedLanguage"
-      (ngModelChange)="onPrimaryLanguageChange($event)"
-      optionLabel="label"
-      optionValue="value"
-      [attr.aria-label]="'languageSelector.ariaLabel' | transloco"
-    >
-      <ng-template let-item #item>
-        <div class="flex items-center justify-center gap-2">
+    <!-- Compact row with SelectButton and More Languages button -->
+    <div class="flex items-center gap-2">
+      <!-- SelectButton for VI/EN Toggle (flags only) -->
+      <p-selectbutton
+        id="language-switcher-select-button"
+        [options]="primaryLanguageOptions()"
+        [(ngModel)]="selectedLanguage"
+        (ngModelChange)="onPrimaryLanguageChange($event)"
+        optionLabel="label"
+        optionValue="value"
+        [attr.aria-label]="'languageSelector.ariaLabel' | transloco"
+      >
+        <ng-template let-item #item>
           <img
             [src]="getFlagForLanguageCode(item.value)"
             [alt]="item.label"
-            class="w-4 h-4 rounded-sm"
+            class="w-5 h-5 rounded-sm"
             aria-hidden="true"
           />
-          <span class="text-sm">{{ item.label }}</span>
-        </div>
-      </ng-template>
-    </p-selectbutton>
+        </ng-template>
+      </p-selectbutton>
 
-    <!-- More Languages Button -->
-    <p-button
-      id="language-switcher-more-button"
-      (onClick)="openAllLanguagesDialog()"
-      [label]="'languageSelector.allLanguages' | transloco"
-      icon="pi pi-globe"
-      severity="secondary"
-      [outlined]="true"
-      size="small"
-      class="w-full"
-      [attr.aria-label]="'languageSelector.changeLanguage' | transloco"
-    />
+      <!-- Arrow button for more languages -->
+      <p-button
+        id="language-switcher-more-button"
+        (onClick)="openAllLanguagesDialog()"
+        icon="pi pi-angle-down"
+        severity="secondary"
+        [text]="true"
+        size="small"
+        [attr.aria-label]="'languageSelector.changeLanguage' | transloco"
+      />
+    </div>
   </div>
   } @else {
   <!-- Narrow Mode -->
