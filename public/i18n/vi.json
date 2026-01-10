@@ -1,0 +1,150 @@
+{
+  "register": {
+    "title": "Tạo tài khoản",
+    "subtitle": "Tham gia cùng chúng tôi để bắt đầu",
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "Nhập email của bạn",
+        "errors": {
+          "required": "Email là bắt buộc",
+          "email": "Vui lòng nhập địa chỉ email hợp lệ"
+        }
+      },
+      "fullName": {
+        "label": "Họ và tên",
+        "placeholder": "Nhập họ và tên của bạn",
+        "errors": {
+          "required": "Họ và tên là bắt buộc",
+          "minlength": "Họ và tên phải có ít nhất 16 ký tự"
+        }
+      },
+      "password": {
+        "label": "Mật khẩu",
+        "placeholder": "Nhập mật khẩu của bạn",
+        "errors": {
+          "required": "Mật khẩu là bắt buộc",
+          "minlength": "Mật khẩu phải có ít nhất 8 ký tự",
+          "pattern": "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt"
+        }
+      },
+      "confirmPassword": {
+        "label": "Xác nhận mật khẩu",
+        "placeholder": "Nhập lại mật khẩu của bạn",
+        "errors": {
+          "required": "Vui lòng xác nhận mật khẩu",
+          "mismatch": "Mật khẩu không khớp"
+        }
+      },
+      "terms": {
+        "label": "Tôi chấp nhận các điều khoản và điều kiện",
+        "errors": {
+          "required": "Bạn phải chấp nhận các điều khoản và điều kiện"
+        }
+      }
+    },
+    "buttons": {
+      "register": "Đăng ký",
+      "backToLogin": "Quay lại đăng nhập",
+      "viewTerms": "Xem điều khoản"
+    },
+    "footer": {
+      "githubLink": "Truy cập kho GitHub của chúng tôi"
+    },
+    "termsDialog": {
+      "title": "Điều khoản và Điều kiện",
+      "content": "Chào mừng đến với Open ERP. Khi sử dụng dịch vụ này, bạn đồng ý với các điều khoản sau:\n\n1. Sử dụng tài khoản: Bạn chịu trách nhiệm duy trì bảo mật tài khoản của mình.\n\n2. Quyền riêng tư dữ liệu: Chúng tôi tôn trọng quyền riêng tư của bạn và bảo vệ thông tin cá nhân theo luật hiện hành.\n\n3. Sử dụng dịch vụ: Bạn đồng ý sử dụng dịch vụ này tuân thủ tất cả các luật và quy định hiện hành.\n\n4. Quyền sở hữu trí tuệ: Tất cả nội dung và tài liệu có sẵn trên dịch vụ này được bảo vệ bởi quyền sở hữu trí tuệ.\n\n5. Giới hạn trách nhiệm: Dịch vụ được cung cấp 'nguyên trạng' không có bảo hành dưới bất kỳ hình thức nào.\n\n6. Thay đổi điều khoản: Chúng tôi bảo lưu quyền sửa đổi các điều khoản này bất cứ lúc nào.\n\nĐể biết điều khoản và điều kiện đầy đủ, vui lòng truy cập trang web của chúng tôi.",
+      "closeButton": "Đóng"
+    }
+  },
+  "login": {
+    "title": "Chào mừng trở lại",
+    "subtitle": "Đăng nhập vào tài khoản của bạn",
+    "form": {
+      "username": {
+        "label": "Email hoặc Tên đăng nhập",
+        "placeholder": "Nhập email hoặc tên đăng nhập",
+        "errors": {
+          "required": "Email hoặc tên đăng nhập là bắt buộc"
+        }
+      },
+      "password": {
+        "label": "Mật khẩu",
+        "placeholder": "Nhập mật khẩu của bạn",
+        "errors": {
+          "required": "Mật khẩu là bắt buộc",
+          "minlength": "Mật khẩu phải có ít nhất 8 ký tự"
+        }
+      }
+    },
+    "buttons": {
+      "login": "Đăng nhập",
+      "createAccount": "Tạo tài khoản",
+      "forgotPassword": "Quên mật khẩu?"
+    },
+    "messages": {
+      "loginSuccess": "Đăng nhập thành công! Đang chuyển hướng...",
+      "loginError": "Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập và thử lại."
+    },
+    "footer": {
+      "githubLink": "Truy cập kho GitHub của chúng tôi"
+    }
+  },
+  "common": {
+    "title": "Open ERP",
+    "appShortName": "ERP"
+  },
+  "auth": {
+    "logout": "Đăng xuất"
+  },
+  "navigation": {
+    "main": "Điều hướng chính",
+    "menu": "Menu điều hướng",
+    "toggle": "Bật/tắt menu điều hướng"
+  },
+  "quickChat": {
+    "title": "Tin nhắn",
+    "panel": "Trò chuyện nhanh",
+    "toggle": "Bật/tắt trò chuyện nhanh",
+    "newConversation": "Cuộc trò chuyện mới",
+    "openConversation": "Mở cuộc trò chuyện với",
+    "backToConversations": "Quay lại cuộc trò chuyện",
+    "closeConversation": "Đóng cuộc trò chuyện",
+    "conversationOptions": "Tùy chọn cuộc trò chuyện",
+    "attachFile": "Đính kèm tệp",
+    "typeMessage": "Nhập tin nhắn...",
+    "messageInput": "Nhập tin nhắn",
+    "sendMessage": "Gửi tin nhắn",
+    "participants": "người tham gia",
+    "noMessages": "Chưa có tin nhắn nào"
+  },
+  "organizationSwitcher": {
+    "label": "Doanh nghiệp hiện tại",
+    "placeholder": "Chọn doanh nghiệp",
+    "ariaLabel": "Chọn doanh nghiệp hiện tại",
+    "taxId": "Mã số thuế",
+    "loading": "Đang tải danh sách doanh nghiệp...",
+    "noOrganizations": "Không có doanh nghiệp nào",
+    "search": "Tìm kiếm doanh nghiệp...",
+    "createNew": "Đăng ký doanh nghiệp",
+    "selectOrganization": "Chọn một doanh nghiệp",
+    "currentOrganization": "Doanh nghiệp hiện tại"
+  },
+  "languageSelector": {
+    "label": "Ngôn ngữ",
+    "placeholder": "Chọn ngôn ngữ",
+    "ariaLabel": "Chọn ngôn ngữ",
+    "currentLanguage": "Ngôn ngữ hiện tại",
+    "changeLanguage": "Thay đổi ngôn ngữ",
+    "allLanguages": "Tất cả ngôn ngữ",
+    "closeDialog": "Đóng",
+    "searchLanguages": "Tìm kiếm ngôn ngữ...",
+    "selectLanguage": "Chọn một ngôn ngữ"
+  },
+  "verticalNav": {
+    "registerOrganization": "Đăng ký doanh nghiệp",
+    "registerOrganizationShort": "Đăng ký",
+    "resizeHandle": "Kéo để thay đổi kích thước thanh điều hướng",
+    "companies": "Công ty"
+  }
+}

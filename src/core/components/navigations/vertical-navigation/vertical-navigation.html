@@ -96,16 +96,19 @@
     class="border-b border-surface-200 dark:border-surface-700"
   >
     <organization-switcher
-      [showLabel]="navMode() === 'sidebar' || isMobile()"
+      [mode]="navMode() === 'sidebar' || isMobile() ? 'sidebar' : 'narrow'"
+      (create)="navigateToRegisterOrganization()"
     ></organization-switcher>
   </div>
 
-  <!-- Language Selector -->
+  <!-- Language Switcher -->
   <div
-    id="vertical-navigation-language-selector"
+    id="vertical-navigation-language-switcher"
     class="border-b border-surface-200 dark:border-surface-700"
   >
-    <language-selector [showLabel]="navMode() === 'sidebar' || isMobile()"></language-selector>
+    <language-switcher
+      [mode]="navMode() === 'sidebar' || isMobile() ? 'sidebar' : 'narrow'"
+    ></language-switcher>
   </div>
 
   <!-- Modules navigation -->

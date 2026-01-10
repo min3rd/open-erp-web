@@ -345,12 +345,22 @@
     "ariaLabel": "Seleccionar organización actual",
     "taxId": "ID de Impuesto",
     "loading": "Cargando organizaciones...",
-    "noOrganizations": "No hay organizaciones disponibles"
+    "noOrganizations": "No hay organizaciones disponibles",
+    "search": "Buscar organizaciones...",
+    "createNew": "Registrar Organización",
+    "selectOrganization": "Seleccionar una organización",
+    "currentOrganization": "Organización actual"
   },
   "languageSelector": {
     "label": "Idioma",
     "placeholder": "Seleccionar idioma",
-    "ariaLabel": "Seleccionar idioma"
+    "ariaLabel": "Seleccionar idioma",
+    "currentLanguage": "Idioma actual",
+    "changeLanguage": "Cambiar idioma",
+    "allLanguages": "Todos los idiomas",
+    "closeDialog": "Cerrar",
+    "searchLanguages": "Buscar idiomas...",
+    "selectLanguage": "Seleccionar un idioma"
   },
   "verticalNav": {
     "registerOrganization": "Registrar Organización",
