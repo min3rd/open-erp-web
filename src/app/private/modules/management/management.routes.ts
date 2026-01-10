@@ -19,6 +19,10 @@ export const routes: Routes = [
         path: 'navigation',
         loadChildren: () => import('./navigation/navigation.routes').then((m) => m.routes),
       },
+      {
+        path: 'province',
+        loadChildren: () => import('./province/province.routes').then((m) => m.routes),
+      },
     ],
   },
 ];
