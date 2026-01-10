@@ -933,5 +933,129 @@
       "moveAria": "Move {{label}}",
       "deleteAria": "Delete {{label}}"
     }
+  },
+  "provinceList": {
+    "title": "Province Management",
+    "search": {
+      "label": "Search provinces",
+      "placeholder": "Search by name, code, or region...",
+      "openSearch": "Open search",
+      "closeSearch": "Close search"
+    },
+    "addButton": {
+      "label": "Add Province",
+      "tooltip": "Add new province"
+    },
+    "refreshButton": {
+      "label": "Refresh",
+      "tooltip": "Refresh list"
+    },
+    "actionsButton": {
+      "label": "Actions"
+    },
+    "actions": {
+      "exportCSV": "Export to CSV",
+      "exportGeoJSON": "Export to GeoJSON",
+      "import": "Import Provinces"
+    },
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "region": "Region",
+      "rowActions": "Row actions"
+    },
+    "contextMenu": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "pagination": {
+      "report": "Showing {first} to {last} of {totalRecords} provinces",
+      "previous": "Previous page",
+      "next": "Next page",
+      "showing": "Showing {first}-{last} of {total}",
+      "itemsPerPage": "Items per page"
+    },
+    "messages": {
+      "loading": "Loading provinces...",
+      "loaded": "{{count}} provinces loaded",
+      "noResults": "No provinces found for '{{query}}'",
+      "noProvinces": "No provinces available",
+      "error": "Error",
+      "success": "Success",
+      "loadFailed": "Failed to load provinces",
+      "exportSuccess": "Export completed successfully",
+      "exportFailed": "Failed to export provinces",
+      "deleteSuccess": "Province {{name}} deleted successfully",
+      "deleteFailed": "Failed to delete province",
+      "notImplemented": "Not Implemented",
+      "importSoon": "Import functionality coming soon"
+    },
+    "confirmDelete": {
+      "header": "Confirm Delete",
+      "message": "Are you sure you want to delete province {{name}}?",
+      "accept": "Delete",
+      "reject": "Cancel"
+    },
+    "mobileList": {
+      "itemActions": "Item actions"
+    },
+    "geoEditor": {
+      "label": "GeoJSON Geometry",
+      "placeholder": "Paste GeoJSON geometry here...",
+      "apply": "Apply",
+      "clear": "Clear"
+    }
+  },
+  "provinceForm": {
+    "title": {
+      "create": "Add Province",
+      "edit": "Edit Province"
+    },
+    "fields": {
+      "code": {
+        "label": "Province Code",
+        "placeholder": "Enter province code (e.g., HN, HCM)",
+        "errors": {
+          "required": "Province code is required",
+          "minlength": "Code must be at least 2 characters"
+        }
+      },
+      "name": {
+        "label": "Province Name",
+        "placeholder": "Enter province name",
+        "errors": {
+          "required": "Province name is required",
+          "minlength": "Name must be at least 2 characters"
+        }
+      },
+      "region": {
+        "label": "Region",
+        "placeholder": "Enter region (e.g., North, Central, South)",
+        "errors": {
+          "required": "Region is required"
+        }
+      }
+    },
+    "geometry": {
+      "title": "Geometry (GeoJSON)"
+    },
+    "map": {
+      "title": "Map Preview"
+    },
+    "buttons": {
+      "create": "Create Province",
+      "update": "Update Province",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Success",
+      "loadFailed": "Failed to load province data",
+      "createSuccess": "Province created successfully",
+      "createFailed": "Failed to create province",
+      "updateSuccess": "Province updated successfully",
+      "updateFailed": "Failed to update province"
+    }
   }
 }

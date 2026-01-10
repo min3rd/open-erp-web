@@ -146,5 +146,129 @@
     "registerOrganizationShort": "Đăng ký",
     "resizeHandle": "Kéo để thay đổi kích thước thanh điều hướng",
     "companies": "Công ty"
+  },
+  "provinceList": {
+    "title": "Quản lý Tỉnh/Thành",
+    "search": {
+      "label": "Tìm kiếm tỉnh/thành",
+      "placeholder": "Tìm theo tên, mã, vùng...",
+      "openSearch": "Mở tìm kiếm",
+      "closeSearch": "Đóng tìm kiếm"
+    },
+    "addButton": {
+      "label": "Thêm Tỉnh/Thành",
+      "tooltip": "Thêm tỉnh/thành mới"
+    },
+    "refreshButton": {
+      "label": "Làm mới",
+      "tooltip": "Làm mới danh sách"
+    },
+    "actionsButton": {
+      "label": "Hành động"
+    },
+    "actions": {
+      "exportCSV": "Xuất CSV",
+      "exportGeoJSON": "Xuất GeoJSON",
+      "import": "Nhập Tỉnh/Thành"
+    },
+    "table": {
+      "code": "Mã",
+      "name": "Tên",
+      "region": "Vùng",
+      "rowActions": "Hành động hàng"
+    },
+    "contextMenu": {
+      "view": "Xem",
+      "edit": "Sửa",
+      "delete": "Xóa"
+    },
+    "pagination": {
+      "report": "Hiển thị {first} đến {last} trong tổng số {totalRecords} tỉnh/thành",
+      "previous": "Trang trước",
+      "next": "Trang sau",
+      "showing": "Hiển thị {first}-{last} trong {total}",
+      "itemsPerPage": "Số mục mỗi trang"
+    },
+    "messages": {
+      "loading": "Đang tải danh sách tỉnh/thành...",
+      "loaded": "Đã tải {{count}} tỉnh/thành",
+      "noResults": "Không tìm thấy tỉnh/thành nào cho '{{query}}'",
+      "noProvinces": "Chưa có tỉnh/thành nào",
+      "error": "Lỗi",
+      "success": "Thành công",
+      "loadFailed": "Không thể tải danh sách tỉnh/thành",
+      "exportSuccess": "Xuất dữ liệu thành công",
+      "exportFailed": "Xuất dữ liệu thất bại",
+      "deleteSuccess": "Đã xóa tỉnh/thành {{name}}",
+      "deleteFailed": "Không thể xóa tỉnh/thành",
+      "notImplemented": "Chưa triển khai",
+      "importSoon": "Tính năng nhập dữ liệu sẽ sớm có"
+    },
+    "confirmDelete": {
+      "header": "Xác nhận xóa",
+      "message": "Bạn có chắc chắn muốn xóa tỉnh/thành {{name}}?",
+      "accept": "Xóa",
+      "reject": "Hủy"
+    },
+    "mobileList": {
+      "itemActions": "Hành động mục"
+    },
+    "geoEditor": {
+      "label": "Vùng GeoJSON",
+      "placeholder": "Dán GeoJSON vào đây...",
+      "apply": "Áp dụng",
+      "clear": "Xóa"
+    }
+  },
+  "provinceForm": {
+    "title": {
+      "create": "Thêm Tỉnh/Thành",
+      "edit": "Sửa Tỉnh/Thành"
+    },
+    "fields": {
+      "code": {
+        "label": "Mã Tỉnh/Thành",
+        "placeholder": "Nhập mã tỉnh/thành (ví dụ: HN, HCM)",
+        "errors": {
+          "required": "Mã tỉnh/thành là bắt buộc",
+          "minlength": "Mã phải có ít nhất 2 ký tự"
+        }
+      },
+      "name": {
+        "label": "Tên Tỉnh/Thành",
+        "placeholder": "Nhập tên tỉnh/thành",
+        "errors": {
+          "required": "Tên tỉnh/thành là bắt buộc",
+          "minlength": "Tên phải có ít nhất 2 ký tự"
+        }
+      },
+      "region": {
+        "label": "Vùng",
+        "placeholder": "Nhập vùng (ví dụ: Bắc, Trung, Nam)",
+        "errors": {
+          "required": "Vùng là bắt buộc"
+        }
+      }
+    },
+    "geometry": {
+      "title": "Vùng địa lý (GeoJSON)"
+    },
+    "map": {
+      "title": "Xem trước bản đồ"
+    },
+    "buttons": {
+      "create": "Tạo Tỉnh/Thành",
+      "update": "Cập nhật Tỉnh/Thành",
+      "cancel": "Hủy"
+    },
+    "messages": {
+      "error": "Lỗi",
+      "success": "Thành công",
+      "loadFailed": "Không thể tải dữ liệu tỉnh/thành",
+      "createSuccess": "Tạo tỉnh/thành thành công",
+      "createFailed": "Không thể tạo tỉnh/thành",
+      "updateSuccess": "Cập nhật tỉnh/thành thành công",
+      "updateFailed": "Không thể cập nhật tỉnh/thành"
+    }
   }
 }
