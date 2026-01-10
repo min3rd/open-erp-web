@@ -31,8 +31,8 @@ export const appConfig: ApplicationConfig = {
     provideEnvironmentInitializer(() => inject(AuthService)),
     provideTransloco({
       config: {
-        availableLangs: ['en', 'es'],
-        defaultLang: 'en',
+        availableLangs: ['vi', 'en', 'es'],
+        defaultLang: 'vi',
         // Remove this option if your application doesn't support changing language in runtime.
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
