@@ -1,12 +1,14 @@
 /**
  * Province model matching backend common-service province.controller.ts
  */
+import type { Geometry } from 'geojson';
+
 export interface Province {
   id: string;
   code: string;
   name: string;
   region: string;
-  geometry?: GeoJSON.Geometry;
+  geometry?: Geometry;
   meta?: Record<string, any>;
   createdAt?: string;
   updatedAt?: string;
@@ -40,7 +42,7 @@ export interface CreateProvinceDto {
   code: string;
   name: string;
   region: string;
-  geometry?: GeoJSON.Geometry;
+  geometry?: Geometry;
   meta?: Record<string, any>;
 }
 
@@ -51,7 +53,7 @@ export interface UpdateProvinceDto {
   code?: string;
   name?: string;
   region?: string;
-  geometry?: GeoJSON.Geometry;
+  geometry?: Geometry;
   meta?: Record<string, any>;
 }
 
