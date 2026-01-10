@@ -94,15 +94,15 @@ export class LanguageSwitcher implements OnInit {
     this.translocoService.setActiveLang(this.selectedLanguage());
 
     // Sync with input
-    effect(
-      () => {
-        const inputLang = this.current();
-        if (inputLang && inputLang !== this.selectedLanguage()) {
-          this.selectedLanguage.set(inputLang);
-        }
-      },
-      { allowSignalWrites: true }
-    );
+    // effect(
+    //   () => {
+    //     const inputLang = this.current();
+    //     if (inputLang && inputLang !== this.selectedLanguage()) {
+    //       this.selectedLanguage.set(inputLang);
+    //     }
+    //   },
+    //   { allowSignalWrites: true }
+    // );
 
     // Persist language changes and emit event
     effect(() => {
