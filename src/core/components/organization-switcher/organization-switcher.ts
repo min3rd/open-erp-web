@@ -15,7 +15,7 @@ import { Button } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { OrganizationContextService, OrganizationMetadata } from '../../services/organization-context.service';
 import { OrganizationService } from '../../services/organization-service';
-import { OverlayPanel } from 'primeng/overlaypanel';
+import { Popover } from 'primeng/popover';
 import { InputText } from 'primeng/inputtext';
 import { Dialog } from 'primeng/dialog';
 
@@ -33,7 +33,7 @@ export interface OrganizationOption {
     TranslocoModule,
     Button,
     FormsModule,
-    OverlayPanel,
+    Popover,
     InputText,
     Dialog,
   ],
@@ -79,11 +79,14 @@ export class OrganizationSwitcher implements OnInit {
     const query = this.searchQuery().toLowerCase();
     const orgs = this.displayOrganizations();
     if (!query) return orgs;
-    return orgs.filter(
-      (org) =>
-        org.name.toLowerCase().includes(query) ||
-        (org.code && org.code.toLowerCase().includes(query))
-    );
+    return orgs.filter((org) => {
+      const matchesName = org.name.toLowerCase().includes(query);
+      const matchesCode =
+        'code' in org && typeof org.code === 'string' ? org.code.toLowerCase().includes(query) : false;
+      const matchesTaxId =
+        'taxId' in org && typeof org.taxId === 'string' ? org.taxId.toLowerCase().includes(query) : false;
+      return matchesName || matchesCode || matchesTaxId;
+    });
   });
 
   constructor() {

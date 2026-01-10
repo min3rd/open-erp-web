@@ -38,7 +38,7 @@
       type="button"
       (click)="openOrganizationDialog()"
       class="flex items-center gap-3 px-3 py-2 bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg transition-colors text-left w-full"
-      [attr.aria-label]="'organizationSwitcher.currentOrganization' | transloco + ': ' + (currentOrganization()?.name || '')"
+      [attr.aria-label]="currentOrganization()?.name || ''"
       [attr.aria-expanded]="showOrgDialog()"
     >
       @if (currentOrganization()?.logoUrl) {
@@ -78,8 +78,7 @@
       type="button"
       (click)="op.toggle($event)"
       class="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
-      [attr.aria-label]="'organizationSwitcher.currentOrganization' | transloco + ': ' + (currentOrganization()?.name || '')"
-      [attr.aria-expanded]="op.overlayVisible"
+      [attr.aria-label]="currentOrganization()?.name || ''"
     >
       @if (currentOrganization()?.logoUrl) {
       <img
@@ -99,16 +98,8 @@
     </button>
 
     <!-- Popover for narrow mode -->
-    <p-overlayPanel
-      #op
-      [dismissable]="true"
-      [showCloseIcon]="false"
-      styleClass="w-72"
-      id="organization-switcher-narrow-overlay"
-      appendTo="body"
-    >
-      <ng-template #content>
-        <div class="flex flex-col gap-2" id="organization-switcher-narrow-content">
+    <p-popover #op id="organization-switcher-narrow-overlay" appendTo="body">
+      <div class="flex flex-col gap-2 w-72" id="organization-switcher-narrow-content">
           <div class="flex items-center gap-2 px-2 py-1 border-b border-surface-200 dark:border-surface-700">
             <i class="pi pi-building text-surface-600 dark:text-surface-400" aria-hidden="true"></i>
             <span class="text-sm font-medium text-surface-900 dark:text-surface-0">
@@ -205,11 +196,11 @@
             />
           </div>
         </div>
-      </ng-template>
-    </p-overlayPanel>
+    </p-popover>
   </div>
   }
-  } @else {
+  }
+  @else {
   <!-- No Organizations -->
   @if (mode() === 'sidebar') {
   <div
