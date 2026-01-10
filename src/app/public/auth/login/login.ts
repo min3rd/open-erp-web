@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { AuthService, LoginDto, LoginResponse } from '../../../../core/services/auth-service';
 import { MessageService } from 'primeng/api';
+import { ApiResponse } from '../../../../core/api';
 
 interface LoginForm {
   email: FormControl<string>;
@@ -83,9 +84,9 @@ export class Login {
       const formValue = this.loginForm.value as LoginDto;
 
       this.authService.login(formValue).subscribe({
-        next: async (response: any) => {
+        next: async (response: ApiResponse<LoginResponse>) => {
           // Success case
-          const loginResponse = response as LoginResponse;
+          const loginResponse = response.data!;
 
           try {
             // Encrypt and store tokens

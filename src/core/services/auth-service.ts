@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, isDevMode } from '@angular/core';
 import { API_URI_AUTH } from '../constant';
-import { BehaviorSubject, from, Observable, of, switchMap } from 'rxjs';
-import { User } from '../components/user/user';
+import { BehaviorSubject, from, map, Observable, of, switchMap } from 'rxjs';
 import { UserDto } from '../interfaces/user.types';
+import { ApiResponse, ApiSingleResponse } from '../api';
 
 export interface RegisterDto {
   email: string;
@@ -82,7 +82,10 @@ export class AuthService {
   }
 
   login(payload: LoginDto, version: string = 'v1') {
-    return this.httpClient.post<LoginResponse>(`${API_URI_AUTH}/${version}/auth/login`, payload);
+    return this.httpClient.post<ApiResponse<LoginResponse>>(
+      `${API_URI_AUTH}/${version}/auth/login`,
+      payload
+    );
   }
 
   forgotPassword(payload: ForgotPasswordDto, version: string = 'v1') {
@@ -93,11 +96,11 @@ export class AuthService {
     return this.httpClient.post(`${API_URI_AUTH}/${version}/auth/reset-password`, payload);
   }
 
-  me(version: string = 'v1'): Observable<User> {
-    return this.httpClient.get(`${API_URI_AUTH}/${version}/me`).pipe(
-      switchMap((user: any) => {
-        this._user.next(user);
-        return of(user);
+  me(version: string = 'v1'): Observable<ApiSingleResponse<UserDto>> {
+    return this.httpClient.get<ApiSingleResponse<UserDto>>(`${API_URI_AUTH}/${version}/me`).pipe(
+      map((response: ApiSingleResponse<UserDto>) => {
+        this._user.next(response.data?.item || null);
+        return response;
       })
     );
   }
