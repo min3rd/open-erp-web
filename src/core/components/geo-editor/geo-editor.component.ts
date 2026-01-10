@@ -9,7 +9,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TranslocoModule } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TextareaModule } from 'primeng/textarea';
 
 /**
  * GeoEditor Component
@@ -17,7 +17,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
  */
 @Component({
   selector: 'core-geo-editor',
-  imports: [FormsModule, TranslocoModule, ButtonModule, InputTextareaModule],
+  imports: [FormsModule, TranslocoModule, ButtonModule, TextareaModule],
   templateUrl: './geo-editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -2,8 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { API_URI_COMMON } from '../../../../../core/constant';
-import { ApiPaginatedResponse, ApiResponse, unwrap, isApiResponse } from '../../../../../core/api';
+import { API_URI_COMMON } from '../../../../../../core/constant';
+import { ApiPaginatedResponse, ApiResponse, unwrap, isApiResponse } from '../../../../../../core/api';
 import {
   Province,
   ProvinceListResponse,
