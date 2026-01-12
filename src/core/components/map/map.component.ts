@@ -10,7 +10,8 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
+import { FormsModule } from '@angular/forms';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import * as L from 'leaflet';
 
 /**
@@ -19,7 +20,7 @@ import * as L from 'leaflet';
  */
 @Component({
   selector: 'core-map',
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule, FormsModule, SelectButtonModule],
   templateUrl: './map.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -42,6 +43,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   
   // State for base map selection
   protected readonly currentBaseMap = signal<'osm' | 'satellite'>('osm');
+  
+  // Options for SelectButton
+  protected readonly baseMapOptions = [
+    { label: 'Map', value: 'osm', icon: 'pi pi-map' },
+    { label: 'Satellite', value: 'satellite', icon: 'pi pi-globe' }
+  ];
 
   constructor() {
     // React to geometry changes

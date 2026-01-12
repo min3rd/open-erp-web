@@ -168,6 +168,16 @@ export class ProvinceList implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Load data from resolver if available
+    this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      const provinceListData = data['provinceList'];
+      if (provinceListData) {
+        this.provinces.set(provinceListData.items);
+        this.totalRecords.set(provinceListData.total);
+        this.isLoading.set(false);
+      }
+    });
+
     // Subscribe to route params for pagination
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const page = parseInt(params['page'], 10) || 1;
@@ -178,9 +188,19 @@ export class ProvinceList implements OnInit, OnDestroy {
       this.pageSize.set(limit);
       this.searchQuery.set(search === 'all' ? '' : search);
 
-      // Load initial data
-      this.loadProvinces();
+      // Only load if resolver data not available or params changed
+      if (!this.provinces().length || this.hasParamsChanged(page, limit, search)) {
+        this.loadProvinces();
+      }
     });
+  }
+
+  private hasParamsChanged(page: number, limit: number, search: string): boolean {
+    return (
+      this.currentPage() !== page ||
+      this.pageSize() !== limit ||
+      this.searchQuery() !== (search === 'all' ? '' : search)
+    );
   }
 
   ngOnDestroy(): void {

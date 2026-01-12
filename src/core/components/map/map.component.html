@@ -8,26 +8,20 @@
   ></div>
   
   <!-- Base Map Switcher -->
-  <div class="absolute top-2 right-2 z-[1000] flex gap-1 bg-white dark:bg-surface-800 rounded shadow-md p-1">
-    <p-button
-      id="core-map-osm-button"
-      label="Map"
-      icon="pi pi-map"
-      size="small"
-      [outlined]="currentBaseMap() !== 'osm'"
-      [severity]="currentBaseMap() === 'osm' ? 'primary' : 'secondary'"
-      (onClick)="switchBaseMap('osm')"
-      [attr.aria-label]="'Switch to street map'"
-    />
-    <p-button
-      id="core-map-satellite-button"
-      label="Satellite"
-      icon="pi pi-globe"
-      size="small"
-      [outlined]="currentBaseMap() !== 'satellite'"
-      [severity]="currentBaseMap() === 'satellite' ? 'primary' : 'secondary'"
-      (onClick)="switchBaseMap('satellite')"
-      [attr.aria-label]="'Switch to satellite view'"
-    />
+  <div class="absolute top-2 right-2 z-[1000]">
+    <p-selectbutton
+      [(ngModel)]="currentBaseMap"
+      [options]="baseMapOptions"
+      (onChange)="switchBaseMap(currentBaseMap())"
+      optionLabel="label"
+      optionValue="value"
+      id="core-map-base-selector"
+      aria-label="Select base map type"
+    >
+      <ng-template #item let-option>
+        <i [class]="option.icon"></i>
+        <span class="ml-2">{{ option.label }}</span>
+      </ng-template>
+    </p-selectbutton>
   </div>
 </div>
