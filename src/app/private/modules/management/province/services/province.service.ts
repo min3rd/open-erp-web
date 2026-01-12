@@ -70,20 +70,29 @@ export class ProvinceService {
           // Check if response is the new API envelope format
           if (isApiResponse(response)) {
             const data = unwrap(response as ApiPaginatedResponse<Province>);
+            // Ensure all items have the scope field for backward compatibility
+            const items = data.items.map(item => ({
+              ...item,
+              scope: 'province' as const
+            }));
             // Store the items in the subject for list management
-            this.provincesSubject.next(data.items);
-            return data;
+            this.provincesSubject.next(items);
+            return { ...data, items };
           }
           // Legacy format - convert to ApiPaginatedData
           const legacyResponse = response as any;
+          const items = (legacyResponse.data || []).map((item: any) => ({
+            ...item,
+            scope: 'province' as const
+          }));
           const data: ProvinceListResponse = {
-            items: legacyResponse.data || [],
+            items,
             page: legacyResponse.page || 1,
             limit: legacyResponse.limit || 10,
             total: legacyResponse.total || 0,
             totalPages: legacyResponse.totalPages || 0,
           };
-          this.provincesSubject.next(data.items);
+          this.provincesSubject.next(items);
           return data;
         })
       );
@@ -100,9 +109,15 @@ export class ProvinceService {
           if (isApiResponse(response)) {
             const singleResponse = response as ApiSingleResponse<Province>;
             const data = unwrap(singleResponse);
-            return data.item!;
+            return {
+              ...data.item!,
+              scope: 'province' as const
+            };
           }
-          return response as Province;
+          return {
+            ...(response as Province),
+            scope: 'province' as const
+          };
         })
       );
   }
@@ -118,9 +133,15 @@ export class ProvinceService {
           if (isApiResponse(response)) {
             const singleResponse = response as ApiSingleResponse<Province>;
             const data = unwrap(singleResponse);
-            return data.item!;
+            return {
+              ...data.item!,
+              scope: 'province' as const
+            };
           }
-          return response as Province;
+          return {
+            ...(response as Province),
+            scope: 'province' as const
+          };
         }),
         tap((province) => {
           // Add the new province to the list
@@ -141,9 +162,15 @@ export class ProvinceService {
           if (isApiResponse(response)) {
             const singleResponse = response as ApiSingleResponse<Province>;
             const data = unwrap(singleResponse);
-            return data.item!;
+            return {
+              ...data.item!,
+              scope: 'province' as const
+            };
           }
-          return response as Province;
+          return {
+            ...(response as Province),
+            scope: 'province' as const
+          };
         }),
         tap((province) => {
           // Update the province in the list
