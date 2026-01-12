@@ -964,10 +964,9 @@
     },
     "table": {
       "code": "Código",
-      "nameVi": "Nombre (Vietnamita)",
+      "name": "Nombre",
       "nameEn": "Nombre (Inglés)",
       "province": "Provincia",
-      "population": "Población",
       "rowActions": "Acciones de fila"
     },
     "contextMenu": {
@@ -1024,7 +1023,7 @@
           "minlength": "El código debe tener al menos 2 caracteres"
         }
       },
-      "nameVi": {
+      "name": {
         "label": "Nombre (Vietnamita)",
         "placeholder": "Ingrese nombre del distrito en vietnamita",
         "errors": {
@@ -1034,26 +1033,19 @@
       },
       "nameEn": {
         "label": "Nombre (Inglés)",
-        "placeholder": "Ingrese nombre del distrito en inglés",
-        "errors": {
-          "required": "El nombre en inglés es requerido",
-          "minlength": "El nombre debe tener al menos 2 caracteres"
-        }
+        "placeholder": "Ingrese nombre del distrito en inglés (opcional)"
       },
-      "provinceId": {
+      "provinceCode": {
         "label": "Provincia",
         "placeholder": "Seleccione provincia",
         "errors": {
           "required": "La provincia es requerida"
         }
       },
-      "population": {
-        "label": "Población",
-        "placeholder": "Ingrese población (opcional)"
-      },
-      "note": {
-        "label": "Notas",
-        "placeholder": "Ingrese notas adicionales (opcional)"
+      "isLegacy": {
+        "label": "Distrito Heredado",
+        "onLabel": "Heredado",
+        "offLabel": "Actual"
       }
     },
     "geometry": {

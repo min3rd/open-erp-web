@@ -13,44 +13,49 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'all/1/10',
+        redirectTo: 'all-provinces/all/1/100',
       },
       {
-        path: ':filter',
+        path: ':provinceFilter',
         children: [
           {
-            path: ':page',
+            path: ':filter',
             children: [
               {
-                path: ':limit',
-                component: DistrictList,
-                resolve: {
-                  districtList: districtListResolver,
-                },
+                path: ':page',
                 children: [
                   {
-                    path: 'new',
-                    pathMatch: 'full',
-                    component: DistrictForm,
-                  },
-                  {
-                    path: ':id',
+                    path: ':limit',
+                    component: DistrictList,
                     resolve: {
-                      district: districtDetailResolver,
+                      districtList: districtListResolver,
                     },
                     children: [
                       {
-                        path: '',
+                        path: 'new',
                         pathMatch: 'full',
-                        redirectTo: 'view',
-                      },
-                      {
-                        path: 'view',
                         component: DistrictForm,
                       },
                       {
-                        path: 'edit',
-                        component: DistrictForm,
+                        path: ':code',
+                        resolve: {
+                          district: districtDetailResolver,
+                        },
+                        children: [
+                          {
+                            path: '',
+                            pathMatch: 'full',
+                            redirectTo: 'view',
+                          },
+                          {
+                            path: 'view',
+                            component: DistrictForm,
+                          },
+                          {
+                            path: 'edit',
+                            component: DistrictForm,
+                          },
+                        ],
                       },
                     ],
                   },

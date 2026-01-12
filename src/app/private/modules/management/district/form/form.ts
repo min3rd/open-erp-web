@@ -16,11 +16,11 @@ import { Subject, takeUntil } from 'rxjs';
 // PrimeNG imports
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
 import { DrawerModule } from 'primeng/drawer';
 import { MessageService } from 'primeng/api';
 import { Select } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 
 // Core components
 import { GeoEditorComponent } from '../../../../../../core/components/geo-editor/geo-editor.component';
@@ -40,10 +40,10 @@ import { Province } from '../../province/province.types';
     TranslocoModule,
     ButtonModule,
     InputTextModule,
-    InputNumberModule,
     DrawerModule,
     Select,
     TextareaModule,
+    ToggleButtonModule,
     GeoEditorComponent,
     MapComponent,
   ],
@@ -64,8 +64,8 @@ export class DistrictForm implements OnInit, OnDestroy {
   protected readonly isVisible = signal(true);
   protected readonly isLoading = signal(false);
   protected readonly isSaving = signal(false);
-  protected readonly districtId = signal<string | null>(null);
-  protected readonly isEditMode = computed(() => this.districtId() !== null);
+  protected readonly districtCode = signal<string | null>(null);
+  protected readonly isEditMode = computed(() => this.districtCode() !== null);
   protected readonly currentGeometry = signal<GeoJSON.Geometry | null>(null);
   protected readonly provinces = signal<Province[]>([]);
   
@@ -73,7 +73,7 @@ export class DistrictForm implements OnInit, OnDestroy {
   protected readonly provinceOptions = computed(() => {
     return this.provinces().map(p => ({
       label: p.name,
-      value: p.id,
+      value: p.code,
     }));
   });
 
@@ -84,11 +84,10 @@ export class DistrictForm implements OnInit, OnDestroy {
     // Initialize form
     this.districtForm = this.fb.group({
       code: ['', [Validators.required, Validators.minLength(2)]],
-      nameVi: ['', [Validators.required, Validators.minLength(2)]],
-      nameEn: ['', [Validators.required, Validators.minLength(2)]],
-      provinceId: ['', [Validators.required]],
-      population: [null],
-      note: [''],
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      nameEn: [''],
+      provinceCode: ['', [Validators.required]],
+      isLegacy: [false],
     });
 
     // Load provinces for dropdown
@@ -110,16 +109,25 @@ export class DistrictForm implements OnInit, OnDestroy {
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       const district = data['district'] as District | null;
       if (district) {
-        this.districtId.set(district.id);
+        this.districtCode.set(district.code);
         this.districtForm.patchValue({
           code: district.code,
-          nameVi: district.name.vi,
-          nameEn: district.name.en,
-          provinceId: district.provinceId,
-          population: district.population,
-          note: district.note,
+          name: district.name,
+          nameEn: district.nameEn || '',
+          provinceCode: district.provinceCode,
+          isLegacy: district.isLegacy || false,
         });
-        this.currentGeometry.set(district.geometry || district.centroid || null);
+        // Set geometry if available, otherwise try centroid (but centroid is just lat/lon, not full geometry)
+        if (district.geometry) {
+          this.currentGeometry.set(district.geometry);
+        } else if (district.centroid) {
+          // Convert centroid to GeoJSON Point
+          const centroidPoint: GeoJSON.Point = {
+            type: 'Point',
+            coordinates: [district.centroid.lon, district.centroid.lat]
+          };
+          this.currentGeometry.set(centroidPoint);
+        }
       }
     });
 
@@ -158,22 +166,28 @@ export class DistrictForm implements OnInit, OnDestroy {
     const formData = this.districtForm.value;
     const geometry = this.currentGeometry();
 
+    // Extract centroid from geometry if it's a Point
+    let centroid: { lat: number; lon: number } | undefined;
+    if (geometry && geometry.type === 'Point') {
+      centroid = {
+        lon: (geometry as GeoJSON.Point).coordinates[0],
+        lat: (geometry as GeoJSON.Point).coordinates[1]
+      };
+    }
+
     if (this.isEditMode()) {
       // Update existing district
       const updateDto: UpdateDistrictDto = {
         code: formData.code,
-        name: {
-          vi: formData.nameVi,
-          en: formData.nameEn,
-        },
-        provinceId: formData.provinceId,
-        population: formData.population || undefined,
-        note: formData.note || undefined,
-        centroid: geometry || undefined,
+        name: formData.name,
+        nameEn: formData.nameEn || undefined,
+        provinceCode: formData.provinceCode,
+        isLegacy: formData.isLegacy,
+        centroid: centroid,
         geometry: geometry || undefined,
       };
 
-      this.districtService.updateDistrict(this.districtId()!, updateDto).subscribe({
+      this.districtService.updateDistrict(this.districtCode()!, updateDto).subscribe({
         next: () => {
           this.isSaving.set(false);
           this.messageService.add({
@@ -197,14 +211,11 @@ export class DistrictForm implements OnInit, OnDestroy {
       // Create new district
       const createDto: CreateDistrictDto = {
         code: formData.code,
-        name: {
-          vi: formData.nameVi,
-          en: formData.nameEn,
-        },
-        provinceId: formData.provinceId,
-        population: formData.population || undefined,
-        note: formData.note || undefined,
-        centroid: geometry || undefined,
+        name: formData.name,
+        nameEn: formData.nameEn || undefined,
+        provinceCode: formData.provinceCode,
+        isLegacy: formData.isLegacy,
+        centroid: centroid,
         geometry: geometry || undefined,
       };
 
@@ -238,7 +249,7 @@ export class DistrictForm implements OnInit, OnDestroy {
     this.isVisible.set(false);
     // Navigate back to list
 
-    if (this.districtId()) {
+    if (this.districtCode()) {
       this.router.navigate(['../../'], { relativeTo: this.route });
       return;
     }

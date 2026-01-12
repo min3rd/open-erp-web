@@ -34,13 +34,14 @@ import { Select } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SplitterModule } from 'primeng/splitter';
 
-// Core components
+// Core components and constants
 import { MapComponent } from '../../../../../../core/components/map/map.component';
+import { PAGE_SIZE_OPTIONS } from '../../../../../../core/constant';
 
 // Services
 import { DistrictService } from '../services/district.service';
 import { ProvinceService } from '../../province/services/province.service';
-import { District, GetDistrictsParams } from '../district.types';
+import { District } from '../district.types';
 import { Province } from '../../province/province.types';
 
 @Component({
@@ -85,6 +86,7 @@ export class DistrictList implements OnInit, OnDestroy {
 
   // Constants
   private readonly SEARCH_FOCUS_DELAY = 100;
+  protected readonly PAGE_SIZE_OPTIONS = PAGE_SIZE_OPTIONS;
 
   // State signals
   protected readonly districts = signal<District[]>([]);
@@ -92,26 +94,40 @@ export class DistrictList implements OnInit, OnDestroy {
   protected readonly isLoading = signal(false);
   protected readonly searchQuery = signal('');
   protected readonly currentPage = signal(1);
-  protected readonly pageSize = signal(10);
+  protected readonly pageSize = signal(100);
   protected readonly totalRecords = signal(0);
   protected readonly isMobile = signal(false);
   protected readonly isSearchOpen = signal(false);
   protected readonly provinces = signal<Province[]>([]);
-  protected readonly selectedProvinceFilter = signal<string | null>(null);
+  protected readonly selectedProvinceCode = signal<string>('all-provinces');
 
   // Computed values
   protected readonly totalPages = computed(() => Math.ceil(this.totalRecords() / this.pageSize()));
   protected readonly selectedGeometry = computed(() => {
     const district = this.selectedDistrict();
-    return district?.geometry || district?.centroid || null;
+    if (!district) return null;
+    
+    // Return geometry if available
+    if (district.geometry) return district.geometry;
+    
+    // Convert centroid to GeoJSON Point if available
+    if (district.centroid) {
+      const centroidPoint: GeoJSON.Point = {
+        type: 'Point',
+        coordinates: [district.centroid.lon, district.centroid.lat]
+      };
+      return centroidPoint;
+    }
+    
+    return null;
   });
 
   // Province filter options for dropdown
   protected readonly provinceOptions = computed(() => {
     const provs = this.provinces();
     return [
-      { label: this.translocoService.translate('districtList.filter.allProvinces'), value: null },
-      ...provs.map(p => ({ label: p.name, value: p.id }))
+      { label: this.translocoService.translate('districtList.filter.allProvinces'), value: 'all-provinces' },
+      ...provs.map(p => ({ label: p.name, value: p.code }))
     ];
   });
 
@@ -200,7 +216,7 @@ export class DistrictList implements OnInit, OnDestroy {
       }
     });
 
-    // Load data from resolver if available
+    // Load data from resolver
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       const districtListData = data['districtList'];
       if (districtListData) {
@@ -210,15 +226,17 @@ export class DistrictList implements OnInit, OnDestroy {
       }
     });
 
-    // Subscribe to route params for pagination
+    // Subscribe to route params for pagination and filters
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const page = parseInt(params['page'], 10) || 1;
-      const limit = parseInt(params['limit'], 10) || 10;
+      const limit = parseInt(params['limit'], 10) || 100;
       const search = params['filter'] || '';
+      const provinceFilter = params['provinceFilter'] || 'all-provinces';
 
       this.currentPage.set(page);
       this.pageSize.set(limit);
       this.searchQuery.set(search === 'all' ? '' : search);
+      this.selectedProvinceCode.set(provinceFilter);
     });
   }
 
@@ -236,7 +254,7 @@ export class DistrictList implements OnInit, OnDestroy {
    */
   protected onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.router.navigate(['../../..', input.value || 'all', 1, this.pageSize()], {
+    this.router.navigate(['../../../..', this.selectedProvinceCode(), input.value || 'all', 1, this.pageSize()], {
       relativeTo: this.route,
     });
   }
@@ -245,39 +263,9 @@ export class DistrictList implements OnInit, OnDestroy {
    * Handle province filter change
    */
   protected onProvinceFilterChange(event: any): void {
-    const provinceId = event.value;
-    this.selectedProvinceFilter.set(provinceId);
-    this.loadDistricts();
-  }
-
-  /**
-   * Load districts with current filters
-   */
-  private loadDistricts(): void {
-    this.isLoading.set(true);
-    const params: GetDistrictsParams = {
-      page: this.currentPage(),
-      limit: this.pageSize(),
-      search: this.searchQuery() || undefined,
-      provinceId: this.selectedProvinceFilter() || undefined,
-    };
-
-    this.districtService.getDistricts(params).subscribe({
-      next: (data) => {
-        this.districts.set(data.items);
-        this.totalRecords.set(data.total);
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        console.error('Failed to load districts:', error);
-        this.isLoading.set(false);
-        const errorMessage = error?.error?.message || error?.message || this.translocoService.translate('districtList.messages.loadFailed');
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translocoService.translate('districtList.messages.error'),
-          detail: errorMessage,
-        });
-      }
+    const provinceCode = event.value;
+    this.router.navigate(['../../../..', provinceCode, this.searchQuery() || 'all', 1, this.pageSize()], {
+      relativeTo: this.route,
     });
   }
 
@@ -288,7 +276,7 @@ export class DistrictList implements OnInit, OnDestroy {
     const newPage = event.page + 1;
     const newPageSize = event.rows;
 
-    this.router.navigate(['../../..', this.searchQuery() || 'all', newPage, newPageSize], {
+    this.router.navigate(['../../../..', this.selectedProvinceCode(), this.searchQuery() || 'all', newPage, newPageSize], {
       relativeTo: this.route,
     });
   }
@@ -304,9 +292,9 @@ export class DistrictList implements OnInit, OnDestroy {
    * Export districts to CSV
    */
   protected onExportCSV(): void {
-    const params: GetDistrictsParams = {
-      search: this.searchQuery() || undefined,
-      provinceId: this.selectedProvinceFilter() || undefined,
+    const params = {
+      q: this.searchQuery() || undefined,
+      provinceCode: this.selectedProvinceCode() !== 'all-provinces' ? this.selectedProvinceCode() : undefined,
     };
 
     this.districtService.exportToCSV(params).subscribe({
@@ -338,9 +326,9 @@ export class DistrictList implements OnInit, OnDestroy {
    * Export districts to GeoJSON
    */
   protected onExportGeoJSON(): void {
-    const params: GetDistrictsParams = {
-      search: this.searchQuery() || undefined,
-      provinceId: this.selectedProvinceFilter() || undefined,
+    const params = {
+      q: this.searchQuery() || undefined,
+      provinceCode: this.selectedProvinceCode() !== 'all-provinces' ? this.selectedProvinceCode() : undefined,
     };
 
     this.districtService.exportToGeoJSON(params).subscribe({
@@ -416,26 +404,24 @@ export class DistrictList implements OnInit, OnDestroy {
     this.confirmationService.confirm({
       header: this.translocoService.translate('districtList.confirmDelete.header'),
       message: this.translocoService.translate('districtList.confirmDelete.message', {
-        name: district.name.vi || district.name.en,
+        name: district.name || district.nameEn,
       }),
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: this.translocoService.translate('districtList.confirmDelete.accept'),
       rejectLabel: this.translocoService.translate('districtList.confirmDelete.reject'),
       accept: () => {
-        this.districtService.deleteDistrict(district.id).subscribe({
+        this.districtService.deleteDistrict(district.code).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',
               summary: this.translocoService.translate('districtList.messages.success'),
               detail: this.translocoService.translate('districtList.messages.deleteSuccess', {
-                name: district.name.vi || district.name.en,
+                name: district.name || district.nameEn,
               }),
             });
-            if (this.selectedDistrict()?.id === district.id) {
+            if (this.selectedDistrict()?.code === district.code) {
               this.selectedDistrict.set(null);
             }
-            // Reload the list
-            this.loadDistricts();
           },
           error: (error) => {
             console.error('Delete failed:', error);
@@ -472,7 +458,7 @@ export class DistrictList implements OnInit, OnDestroy {
   protected closeSearch(): void {
     this.isSearchOpen.set(false);
     this.searchQuery.set('');
-    this.router.navigate(['../../..', 'all', 1, this.pageSize()], {
+    this.router.navigate(['../../../..', this.selectedProvinceCode(), 'all', 1, this.pageSize()], {
       relativeTo: this.route,
     });
   }
@@ -481,7 +467,7 @@ export class DistrictList implements OnInit, OnDestroy {
    * Refresh district list
    */
   protected onRefresh(): void {
-    this.loadDistricts();
+    window.location.reload();
   }
 
   /**
@@ -490,7 +476,7 @@ export class DistrictList implements OnInit, OnDestroy {
   protected onPreviousPage(): void {
     if (this.currentPage() > 1) {
       const newPage = this.currentPage() - 1;
-      this.router.navigate(['../../..', this.searchQuery() || 'all', newPage, this.pageSize()], {
+      this.router.navigate(['../../../..', this.selectedProvinceCode(), this.searchQuery() || 'all', newPage, this.pageSize()], {
         relativeTo: this.route,
       });
     }
@@ -502,7 +488,7 @@ export class DistrictList implements OnInit, OnDestroy {
   protected onNextPage(): void {
     if (this.currentPage() < this.totalPages()) {
       const newPage = this.currentPage() + 1;
-      this.router.navigate(['../../..', this.searchQuery() || 'all', newPage, this.pageSize()], {
+      this.router.navigate(['../../../..', this.selectedProvinceCode(), this.searchQuery() || 'all', newPage, this.pageSize()], {
         relativeTo: this.route,
       });
     }
@@ -513,7 +499,7 @@ export class DistrictList implements OnInit, OnDestroy {
    */
   protected onPageSizeChangeMobile(event: { value: number }): void {
     const newPageSize = event.value;
-    this.router.navigate(['../../..', this.searchQuery() || 'all', 1, newPageSize], {
+    this.router.navigate(['../../../..', this.selectedProvinceCode(), this.searchQuery() || 'all', 1, newPageSize], {
       relativeTo: this.route,
     });
   }

@@ -1,33 +1,33 @@
 /**
- * District model matching backend common-service district.controller.ts
+ * District model matching backend common-service district.controller.ts and district.schema.ts
  */
 import type { Geometry } from 'geojson';
-import type { ApiPaginatedData } from '../../../../../core/api/interfaces';
 
 export interface District {
   id: string;
   code: string;
-  name: {
-    vi: string;
-    en: string;
-  };
-  provinceId: string;
-  provinceName?: string;
-  provinceCode?: string;
-  population?: number;
-  centroid?: Geometry;
-  bbox?: number[];
+  name: string; // Vietnamese name (primary)
+  nameEn?: string; // English name (optional)
+  provinceCode: string;
+  sortOrder?: number;
+  version?: string;
+  isLegacy?: boolean;
   geometry?: Geometry;
-  note?: string;
-  meta?: Record<string, any>;
+  geometrySimplified?: Geometry;
+  centroid?: {
+    lat: number;
+    lon: number;
+  };
+  bbox?: number[];
+  areaSqKm?: number;
+  geometrySource?: string;
+  geometryVersion?: number;
+  geometryUpdatedAt?: string;
+  geometryUpdatedBy?: string;
+  geometryMeta?: Record<string, any>;
   createdAt?: string;
   updatedAt?: string;
 }
-
-/**
- * District list response with pagination - uses core API interface
- */
-export type DistrictListResponse = ApiPaginatedData<District>;
 
 /**
  * Parameters for getting districts
@@ -35,8 +35,10 @@ export type DistrictListResponse = ApiPaginatedData<District>;
 export interface GetDistrictsParams {
   page?: number;
   limit?: number;
-  search?: string;
-  provinceId?: string;
+  q?: string; // Search query
+  provinceCode?: string;
+  version?: string;
+  isLegacy?: boolean;
 }
 
 /**
@@ -44,17 +46,22 @@ export interface GetDistrictsParams {
  */
 export interface CreateDistrictDto {
   code: string;
-  name: {
-    vi: string;
-    en: string;
-  };
-  provinceId: string;
-  population?: number;
-  centroid?: Geometry;
-  bbox?: number[];
+  name: string;
+  nameEn?: string;
+  provinceCode: string;
+  sortOrder?: number;
+  version?: string;
+  isLegacy?: boolean;
   geometry?: Geometry;
-  note?: string;
-  meta?: Record<string, any>;
+  geometrySimplified?: Geometry;
+  centroid?: {
+    lat: number;
+    lon: number;
+  };
+  bbox?: number[];
+  areaSqKm?: number;
+  geometrySource?: string;
+  geometryMeta?: Record<string, any>;
 }
 
 /**
@@ -62,17 +69,22 @@ export interface CreateDistrictDto {
  */
 export interface UpdateDistrictDto {
   code?: string;
-  name?: {
-    vi?: string;
-    en?: string;
-  };
-  provinceId?: string;
-  population?: number;
-  centroid?: Geometry;
-  bbox?: number[];
+  name?: string;
+  nameEn?: string;
+  provinceCode?: string;
+  sortOrder?: number;
+  version?: string;
+  isLegacy?: boolean;
   geometry?: Geometry;
-  note?: string;
-  meta?: Record<string, any>;
+  geometrySimplified?: Geometry;
+  centroid?: {
+    lat: number;
+    lon: number;
+  };
+  bbox?: number[];
+  areaSqKm?: number;
+  geometrySource?: string;
+  geometryMeta?: Record<string, any>;
 }
 
 /**
@@ -83,3 +95,4 @@ export interface ImportResult {
   failed: number;
   errors: string[];
 }
+

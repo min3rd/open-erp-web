@@ -13,13 +13,13 @@ export const districtDetailResolver: ResolveFn<District | null> = (
   route: ActivatedRouteSnapshot
 ): Observable<District | null> => {
   const districtService = inject(DistrictService);
-  const districtId = route.paramMap.get('id');
+  const districtCode = route.paramMap.get('code');
 
-  if (!districtId) {
+  if (!districtCode) {
     return of(null);
   }
 
-  return districtService.getDistrict(districtId).pipe(
+  return districtService.getDistrict(districtCode).pipe(
     catchError((error) => {
       console.error('Failed to resolve district detail:', error);
       return of(null);
