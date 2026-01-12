@@ -1062,5 +1062,147 @@
       "updateSuccess": "Province updated successfully",
       "updateFailed": "Failed to update province"
     }
+  },
+  "districtList": {
+    "title": "District Management",
+    "search": {
+      "label": "Search districts",
+      "placeholder": "Search by name, code...",
+      "openSearch": "Open search",
+      "closeSearch": "Close search"
+    },
+    "filter": {
+      "allProvinces": "All Provinces",
+      "selectProvince": "Filter by Province"
+    },
+    "addButton": {
+      "label": "Add District",
+      "tooltip": "Add new district"
+    },
+    "refreshButton": {
+      "label": "Refresh",
+      "tooltip": "Refresh list"
+    },
+    "actionsButton": {
+      "label": "Actions"
+    },
+    "actions": {
+      "exportCSV": "Export to CSV",
+      "exportGeoJSON": "Export to GeoJSON",
+      "import": "Import Districts"
+    },
+    "table": {
+      "code": "Code",
+      "nameVi": "Name (Vietnamese)",
+      "nameEn": "Name (English)",
+      "province": "Province",
+      "population": "Population",
+      "rowActions": "Row actions"
+    },
+    "contextMenu": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "pagination": {
+      "report": "Showing {first} to {last} of {totalRecords} districts",
+      "previous": "Previous page",
+      "next": "Next page",
+      "showing": "Showing {first}-{last} of {total}",
+      "itemsPerPage": "Items per page"
+    },
+    "messages": {
+      "loading": "Loading districts...",
+      "loaded": "{{count}} districts loaded",
+      "noResults": "No districts found for '{{query}}'",
+      "noDistricts": "No districts available",
+      "error": "Error",
+      "success": "Success",
+      "loadFailed": "Failed to load districts",
+      "exportSuccess": "Export completed successfully",
+      "exportFailed": "Export failed. Please try again.",
+      "notImplemented": "Coming Soon",
+      "importSoon": "Import functionality will be available soon",
+      "deleteSuccess": "District '{{name}}' deleted successfully",
+      "deleteFailed": "Failed to delete district. Please try again."
+    },
+    "confirmDelete": {
+      "header": "Confirm Delete",
+      "message": "Are you sure you want to delete '{{name}}'? This action cannot be undone.",
+      "accept": "Delete",
+      "reject": "Cancel"
+    },
+    "mobileList": {
+      "itemActions": "Item actions",
+      "population": "people"
+    }
+  },
+  "districtForm": {
+    "title": {
+      "create": "Create New District",
+      "edit": "Edit District",
+      "view": "View District"
+    },
+    "fields": {
+      "code": {
+        "label": "District Code",
+        "placeholder": "Enter district code (e.g., D001)",
+        "errors": {
+          "required": "District code is required",
+          "minlength": "District code must be at least 2 characters"
+        }
+      },
+      "nameVi": {
+        "label": "Name (Vietnamese)",
+        "placeholder": "Enter district name in Vietnamese",
+        "errors": {
+          "required": "Vietnamese name is required",
+          "minlength": "Name must be at least 2 characters"
+        }
+      },
+      "nameEn": {
+        "label": "Name (English)",
+        "placeholder": "Enter district name in English",
+        "errors": {
+          "required": "English name is required",
+          "minlength": "Name must be at least 2 characters"
+        }
+      },
+      "provinceId": {
+        "label": "Province",
+        "placeholder": "Select province",
+        "errors": {
+          "required": "Province is required"
+        }
+      },
+      "population": {
+        "label": "Population",
+        "placeholder": "Enter population (optional)"
+      },
+      "note": {
+        "label": "Notes",
+        "placeholder": "Enter additional notes (optional)"
+      }
+    },
+    "geometry": {
+      "title": "Geometry Editor"
+    },
+    "map": {
+      "title": "Map Preview"
+    },
+    "buttons": {
+      "create": "Create District",
+      "update": "Update District",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Success",
+      "loadFailed": "Failed to load district data",
+      "createSuccess": "District created successfully",
+      "createFailed": "Failed to create district",
+      "updateSuccess": "District updated successfully",
+      "updateFailed": "Failed to update district"
+    }
   }
 }

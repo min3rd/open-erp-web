@@ -933,5 +933,147 @@
       "moveAria": "Mover {{label}}",
       "deleteAria": "Eliminar {{label}}"
     }
+  },
+  "districtList": {
+    "title": "Gestión de Distritos",
+    "search": {
+      "label": "Buscar distritos",
+      "placeholder": "Buscar por nombre, código...",
+      "openSearch": "Abrir búsqueda",
+      "closeSearch": "Cerrar búsqueda"
+    },
+    "filter": {
+      "allProvinces": "Todas las Provincias",
+      "selectProvince": "Filtrar por Provincia"
+    },
+    "addButton": {
+      "label": "Agregar Distrito",
+      "tooltip": "Agregar nuevo distrito"
+    },
+    "refreshButton": {
+      "label": "Actualizar",
+      "tooltip": "Actualizar lista"
+    },
+    "actionsButton": {
+      "label": "Acciones"
+    },
+    "actions": {
+      "exportCSV": "Exportar a CSV",
+      "exportGeoJSON": "Exportar a GeoJSON",
+      "import": "Importar Distritos"
+    },
+    "table": {
+      "code": "Código",
+      "nameVi": "Nombre (Vietnamita)",
+      "nameEn": "Nombre (Inglés)",
+      "province": "Provincia",
+      "population": "Población",
+      "rowActions": "Acciones de fila"
+    },
+    "contextMenu": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "pagination": {
+      "report": "Mostrando {first} a {last} de {totalRecords} distritos",
+      "previous": "Página anterior",
+      "next": "Página siguiente",
+      "showing": "Mostrando {first}-{last} de {total}",
+      "itemsPerPage": "Elementos por página"
+    },
+    "messages": {
+      "loading": "Cargando distritos...",
+      "loaded": "{{count}} distritos cargados",
+      "noResults": "No se encontraron distritos para '{{query}}'",
+      "noDistricts": "No hay distritos disponibles",
+      "error": "Error",
+      "success": "Éxito",
+      "loadFailed": "Error al cargar distritos",
+      "exportSuccess": "Exportación completada exitosamente",
+      "exportFailed": "Error en la exportación. Por favor, intente nuevamente.",
+      "notImplemented": "Próximamente",
+      "importSoon": "La funcionalidad de importación estará disponible pronto",
+      "deleteSuccess": "Distrito '{{name}}' eliminado exitosamente",
+      "deleteFailed": "Error al eliminar distrito. Por favor, intente nuevamente."
+    },
+    "confirmDelete": {
+      "header": "Confirmar Eliminación",
+      "message": "¿Está seguro de que desea eliminar '{{name}}'? Esta acción no se puede deshacer.",
+      "accept": "Eliminar",
+      "reject": "Cancelar"
+    },
+    "mobileList": {
+      "itemActions": "Acciones del elemento",
+      "population": "personas"
+    }
+  },
+  "districtForm": {
+    "title": {
+      "create": "Crear Nuevo Distrito",
+      "edit": "Editar Distrito",
+      "view": "Ver Distrito"
+    },
+    "fields": {
+      "code": {
+        "label": "Código del Distrito",
+        "placeholder": "Ingrese código del distrito (ej. D001)",
+        "errors": {
+          "required": "El código del distrito es requerido",
+          "minlength": "El código debe tener al menos 2 caracteres"
+        }
+      },
+      "nameVi": {
+        "label": "Nombre (Vietnamita)",
+        "placeholder": "Ingrese nombre del distrito en vietnamita",
+        "errors": {
+          "required": "El nombre en vietnamita es requerido",
+          "minlength": "El nombre debe tener al menos 2 caracteres"
+        }
+      },
+      "nameEn": {
+        "label": "Nombre (Inglés)",
+        "placeholder": "Ingrese nombre del distrito en inglés",
+        "errors": {
+          "required": "El nombre en inglés es requerido",
+          "minlength": "El nombre debe tener al menos 2 caracteres"
+        }
+      },
+      "provinceId": {
+        "label": "Provincia",
+        "placeholder": "Seleccione provincia",
+        "errors": {
+          "required": "La provincia es requerida"
+        }
+      },
+      "population": {
+        "label": "Población",
+        "placeholder": "Ingrese población (opcional)"
+      },
+      "note": {
+        "label": "Notas",
+        "placeholder": "Ingrese notas adicionales (opcional)"
+      }
+    },
+    "geometry": {
+      "title": "Editor de Geometría"
+    },
+    "map": {
+      "title": "Vista Previa del Mapa"
+    },
+    "buttons": {
+      "create": "Crear Distrito",
+      "update": "Actualizar Distrito",
+      "cancel": "Cancelar"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Éxito",
+      "loadFailed": "Error al cargar datos del distrito",
+      "createSuccess": "Distrito creado exitosamente",
+      "createFailed": "Error al crear distrito",
+      "updateSuccess": "Distrito actualizado exitosamente",
+      "updateFailed": "Error al actualizar distrito"
+    }
   }
 }

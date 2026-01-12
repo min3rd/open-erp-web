@@ -23,6 +23,10 @@ export const routes: Routes = [
         path: 'province',
         loadChildren: () => import('./province/province.routes').then((m) => m.routes),
       },
+      {
+        path: 'district',
+        loadChildren: () => import('./district/district.routes').then((m) => m.routes),
+      },
     ],
   },
 ];
