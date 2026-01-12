@@ -1004,13 +1004,18 @@
       "label": "GeoJSON Geometry",
       "placeholder": "Paste GeoJSON geometry, Feature, or FeatureCollection here (the first Feature's geometry will be used)",
       "apply": "Apply",
-      "clear": "Clear"
+      "clear": "Clear",
+      "textTab": "Text Editor",
+      "drawTab": "Draw on Map"
     }
   },
   "provinceForm": {
     "title": {
       "create": "Add Province",
       "edit": "Edit Province"
+    },
+    "drawMap": {
+      "clear": "Clear Drawing"
     },
     "fields": {
       "code": {

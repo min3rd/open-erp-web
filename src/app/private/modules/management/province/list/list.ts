@@ -32,6 +32,7 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { Select } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { SplitterModule } from 'primeng/splitter';
 
 // Core components
 import { MapComponent } from '../../../../../../core/components/map/map.component';
@@ -59,6 +60,7 @@ import { Province, GetProvincesParams } from '../province.types';
     InputGroupAddonModule,
     Select,
     ConfirmDialogModule,
+    SplitterModule,
     MapComponent,
   ],
   providers: [ConfirmationService],
