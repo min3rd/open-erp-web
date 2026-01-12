@@ -206,7 +206,7 @@ export class ProvinceList implements OnInit, OnDestroy {
 
     this.provinceService.getProvinces(params).subscribe({
       next: (response) => {
-        this.provinces.set(response.data);
+        this.provinces.set(response.items);
         this.totalRecords.set(response.total);
         this.isLoading.set(false);
       },

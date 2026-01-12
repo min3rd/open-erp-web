@@ -7,6 +7,30 @@
     aria-label="Interactive map for drawing province boundaries"
   ></div>
   
+  <!-- Base Map Switcher -->
+  <div class="absolute top-2 right-2 z-1000 flex gap-1 bg-white dark:bg-surface-800 rounded shadow-md p-1">
+    <p-button
+      id="draw-map-osm-button"
+      label="Map"
+      icon="pi pi-map"
+      size="small"
+      [outlined]="currentBaseMap() !== 'osm'"
+      [severity]="currentBaseMap() === 'osm' ? 'primary' : 'secondary'"
+      (onClick)="switchBaseMap('osm')"
+      [attr.aria-label]="'Switch to street map'"
+    />
+    <p-button
+      id="draw-map-satellite-button"
+      label="Satellite"
+      icon="pi pi-globe"
+      size="small"
+      [outlined]="currentBaseMap() !== 'satellite'"
+      [severity]="currentBaseMap() === 'satellite' ? 'primary' : 'secondary'"
+      (onClick)="switchBaseMap('satellite')"
+      [attr.aria-label]="'Switch to satellite view'"
+    />
+  </div>
+  
   @if (editable()) {
   <div class="absolute bottom-4 left-4 z-1000">
     <p-button
