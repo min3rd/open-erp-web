@@ -1,7 +1,9 @@
 # Province Management Module - Layout Documentation
 
 ## Overview
-This document describes the implementation of the Province Management module for Open ERP Web, featuring a map-based interface for managing Vietnamese provinces/cities.
+This document describes the implementation of the Province Management module for Open ERP Web, featuring a hierarchical tree-based interface for managing Vietnamese administrative divisions (Provinces/Cities → Districts → Wards) with integrated map visualization.
+
+**⚠️ Major Update**: The module now uses TreeTable for hierarchical data display instead of a flat table. See [TREETABLE_IMPLEMENTATION.md](./TREETABLE_IMPLEMENTATION.md) for detailed technical documentation.
 
 ## Access URL
 ```
@@ -22,16 +24,14 @@ Default route redirects to:
 │  [Search Input] [Add] [Actions ▼]                      │
 ├─────────────────┬───────────────────────────────────────┤
 │                 │                                       │
-│   PROVINCE      │         MAP                           │
-│   LIST (50%)    │      (OpenStreetMap)                  │
+│   TREE TABLE    │         MAP                           │
+│   (50%)         │      (OpenStreetMap)                  │
 │                 │                                       │
-│  ┌────────────┐ │   Selected province geometry          │
-│  │ Code | Nam │ │   displayed with blue polygon         │
-│  │ e | Region │ │                                       │
-│  ├────────────┤ │   Auto-zoom to bounds                 │
-│  │ HN | Ha No │ │                                       │
-│  │ i | North  │ │                                       │
-│  └────────────┘ │                                       │
+│  ▼ Hà Nội       │   Selected entity geometry            │
+│    ├─ Ba Đình   │   displayed with blue polygon         │
+│    └─ Hoàn Kiếm │                                       │
+│  ▶ Hồ Chí Minh  │   Auto-zoom to bounds                 │
+│  ▶ Đà Nẵng      │                                       │
 │                 │                                       │
 │  [Pagination]   │                                       │
 └─────────────────┴───────────────────────────────────────┘
@@ -40,33 +40,53 @@ Default route redirects to:
 ### Components
 
 #### Toolbar
-- **Search Input**: Filter provinces by name, code, or region
+- **Search Input**: Filter entities by name, code, or region
 - **Add Button** (Plus icon): Opens drawer to create new province
 - **Actions Menu** (Ellipsis): 
   - Export to CSV
   - Export to GeoJSON
   - Import Provinces
+  - Expand All (future)
+  - Collapse All (future)
 
-#### Province List (Left Pane)
-- **Table Columns**:
-  - Code (e.g., HN, HCM)
-  - Name (e.g., Hà Nội, Hồ Chí Minh)
-  - Region (e.g., North, South, Central)
+#### Administrative Tree (Left Pane)
+- **TreeTable Component**: Hierarchical display of administrative divisions
+- **Columns**:
+  - Name (with expand/collapse toggle)
+  - Code (e.g., HN, HCM, BD)
+  - Type (Province/District/Ward)
   - Actions (context menu button)
 
+- **Hierarchy Levels**:
+  1. **Provinces** (Root level) - e.g., Hà Nội, Hồ Chí Minh
+  2. **Districts** (Level 1) - e.g., Ba Đình, Quận 1 (optional in 2-tier system)
+  3. **Wards** (Level 2) - e.g., Phường Điện Biên, Phường Bến Nghé
+
 - **Interactions**:
-  - Click row: Select province and show on map
-  - Right-click row: Show context menu (View/Edit/Delete)
+  - Click row: Select entity and show on map
+  - Click expand icon: Load children (lazy loading)
+  - Right-click row: Show context menu
   - Click action button: Show menu for that row
 
-- **Pagination**: PrimeNG paginator at bottom
+- **Lazy Loading**:
+  - Children loaded on-demand when parent node is expanded
+  - Loading spinner shown during data fetch
+  - Reduces initial page load time
+
+- **Context Menu Actions** (vary by entity type):
+  - **Province**: View, Edit, Create District, Delete
+  - **District**: View, Edit, Create Ward, Delete
+  - **Ward**: View, Edit, Delete
+
+- **Pagination**: PrimeNG paginator at bottom (for root-level provinces)
   - Options: 10, 20, 50, 100 items per page
-  - Shows: "Showing X to Y of Z provinces"
+  - Shows: "Showing X to Y of Z items"
 
 #### Map (Right Pane)
 - **Base Layer**: OpenStreetMap tiles
 - **Features**:
-  - Shows selected province geometry as blue polygon
+  - Shows selected entity geometry as blue polygon
+  - Supports Province, District, and Ward geometries
   - Auto-zooms to fit polygon bounds
   - Default center: Vietnam (15.9749°N, 108.2515°E)
   - Zoom controls included
@@ -80,16 +100,21 @@ Default route redirects to:
 │  [🔍] [🔄] [+] [⋮]         │
 ├─────────────────────────────┤
 │                             │
-│  PROVINCE CARDS             │
+│  ENTITY CARDS (Flat List)   │
 │                             │
 │  ┌─────────────────────┐   │
 │  │ Hà Nội          HN  │   │
-│  │ North              ⋮│   │
+│  │ [Province]         ⋮│   │
 │  └─────────────────────┘   │
 │                             │
 │  ┌─────────────────────┐   │
-│  │ Hồ Chí Minh    HCM  │   │
-│  │ South              ⋮│   │
+│  │ Ba Đình         BD  │   │
+│  │ [District]         ⋮│   │
+│  └─────────────────────┘   │
+│                             │
+│  ┌─────────────────────┐   │
+│  │ Điện Biên       DB  │   │
+│  │ [Ward]             ⋮│   │
 │  └─────────────────────┘   │
 │                             │
 ├─────────────────────────────┤
@@ -100,11 +125,15 @@ Default route redirects to:
 
 ### Mobile Features
 - **Collapsible Search**: Tap search icon to expand full-width search input
-- **Card Layout**: Each province shown as a card with:
-  - Province name (bold)
+- **Card Layout**: Each entity shown as a card with:
+  - Entity name (bold)
   - Code (top-right)
-  - Region (below name)
+  - Type badge (Province/District/Ward with colored background)
+  - Region (for provinces only)
   - Action menu button (⋮)
+- **Flat List View**: Shows all entities in a single list (not hierarchical tree)
+  - Includes provinces, districts, and wards
+  - Type badge clearly indicates entity level
 - **Touch Targets**: All buttons minimum 44x44px
 - **Pagination**: Compact mobile version with prev/next buttons
 
@@ -209,6 +238,52 @@ Default route redirects to:
 - `province-list-pagination-next-mobile`
 
 ## Backend Integration
+
+### Data Model Updates
+
+**⚠️ Breaking Change**: The Province interface now includes a `scope` field to support hierarchical data:
+
+```typescript
+interface Province {
+  id: string;
+  code: string;
+  name: string;
+  region: string;
+  scope: 'province';  // NEW: Required field
+  geometry?: GeoJSON.Geometry;
+  meta?: Record<string, any>;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface District {
+  id: string;
+  code: string;
+  name: string;
+  parentCode: string;  // Reference to Province code
+  scope: 'district';
+  type?: string;  // e.g., "Urban District", "Rural District"
+  geometry?: GeoJSON.Geometry;
+  meta?: Record<string, any>;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface Ward {
+  id: string;
+  code: string;
+  name: string;
+  parentCode: string;  // Reference to District or Province code
+  scope: 'ward';
+  type?: string;  // e.g., "Ward", "Commune", "Town"
+  geometry?: GeoJSON.Geometry;
+  meta?: Record<string, any>;
+  createdAt?: string;
+  updatedAt?: string;
+}
+```
+
+**Note**: The frontend automatically adds the `scope` field for backward compatibility if the backend doesn't provide it.
 
 ### API Endpoints (Common Service - Port 3006)
 
