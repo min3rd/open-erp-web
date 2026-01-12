@@ -157,12 +157,18 @@
 
   <!-- Body: Split Pane on Desktop, Single Column on Mobile -->
   <div class="flex flex-auto h-full overflow-hidden">
-    <!-- Desktop: Two-Column Layout -->
+    <!-- Desktop: Two-Column Layout with Resizable Splitter -->
     @if (!isMobile()) {
-    <div class="flex w-full h-full">
-      <!-- Left Pane: Province List -->
-      <div id="province-list-left-pane" class="w-1/2 flex flex-col border-r border-surface-200 dark:border-surface-700">
-        <div class="flex-1 overflow-auto">
+    <p-splitter 
+      [style]="{ height: '100%' }" 
+      [panelSizes]="[50, 50]"
+      [minSizes]="[30, 30]"
+      id="province-list-splitter"
+    >
+      <ng-template #panel>
+        <!-- Left Pane: Province List -->
+        <div id="province-list-left-pane" class="flex flex-col h-full">
+          <div class="flex-1 overflow-auto">
           <p-table
             id="province-list-table"
             [value]="provinces()"
@@ -250,17 +256,20 @@
           />
         </div>
       </div>
+      </ng-template>
 
-      <!-- Right Pane: Map -->
-      <div id="province-list-right-pane" class="w-1/2 flex flex-col">
-        <div class="flex-1 h-full">
-          <core-map
-            id="province-list-map"
-            [geometry]="selectedGeometry()"
-          />
+      <ng-template #panel>
+        <!-- Right Pane: Map -->
+        <div id="province-list-right-pane" class="flex flex-col h-full">
+          <div class="flex-1 h-full">
+            <core-map
+              id="province-list-map"
+              [geometry]="selectedGeometry()"
+            />
+          </div>
         </div>
-      </div>
-    </div>
+      </ng-template>
+    </p-splitter>
     }
 
     <!-- Mobile: Single Column with List -->
