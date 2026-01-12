@@ -58,7 +58,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   private initMap(): void {
     // Create map instance
-    this.map = L.map('core-map-container').setView(this.center(), this.zoom());
+    this.map = L.map(this.mapContainer.nativeElement).setView(this.center(), this.zoom());
 
     // Add OpenStreetMap tile layer
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
