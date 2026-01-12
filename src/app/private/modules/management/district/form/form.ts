@@ -98,6 +98,11 @@ export class DistrictForm implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Failed to load provinces:', error);
+        this.messageService.add({
+          severity: 'warn',
+          summary: this.translocoService.translate('districtForm.messages.error'),
+          detail: this.translocoService.translate('districtForm.messages.provinceLoadFailed'),
+        });
       }
     });
 
