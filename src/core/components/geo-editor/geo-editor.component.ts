@@ -22,10 +22,10 @@ import { TextareaModule } from 'primeng/textarea';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeoEditorComponent {
-  // Inputs
-  readonly geometry = input<GeoJSON.Geometry | null>(null);
+  // Inputs (accept any GeoJSON - Geometry, Feature or FeatureCollection)
+  readonly geometry = input<GeoJSON.GeoJSON | null>(null);
 
-  // Outputs
+  // Outputs emit a Geometry (province model expects Geometry)
   readonly geometryChange = output<GeoJSON.Geometry | null>();
 
   // State
@@ -53,7 +53,7 @@ export class GeoEditorComponent {
   }
 
   /**
-   * Validate and emit GeoJSON
+   * Validate and emit GeoJSON (accept Geometry, Feature, FeatureCollection)
    */
   protected onApply(): void {
     const text = this.geoJsonText().trim();
@@ -65,15 +65,36 @@ export class GeoEditorComponent {
     }
 
     try {
-      const parsed = JSON.parse(text);
+      const parsed = JSON.parse(text) as GeoJSON.GeoJSON;
 
-      // Basic validation: check if it looks like a GeoJSON geometry
-      if (!parsed.type || !parsed.coordinates) {
-        this.parseError.set('Invalid GeoJSON: missing type or coordinates');
+      // Helper to extract Geometry from various GeoJSON wrappers
+      const extractGeometry = (obj: GeoJSON.GeoJSON): GeoJSON.Geometry | null => {
+        // Geometry object
+        if ((obj as any).type && (obj as any).coordinates) {
+          return obj as GeoJSON.Geometry;
+        }
+
+        // Feature
+        if ((obj as any).type === 'Feature' && (obj as any).geometry) {
+          return (obj as any).geometry as GeoJSON.Geometry;
+        }
+
+        // FeatureCollection: take first feature with geometry
+        if ((obj as any).type === 'FeatureCollection' && Array.isArray((obj as any).features)) {
+          const featureWithGeom = (obj as any).features.find((f: any) => f && f.geometry);
+          return featureWithGeom ? (featureWithGeom.geometry as GeoJSON.Geometry) : null;
+        }
+
+        return null;
+      };
+
+      const geom = extractGeometry(parsed);
+      if (!geom) {
+        this.parseError.set('Invalid GeoJSON: expected Geometry, Feature or FeatureCollection with at least one Feature');
         return;
       }
 
-      this.geometryChange.emit(parsed as GeoJSON.Geometry);
+      this.geometryChange.emit(geom);
       this.parseError.set('');
     } catch (error) {
       this.parseError.set('Invalid JSON: ' + (error as Error).message);
