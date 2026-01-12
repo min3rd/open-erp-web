@@ -11,7 +11,9 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { TranslocoModule } from '@jsverse/transloco';
 import * as L from 'leaflet';
 import 'leaflet-draw';
@@ -22,7 +24,7 @@ import 'leaflet-draw';
  */
 @Component({
   selector: 'core-draw-map',
-  imports: [CommonModule, ButtonModule, TranslocoModule],
+  imports: [CommonModule, FormsModule, ButtonModule, SelectButtonModule, TranslocoModule],
   templateUrl: './draw-map.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -48,6 +50,12 @@ export class DrawMapComponent implements AfterViewInit, OnDestroy {
   
   // State for base map selection
   protected readonly currentBaseMap = signal<'osm' | 'satellite'>('osm');
+  
+  // Options for SelectButton
+  protected readonly baseMapOptions = [
+    { label: 'Map', value: 'osm', icon: 'pi pi-map' },
+    { label: 'Satellite', value: 'satellite', icon: 'pi pi-globe' }
+  ];
 
   constructor() {
     // React to geometry changes

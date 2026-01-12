@@ -3,6 +3,7 @@ import { Province } from './province';
 import { ProvinceList } from './list/list';
 import { ProvinceForm } from './form/form';
 import { provinceDetailResolver } from './resolvers/province-detail.resolver';
+import { provinceListResolver } from './resolvers/province-list.resolver';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,9 @@ export const routes: Routes = [
               {
                 path: ':limit',
                 component: ProvinceList,
+                resolve: {
+                  provinceList: provinceListResolver,
+                },
                 children: [
                   {
                     path: 'new',
