@@ -18,7 +18,6 @@ import * as L from 'leaflet';
   selector: 'core-map',
   imports: [],
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
@@ -59,16 +58,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   private initMap(): void {
     // Create map instance
-    this.map = L.map(this.mapContainer.nativeElement, {
-      center: this.center(),
-      zoom: this.zoom(),
-      zoomControl: true,
-    });
+    this.map = L.map('core-map-container').setView(this.center(), this.zoom());
 
     // Add OpenStreetMap tile layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(this.map);
 
     // Add initial geometry if provided
