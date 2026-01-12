@@ -23,7 +23,6 @@ import 'leaflet-draw';
   selector: 'core-draw-map',
   imports: [CommonModule, ButtonModule, TranslocoModule],
   templateUrl: './draw-map.component.html',
-  styleUrls: ['./draw-map.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DrawMapComponent implements AfterViewInit, OnDestroy {
@@ -200,7 +199,7 @@ export class DrawMapComponent implements AfterViewInit, OnDestroy {
 
     // Convert layers to GeoJSON
     const geoJson = this.drawnItems.toGeoJSON() as GeoJSON.FeatureCollection;
-    
+
     if (geoJson.features.length === 0) {
       this.geometryChange.emit(null);
       return;
@@ -211,12 +210,12 @@ export class DrawMapComponent implements AfterViewInit, OnDestroy {
       this.geometryChange.emit(geoJson.features[0].geometry);
     } else {
       // Multiple features - create MultiPolygon or GeometryCollection
-      const geometries = geoJson.features.map(f => f.geometry);
-      const allPolygons = geometries.every(g => g.type === 'Polygon');
-      
+      const geometries = geoJson.features.map((f) => f.geometry);
+      const allPolygons = geometries.every((g) => g.type === 'Polygon');
+
       if (allPolygons) {
         // Combine into MultiPolygon
-        const coordinates = geometries.map(g => (g as GeoJSON.Polygon).coordinates);
+        const coordinates = geometries.map((g) => (g as GeoJSON.Polygon).coordinates);
         this.geometryChange.emit({
           type: 'MultiPolygon',
           coordinates: coordinates,

@@ -348,14 +348,14 @@ export class ProvinceList implements OnInit, OnDestroy {
    * View province details
    */
   protected onViewProvince(province: Province): void {
-    this.router.navigate([province.id], { relativeTo: this.route });
+    this.router.navigate([province.code], { relativeTo: this.route });
   }
 
   /**
    * Edit province
    */
   protected onEditProvince(province: Province): void {
-    this.router.navigate([province.id, 'edit'], { relativeTo: this.route });
+    this.router.navigate([province.code, 'edit'], { relativeTo: this.route });
   }
 
   /**
