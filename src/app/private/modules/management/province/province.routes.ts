@@ -31,6 +31,9 @@ export const routes: Routes = [
                   },
                   {
                     path: ':id',
+                    resolve: {
+                      province: provinceDetailResolver,
+                    },
                     children: [
                       {
                         path: '',
@@ -40,16 +43,10 @@ export const routes: Routes = [
                       {
                         path: 'view',
                         component: ProvinceForm,
-                        resolve: {
-                          province: provinceDetailResolver,
-                        },
                       },
                       {
                         path: 'edit',
                         component: ProvinceForm,
-                        resolve: {
-                          province: provinceDetailResolver,
-                        },
                       },
                     ],
                   },
