@@ -192,6 +192,11 @@ export class DistrictList implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Failed to load provinces:', error);
+        this.messageService.add({
+          severity: 'warn',
+          summary: this.translocoService.translate('districtList.messages.error'),
+          detail: this.translocoService.translate('districtList.messages.provinceLoadFailed'),
+        });
       }
     });
 
@@ -266,10 +271,11 @@ export class DistrictList implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Failed to load districts:', error);
         this.isLoading.set(false);
+        const errorMessage = error?.error?.message || error?.message || this.translocoService.translate('districtList.messages.loadFailed');
         this.messageService.add({
           severity: 'error',
           summary: this.translocoService.translate('districtList.messages.error'),
-          detail: this.translocoService.translate('districtList.messages.loadFailed'),
+          detail: errorMessage,
         });
       }
     });
