@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SelectButtonModule } from 'primeng/selectbutton';
+import { SelectButtonChangeEvent, SelectButtonModule } from 'primeng/selectbutton';
 import * as L from 'leaflet';
 
 /**
@@ -36,18 +36,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   private map: L.Map | null = null;
   private geoJsonLayer: L.GeoJSON | null = null;
-  
+
   // Base map layers
   private baseLayers: { [key: string]: L.TileLayer } = {};
   private currentBaseLayer: L.TileLayer | null = null;
-  
+
   // State for base map selection
   protected readonly currentBaseMap = signal<'osm' | 'satellite'>('osm');
-  
+
   // Options for SelectButton
   protected readonly baseMapOptions = [
     { label: 'Map', value: 'osm', icon: 'pi pi-map' },
-    { label: 'Satellite', value: 'satellite', icon: 'pi pi-globe' }
+    { label: 'Satellite', value: 'satellite', icon: 'pi pi-globe' },
   ];
 
   constructor() {
@@ -84,10 +84,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }),
-      satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
-      }),
+      satellite: L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
+        }
+      ),
     };
 
     // Add default base layer
@@ -104,8 +107,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   /**
    * Switch base map layer
    */
-  protected switchBaseMap(type: 'osm' | 'satellite'): void {
-    if (!this.map || this.currentBaseMap() === type) return;
+  protected switchBaseMap(event: SelectButtonChangeEvent): void {
+    const type = event.value as 'osm' | 'satellite';
+    if (!this.map) return;
 
     // Remove current base layer
     if (this.currentBaseLayer) {
@@ -115,7 +119,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Add new base layer
     this.currentBaseLayer = this.baseLayers[type];
     this.currentBaseLayer.addTo(this.map);
-    
+
     // Update state
     this.currentBaseMap.set(type);
   }

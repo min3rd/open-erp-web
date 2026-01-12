@@ -187,11 +187,6 @@ export class ProvinceList implements OnInit, OnDestroy {
       this.currentPage.set(page);
       this.pageSize.set(limit);
       this.searchQuery.set(search === 'all' ? '' : search);
-
-      // Only load if resolver data not available or params changed
-      if (!this.provinces().length || this.hasParamsChanged(page, limit, search)) {
-        this.loadProvinces();
-      }
     });
   }
 
@@ -210,36 +205,6 @@ export class ProvinceList implements OnInit, OnDestroy {
     if (typeof window !== 'undefined' && this.resizeHandler) {
       window.removeEventListener('resize', this.resizeHandler);
     }
-  }
-
-  /**
-   * Load provinces from the API
-   */
-  private loadProvinces(): void {
-    this.isLoading.set(true);
-
-    const params: GetProvincesParams = {
-      page: this.currentPage(),
-      limit: this.pageSize(),
-      search: this.searchQuery() || undefined,
-    };
-
-    this.provinceService.getProvinces(params).subscribe({
-      next: (response) => {
-        this.provinces.set(response.items);
-        this.totalRecords.set(response.total);
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        console.error('Failed to load provinces:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translocoService.translate('provinceList.messages.error'),
-          detail: this.translocoService.translate('provinceList.messages.loadFailed'),
-        });
-        this.isLoading.set(false);
-      },
-    });
   }
 
   /**
@@ -400,7 +365,6 @@ export class ProvinceList implements OnInit, OnDestroy {
                 name: province.name,
               }),
             });
-            this.loadProvinces();
             if (this.selectedProvince()?.id === province.id) {
               this.selectedProvince.set(null);
             }
@@ -449,7 +413,13 @@ export class ProvinceList implements OnInit, OnDestroy {
    * Refresh province list
    */
   protected onRefresh(): void {
-    this.loadProvinces();
+    this.provinceService
+      .getProvinces({
+        page: this.currentPage(),
+        limit: this.pageSize(),
+        search: this.searchQuery() || undefined,
+      })
+      .subscribe();
   }
 
   /**
