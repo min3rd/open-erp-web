@@ -204,7 +204,13 @@ export class ProvinceForm implements OnInit, OnDestroy {
   protected onClose(): void {
     this.isVisible.set(false);
     // Navigate back to list
-    this.router.navigate(['../..'], { relativeTo: this.route });
+
+    if (this.provinceId()) {
+      this.router.navigate(['../../'], { relativeTo: this.route });
+      return;
+    }
+
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
 
   /**
