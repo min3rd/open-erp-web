@@ -17,7 +17,7 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Subject, takeUntil } from 'rxjs';
 
 // PrimeNG imports
-import { TreeTableModule } from 'primeng/treetable';
+import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -27,29 +27,19 @@ import { ContextMenu } from 'primeng/contextmenu';
 import { TooltipModule } from 'primeng/tooltip';
 import { PaginatorModule } from 'primeng/paginator';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { MenuItem, TreeNode } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { Select } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SplitterModule } from 'primeng/splitter';
-import { TreeTableNodeExpandEvent } from 'primeng/treetable';
 
 // Core components
 import { MapComponent } from '../../../../../../core/components/map/map.component';
 
 // Services
 import { ProvinceService } from '../services/province.service';
-import {
-  Province,
-  District,
-  Ward,
-  AdministrativeEntity,
-  AdministrativeTreeNode,
-  GetProvincesParams,
-  EntityScope,
-} from '../province.types';
-import { mapToTreeNodes, canHaveChildren, getChildScope } from '../utils/tree-mapper';
+import { Province, GetProvincesParams } from '../province.types';
 
 @Component({
   selector: 'management-province-list',
@@ -58,7 +48,7 @@ import { mapToTreeNodes, canHaveChildren, getChildScope } from '../utils/tree-ma
     RouterOutlet,
     FormsModule,
     TranslocoModule,
-    TreeTableModule,
+    TableModule,
     ButtonModule,
     InputTextModule,
     ToolbarModule,
@@ -94,9 +84,8 @@ export class ProvinceList implements OnInit, OnDestroy {
   private readonly SEARCH_FOCUS_DELAY = 100;
 
   // State signals
-  protected readonly treeNodes = signal<AdministrativeTreeNode[]>([]);
-  protected readonly selectedNode = signal<AdministrativeTreeNode | null>(null);
-  protected readonly selectedEntity = signal<AdministrativeEntity | null>(null);
+  protected readonly provinces = signal<Province[]>([]);
+  protected readonly selectedProvince = signal<Province | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly searchQuery = signal('');
   protected readonly currentPage = signal(1);
@@ -107,7 +96,7 @@ export class ProvinceList implements OnInit, OnDestroy {
 
   // Computed values
   protected readonly totalPages = computed(() => Math.ceil(this.totalRecords() / this.pageSize()));
-  protected readonly selectedGeometry = computed(() => this.selectedEntity()?.geometry || null);
+  protected readonly selectedGeometry = computed(() => this.selectedProvince()?.geometry || null);
 
   // Actions menu items
   protected get actionMenuItems(): MenuItem[] {
@@ -135,51 +124,29 @@ export class ProvinceList implements OnInit, OnDestroy {
 
   // Context menu items for row actions
   protected get contextMenuItems(): MenuItem[] {
-    const entity = this.selectedEntity();
-    if (!entity) return [];
+    const province = this.selectedProvince();
+    if (!province) return [];
 
-    const items: MenuItem[] = [
+    return [
       {
         label: this.translocoService.translate('provinceList.contextMenu.view'),
         icon: 'pi pi-eye',
-        command: () => this.onViewEntity(entity),
+        command: () => this.onViewProvince(province),
       },
       {
         label: this.translocoService.translate('provinceList.contextMenu.edit'),
         icon: 'pi pi-pencil',
-        command: () => this.onEditEntity(entity),
+        command: () => this.onEditProvince(province),
       },
-    ];
-
-    // Add "Create Child" options based on entity type
-    if (canHaveChildren(entity)) {
-      items.push({ separator: true });
-      
-      if (entity.scope === 'province') {
-        items.push({
-          label: this.translocoService.translate('provinceList.contextMenu.createDistrict'),
-          icon: 'pi pi-plus',
-          command: () => this.onCreateChild(entity, 'district'),
-        });
-      } else if (entity.scope === 'district') {
-        items.push({
-          label: this.translocoService.translate('provinceList.contextMenu.createWard'),
-          icon: 'pi pi-plus',
-          command: () => this.onCreateChild(entity, 'ward'),
-        });
-      }
-    }
-
-    items.push(
-      { separator: true },
+      {
+        separator: true,
+      },
       {
         label: this.translocoService.translate('provinceList.contextMenu.delete'),
         icon: 'pi pi-trash',
-        command: () => this.onDeleteEntity(entity),
-      }
-    );
-
-    return items;
+        command: () => this.onDeleteProvince(province),
+      },
+    ];
   }
 
   constructor() {
@@ -205,10 +172,7 @@ export class ProvinceList implements OnInit, OnDestroy {
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       const provinceListData = data['provinceList'];
       if (provinceListData) {
-        // Convert flat list to tree nodes
-        const provinces = provinceListData.items as Province[];
-        const treeData = mapToTreeNodes(provinces);
-        this.treeNodes.set(treeData);
+        this.provinces.set(provinceListData.items);
         this.totalRecords.set(provinceListData.total);
         this.isLoading.set(false);
       }
@@ -350,168 +314,72 @@ export class ProvinceList implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle row click to select entity and show on map
+   * Handle row click to select province and show on map
    */
-  protected onNodeSelect(event: any): void {
-    const node: AdministrativeTreeNode = event.node;
-    this.selectedNode.set(node);
-    this.selectedEntity.set(node.data);
-  }
-
-  /**
-   * Handle tree node expansion (lazy loading)
-   */
-  protected onNodeExpand(event: TreeTableNodeExpandEvent): void {
-    const node = event.node as AdministrativeTreeNode;
-    const entity = node.data;
-
-    // If children are already loaded, skip
-    if (node.children && node.children.length > 0) {
-      return;
-    }
-
-    // Set loading state
-    node.loading = true;
-
-    // Lazy load children from server
-    this.provinceService.getChildren(entity.code).subscribe({
-      next: (children) => {
-        node.children = children;
-        node.loading = false;
-        node.leaf = children.length === 0;
-        // Trigger change detection
-        this.treeNodes.set([...this.treeNodes()]);
-      },
-      error: (error) => {
-        console.error('Failed to load children:', error);
-        node.loading = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translocoService.translate('provinceList.messages.error'),
-          detail: this.translocoService.translate('provinceList.messages.loadChildrenFailed'),
-        });
-        // Trigger change detection
-        this.treeNodes.set([...this.treeNodes()]);
-      },
-    });
+  protected onRowClick(province: Province): void {
+    this.selectedProvince.set(province);
   }
 
   /**
    * Handle row right-click to show context menu
    */
-  protected onRowRightClick(event: MouseEvent, node: AdministrativeTreeNode): void {
+  protected onRowRightClick(event: MouseEvent, province: Province): void {
     event.preventDefault();
-    this.selectedNode.set(node);
-    this.selectedEntity.set(node.data);
+    this.selectedProvince.set(province);
     this.contextMenu.show(event);
   }
 
   /**
-   * View entity details
+   * View province details
    */
-  protected onViewEntity(entity: AdministrativeEntity): void {
-    this.router.navigate([entity.code], { relativeTo: this.route });
+  protected onViewProvince(province: Province): void {
+    this.router.navigate([province.code], { relativeTo: this.route });
   }
 
   /**
-   * Edit entity
+   * Edit province
    */
-  protected onEditEntity(entity: AdministrativeEntity): void {
-    this.router.navigate([entity.code, 'edit'], { relativeTo: this.route });
+  protected onEditProvince(province: Province): void {
+    this.router.navigate([province.code, 'edit'], { relativeTo: this.route });
   }
 
   /**
-   * Create a child entity under the selected parent
+   * Delete a province
    */
-  protected onCreateChild(parent: AdministrativeEntity, childScope: EntityScope): void {
-    // Navigate to create route with parent info in query params
-    this.router.navigate(['new'], {
-      relativeTo: this.route,
-      queryParams: {
-        parentCode: parent.code,
-        scope: childScope,
-      },
-    });
-  }
-
-  /**
-   * Delete an entity
-   */
-  protected onDeleteEntity(entity: AdministrativeEntity): void {
-    const hasChildren = canHaveChildren(entity);
-    const message = hasChildren
-      ? this.translocoService.translate('provinceList.confirmDelete.messageWithChildren', {
-          name: entity.name,
-        })
-      : this.translocoService.translate('provinceList.confirmDelete.message', {
-          name: entity.name,
-        });
-
+  protected onDeleteProvince(province: Province): void {
     this.confirmationService.confirm({
       header: this.translocoService.translate('provinceList.confirmDelete.header'),
-      message,
+      message: this.translocoService.translate('provinceList.confirmDelete.message', {
+        name: province.name,
+      }),
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: this.translocoService.translate('provinceList.confirmDelete.accept'),
       rejectLabel: this.translocoService.translate('provinceList.confirmDelete.reject'),
       accept: () => {
-        this.deleteEntityByScope(entity);
-      },
-    });
-  }
-
-  /**
-   * Delete entity based on its scope
-   */
-  private deleteEntityByScope(entity: AdministrativeEntity): void {
-    let deleteObservable;
-
-    switch (entity.scope) {
-      case 'province':
-        deleteObservable = this.provinceService.deleteProvince(entity.id);
-        break;
-      case 'district':
-        deleteObservable = this.provinceService.deleteDistrict(entity.id);
-        break;
-      case 'ward':
-        deleteObservable = this.provinceService.deleteWard(entity.id);
-        break;
-      default:
-        return;
-    }
-
-    deleteObservable.subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: this.translocoService.translate('provinceList.messages.success'),
-          detail: this.translocoService.translate('provinceList.messages.deleteSuccess', {
-            name: entity.name,
-          }),
-        });
-        if (this.selectedEntity()?.id === entity.id) {
-          this.selectedEntity.set(null);
-          this.selectedNode.set(null);
-        }
-        // Reload the tree
-        this.onRefresh();
-      },
-      error: (error) => {
-        console.error('Delete failed:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translocoService.translate('provinceList.messages.error'),
-          detail: this.translocoService.translate('provinceList.messages.deleteFailed'),
+        this.provinceService.deleteProvince(province.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: this.translocoService.translate('provinceList.messages.success'),
+              detail: this.translocoService.translate('provinceList.messages.deleteSuccess', {
+                name: province.name,
+              }),
+            });
+            if (this.selectedProvince()?.id === province.id) {
+              this.selectedProvince.set(null);
+            }
+          },
+          error: (error) => {
+            console.error('Delete failed:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: this.translocoService.translate('provinceList.messages.error'),
+              detail: this.translocoService.translate('provinceList.messages.deleteFailed'),
+            });
+          },
         });
       },
     });
-  }
-
-  /**
-   * Handle row click to select province and show on map (backward compatibility)
-   */
-  protected onRowClick(node: AdministrativeTreeNode): void {
-    this.selectedNode.set(node);
-    this.selectedEntity.set(node.data);
   }
 
   /**
@@ -551,22 +419,7 @@ export class ProvinceList implements OnInit, OnDestroy {
         limit: this.pageSize(),
         search: this.searchQuery() || undefined,
       })
-      .subscribe({
-        next: (response) => {
-          const provinces = response.items as Province[];
-          const treeData = mapToTreeNodes(provinces);
-          this.treeNodes.set(treeData);
-          this.totalRecords.set(response.total);
-        },
-        error: (error) => {
-          console.error('Refresh failed:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translocoService.translate('provinceList.messages.error'),
-            detail: this.translocoService.translate('provinceList.messages.loadFailed'),
-          });
-        },
-      });
+      .subscribe();
   }
 
   /**
@@ -606,56 +459,26 @@ export class ProvinceList implements OnInit, OnDestroy {
   /**
    * Get per-row menu items for mobile list
    */
-  protected getRowMenuItems(node: AdministrativeTreeNode): MenuItem[] {
-    const entity = node.data;
-    const items: MenuItem[] = [
+  protected getRowMenuItems(province: Province): MenuItem[] {
+    return [
       {
         label: this.translocoService.translate('provinceList.contextMenu.view'),
         icon: 'pi pi-eye',
-        command: () => this.onViewEntity(entity),
+        command: () => this.onViewProvince(province),
       },
       {
         label: this.translocoService.translate('provinceList.contextMenu.edit'),
         icon: 'pi pi-pencil',
-        command: () => this.onEditEntity(entity),
+        command: () => this.onEditProvince(province),
       },
-    ];
-
-    // Add "Create Child" options based on entity type
-    if (canHaveChildren(entity)) {
-      items.push({ separator: true });
-
-      if (entity.scope === 'province') {
-        items.push({
-          label: this.translocoService.translate('provinceList.contextMenu.createDistrict'),
-          icon: 'pi pi-plus',
-          command: () => this.onCreateChild(entity, 'district'),
-        });
-      } else if (entity.scope === 'district') {
-        items.push({
-          label: this.translocoService.translate('provinceList.contextMenu.createWard'),
-          icon: 'pi pi-plus',
-          command: () => this.onCreateChild(entity, 'ward'),
-        });
-      }
-    }
-
-    items.push(
-      { separator: true },
+      {
+        separator: true,
+      },
       {
         label: this.translocoService.translate('provinceList.contextMenu.delete'),
         icon: 'pi pi-trash',
-        command: () => this.onDeleteEntity(entity),
-      }
-    );
-
-    return items;
-  }
-
-  /**
-   * Get scope translation key for display
-   */
-  protected getScopeLabel(scope: string): string {
-    return this.translocoService.translate(`provinceList.scope.${scope}`);
+        command: () => this.onDeleteProvince(province),
+      },
+    ];
   }
 }
