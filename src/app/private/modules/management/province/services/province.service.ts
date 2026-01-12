@@ -1,9 +1,15 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { API_URI_COMMON } from '../../../../../../core/constant';
-import { ApiPaginatedResponse, ApiResponse, unwrap, isApiResponse } from '../../../../../../core/api';
+import { 
+  ApiPaginatedResponse, 
+  ApiResponse, 
+  ApiSingleResponse,
+  unwrap, 
+  isApiResponse 
+} from '../../../../../../core/api';
 import {
   Province,
   ProvinceListResponse,
@@ -18,6 +24,10 @@ import {
 })
 export class ProvinceService {
   private http = inject(HttpClient);
+  
+  // BehaviorSubject to manage province list state
+  private provincesSubject = new BehaviorSubject<Province[]>([]);
+  public provinces$ = this.provincesSubject.asObservable();
 
   /**
    * Get provinces list with pagination and filtering
@@ -47,16 +57,21 @@ export class ProvinceService {
           // Check if response is the new API envelope format
           if (isApiResponse(response)) {
             const data = unwrap(response as ApiPaginatedResponse<Province>);
-            return {
-              data: data.items,
-              total: data.total,
-              page: data.page,
-              limit: data.limit,
-              totalPages: data.totalPages,
-            };
+            // Store the items in the subject for list management
+            this.provincesSubject.next(data.items);
+            return data;
           }
-          // Legacy format
-          return response as ProvinceListResponse;
+          // Legacy format - convert to ApiPaginatedData
+          const legacyResponse = response as any;
+          const data: ProvinceListResponse = {
+            items: legacyResponse.data || [],
+            page: legacyResponse.page || 1,
+            limit: legacyResponse.limit || 10,
+            total: legacyResponse.total || 0,
+            totalPages: legacyResponse.totalPages || 0,
+          };
+          this.provincesSubject.next(data.items);
+          return data;
         })
       );
   }
@@ -66,11 +81,13 @@ export class ProvinceService {
    */
   getProvince(id: string): Observable<Province> {
     return this.http
-      .get<ApiResponse<Province> | Province>(`${API_URI_COMMON}/v1/provinces/${id}`)
+      .get<ApiSingleResponse<Province> | Province>(`${API_URI_COMMON}/v1/provinces/${id}`)
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            return unwrap(response as ApiResponse<Province>);
+            const singleResponse = response as ApiSingleResponse<Province>;
+            const data = unwrap(singleResponse);
+            return data.item!;
           }
           return response as Province;
         })
@@ -82,13 +99,20 @@ export class ProvinceService {
    */
   createProvince(dto: CreateProvinceDto): Observable<Province> {
     return this.http
-      .post<ApiResponse<Province> | Province>(`${API_URI_COMMON}/v1/provinces`, dto)
+      .post<ApiSingleResponse<Province> | Province>(`${API_URI_COMMON}/v1/provinces`, dto)
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            return unwrap(response as ApiResponse<Province>);
+            const singleResponse = response as ApiSingleResponse<Province>;
+            const data = unwrap(singleResponse);
+            return data.item!;
           }
           return response as Province;
+        }),
+        tap((province) => {
+          // Add the new province to the list
+          const currentList = this.provincesSubject.value;
+          this.provincesSubject.next([province, ...currentList]);
         })
       );
   }
@@ -98,13 +122,21 @@ export class ProvinceService {
    */
   updateProvince(id: string, dto: UpdateProvinceDto): Observable<Province> {
     return this.http
-      .patch<ApiResponse<Province> | Province>(`${API_URI_COMMON}/v1/provinces/${id}`, dto)
+      .patch<ApiSingleResponse<Province> | Province>(`${API_URI_COMMON}/v1/provinces/${id}`, dto)
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            return unwrap(response as ApiResponse<Province>);
+            const singleResponse = response as ApiSingleResponse<Province>;
+            const data = unwrap(singleResponse);
+            return data.item!;
           }
           return response as Province;
+        }),
+        tap((province) => {
+          // Update the province in the list
+          const currentList = this.provincesSubject.value;
+          const updatedList = currentList.map(p => p.id === province.id ? province : p);
+          this.provincesSubject.next(updatedList);
         })
       );
   }
@@ -113,7 +145,14 @@ export class ProvinceService {
    * Delete a province
    */
   deleteProvince(id: string): Observable<void> {
-    return this.http.delete<void>(`${API_URI_COMMON}/v1/provinces/${id}`);
+    return this.http.delete<void>(`${API_URI_COMMON}/v1/provinces/${id}`).pipe(
+      tap(() => {
+        // Remove the province from the list
+        const currentList = this.provincesSubject.value;
+        const updatedList = currentList.filter(p => p.id !== id);
+        this.provincesSubject.next(updatedList);
+      })
+    );
   }
 
   /**

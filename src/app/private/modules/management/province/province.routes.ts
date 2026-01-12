@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Province } from './province';
 import { ProvinceList } from './list/list';
 import { ProvinceForm } from './form/form';
+import { provinceDetailResolver } from './resolvers/province-detail.resolver';
 
 export const routes: Routes = [
   {
@@ -39,10 +40,16 @@ export const routes: Routes = [
                       {
                         path: 'view',
                         component: ProvinceForm,
+                        resolve: {
+                          province: provinceDetailResolver,
+                        },
                       },
                       {
                         path: 'edit',
                         component: ProvinceForm,
+                        resolve: {
+                          province: provinceDetailResolver,
+                        },
                       },
                     ],
                   },

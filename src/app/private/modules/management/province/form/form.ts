@@ -70,12 +70,17 @@ export class ProvinceForm implements OnInit, OnDestroy {
       region: ['', [Validators.required]],
     });
 
-    // Check if we're in edit mode
-    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-      const id = params['id'];
-      if (id && id !== 'new') {
-        this.provinceId.set(id);
-        this.loadProvince(id);
+    // Load province data from resolver
+    this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      const province = data['province'] as Province | null;
+      if (province) {
+        this.provinceId.set(province.id);
+        this.provinceForm.patchValue({
+          code: province.code,
+          name: province.name,
+          region: province.region,
+        });
+        this.currentGeometry.set(province.geometry || null);
       }
     });
   }
@@ -83,35 +88,6 @@ export class ProvinceForm implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  /**
-   * Load province data for editing
-   */
-  private loadProvince(id: string): void {
-    this.isLoading.set(true);
-
-    this.provinceService.getProvince(id).subscribe({
-      next: (province) => {
-        this.provinceForm.patchValue({
-          code: province.code,
-          name: province.name,
-          region: province.region,
-        });
-        this.currentGeometry.set(province.geometry || null);
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        console.error('Failed to load province:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: this.translocoService.translate('provinceForm.messages.error'),
-          detail: this.translocoService.translate('provinceForm.messages.loadFailed'),
-        });
-        this.isLoading.set(false);
-        this.onClose();
-      },
-    });
   }
 
   /**
@@ -148,11 +124,6 @@ export class ProvinceForm implements OnInit, OnDestroy {
 
       this.provinceService.updateProvince(this.provinceId()!, updateDto).subscribe({
         next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.translocoService.translate('provinceForm.messages.success'),
-            detail: this.translocoService.translate('provinceForm.messages.updateSuccess'),
-          });
           this.isSaving.set(false);
           this.onClose();
         },
@@ -177,11 +148,6 @@ export class ProvinceForm implements OnInit, OnDestroy {
 
       this.provinceService.createProvince(createDto).subscribe({
         next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.translocoService.translate('provinceForm.messages.success'),
-            detail: this.translocoService.translate('provinceForm.messages.createSuccess'),
-          });
           this.isSaving.set(false);
           this.onClose();
         },

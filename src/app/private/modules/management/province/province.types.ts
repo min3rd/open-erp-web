@@ -2,6 +2,7 @@
  * Province model matching backend common-service province.controller.ts
  */
 import type { Geometry } from 'geojson';
+import type { ApiPaginatedData } from '../../../../../core/api/interfaces';
 
 export interface Province {
   id: string;
@@ -15,15 +16,9 @@ export interface Province {
 }
 
 /**
- * Province list response with pagination
+ * Province list response with pagination - uses core API interface
  */
-export interface ProvinceListResponse {
-  data: Province[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+export type ProvinceListResponse = ApiPaginatedData<Province>;
 
 /**
  * Parameters for getting provinces
