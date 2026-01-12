@@ -933,5 +933,265 @@
       "moveAria": "Mover {{label}}",
       "deleteAria": "Eliminar {{label}}"
     }
+  },
+  "provinceList": {
+    "title": "Gestión de Divisiones Administrativas",
+    "search": {
+      "label": "Buscar divisiones administrativas",
+      "placeholder": "Buscar por nombre, código o región...",
+      "openSearch": "Abrir búsqueda",
+      "closeSearch": "Cerrar búsqueda"
+    },
+    "addButton": {
+      "label": "Agregar Provincia",
+      "tooltip": "Agregar nueva provincia"
+    },
+    "refreshButton": {
+      "label": "Actualizar",
+      "tooltip": "Actualizar lista"
+    },
+    "actionsButton": {
+      "label": "Acciones"
+    },
+    "actions": {
+      "exportCSV": "Exportar a CSV",
+      "exportGeoJSON": "Exportar a GeoJSON",
+      "import": "Importar Provincias",
+      "createChild": "Crear Hijo",
+      "expandAll": "Expandir Todo",
+      "collapseAll": "Contraer Todo"
+    },
+    "scope": {
+      "province": "Provincia",
+      "district": "Distrito",
+      "ward": "Barrio"
+    },
+    "table": {
+      "code": "Código",
+      "name": "Nombre",
+      "type": "Tipo",
+      "region": "Región",
+      "parent": "Padre",
+      "rowActions": "Acciones de fila"
+    },
+    "contextMenu": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "createDistrict": "Crear Distrito",
+      "createWard": "Crear Barrio",
+      "zoomToArea": "Acercar al Área"
+    },
+    "pagination": {
+      "report": "Mostrando {first} a {last} de {totalRecords} elementos",
+      "previous": "Página anterior",
+      "next": "Página siguiente",
+      "showing": "Mostrando {first}-{last} de {total}",
+      "itemsPerPage": "Elementos por página"
+    },
+    "messages": {
+      "loading": "Cargando divisiones administrativas...",
+      "loaded": "{{count}} elementos cargados",
+      "noResults": "No se encontraron elementos para '{{query}}'",
+      "noItems": "No hay divisiones administrativas disponibles",
+      "error": "Error",
+      "success": "Éxito",
+      "loadFailed": "Error al cargar datos",
+      "loadChildrenFailed": "Error al cargar hijos",
+      "exportSuccess": "Exportación completada exitosamente",
+      "exportFailed": "Error al exportar datos",
+      "deleteSuccess": "{{name}} eliminado exitosamente",
+      "deleteFailed": "Error al eliminar elemento",
+      "notImplemented": "No Implementado",
+      "importSoon": "Funcionalidad de importación próximamente"
+    },
+    "confirmDelete": {
+      "header": "Confirmar Eliminación",
+      "message": "¿Está seguro de que desea eliminar {{name}}?",
+      "messageWithChildren": "¿Está seguro de que desea eliminar {{name}}? Esto también eliminará todas las entidades hijas.",
+      "accept": "Eliminar",
+      "reject": "Cancelar"
+    },
+    "mobileList": {
+      "itemActions": "Acciones del elemento"
+    },
+    "geoEditor": {
+      "label": "Geometría GeoJSON",
+      "placeholder": "Pegue geometría GeoJSON, Feature o FeatureCollection aquí (se usará la geometría del primer Feature)",
+      "apply": "Aplicar",
+      "clear": "Limpiar",
+      "textTab": "Editor de Texto",
+      "drawTab": "Dibujar en Mapa"
+    }
+  },
+  "provinceForm": {
+    "title": {
+      "create": "Agregar Provincia",
+      "edit": "Editar Provincia",
+      "view": "Ver Provincia"
+    },
+    "drawMap": {
+      "clear": "Limpiar Dibujo"
+    },
+    "fields": {
+      "code": {
+        "label": "Código de Provincia",
+        "placeholder": "Ingrese código de provincia (ej. HN, HCM)",
+        "errors": {
+          "required": "El código de provincia es obligatorio",
+          "minlength": "El código debe tener al menos 2 caracteres"
+        }
+      },
+      "name": {
+        "label": "Nombre de Provincia",
+        "placeholder": "Ingrese nombre de provincia",
+        "errors": {
+          "required": "El nombre de provincia es obligatorio",
+          "minlength": "El nombre debe tener al menos 2 caracteres"
+        }
+      },
+      "region": {
+        "label": "Región",
+        "placeholder": "Ingrese región (ej. Norte, Centro, Sur)",
+        "errors": {
+          "required": "La región es obligatoria"
+        }
+      },
+      "type": {
+        "label": "Tipo",
+        "placeholder": "Ingrese tipo"
+      },
+      "parent": {
+        "label": "Padre",
+        "placeholder": "Seleccione padre"
+      }
+    },
+    "geometry": {
+      "title": "Geometría (GeoJSON)"
+    },
+    "map": {
+      "title": "Vista Previa del Mapa"
+    },
+    "buttons": {
+      "create": "Crear Provincia",
+      "update": "Actualizar Provincia",
+      "cancel": "Cancelar"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Éxito",
+      "loadFailed": "Error al cargar datos de provincia",
+      "createSuccess": "Provincia creada exitosamente",
+      "createFailed": "Error al crear provincia",
+      "updateSuccess": "Provincia actualizada exitosamente",
+      "updateFailed": "Error al actualizar provincia"
+    }
+  },
+  "districtForm": {
+    "title": {
+      "create": "Agregar Distrito",
+      "edit": "Editar Distrito",
+      "view": "Ver Distrito"
+    },
+    "fields": {
+      "code": {
+        "label": "Código de Distrito",
+        "placeholder": "Ingrese código de distrito",
+        "errors": {
+          "required": "El código de distrito es obligatorio",
+          "minlength": "El código debe tener al menos 2 caracteres"
+        }
+      },
+      "name": {
+        "label": "Nombre de Distrito",
+        "placeholder": "Ingrese nombre de distrito",
+        "errors": {
+          "required": "El nombre de distrito es obligatorio",
+          "minlength": "El nombre debe tener al menos 2 caracteres"
+        }
+      },
+      "type": {
+        "label": "Tipo de Distrito",
+        "placeholder": "Ingrese tipo (ej. Distrito Urbano, Distrito Rural)",
+        "errors": {
+          "required": "El tipo es obligatorio"
+        }
+      },
+      "parent": {
+        "label": "Provincia",
+        "placeholder": "Seleccione provincia",
+        "errors": {
+          "required": "La provincia es obligatoria"
+        }
+      }
+    },
+    "buttons": {
+      "create": "Crear Distrito",
+      "update": "Actualizar Distrito",
+      "cancel": "Cancelar"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Éxito",
+      "loadFailed": "Error al cargar datos de distrito",
+      "createSuccess": "Distrito creado exitosamente",
+      "createFailed": "Error al crear distrito",
+      "updateSuccess": "Distrito actualizado exitosamente",
+      "updateFailed": "Error al actualizar distrito"
+    }
+  },
+  "wardForm": {
+    "title": {
+      "create": "Agregar Barrio",
+      "edit": "Editar Barrio",
+      "view": "Ver Barrio"
+    },
+    "fields": {
+      "code": {
+        "label": "Código de Barrio",
+        "placeholder": "Ingrese código de barrio",
+        "errors": {
+          "required": "El código de barrio es obligatorio",
+          "minlength": "El código debe tener al menos 2 caracteres"
+        }
+      },
+      "name": {
+        "label": "Nombre de Barrio",
+        "placeholder": "Ingrese nombre de barrio",
+        "errors": {
+          "required": "El nombre de barrio es obligatorio",
+          "minlength": "El nombre debe tener al menos 2 caracteres"
+        }
+      },
+      "type": {
+        "label": "Tipo de Barrio",
+        "placeholder": "Ingrese tipo (ej. Barrio, Comuna, Pueblo)",
+        "errors": {
+          "required": "El tipo es obligatorio"
+        }
+      },
+      "parent": {
+        "label": "Padre",
+        "placeholder": "Seleccione distrito o provincia",
+        "errors": {
+          "required": "El padre es obligatorio"
+        }
+      }
+    },
+    "buttons": {
+      "create": "Crear Barrio",
+      "update": "Actualizar Barrio",
+      "cancel": "Cancelar"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Éxito",
+      "loadFailed": "Error al cargar datos de barrio",
+      "createSuccess": "Barrio creado exitosamente",
+      "createFailed": "Error al crear barrio",
+      "updateSuccess": "Barrio actualizado exitosamente",
+      "updateFailed": "Error al actualizar barrio"
+    }
   }
 }
+

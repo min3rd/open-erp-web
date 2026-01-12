@@ -935,9 +935,9 @@
     }
   },
   "provinceList": {
-    "title": "Province Management",
+    "title": "Administrative Division Management",
     "search": {
-      "label": "Search provinces",
+      "label": "Search administrative divisions",
       "placeholder": "Search by name, code, or region...",
       "openSearch": "Open search",
       "closeSearch": "Close search"
@@ -956,44 +956,59 @@
     "actions": {
       "exportCSV": "Export to CSV",
       "exportGeoJSON": "Export to GeoJSON",
-      "import": "Import Provinces"
+      "import": "Import Provinces",
+      "createChild": "Create Child",
+      "expandAll": "Expand All",
+      "collapseAll": "Collapse All"
+    },
+    "scope": {
+      "province": "Province",
+      "district": "District",
+      "ward": "Ward"
     },
     "table": {
       "code": "Code",
       "name": "Name",
+      "type": "Type",
       "region": "Region",
+      "parent": "Parent",
       "rowActions": "Row actions"
     },
     "contextMenu": {
       "view": "View",
       "edit": "Edit",
-      "delete": "Delete"
+      "delete": "Delete",
+      "createDistrict": "Create District",
+      "createWard": "Create Ward",
+      "zoomToArea": "Zoom to Area"
     },
     "pagination": {
-      "report": "Showing {first} to {last} of {totalRecords} provinces",
+      "report": "Showing {first} to {last} of {totalRecords} items",
       "previous": "Previous page",
       "next": "Next page",
       "showing": "Showing {first}-{last} of {total}",
       "itemsPerPage": "Items per page"
     },
     "messages": {
-      "loading": "Loading provinces...",
-      "loaded": "{{count}} provinces loaded",
-      "noResults": "No provinces found for '{{query}}'",
-      "noProvinces": "No provinces available",
+      "loading": "Loading administrative divisions...",
+      "loaded": "{{count}} items loaded",
+      "noResults": "No items found for '{{query}}'",
+      "noItems": "No administrative divisions available",
       "error": "Error",
       "success": "Success",
-      "loadFailed": "Failed to load provinces",
+      "loadFailed": "Failed to load data",
+      "loadChildrenFailed": "Failed to load children",
       "exportSuccess": "Export completed successfully",
-      "exportFailed": "Failed to export provinces",
-      "deleteSuccess": "Province {{name}} deleted successfully",
-      "deleteFailed": "Failed to delete province",
+      "exportFailed": "Failed to export data",
+      "deleteSuccess": "{{name}} deleted successfully",
+      "deleteFailed": "Failed to delete item",
       "notImplemented": "Not Implemented",
       "importSoon": "Import functionality coming soon"
     },
     "confirmDelete": {
       "header": "Confirm Delete",
-      "message": "Are you sure you want to delete province {{name}}?",
+      "message": "Are you sure you want to delete {{name}}?",
+      "messageWithChildren": "Are you sure you want to delete {{name}}? This will also delete all child entities.",
       "accept": "Delete",
       "reject": "Cancel"
     },
@@ -1012,7 +1027,8 @@
   "provinceForm": {
     "title": {
       "create": "Add Province",
-      "edit": "Edit Province"
+      "edit": "Edit Province",
+      "view": "View Province"
     },
     "drawMap": {
       "clear": "Clear Drawing"
@@ -1040,6 +1056,14 @@
         "errors": {
           "required": "Region is required"
         }
+      },
+      "type": {
+        "label": "Type",
+        "placeholder": "Enter type"
+      },
+      "parent": {
+        "label": "Parent",
+        "placeholder": "Select parent"
       }
     },
     "geometry": {
@@ -1061,6 +1085,112 @@
       "createFailed": "Failed to create province",
       "updateSuccess": "Province updated successfully",
       "updateFailed": "Failed to update province"
+    }
+  },
+  "districtForm": {
+    "title": {
+      "create": "Add District",
+      "edit": "Edit District",
+      "view": "View District"
+    },
+    "fields": {
+      "code": {
+        "label": "District Code",
+        "placeholder": "Enter district code",
+        "errors": {
+          "required": "District code is required",
+          "minlength": "Code must be at least 2 characters"
+        }
+      },
+      "name": {
+        "label": "District Name",
+        "placeholder": "Enter district name",
+        "errors": {
+          "required": "District name is required",
+          "minlength": "Name must be at least 2 characters"
+        }
+      },
+      "type": {
+        "label": "District Type",
+        "placeholder": "Enter type (e.g., Urban District, Rural District)",
+        "errors": {
+          "required": "Type is required"
+        }
+      },
+      "parent": {
+        "label": "Province",
+        "placeholder": "Select province",
+        "errors": {
+          "required": "Province is required"
+        }
+      }
+    },
+    "buttons": {
+      "create": "Create District",
+      "update": "Update District",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Success",
+      "loadFailed": "Failed to load district data",
+      "createSuccess": "District created successfully",
+      "createFailed": "Failed to create district",
+      "updateSuccess": "District updated successfully",
+      "updateFailed": "Failed to update district"
+    }
+  },
+  "wardForm": {
+    "title": {
+      "create": "Add Ward",
+      "edit": "Edit Ward",
+      "view": "View Ward"
+    },
+    "fields": {
+      "code": {
+        "label": "Ward Code",
+        "placeholder": "Enter ward code",
+        "errors": {
+          "required": "Ward code is required",
+          "minlength": "Code must be at least 2 characters"
+        }
+      },
+      "name": {
+        "label": "Ward Name",
+        "placeholder": "Enter ward name",
+        "errors": {
+          "required": "Ward name is required",
+          "minlength": "Name must be at least 2 characters"
+        }
+      },
+      "type": {
+        "label": "Ward Type",
+        "placeholder": "Enter type (e.g., Ward, Commune, Town)",
+        "errors": {
+          "required": "Type is required"
+        }
+      },
+      "parent": {
+        "label": "Parent",
+        "placeholder": "Select district or province",
+        "errors": {
+          "required": "Parent is required"
+        }
+      }
+    },
+    "buttons": {
+      "create": "Create Ward",
+      "update": "Update Ward",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Success",
+      "loadFailed": "Failed to load ward data",
+      "createSuccess": "Ward created successfully",
+      "createFailed": "Failed to create ward",
+      "updateSuccess": "Ward updated successfully",
+      "updateFailed": "Failed to update ward"
     }
   }
 }
