@@ -8,11 +8,11 @@
   ></div>
   
   <!-- Base Map Switcher -->
-  <div class="absolute top-2 right-2 z-[1000]">
+  <div class="absolute top-2 right-2 z-1000">
     <p-selectbutton
       [(ngModel)]="currentBaseMap"
       [options]="baseMapOptions"
-      (onChange)="switchBaseMap(currentBaseMap())"
+      (onChange)="switchBaseMap($event)"
       optionLabel="label"
       optionValue="value"
       id="core-map-base-selector"
