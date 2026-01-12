@@ -24,7 +24,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef<HTMLDivElement>;
 
   // Input signals
-  readonly geometry = input<GeoJSON.Geometry | null>(null);
+  // Accept any GeoJSON (Geometry, Feature, FeatureCollection)
+  readonly geometry = input<GeoJSON.GeoJSON | null>(null);
   readonly center = input<[number, number]>([15.9749, 108.2515]); // Vietnam center
   readonly zoom = input<number>(6);
   readonly showLabels = input<boolean>(true);
@@ -76,7 +77,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   /**
    * Update the GeoJSON layer on the map
    */
-  private updateGeoJSON(geometry: GeoJSON.Geometry | null): void {
+  private updateGeoJSON(geometry: GeoJSON.GeoJSON | null): void {
     if (!this.map) return;
 
     // Remove existing layer

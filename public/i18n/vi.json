@@ -215,7 +215,7 @@
     },
     "geoEditor": {
       "label": "Vùng GeoJSON",
-      "placeholder": "Dán GeoJSON vào đây...",
+      "placeholder": "Dán GeoJSON, Feature hoặc FeatureCollection vào đây (sẽ dùng geometry của Feature đầu tiên)",
       "apply": "Áp dụng",
       "clear": "Xóa"
     }
