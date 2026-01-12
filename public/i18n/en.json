@@ -1093,10 +1093,9 @@
     },
     "table": {
       "code": "Code",
-      "nameVi": "Name (Vietnamese)",
+      "name": "Name",
       "nameEn": "Name (English)",
       "province": "Province",
-      "population": "Population",
       "rowActions": "Row actions"
     },
     "contextMenu": {
@@ -1153,7 +1152,7 @@
           "minlength": "District code must be at least 2 characters"
         }
       },
-      "nameVi": {
+      "name": {
         "label": "Name (Vietnamese)",
         "placeholder": "Enter district name in Vietnamese",
         "errors": {
@@ -1163,26 +1162,19 @@
       },
       "nameEn": {
         "label": "Name (English)",
-        "placeholder": "Enter district name in English",
-        "errors": {
-          "required": "English name is required",
-          "minlength": "Name must be at least 2 characters"
-        }
+        "placeholder": "Enter district name in English (optional)"
       },
-      "provinceId": {
+      "provinceCode": {
         "label": "Province",
         "placeholder": "Select province",
         "errors": {
           "required": "Province is required"
         }
       },
-      "population": {
-        "label": "Population",
-        "placeholder": "Enter population (optional)"
-      },
-      "note": {
-        "label": "Notes",
-        "placeholder": "Enter additional notes (optional)"
+      "isLegacy": {
+        "label": "Legacy District",
+        "onLabel": "Legacy",
+        "offLabel": "Current"
       }
     },
     "geometry": {

@@ -5,14 +5,11 @@ import { map, tap } from 'rxjs/operators';
 import { API_URI_COMMON } from '../../../../../../core/constant';
 import { 
   ApiPaginatedResponse, 
-  ApiResponse, 
   ApiSingleResponse,
-  unwrap, 
-  isApiResponse 
+  unwrap
 } from '../../../../../../core/api';
 import {
   District,
-  DistrictListResponse,
   GetDistrictsParams,
   CreateDistrictDto,
   UpdateDistrictDto,
@@ -32,21 +29,29 @@ export class DistrictService {
   /**
    * Get districts list with pagination and filtering
    */
-  getDistricts(params: GetDistrictsParams): Observable<DistrictListResponse> {
+  getDistricts(params: GetDistrictsParams): Observable<{ items: District[]; total: number; page: number; limit: number; totalPages: number }> {
     let httpParams = new HttpParams()
       .set('page', (params.page || 1).toString())
-      .set('size', (params.limit || 10).toString());
+      .set('limit', (params.limit || 100).toString());
 
-    if (params.search) {
-      httpParams = httpParams.set('q', params.search);
+    if (params.q) {
+      httpParams = httpParams.set('q', params.q);
     }
 
-    if (params.provinceId) {
-      httpParams = httpParams.set('provinceId', params.provinceId);
+    if (params.provinceCode) {
+      httpParams = httpParams.set('provinceCode', params.provinceCode);
+    }
+
+    if (params.version) {
+      httpParams = httpParams.set('version', params.version);
+    }
+
+    if (params.isLegacy !== undefined) {
+      httpParams = httpParams.set('isLegacy', params.isLegacy.toString());
     }
 
     return this.http
-      .get<ApiPaginatedResponse<District> | DistrictListResponse>(
+      .get<ApiPaginatedResponse<District>>(
         `${API_URI_COMMON}/v1/districts`,
         {
           params: httpParams,
@@ -54,22 +59,7 @@ export class DistrictService {
       )
       .pipe(
         map((response) => {
-          // Check if response is the new API envelope format
-          if (isApiResponse(response)) {
-            const data = unwrap(response as ApiPaginatedResponse<District>);
-            // Store the items in the subject for list management
-            this.districtsSubject.next(data.items);
-            return data;
-          }
-          // Legacy format - convert to ApiPaginatedData
-          const legacyResponse = response as any;
-          const data: DistrictListResponse = {
-            items: legacyResponse.data || [],
-            page: legacyResponse.page || 1,
-            limit: legacyResponse.limit || 10,
-            total: legacyResponse.total || 0,
-            totalPages: legacyResponse.totalPages || 0,
-          };
+          const data = unwrap(response);
           this.districtsSubject.next(data.items);
           return data;
         })
@@ -77,19 +67,15 @@ export class DistrictService {
   }
 
   /**
-   * Get a single district by ID
+   * Get a single district by code
    */
-  getDistrict(id: string): Observable<District> {
+  getDistrict(code: string): Observable<District> {
     return this.http
-      .get<ApiSingleResponse<District> | District>(`${API_URI_COMMON}/v1/districts/${id}`)
+      .get<ApiSingleResponse<District>>(`${API_URI_COMMON}/v1/districts/${code}`)
       .pipe(
         map((response) => {
-          if (isApiResponse(response)) {
-            const singleResponse = response as ApiSingleResponse<District>;
-            const data = unwrap(singleResponse);
-            return data.item!;
-          }
-          return response as District;
+          const data = unwrap(response);
+          return data.item!;
         })
       );
   }
@@ -99,15 +85,11 @@ export class DistrictService {
    */
   createDistrict(dto: CreateDistrictDto): Observable<District> {
     return this.http
-      .post<ApiSingleResponse<District> | District>(`${API_URI_COMMON}/v1/districts`, dto)
+      .post<ApiSingleResponse<District>>(`${API_URI_COMMON}/v1/districts`, dto)
       .pipe(
         map((response) => {
-          if (isApiResponse(response)) {
-            const singleResponse = response as ApiSingleResponse<District>;
-            const data = unwrap(singleResponse);
-            return data.item!;
-          }
-          return response as District;
+          const data = unwrap(response);
+          return data.item!;
         }),
         tap((district) => {
           // Add the new district to the list
@@ -120,22 +102,18 @@ export class DistrictService {
   /**
    * Update a district
    */
-  updateDistrict(id: string, dto: UpdateDistrictDto): Observable<District> {
+  updateDistrict(code: string, dto: UpdateDistrictDto): Observable<District> {
     return this.http
-      .patch<ApiSingleResponse<District> | District>(`${API_URI_COMMON}/v1/districts/${id}`, dto)
+      .patch<ApiSingleResponse<District>>(`${API_URI_COMMON}/v1/districts/${code}`, dto)
       .pipe(
         map((response) => {
-          if (isApiResponse(response)) {
-            const singleResponse = response as ApiSingleResponse<District>;
-            const data = unwrap(singleResponse);
-            return data.item!;
-          }
-          return response as District;
+          const data = unwrap(response);
+          return data.item!;
         }),
         tap((district) => {
           // Update the district in the list
           const currentList = this.districtsSubject.value;
-          const updatedList = currentList.map(d => d.id === district.id ? district : d);
+          const updatedList = currentList.map(d => d.code === district.code ? district : d);
           this.districtsSubject.next(updatedList);
         })
       );
@@ -144,12 +122,12 @@ export class DistrictService {
   /**
    * Delete a district
    */
-  deleteDistrict(id: string): Observable<void> {
-    return this.http.delete<void>(`${API_URI_COMMON}/v1/districts/${id}`).pipe(
+  deleteDistrict(code: string): Observable<void> {
+    return this.http.delete<void>(`${API_URI_COMMON}/v1/districts/${code}`).pipe(
       tap(() => {
         // Remove the district from the list
         const currentList = this.districtsSubject.value;
-        const updatedList = currentList.filter(d => d.id !== id);
+        const updatedList = currentList.filter(d => d.code !== code);
         this.districtsSubject.next(updatedList);
       })
     );
@@ -161,12 +139,20 @@ export class DistrictService {
   exportToCSV(params: GetDistrictsParams): Observable<Blob> {
     let httpParams = new HttpParams();
 
-    if (params.search) {
-      httpParams = httpParams.set('q', params.search);
+    if (params.q) {
+      httpParams = httpParams.set('q', params.q);
     }
 
-    if (params.provinceId) {
-      httpParams = httpParams.set('provinceId', params.provinceId);
+    if (params.provinceCode) {
+      httpParams = httpParams.set('provinceCode', params.provinceCode);
+    }
+
+    if (params.version) {
+      httpParams = httpParams.set('version', params.version);
+    }
+
+    if (params.isLegacy !== undefined) {
+      httpParams = httpParams.set('isLegacy', params.isLegacy.toString());
     }
 
     return this.http.post(
@@ -185,12 +171,20 @@ export class DistrictService {
   exportToGeoJSON(params: GetDistrictsParams): Observable<Blob> {
     let httpParams = new HttpParams();
 
-    if (params.search) {
-      httpParams = httpParams.set('q', params.search);
+    if (params.q) {
+      httpParams = httpParams.set('q', params.q);
     }
 
-    if (params.provinceId) {
-      httpParams = httpParams.set('provinceId', params.provinceId);
+    if (params.provinceCode) {
+      httpParams = httpParams.set('provinceCode', params.provinceCode);
+    }
+
+    if (params.version) {
+      httpParams = httpParams.set('version', params.version);
+    }
+
+    if (params.isLegacy !== undefined) {
+      httpParams = httpParams.set('isLegacy', params.isLegacy.toString());
     }
 
     return this.http.post(
@@ -211,16 +205,14 @@ export class DistrictService {
     formData.append('file', file);
 
     return this.http
-      .post<ApiResponse<ImportResult> | ImportResult>(
+      .post<ApiSingleResponse<ImportResult>>(
         `${API_URI_COMMON}/v1/districts/import`,
         formData
       )
       .pipe(
         map((response) => {
-          if (isApiResponse(response)) {
-            return unwrap(response as ApiResponse<ImportResult>);
-          }
-          return response as ImportResult;
+          const data = unwrap(response);
+          return data.item!;
         })
       );
   }

@@ -53,49 +53,49 @@
       <!-- Province Field -->
       <div class="flex flex-col gap-2">
         <label for="district-form-province" class="font-medium text-sm">
-          {{ 'districtForm.fields.provinceId.label' | transloco }}
+          {{ 'districtForm.fields.provinceCode.label' | transloco }}
           <span class="text-red-500">*</span>
         </label>
         <p-select
           id="district-form-province"
-          formControlName="provinceId"
+          formControlName="provinceCode"
           [options]="provinceOptions()"
-          [placeholder]="'districtForm.fields.provinceId.placeholder' | transloco"
+          [placeholder]="'districtForm.fields.provinceCode.placeholder' | transloco"
           optionLabel="label"
           optionValue="value"
           [style]="{ width: '100%' }"
-          [attr.aria-label]="'districtForm.fields.provinceId.label' | transloco"
+          [attr.aria-label]="'districtForm.fields.provinceCode.label' | transloco"
           [class.border-red-500]="
-            districtForm.get('provinceId')?.touched && districtForm.get('provinceId')?.invalid
+            districtForm.get('provinceCode')?.touched && districtForm.get('provinceCode')?.invalid
           "
         />
-        @if (getErrorMessage('provinceId')) {
+        @if (getErrorMessage('provinceCode')) {
         <small id="district-form-province-error" class="text-red-500">
-          {{ getErrorMessage('provinceId') }}
+          {{ getErrorMessage('provinceCode') }}
         </small>
         }
       </div>
 
       <!-- Name (Vietnamese) Field -->
       <div class="flex flex-col gap-2">
-        <label for="district-form-name-vi" class="font-medium text-sm">
-          {{ 'districtForm.fields.nameVi.label' | transloco }}
+        <label for="district-form-name" class="font-medium text-sm">
+          {{ 'districtForm.fields.name.label' | transloco }}
           <span class="text-red-500">*</span>
         </label>
         <input
-          id="district-form-name-vi"
+          id="district-form-name"
           type="text"
           pInputText
-          formControlName="nameVi"
-          [placeholder]="'districtForm.fields.nameVi.placeholder' | transloco"
-          [attr.aria-label]="'districtForm.fields.nameVi.label' | transloco"
+          formControlName="name"
+          [placeholder]="'districtForm.fields.name.placeholder' | transloco"
+          [attr.aria-label]="'districtForm.fields.name.label' | transloco"
           [class.border-red-500]="
-            districtForm.get('nameVi')?.touched && districtForm.get('nameVi')?.invalid
+            districtForm.get('name')?.touched && districtForm.get('name')?.invalid
           "
         />
-        @if (getErrorMessage('nameVi')) {
-        <small id="district-form-name-vi-error" class="text-red-500">
-          {{ getErrorMessage('nameVi') }}
+        @if (getErrorMessage('name')) {
+        <small id="district-form-name-error" class="text-red-500">
+          {{ getErrorMessage('name') }}
         </small>
         }
       </div>
@@ -104,7 +104,6 @@
       <div class="flex flex-col gap-2">
         <label for="district-form-name-en" class="font-medium text-sm">
           {{ 'districtForm.fields.nameEn.label' | transloco }}
-          <span class="text-red-500">*</span>
         </label>
         <input
           id="district-form-name-en"
@@ -113,45 +112,21 @@
           formControlName="nameEn"
           [placeholder]="'districtForm.fields.nameEn.placeholder' | transloco"
           [attr.aria-label]="'districtForm.fields.nameEn.label' | transloco"
-          [class.border-red-500]="
-            districtForm.get('nameEn')?.touched && districtForm.get('nameEn')?.invalid
-          "
-        />
-        @if (getErrorMessage('nameEn')) {
-        <small id="district-form-name-en-error" class="text-red-500">
-          {{ getErrorMessage('nameEn') }}
-        </small>
-        }
-      </div>
-
-      <!-- Population Field (Optional) -->
-      <div class="flex flex-col gap-2">
-        <label for="district-form-population" class="font-medium text-sm">
-          {{ 'districtForm.fields.population.label' | transloco }}
-        </label>
-        <p-inputnumber
-          id="district-form-population"
-          formControlName="population"
-          [placeholder]="'districtForm.fields.population.placeholder' | transloco"
-          [useGrouping]="true"
-          [min]="0"
-          [attr.aria-label]="'districtForm.fields.population.label' | transloco"
         />
       </div>
 
-      <!-- Note Field (Optional) -->
+      <!-- Is Legacy Toggle -->
       <div class="flex flex-col gap-2">
-        <label for="district-form-note" class="font-medium text-sm">
-          {{ 'districtForm.fields.note.label' | transloco }}
+        <label for="district-form-is-legacy" class="font-medium text-sm">
+          {{ 'districtForm.fields.isLegacy.label' | transloco }}
         </label>
-        <textarea
-          id="district-form-note"
-          pTextarea
-          formControlName="note"
-          [placeholder]="'districtForm.fields.note.placeholder' | transloco"
-          [attr.aria-label]="'districtForm.fields.note.label' | transloco"
-          rows="3"
-        ></textarea>
+        <p-togglebutton
+          id="district-form-is-legacy"
+          formControlName="isLegacy"
+          [onLabel]="'districtForm.fields.isLegacy.onLabel' | transloco"
+          [offLabel]="'districtForm.fields.isLegacy.offLabel' | transloco"
+          [attr.aria-label]="'districtForm.fields.isLegacy.label' | transloco"
+        />
       </div>
 
       <!-- Geometry Editor -->
