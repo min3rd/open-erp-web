@@ -427,5 +427,142 @@
       "updateSuccess": "Cập nhật phường/xã thành công",
       "updateFailed": "Không thể cập nhật phường/xã"
     }
+  },
+  "administrativeUnit": {
+    "title": "Quản lý Đơn vị Hành chính",
+    "search": {
+      "label": "Tìm kiếm",
+      "placeholder": "Tìm theo tên hoặc mã...",
+      "openSearch": "Mở tìm kiếm",
+      "closeSearch": "Đóng tìm kiếm",
+      "clearSearch": "Xóa tìm kiếm"
+    },
+    "addButton": {
+      "label": "Thêm Tỉnh/Thành",
+      "tooltip": "Thêm tỉnh/thành mới"
+    },
+    "refreshButton": {
+      "label": "Làm mới",
+      "tooltip": "Làm mới danh sách"
+    },
+    "actionsButton": {
+      "label": "Thao tác"
+    },
+    "actions": {
+      "exportCSV": "Xuất ra CSV",
+      "exportGeoJSON": "Xuất ra GeoJSON",
+      "bulkDelete": "Xóa hàng loạt"
+    },
+    "table": {
+      "name": "Tên",
+      "code": "Mã",
+      "type": "Loại",
+      "region": "Vùng",
+      "actions": "Thao tác",
+      "rowActions": "Thao tác hàng"
+    },
+    "types": {
+      "province": "Tỉnh/Thành",
+      "district": "Quận/Huyện",
+      "ward": "Phường/Xã"
+    },
+    "contextMenu": {
+      "view": "Xem",
+      "edit": "Sửa",
+      "createChild": "Tạo đơn vị con",
+      "delete": "Xóa"
+    },
+    "pagination": {
+      "showing": "Hiển thị {first}-{last} trong tổng số {total}",
+      "itemsPerPage": "Số dòng mỗi trang",
+      "page": "Trang"
+    },
+    "messages": {
+      "loading": "Đang tải đơn vị hành chính...",
+      "loaded": "Đã tải {{count}} đơn vị",
+      "noData": "Không tìm thấy đơn vị hành chính",
+      "error": "Lỗi",
+      "success": "Thành công",
+      "loadFailed": "Không thể tải dữ liệu",
+      "loadChildrenFailed": "Không thể tải đơn vị con",
+      "deleteSuccess": "Đã xóa {{name}} thành công",
+      "deleteFailed": "Không thể xóa đơn vị",
+      "createSuccess": "Tạo đơn vị thành công",
+      "createFailed": "Không thể tạo đơn vị",
+      "updateSuccess": "Cập nhật đơn vị thành công",
+      "updateFailed": "Không thể cập nhật đơn vị",
+      "refreshed": "Đã làm mới danh sách",
+      "notImplemented": "Chưa triển khai",
+      "exportSoon": "Chức năng xuất dữ liệu sẽ có sớm",
+      "bulkDeleteSoon": "Chức năng xóa hàng loạt sẽ có sớm"
+    },
+    "confirmDelete": {
+      "header": "Xác nhận Xóa",
+      "message": "Bạn có chắc chắn muốn xóa {{name}}?",
+      "bulkMessage": "Bạn có chắc chắn muốn xóa {{count}} đơn vị?",
+      "accept": "Xóa",
+      "reject": "Hủy"
+    },
+    "form": {
+      "title": {
+        "create": "Tạo Đơn vị Hành chính",
+        "edit": "Sửa Đơn vị Hành chính",
+        "view": "Xem Đơn vị Hành chính"
+      },
+      "fields": {
+        "code": {
+          "label": "Mã",
+          "placeholder": "Nhập mã",
+          "errors": {
+            "required": "Mã là bắt buộc",
+            "minlength": "Mã phải có ít nhất 2 ký tự"
+          }
+        },
+        "name": {
+          "label": "Tên",
+          "placeholder": "Nhập tên",
+          "errors": {
+            "required": "Tên là bắt buộc",
+            "minlength": "Tên phải có ít nhất 2 ký tự"
+          }
+        },
+        "nameEn": {
+          "label": "Tên (Tiếng Anh)",
+          "placeholder": "Nhập tên tiếng Anh"
+        },
+        "type": {
+          "label": "Loại"
+        },
+        "province": {
+          "label": "Tỉnh/Thành",
+          "placeholder": "Chọn tỉnh/thành"
+        },
+        "district": {
+          "label": "Quận/Huyện",
+          "placeholder": "Chọn quận/huyện"
+        },
+        "region": {
+          "label": "Vùng",
+          "placeholder": "Nhập vùng (vd: Miền Bắc, Miền Trung, Miền Nam)"
+        },
+        "population": {
+          "label": "Dân số",
+          "placeholder": "Nhập dân số"
+        },
+        "note": {
+          "label": "Ghi chú",
+          "placeholder": "Nhập ghi chú thêm"
+        }
+      },
+      "mapPreview": {
+        "label": "Xem trước Bản đồ"
+      },
+      "buttons": {
+        "create": "Tạo",
+        "update": "Cập nhật",
+        "cancel": "Hủy",
+        "close": "Đóng"
+      }
+    }
   }
 }

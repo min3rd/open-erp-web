@@ -1334,5 +1334,142 @@
       "idRequired": "El ID es requerido",
       "invalidId": "Formato de ID inválido"
     }
+  },
+  "administrativeUnit": {
+    "title": "Gestión de Unidades Administrativas",
+    "search": {
+      "label": "Buscar unidades",
+      "placeholder": "Buscar por nombre o código...",
+      "openSearch": "Abrir búsqueda",
+      "closeSearch": "Cerrar búsqueda",
+      "clearSearch": "Limpiar búsqueda"
+    },
+    "addButton": {
+      "label": "Agregar Provincia",
+      "tooltip": "Agregar nueva provincia"
+    },
+    "refreshButton": {
+      "label": "Actualizar",
+      "tooltip": "Actualizar lista"
+    },
+    "actionsButton": {
+      "label": "Acciones"
+    },
+    "actions": {
+      "exportCSV": "Exportar a CSV",
+      "exportGeoJSON": "Exportar a GeoJSON",
+      "bulkDelete": "Eliminación Masiva"
+    },
+    "table": {
+      "name": "Nombre",
+      "code": "Código",
+      "type": "Tipo",
+      "region": "Región",
+      "actions": "Acciones",
+      "rowActions": "Acciones de fila"
+    },
+    "types": {
+      "province": "Provincia",
+      "district": "Distrito",
+      "ward": "Comuna"
+    },
+    "contextMenu": {
+      "view": "Ver",
+      "edit": "Editar",
+      "createChild": "Crear Hijo",
+      "delete": "Eliminar"
+    },
+    "pagination": {
+      "showing": "Mostrando {first}-{last} de {total}",
+      "itemsPerPage": "Elementos por página",
+      "page": "Página"
+    },
+    "messages": {
+      "loading": "Cargando unidades administrativas...",
+      "loaded": "{{count}} unidades cargadas",
+      "noData": "No se encontraron unidades administrativas",
+      "error": "Error",
+      "success": "Éxito",
+      "loadFailed": "Error al cargar unidades",
+      "loadChildrenFailed": "Error al cargar hijos",
+      "deleteSuccess": "{{name}} eliminado exitosamente",
+      "deleteFailed": "Error al eliminar unidad",
+      "createSuccess": "Unidad creada exitosamente",
+      "createFailed": "Error al crear unidad",
+      "updateSuccess": "Unidad actualizada exitosamente",
+      "updateFailed": "Error al actualizar unidad",
+      "refreshed": "Lista actualizada exitosamente",
+      "notImplemented": "No Implementado",
+      "exportSoon": "Funcionalidad de exportación próximamente",
+      "bulkDeleteSoon": "Funcionalidad de eliminación masiva próximamente"
+    },
+    "confirmDelete": {
+      "header": "Confirmar Eliminación",
+      "message": "¿Está seguro de que desea eliminar {{name}}?",
+      "bulkMessage": "¿Está seguro de que desea eliminar {{count}} unidades?",
+      "accept": "Eliminar",
+      "reject": "Cancelar"
+    },
+    "form": {
+      "title": {
+        "create": "Crear Unidad Administrativa",
+        "edit": "Editar Unidad Administrativa",
+        "view": "Ver Unidad Administrativa"
+      },
+      "fields": {
+        "code": {
+          "label": "Código",
+          "placeholder": "Ingresar código",
+          "errors": {
+            "required": "El código es requerido",
+            "minlength": "El código debe tener al menos 2 caracteres"
+          }
+        },
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Ingresar nombre",
+          "errors": {
+            "required": "El nombre es requerido",
+            "minlength": "El nombre debe tener al menos 2 caracteres"
+          }
+        },
+        "nameEn": {
+          "label": "Nombre (Inglés)",
+          "placeholder": "Ingresar nombre en inglés"
+        },
+        "type": {
+          "label": "Tipo"
+        },
+        "province": {
+          "label": "Provincia",
+          "placeholder": "Seleccionar provincia"
+        },
+        "district": {
+          "label": "Distrito",
+          "placeholder": "Seleccionar distrito"
+        },
+        "region": {
+          "label": "Región",
+          "placeholder": "Ingresar región (ej. Norte, Centro, Sur)"
+        },
+        "population": {
+          "label": "Población",
+          "placeholder": "Ingresar población"
+        },
+        "note": {
+          "label": "Nota",
+          "placeholder": "Ingresar notas adicionales"
+        }
+      },
+      "mapPreview": {
+        "label": "Vista Previa del Mapa"
+      },
+      "buttons": {
+        "create": "Crear",
+        "update": "Actualizar",
+        "cancel": "Cancelar",
+        "close": "Cerrar"
+      }
+    }
   }
 }
