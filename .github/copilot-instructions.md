@@ -140,3 +140,12 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+## Integration & Architecture
+
+- When integrating with backend APIs you **MUST** clone the `open-erp-backend` repository locally and run it to perform integration tests alongside unit tests. Integration PRs should include instructions (or npm scripts) to start the backend for local testing and CI where applicable.
+- Always use Angular **Route Resolvers** to preload data required by a screen; data needed for rendering must be fetched by a resolver so the route activates only after preload completes.
+- Design routes to capture and persist user view state and actions (filters, sorts, active view, pagination). Use route parameters and/or query parameters to enable traceability and reproducibility of user interactions.
+- Do **not** implement branching in the UI to handle legacy vs newest API formats; assume the **newest API format** by default. If legacy support is required, it must be handled in a dedicated compatibility layer and explicitly documented.
+- Common component options (e.g., page size options, base map layers, default tile providers) should be declared as shared UI constants (for example `src/core/ui-constants.ts`) and reused across components to ensure consistency.
+
