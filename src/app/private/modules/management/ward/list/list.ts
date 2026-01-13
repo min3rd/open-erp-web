@@ -41,8 +41,6 @@ import { PAGE_SIZE_OPTIONS } from '../../../../../../core/constant';
 
 // Services
 import { WardService } from '../services/ward.service';
-import { ProvinceService } from '../../province/services/province.service';
-import { DistrictService } from '../../district/services/district.service';
 import { Ward } from '../ward.types';
 import { Province } from '../../province/province.types';
 import { District } from '../../district/district.types';
@@ -81,8 +79,6 @@ export class WardList implements OnInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private wardService = inject(WardService);
-  private provinceService = inject(ProvinceService);
-  private districtService = inject(DistrictService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
   private translocoService = inject(TranslocoService);
@@ -316,7 +312,7 @@ export class WardList implements OnInit, OnDestroy {
     const provinceCode = event.value;
     // Reset district filter when province changes
     this.router.navigate(
-      ['../../../..', provinceCode, 'all-districts', this.searchQuery() || 'all', 1, this.pageSize()],
+      ['../../../../..', provinceCode, 'all-districts', this.searchQuery() || 'all', 1, this.pageSize()],
       {
         relativeTo: this.route,
       }
@@ -330,7 +326,7 @@ export class WardList implements OnInit, OnDestroy {
     const districtCode = event.value;
     this.router.navigate(
       [
-        '../../../..',
+        '../../../../..',
         this.selectedProvinceCode(),
         districtCode,
         this.searchQuery() || 'all',
