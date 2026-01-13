@@ -1221,5 +1221,117 @@
       "updateSuccess": "Barrio actualizado exitosamente",
       "updateFailed": "Error al actualizar barrio"
     }
+  },
+  "formEditor": {
+    "title": "Editor de Formularios",
+    "toolbar": {
+      "undo": "Deshacer",
+      "redo": "Rehacer",
+      "export": "Exportar Esquema",
+      "clear": "Limpiar Todo",
+      "loadExample": "Cargar Ejemplo"
+    },
+    "panels": {
+      "components": "Componentes",
+      "properties": "Propiedades",
+      "preview": "Vista Previa"
+    },
+    "categories": {
+      "layout": "Componentes de Diseño",
+      "form": "Componentes de Formulario"
+    },
+    "components": {
+      "layout1Column": "1 Columna",
+      "layout2Column": "2 Columnas",
+      "layout3Column": "3 Columnas",
+      "divider": "Divisor",
+      "button": "Botón",
+      "input": "Entrada",
+      "textarea": "Área de Texto",
+      "select": "Selección",
+      "checkbox": "Casilla de Verificación",
+      "radioButton": "Botón de Radio",
+      "datePicker": "Selector de Fecha",
+      "autocomplete": "Autocompletar",
+      "cascadeSelect": "Selección en Cascada",
+      "colorPicker": "Selector de Color",
+      "rating": "Calificación",
+      "selectButton": "Botón de Selección",
+      "slider": "Deslizador",
+      "toggleButton": "Botón de Alternar",
+      "toggleSwitch": "Interruptor"
+    },
+    "defaults": {
+      "button": "Botón",
+      "input": "Campo de Entrada",
+      "inputPlaceholder": "Ingrese texto",
+      "textarea": "Área de Texto",
+      "textareaPlaceholder": "Ingrese texto",
+      "select": "Selección",
+      "selectPlaceholder": "Elija opción",
+      "checkbox": "Casilla de Verificación",
+      "radioButton": "Botón de Radio",
+      "datePicker": "Selector de Fecha",
+      "datePickerPlaceholder": "Seleccione fecha",
+      "autocomplete": "Autocompletar",
+      "autocompletePlaceholder": "Buscar...",
+      "cascadeSelect": "Selección en Cascada",
+      "cascadeSelectPlaceholder": "Seleccione opción",
+      "colorPicker": "Selector de Color",
+      "rating": "Calificación",
+      "selectButton": "Botón de Selección",
+      "slider": "Deslizador",
+      "toggleButton": "Botón de Alternar",
+      "toggleSwitch": "Interruptor"
+    },
+    "properties": {
+      "general": "General",
+      "label": "Etiqueta",
+      "labelKey": "Clave i18n de Etiqueta",
+      "placeholder": "Marcador de Posición",
+      "placeholderKey": "Clave i18n de Marcador",
+      "id": "ID",
+      "cssClasses": "Clases CSS",
+      "required": "Requerido",
+      "disabled": "Deshabilitado",
+      "defaultValue": "Valor Predeterminado",
+      "validation": "Validación",
+      "minLength": "Longitud Mínima",
+      "maxLength": "Longitud Máxima",
+      "min": "Mínimo",
+      "max": "Máximo",
+      "pattern": "Patrón",
+      "email": "Formato de Correo",
+      "url": "Formato de URL",
+      "options": "Opciones",
+      "addOption": "Agregar Opción",
+      "optionLabel": "Etiqueta",
+      "optionValue": "Valor",
+      "removeOption": "Eliminar"
+    },
+    "actions": {
+      "addComponent": "Agregar Componente",
+      "removeComponent": "Eliminar Componente",
+      "selectComponent": "Seleccionar Componente",
+      "dragComponent": "Arrastrar para agregar"
+    },
+    "messages": {
+      "noComponentSelected": "Ningún componente seleccionado. Seleccione un componente para editar sus propiedades.",
+      "emptyCanvas": "Arrastre componentes desde el panel izquierdo o haga clic en + para agregar componentes a su formulario.",
+      "exportSuccess": "Esquema exportado exitosamente",
+      "exportError": "Error al exportar esquema",
+      "validationError": "Falló la validación del esquema",
+      "clearConfirm": "¿Está seguro de que desea limpiar el formulario? Esta acción no se puede deshacer.",
+      "componentAdded": "Componente agregado",
+      "componentRemoved": "Componente eliminado",
+      "componentUpdated": "Componente actualizado",
+      "undoAction": "Deshacer: {{action}}",
+      "redoAction": "Rehacer: {{action}}"
+    },
+    "validation": {
+      "required": "Este campo es requerido",
+      "idRequired": "El ID es requerido",
+      "invalidId": "Formato de ID inválido"
+    }
   }
 }
