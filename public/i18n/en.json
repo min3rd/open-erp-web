@@ -1198,5 +1198,157 @@
       "updateSuccess": "District updated successfully",
       "updateFailed": "Failed to update district"
     }
+  },
+  "wardList": {
+    "title": "Ward Management",
+    "search": {
+      "label": "Search wards",
+      "placeholder": "Search by name, code...",
+      "openSearch": "Open search",
+      "closeSearch": "Close search"
+    },
+    "filter": {
+      "allProvinces": "All Provinces",
+      "allDistricts": "All Districts",
+      "selectProvince": "Filter by Province",
+      "selectDistrict": "Filter by District"
+    },
+    "addButton": {
+      "label": "Add Ward",
+      "tooltip": "Add new ward"
+    },
+    "refreshButton": {
+      "label": "Refresh",
+      "tooltip": "Refresh list"
+    },
+    "actionsButton": {
+      "label": "Actions"
+    },
+    "actions": {
+      "exportCSV": "Export to CSV",
+      "exportGeoJSON": "Export to GeoJSON",
+      "import": "Import Wards"
+    },
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "nameVi": "Name (Vietnamese)",
+      "nameEn": "Name (English)",
+      "province": "Province",
+      "district": "District",
+      "rowActions": "Row actions"
+    },
+    "contextMenu": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "pagination": {
+      "report": "Showing {first} to {last} of {totalRecords} wards",
+      "previous": "Previous page",
+      "next": "Next page",
+      "showing": "Showing {first}-{last} of {total}",
+      "itemsPerPage": "Items per page"
+    },
+    "messages": {
+      "loading": "Loading wards...",
+      "loaded": "{{count}} wards loaded",
+      "noResults": "No wards found for '{{query}}'",
+      "noWards": "No wards available",
+      "error": "Error",
+      "success": "Success",
+      "loadFailed": "Failed to load wards",
+      "provinceLoadFailed": "Failed to load provinces for filter",
+      "districtLoadFailed": "Failed to load districts for filter",
+      "exportSuccess": "Export completed successfully",
+      "exportFailed": "Export failed. Please try again.",
+      "notImplemented": "Coming Soon",
+      "importSoon": "Import functionality will be available soon",
+      "deleteSuccess": "Ward '{{name}}' deleted successfully",
+      "deleteFailed": "Failed to delete ward. Please try again."
+    },
+    "confirmDelete": {
+      "header": "Confirm Delete",
+      "message": "Are you sure you want to delete '{{name}}'? This action cannot be undone.",
+      "accept": "Delete",
+      "reject": "Cancel"
+    },
+    "mobileList": {
+      "itemActions": "Item actions"
+    }
+  },
+  "wardForm": {
+    "title": {
+      "create": "Create New Ward",
+      "edit": "Edit Ward",
+      "view": "View Ward"
+    },
+    "fields": {
+      "code": {
+        "label": "Ward Code",
+        "placeholder": "Enter ward code (e.g., W001)",
+        "errors": {
+          "required": "Ward code is required",
+          "minlength": "Ward code must be at least 2 characters"
+        }
+      },
+      "name": {
+        "label": "Name (Vietnamese)",
+        "placeholder": "Enter ward name in Vietnamese",
+        "errors": {
+          "required": "Vietnamese name is required",
+          "minlength": "Name must be at least 2 characters"
+        }
+      },
+      "nameEn": {
+        "label": "Name (English)",
+        "placeholder": "Enter ward name in English (optional)"
+      },
+      "provinceCode": {
+        "label": "Province",
+        "placeholder": "Select province",
+        "errors": {
+          "required": "Province is required"
+        }
+      },
+      "districtCode": {
+        "label": "District",
+        "placeholder": "Select district",
+        "errors": {
+          "required": "District is required"
+        }
+      },
+      "note": {
+        "label": "Note",
+        "placeholder": "Enter additional notes (optional)"
+      },
+      "isLegacy": {
+        "label": "Legacy Ward",
+        "onLabel": "Legacy",
+        "offLabel": "Current"
+      }
+    },
+    "geometry": {
+      "title": "Geometry Editor"
+    },
+    "map": {
+      "title": "Map Preview"
+    },
+    "buttons": {
+      "create": "Create Ward",
+      "update": "Update Ward",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Success",
+      "loadFailed": "Failed to load ward data",
+      "provinceLoadFailed": "Failed to load provinces for selection",
+      "districtLoadFailed": "Failed to load districts for selection",
+      "createSuccess": "Ward created successfully",
+      "createFailed": "Failed to create ward",
+      "updateSuccess": "Ward updated successfully",
+      "updateFailed": "Failed to update ward"
+    }
   }
 }

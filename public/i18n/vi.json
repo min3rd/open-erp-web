@@ -275,5 +275,157 @@
       "updateSuccess": "Cập nhật tỉnh/thành thành công",
       "updateFailed": "Không thể cập nhật tỉnh/thành"
     }
+  },
+  "wardList": {
+    "title": "Quản lý Phường/Xã",
+    "search": {
+      "label": "Tìm kiếm phường/xã",
+      "placeholder": "Tìm theo tên, mã...",
+      "openSearch": "Mở tìm kiếm",
+      "closeSearch": "Đóng tìm kiếm"
+    },
+    "filter": {
+      "allProvinces": "Tất cả Tỉnh/Thành",
+      "allDistricts": "Tất cả Quận/Huyện",
+      "selectProvince": "Lọc theo Tỉnh/Thành",
+      "selectDistrict": "Lọc theo Quận/Huyện"
+    },
+    "addButton": {
+      "label": "Thêm Phường/Xã",
+      "tooltip": "Thêm phường/xã mới"
+    },
+    "refreshButton": {
+      "label": "Làm mới",
+      "tooltip": "Làm mới danh sách"
+    },
+    "actionsButton": {
+      "label": "Hành động"
+    },
+    "actions": {
+      "exportCSV": "Xuất ra CSV",
+      "exportGeoJSON": "Xuất ra GeoJSON",
+      "import": "Nhập Phường/Xã"
+    },
+    "table": {
+      "code": "Mã",
+      "name": "Tên",
+      "nameVi": "Tên (Tiếng Việt)",
+      "nameEn": "Tên (Tiếng Anh)",
+      "province": "Tỉnh/Thành",
+      "district": "Quận/Huyện",
+      "rowActions": "Hành động"
+    },
+    "contextMenu": {
+      "view": "Xem",
+      "edit": "Sửa",
+      "delete": "Xóa"
+    },
+    "pagination": {
+      "report": "Hiển thị {first} đến {last} trong tổng số {totalRecords} phường/xã",
+      "previous": "Trang trước",
+      "next": "Trang sau",
+      "showing": "Hiển thị {first}-{last} / {total}",
+      "itemsPerPage": "Số mục mỗi trang"
+    },
+    "messages": {
+      "loading": "Đang tải phường/xã...",
+      "loaded": "Đã tải {{count}} phường/xã",
+      "noResults": "Không tìm thấy phường/xã nào cho '{{query}}'",
+      "noWards": "Không có phường/xã nào",
+      "error": "Lỗi",
+      "success": "Thành công",
+      "loadFailed": "Không thể tải danh sách phường/xã",
+      "provinceLoadFailed": "Không thể tải danh sách tỉnh/thành",
+      "districtLoadFailed": "Không thể tải danh sách quận/huyện",
+      "exportSuccess": "Xuất dữ liệu thành công",
+      "exportFailed": "Xuất dữ liệu thất bại. Vui lòng thử lại.",
+      "notImplemented": "Sắp có",
+      "importSoon": "Chức năng nhập sẽ sớm được cập nhật",
+      "deleteSuccess": "Đã xóa phường/xã '{{name}}' thành công",
+      "deleteFailed": "Không thể xóa phường/xã. Vui lòng thử lại."
+    },
+    "confirmDelete": {
+      "header": "Xác nhận xóa",
+      "message": "Bạn có chắc chắn muốn xóa '{{name}}'? Hành động này không thể hoàn tác.",
+      "accept": "Xóa",
+      "reject": "Hủy"
+    },
+    "mobileList": {
+      "itemActions": "Hành động"
+    }
+  },
+  "wardForm": {
+    "title": {
+      "create": "Tạo Phường/Xã mới",
+      "edit": "Sửa Phường/Xã",
+      "view": "Xem Phường/Xã"
+    },
+    "fields": {
+      "code": {
+        "label": "Mã Phường/Xã",
+        "placeholder": "Nhập mã phường/xã (VD: W001)",
+        "errors": {
+          "required": "Mã phường/xã là bắt buộc",
+          "minlength": "Mã phường/xã phải có ít nhất 2 ký tự"
+        }
+      },
+      "name": {
+        "label": "Tên (Tiếng Việt)",
+        "placeholder": "Nhập tên phường/xã bằng tiếng Việt",
+        "errors": {
+          "required": "Tên tiếng Việt là bắt buộc",
+          "minlength": "Tên phải có ít nhất 2 ký tự"
+        }
+      },
+      "nameEn": {
+        "label": "Tên (Tiếng Anh)",
+        "placeholder": "Nhập tên phường/xã bằng tiếng Anh (tùy chọn)"
+      },
+      "provinceCode": {
+        "label": "Tỉnh/Thành",
+        "placeholder": "Chọn tỉnh/thành",
+        "errors": {
+          "required": "Tỉnh/Thành là bắt buộc"
+        }
+      },
+      "districtCode": {
+        "label": "Quận/Huyện",
+        "placeholder": "Chọn quận/huyện",
+        "errors": {
+          "required": "Quận/Huyện là bắt buộc"
+        }
+      },
+      "note": {
+        "label": "Ghi chú",
+        "placeholder": "Nhập ghi chú bổ sung (tùy chọn)"
+      },
+      "isLegacy": {
+        "label": "Phường/Xã cũ",
+        "onLabel": "Cũ",
+        "offLabel": "Hiện tại"
+      }
+    },
+    "geometry": {
+      "title": "Chỉnh sửa hình học"
+    },
+    "map": {
+      "title": "Xem trước bản đồ"
+    },
+    "buttons": {
+      "create": "Tạo Phường/Xã",
+      "update": "Cập nhật Phường/Xã",
+      "cancel": "Hủy"
+    },
+    "messages": {
+      "error": "Lỗi",
+      "success": "Thành công",
+      "loadFailed": "Không thể tải dữ liệu phường/xã",
+      "provinceLoadFailed": "Không thể tải danh sách tỉnh/thành",
+      "districtLoadFailed": "Không thể tải danh sách quận/huyện",
+      "createSuccess": "Tạo phường/xã thành công",
+      "createFailed": "Không thể tạo phường/xã",
+      "updateSuccess": "Cập nhật phường/xã thành công",
+      "updateFailed": "Không thể cập nhật phường/xã"
+    }
   }
 }
