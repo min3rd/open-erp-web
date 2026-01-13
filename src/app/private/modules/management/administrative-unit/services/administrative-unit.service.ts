@@ -154,6 +154,8 @@ export class AdministrativeUnitService {
       case AdminUnitType.WARD:
         endpoint = `${this.apiUrl}/wards/${code}`;
         break;
+      default:
+        throw new Error(`Unknown admin unit type: ${type}`);
     }
 
     return this.http.get<any>(endpoint).pipe(
@@ -168,6 +170,8 @@ export class AdministrativeUnitService {
             return districtToAdminUnit(item as District);
           case AdminUnitType.WARD:
             return wardToAdminUnit(item as Ward);
+          default:
+            throw new Error(`Unknown admin unit type: ${type}`);
         }
       })
     );
@@ -188,6 +192,8 @@ export class AdministrativeUnitService {
       case AdminUnitType.WARD:
         endpoint = `${this.apiUrl}/wards`;
         break;
+      default:
+        throw new Error(`Unknown admin unit type: ${unit.type}`);
     }
 
     return this.http.post<any>(endpoint, unit).pipe(
@@ -202,6 +208,8 @@ export class AdministrativeUnitService {
             return districtToAdminUnit(item as District);
           case AdminUnitType.WARD:
             return wardToAdminUnit(item as Ward);
+          default:
+            throw new Error(`Unknown admin unit type: ${unit.type}`);
         }
       })
     );
@@ -222,6 +230,8 @@ export class AdministrativeUnitService {
       case AdminUnitType.WARD:
         endpoint = `${this.apiUrl}/wards/${code}`;
         break;
+      default:
+        throw new Error(`Unknown admin unit type: ${type}`);
     }
 
     return this.http.patch<any>(endpoint, unit).pipe(
@@ -236,6 +246,8 @@ export class AdministrativeUnitService {
             return districtToAdminUnit(item as District);
           case AdminUnitType.WARD:
             return wardToAdminUnit(item as Ward);
+          default:
+            throw new Error(`Unknown admin unit type: ${type}`);
         }
       })
     );
@@ -256,6 +268,8 @@ export class AdministrativeUnitService {
       case AdminUnitType.WARD:
         endpoint = `${this.apiUrl}/wards/${code}`;
         break;
+      default:
+        throw new Error(`Unknown admin unit type: ${type}`);
     }
 
     return this.http.delete<any>(endpoint).pipe(map(() => undefined));

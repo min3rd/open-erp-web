@@ -105,11 +105,31 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
 
   protected readonly hasSelection = computed(() => this.selectedNodes().length > 0);
 
+  // Actions menu items - computed to be reactive
+  protected readonly actionsMenuItems = computed<MenuItem[]>(() => [
+    {
+      label: this.translocoService.translate('administrativeUnit.actions.exportCSV'),
+      icon: 'pi pi-file',
+      command: () => this.exportCSV(),
+    },
+    {
+      label: this.translocoService.translate('administrativeUnit.actions.exportGeoJSON'),
+      icon: 'pi pi-map',
+      command: () => this.exportGeoJSON(),
+    },
+    {
+      separator: true,
+    },
+    {
+      label: this.translocoService.translate('administrativeUnit.actions.bulkDelete'),
+      icon: 'pi pi-trash',
+      command: () => this.bulkDelete(),
+      disabled: !this.hasSelection(),
+    },
+  ]);
+
   // Context menu items
   protected contextMenuItems = signal<MenuItem[]>([]);
-
-  // Actions menu items
-  protected actionsMenuItems: MenuItem[] = [];
 
   constructor() {
     // Check if mobile
@@ -179,9 +199,6 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
       }
     });
 
-    // Setup actions menu
-    this.setupActionsMenu();
-
     // Listen for window resize
     window.addEventListener('resize', this.onResize.bind(this));
   }
@@ -194,30 +211,6 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
 
   private onResize(): void {
     this.isMobile.set(window.innerWidth < 768);
-  }
-
-  private setupActionsMenu(): void {
-    this.actionsMenuItems = [
-      {
-        label: this.translocoService.translate('administrativeUnit.actions.exportCSV'),
-        icon: 'pi pi-file',
-        command: () => this.exportCSV(),
-      },
-      {
-        label: this.translocoService.translate('administrativeUnit.actions.exportGeoJSON'),
-        icon: 'pi pi-map',
-        command: () => this.exportGeoJSON(),
-      },
-      {
-        separator: true,
-      },
-      {
-        label: this.translocoService.translate('administrativeUnit.actions.bulkDelete'),
-        icon: 'pi pi-trash',
-        command: () => this.bulkDelete(),
-        disabled: !this.hasSelection(),
-      },
-    ];
   }
 
   /**
@@ -465,6 +458,14 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
     this.router.navigate([
       `/private/modules/management/administrative-unit/${this.filter()}/1/${newLimit}`,
     ]);
+  }
+
+  /**
+   * Handle row actions click
+   */
+  protected onRowActionsClick(node: AdministrativeUnitTreeNode, event: Event, menu: any): void {
+    this.selectedNode.set(node);
+    menu.toggle(event);
   }
 
   /**
