@@ -23,14 +23,13 @@
             (keyup.enter)="onSearch()"
           />
           @if (searchTerm()) {
-          <button
-            pButton
+          <p-button
             icon="pi pi-times"
             class="p-button-text"
             id="administrative-unit-search-clear"
             (click)="clearSearch()"
             [pTooltip]="'administrativeUnit.search.clearSearch' | transloco"
-          ></button>
+          ></p-button>
           }
         </p-inputgroup>
 
@@ -130,14 +129,13 @@
                 <td>{{ rowData.region || '-' }}</td>
                 <td>
                   <p-menu #rowMenu [model]="contextMenuItems()" [popup]="true"></p-menu>
-                  <button
-                    pButton
+                  <p-button
                     icon="pi pi-ellipsis-v"
                     class="p-button-text p-button-sm"
                     [id]="'administrative-unit-row-actions-' + rowData.code"
                     (click)="onRowActionsClick(rowNode, $event, rowMenu)"
                     [pTooltip]="'administrativeUnit.table.rowActions' | transloco"
-                  ></button>
+                  ></p-button>
                 </td>
               </tr>
             </ng-template>
@@ -168,14 +166,13 @@
               </select>
             </div>
             <div class="flex items-center gap-2">
-              <button
-                pButton
+              <p-button
                 icon="pi pi-chevron-left"
                 class="p-button-text"
                 id="administrative-unit-pagination-prev"
                 [disabled]="page() <= 1"
                 (click)="onPageChange(page() - 1)"
-              ></button>
+              ></p-button>
               <span>
                 {{
                   'administrativeUnit.pagination.showing'
@@ -187,14 +184,13 @@
                         }
                 }}
               </span>
-              <button
-                pButton
+              <p-button
                 icon="pi pi-chevron-right"
                 class="p-button-text"
                 id="administrative-unit-pagination-next"
                 [disabled]="page() >= totalPages()"
                 (click)="onPageChange(page() + 1)"
-              ></button>
+              ></p-button>
             </div>
           </div>
         </div>
@@ -225,36 +221,32 @@
     </ng-template>
     <ng-template #end>
       <div class="flex items-center gap-2">
-        <button
-          pButton
+        <p-button
           icon="pi pi-search"
           class="p-button-text"
           id="administrative-unit-search-button-mobile"
           (click)="toggleMobileSearch()"
           [pTooltip]="'administrativeUnit.search.openSearch' | transloco"
-        ></button>
-        <button
-          pButton
+        ></p-button>
+        <p-button
           icon="pi pi-refresh"
           class="p-button-text"
           id="administrative-unit-refresh-button-mobile"
           (click)="refresh()"
-        ></button>
-        <button
-          pButton
+        ></p-button>
+        <p-button
           icon="pi pi-plus"
           class="p-button-text"
           id="administrative-unit-add-button-mobile"
           (click)="addNewProvince()"
-        ></button>
+        ></p-button>
         <p-menu #actionsMobileMenu [model]="actionsMenuItems()" [popup]="true"></p-menu>
-        <button
-          pButton
+        <p-button
           icon="pi pi-ellipsis-v"
           class="p-button-text"
           id="administrative-unit-actions-button-mobile"
           (click)="actionsMobileMenu.toggle($event)"
-        ></button>
+        ></p-button>
       </div>
     </ng-template>
   </p-toolbar>
@@ -275,13 +267,12 @@
         (keyup.enter)="onSearch()"
       />
       @if (searchTerm()) {
-      <button
-        pButton
+      <p-button
         icon="pi pi-times"
         class="p-button-text"
         id="administrative-unit-search-clear-mobile"
         (click)="clearSearch()"
-      ></button>
+      ></p-button>
       }
     </p-inputgroup>
   </div>
@@ -308,13 +299,12 @@
           <span class="font-semibold">{{ node.data.name }}</span>
         </div>
         <p-menu #rowMenuMobile [model]="contextMenuItems()" [popup]="true"></p-menu>
-        <button
-          pButton
+        <p-button
           icon="pi pi-ellipsis-v"
           class="p-button-text p-button-sm"
           [id]="'administrative-unit-mobile-item-actions-' + node.data.code"
           (click)="onRowActionsClick(node, $event, rowMenuMobile)"
-        ></button>
+        ></p-button>
       </div>
       <div class="text-sm text-gray-600 mb-2">
         <span class="font-semibold">{{ 'administrativeUnit.table.code' | transloco }}:</span>
@@ -342,20 +332,18 @@
       </div>
       }
       <div class="flex gap-2">
-        <button
-          pButton
+        <p-button
           [label]="'administrativeUnit.contextMenu.view' | transloco"
           icon="pi pi-eye"
           class="p-button-sm flex-1"
           (click)="viewNode(node)"
-        ></button>
-        <button
-          pButton
+        ></p-button>
+        <p-button
           [label]="'administrativeUnit.contextMenu.edit' | transloco"
           icon="pi pi-pencil"
           class="p-button-sm flex-1"
           (click)="editNode(node)"
-        ></button>
+        ></p-button>
       </div>
     </div>
     } }
@@ -366,25 +354,23 @@
     class="p-4 border-t flex items-center justify-between"
     id="administrative-unit-pagination-mobile"
   >
-    <button
-      pButton
+    <p-button
       icon="pi pi-chevron-left"
       class="p-button-sm"
       id="administrative-unit-pagination-prev-mobile"
       [disabled]="page() <= 1"
       (click)="onPageChange(page() - 1)"
-    ></button>
+    ></p-button>
     <span class="text-sm">
       {{ 'administrativeUnit.pagination.page' | transloco }} {{ page() }} / {{ totalPages() }}
     </span>
-    <button
-      pButton
+    <p-button
       icon="pi pi-chevron-right"
       class="p-button-sm"
       id="administrative-unit-pagination-next-mobile"
       [disabled]="page() >= totalPages()"
       (click)="onPageChange(page() + 1)"
-    ></button>
+    ></p-button>
   </div>
 </div>
 
