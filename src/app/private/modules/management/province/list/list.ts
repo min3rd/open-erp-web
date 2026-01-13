@@ -190,14 +190,6 @@ export class ProvinceList implements OnInit, OnDestroy {
     });
   }
 
-  private hasParamsChanged(page: number, limit: number, search: string): boolean {
-    return (
-      this.currentPage() !== page ||
-      this.pageSize() !== limit ||
-      this.searchQuery() !== (search === 'all' ? '' : search)
-    );
-  }
-
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
