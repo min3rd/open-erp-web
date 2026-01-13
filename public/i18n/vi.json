@@ -390,7 +390,7 @@
       },
       "districtCode": {
         "label": "Quận/Huyện",
-        "placeholder": "Chọn quận/huyện",
+        "placeholder": "Chọn quận/huyện (tùy chọn cho chính quyền 2 cấp)",
         "errors": {
           "required": "Quận/Huyện là bắt buộc"
         }

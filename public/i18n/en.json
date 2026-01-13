@@ -1313,7 +1313,7 @@
       },
       "districtCode": {
         "label": "District",
-        "placeholder": "Select district",
+        "placeholder": "Select district (optional for 2-level government)",
         "errors": {
           "required": "District is required"
         }
