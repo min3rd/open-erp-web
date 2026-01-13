@@ -11,9 +11,9 @@
       <div class="flex items-center gap-2">
         <!-- Search Input -->
         <p-inputgroup id="administrative-unit-search-group" class="w-80">
-          <p-inputgroupaddon>
+          <p-inputgroup-addon>
             <i class="pi pi-search"></i>
-          </p-inputgroupaddon>
+          </p-inputgroup-addon>
           <input
             pInputText
             type="text"
@@ -263,9 +263,9 @@
   @if (mobileSearchExpanded()) {
     <div class="p-4 border-b" id="administrative-unit-mobile-search-panel">
       <p-inputgroup>
-        <p-inputgroupaddon>
+        <p-inputgroup-addon>
           <i class="pi pi-search"></i>
-        </p-inputgroupaddon>
+        </p-inputgroup-addon>
         <input
           pInputText
           type="text"
@@ -304,62 +304,64 @@
     }
 
     @if (!loading() && treeNodes().length > 0) {
-      <p-accordion [multiple]="true">
-        @for (node of treeNodes(); track node.data.code) {
-          <p-accordiontab>
-            <ng-template #header>
-              <div class="flex items-center justify-between w-full">
-                <div class="flex items-center gap-2">
-                  <i [class]="getTypeIcon(node.data.type)"></i>
-                  <span class="font-semibold">{{ node.data.name }}</span>
-                  <span class="text-xs text-gray-500">{{ node.data.code }}</span>
-                </div>
-                <button
-                  pButton
-                  icon="pi pi-ellipsis-v"
-                  class="p-button-text p-button-sm"
-                  [id]="'administrative-unit-mobile-item-actions-' + node.data.code"
-                  (click)="$event.stopPropagation(); selectedNode.set(node); actionsMenu.toggle($event)"
-                ></button>
-              </div>
-            </ng-template>
-            <div class="p-2">
-              <div class="mb-2">
-                <span class="font-semibold">{{ 'administrativeUnit.table.type' | transloco }}:</span>
-                <span class="ml-2 px-2 py-1 rounded text-sm" [ngClass]="{
-                  'bg-blue-100 text-blue-800': node.data.type === 'province',
-                  'bg-green-100 text-green-800': node.data.type === 'district',
-                  'bg-purple-100 text-purple-800': node.data.type === 'ward'
-                }">
-                  {{ getTypeLabel(node.data.type) }}
-                </span>
-              </div>
-              @if (node.data.region) {
-                <div class="mb-2">
-                  <span class="font-semibold">{{ 'administrativeUnit.table.region' | transloco }}:</span>
-                  <span class="ml-2">{{ node.data.region }}</span>
-                </div>
-              }
-              <div class="mt-4 flex gap-2">
-                <button
-                  pButton
-                  [label]="'administrativeUnit.contextMenu.view' | transloco"
-                  icon="pi pi-eye"
-                  class="p-button-sm flex-1"
-                  (click)="viewNode(node)"
-                ></button>
-                <button
-                  pButton
-                  [label]="'administrativeUnit.contextMenu.edit' | transloco"
-                  icon="pi pi-pencil"
-                  class="p-button-sm flex-1"
-                  (click)="editNode(node)"
-                ></button>
-              </div>
+      @for (node of treeNodes(); track node.data.code) {
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-3 border">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <i [class]="getTypeIcon(node.data.type)"></i>
+              <span class="font-semibold">{{ node.data.name }}</span>
             </div>
-          </p-accordiontab>
-        }
-      </p-accordion>
+            <p-menu
+              #rowMenuMobile
+              [model]="contextMenuItems()"
+              [popup]="true"
+            ></p-menu>
+            <button
+              pButton
+              icon="pi pi-ellipsis-v"
+              class="p-button-text p-button-sm"
+              [id]="'administrative-unit-mobile-item-actions-' + node.data.code"
+              (click)="selectedNode.set(node); rowMenuMobile.toggle($event)"
+            ></button>
+          </div>
+          <div class="text-sm text-gray-600 mb-2">
+            <span class="font-semibold">{{ 'administrativeUnit.table.code' | transloco }}:</span>
+            <span class="ml-2">{{ node.data.code }}</span>
+          </div>
+          <div class="mb-2">
+            <span class="text-sm font-semibold">{{ 'administrativeUnit.table.type' | transloco }}:</span>
+            <span class="ml-2 px-2 py-1 rounded text-xs" [ngClass]="{
+              'bg-blue-100 text-blue-800': node.data.type === 'province',
+              'bg-green-100 text-green-800': node.data.type === 'district',
+              'bg-purple-100 text-purple-800': node.data.type === 'ward'
+            }">
+              {{ getTypeLabel(node.data.type) }}
+            </span>
+          </div>
+          @if (node.data.region) {
+            <div class="text-sm text-gray-600 mb-3">
+              <span class="font-semibold">{{ 'administrativeUnit.table.region' | transloco }}:</span>
+              <span class="ml-2">{{ node.data.region }}</span>
+            </div>
+          }
+          <div class="flex gap-2">
+            <button
+              pButton
+              [label]="'administrativeUnit.contextMenu.view' | transloco"
+              icon="pi pi-eye"
+              class="p-button-sm flex-1"
+              (click)="viewNode(node)"
+            ></button>
+            <button
+              pButton
+              [label]="'administrativeUnit.contextMenu.edit' | transloco"
+              icon="pi pi-pencil"
+              class="p-button-sm flex-1"
+              (click)="editNode(node)"
+            ></button>
+          </div>
+        </div>
+      }
     }
   </div>
 

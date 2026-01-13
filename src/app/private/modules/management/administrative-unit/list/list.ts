@@ -30,7 +30,6 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SplitterModule } from 'primeng/splitter';
 import { CheckboxModule } from 'primeng/checkbox';
-import { AccordionModule } from 'primeng/accordion';
 
 // Core components
 import { MapComponent } from '../../../../../../core/components/map/map.component';
@@ -64,7 +63,6 @@ import {
     ConfirmDialogModule,
     SplitterModule,
     CheckboxModule,
-    AccordionModule,
     MapComponent,
   ],
   templateUrl: './list.html',
