@@ -1447,6 +1447,7 @@
     "messages": {
       "noComponentSelected": "No component selected. Select a component to edit its properties.",
       "emptyCanvas": "Drag components from the left panel or click + to add components to your form.",
+      "dropHere": "Drop components here",
       "exportSuccess": "Schema exported successfully",
       "exportError": "Failed to export schema",
       "validationError": "Schema validation failed",

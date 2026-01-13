@@ -1318,6 +1318,7 @@
     "messages": {
       "noComponentSelected": "Ningún componente seleccionado. Seleccione un componente para editar sus propiedades.",
       "emptyCanvas": "Arrastre componentes desde el panel izquierdo o haga clic en + para agregar componentes a su formulario.",
+      "dropHere": "Suelte componentes aquí",
       "exportSuccess": "Esquema exportado exitosamente",
       "exportError": "Error al exportar esquema",
       "validationError": "Falló la validación del esquema",

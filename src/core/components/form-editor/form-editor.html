@@ -83,6 +83,8 @@
         [selectedComponentId]="selectedComponentId()"
         (componentSelected)="onCanvasComponentSelected($event)"
         (componentDropped)="onComponentDropped($event)"
+        (componentMoved)="onComponentMoved($event)"
+        (addComponentRequested)="onAddComponentRequested($event)"
       />
     </div>
 
