@@ -9,6 +9,7 @@ import {
   effect,
   ViewChild,
   ElementRef,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
@@ -74,6 +75,7 @@ export class DistrictList implements OnInit, OnDestroy {
   @ViewChild('contextMenu') contextMenu!: ContextMenu;
   @ViewChild('mobileSearchInput') mobileSearchInput?: ElementRef<HTMLInputElement>;
 
+  private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private districtService = inject(DistrictService);
@@ -106,19 +108,19 @@ export class DistrictList implements OnInit, OnDestroy {
   protected readonly selectedGeometry = computed(() => {
     const district = this.selectedDistrict();
     if (!district) return null;
-    
+
     // Return geometry if available
     if (district.geometry) return district.geometry;
-    
+
     // Convert centroid to GeoJSON Point if available
     if (district.centroid) {
       const centroidPoint: GeoJSON.Point = {
         type: 'Point',
-        coordinates: [district.centroid.lon, district.centroid.lat]
+        coordinates: [district.centroid.lon, district.centroid.lat],
       };
       return centroidPoint;
     }
-    
+
     return null;
   });
 
@@ -126,8 +128,11 @@ export class DistrictList implements OnInit, OnDestroy {
   protected readonly provinceOptions = computed(() => {
     const provs = this.provinces();
     return [
-      { label: this.translocoService.translate('districtList.filter.allProvinces'), value: 'all-provinces' },
-      ...provs.map(p => ({ label: p.name, value: p.code }))
+      {
+        label: this.translocoService.translate('districtList.filter.allProvinces'),
+        value: 'all-provinces',
+      },
+      ...provs.map((p) => ({ label: p.name, value: p.code })),
     ];
   });
 
@@ -201,21 +206,6 @@ export class DistrictList implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Load provinces for filter
-    this.provinceService.getProvinces({ page: 1, limit: 1000 }).subscribe({
-      next: (data) => {
-        this.provinces.set(data.items);
-      },
-      error: (error) => {
-        console.error('Failed to load provinces:', error);
-        this.messageService.add({
-          severity: 'warn',
-          summary: this.translocoService.translate('districtList.messages.error'),
-          detail: this.translocoService.translate('districtList.messages.provinceLoadFailed'),
-        });
-      }
-    });
-
     // Load data from resolver
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       const districtListData = data['districtList'];
@@ -224,6 +214,12 @@ export class DistrictList implements OnInit, OnDestroy {
         this.totalRecords.set(districtListData.total);
         this.isLoading.set(false);
       }
+
+      if (data['provinceList']) {
+        this.provinces.set(data['provinceList'].items);
+      }
+
+      this.cdr.markForCheck();
     });
 
     // Subscribe to route params for pagination and filters
@@ -237,6 +233,7 @@ export class DistrictList implements OnInit, OnDestroy {
       this.pageSize.set(limit);
       this.searchQuery.set(search === 'all' ? '' : search);
       this.selectedProvinceCode.set(provinceFilter);
+      this.cdr.markForCheck();
     });
   }
 
@@ -254,9 +251,12 @@ export class DistrictList implements OnInit, OnDestroy {
    */
   protected onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.router.navigate(['../../../..', this.selectedProvinceCode(), input.value || 'all', 1, this.pageSize()], {
-      relativeTo: this.route,
-    });
+    this.router.navigate(
+      ['../../../..', this.selectedProvinceCode(), input.value || 'all', 1, this.pageSize()],
+      {
+        relativeTo: this.route,
+      }
+    );
   }
 
   /**
@@ -264,9 +264,12 @@ export class DistrictList implements OnInit, OnDestroy {
    */
   protected onProvinceFilterChange(event: any): void {
     const provinceCode = event.value;
-    this.router.navigate(['../../../..', provinceCode, this.searchQuery() || 'all', 1, this.pageSize()], {
-      relativeTo: this.route,
-    });
+    this.router.navigate(
+      ['../../../..', provinceCode, this.searchQuery() || 'all', 1, this.pageSize()],
+      {
+        relativeTo: this.route,
+      }
+    );
   }
 
   /**
@@ -276,9 +279,18 @@ export class DistrictList implements OnInit, OnDestroy {
     const newPage = event.page + 1;
     const newPageSize = event.rows;
 
-    this.router.navigate(['../../../..', this.selectedProvinceCode(), this.searchQuery() || 'all', newPage, newPageSize], {
-      relativeTo: this.route,
-    });
+    this.router.navigate(
+      [
+        '../../../..',
+        this.selectedProvinceCode(),
+        this.searchQuery() || 'all',
+        newPage,
+        newPageSize,
+      ],
+      {
+        relativeTo: this.route,
+      }
+    );
   }
 
   /**
@@ -294,7 +306,8 @@ export class DistrictList implements OnInit, OnDestroy {
   protected onExportCSV(): void {
     const params = {
       q: this.searchQuery() || undefined,
-      provinceCode: this.selectedProvinceCode() !== 'all-provinces' ? this.selectedProvinceCode() : undefined,
+      provinceCode:
+        this.selectedProvinceCode() !== 'all-provinces' ? this.selectedProvinceCode() : undefined,
     };
 
     this.districtService.exportToCSV(params).subscribe({
@@ -328,7 +341,8 @@ export class DistrictList implements OnInit, OnDestroy {
   protected onExportGeoJSON(): void {
     const params = {
       q: this.searchQuery() || undefined,
-      provinceCode: this.selectedProvinceCode() !== 'all-provinces' ? this.selectedProvinceCode() : undefined,
+      provinceCode:
+        this.selectedProvinceCode() !== 'all-provinces' ? this.selectedProvinceCode() : undefined,
     };
 
     this.districtService.exportToGeoJSON(params).subscribe({
@@ -476,9 +490,18 @@ export class DistrictList implements OnInit, OnDestroy {
   protected onPreviousPage(): void {
     if (this.currentPage() > 1) {
       const newPage = this.currentPage() - 1;
-      this.router.navigate(['../../../..', this.selectedProvinceCode(), this.searchQuery() || 'all', newPage, this.pageSize()], {
-        relativeTo: this.route,
-      });
+      this.router.navigate(
+        [
+          '../../../..',
+          this.selectedProvinceCode(),
+          this.searchQuery() || 'all',
+          newPage,
+          this.pageSize(),
+        ],
+        {
+          relativeTo: this.route,
+        }
+      );
     }
   }
 
@@ -488,9 +511,18 @@ export class DistrictList implements OnInit, OnDestroy {
   protected onNextPage(): void {
     if (this.currentPage() < this.totalPages()) {
       const newPage = this.currentPage() + 1;
-      this.router.navigate(['../../../..', this.selectedProvinceCode(), this.searchQuery() || 'all', newPage, this.pageSize()], {
-        relativeTo: this.route,
-      });
+      this.router.navigate(
+        [
+          '../../../..',
+          this.selectedProvinceCode(),
+          this.searchQuery() || 'all',
+          newPage,
+          this.pageSize(),
+        ],
+        {
+          relativeTo: this.route,
+        }
+      );
     }
   }
 
@@ -499,9 +531,12 @@ export class DistrictList implements OnInit, OnDestroy {
    */
   protected onPageSizeChangeMobile(event: { value: number }): void {
     const newPageSize = event.value;
-    this.router.navigate(['../../../..', this.selectedProvinceCode(), this.searchQuery() || 'all', 1, newPageSize], {
-      relativeTo: this.route,
-    });
+    this.router.navigate(
+      ['../../../..', this.selectedProvinceCode(), this.searchQuery() || 'all', 1, newPageSize],
+      {
+        relativeTo: this.route,
+      }
+    );
   }
 
   /**

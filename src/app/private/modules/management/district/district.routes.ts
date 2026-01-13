@@ -4,6 +4,7 @@ import { DistrictList } from './list/list';
 import { DistrictForm } from './form/form';
 import { districtDetailResolver } from './resolvers/district-detail.resolver';
 import { districtListResolver } from './resolvers/district-list.resolver';
+import { provinceListResolver } from '../province/resolvers/province-list.resolver';
 
 export const routes: Routes = [
   {
@@ -29,6 +30,7 @@ export const routes: Routes = [
                     component: DistrictList,
                     resolve: {
                       districtList: districtListResolver,
+                      provinceList: provinceListResolver,
                     },
                     children: [
                       {

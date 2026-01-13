@@ -16,7 +16,7 @@ export const provinceListResolver: ResolveFn<ProvinceListResponse | null> = (
   
   // Get pagination params from route
   const page = parseInt(route.paramMap.get('page') || '1', 10);
-  const limit = parseInt(route.paramMap.get('limit') || '10', 10);
+  const limit = parseInt(route.paramMap.get('limit') || '100', 10);
   const filter = route.paramMap.get('filter') || 'all';
   
   // Get search query from query params
