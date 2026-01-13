@@ -1,5 +1,8 @@
 import { ComponentDefinition, ComponentType } from './form-editor.types';
 
+// Re-export for convenience
+export type { ComponentDefinition, ComponentType };
+
 /**
  * Component palette definitions
  * Defines all available components for the form editor

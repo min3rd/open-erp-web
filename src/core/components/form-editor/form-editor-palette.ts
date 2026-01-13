@@ -1,14 +1,12 @@
-import { Component, output, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, output, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
-import { ButtonModule } from 'primeng/button';
-import { PanelModule } from 'primeng/panel';
 import { ComponentDefinition } from './component-definitions';
 import { COMPONENT_DEFINITIONS, getLayoutComponents, getFormComponents } from './component-definitions';
 
 @Component({
   selector: 'form-editor-palette',
-  imports: [CommonModule, TranslocoModule, ButtonModule, PanelModule],
+  imports: [CommonModule, TranslocoModule],
   template: `
     <div id="form-editor-palette" class="h-full flex flex-col bg-surface-50 dark:bg-surface-900">
       <div class="p-4 border-b border-surface-200 dark:border-surface-700">

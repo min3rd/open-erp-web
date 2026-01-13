@@ -152,7 +152,8 @@ export class JSONSchemaConverter {
       }
 
       if (childrenIds.length > 0 || childLayouts.length > 0) {
-        layout.children = [...childrenIds, ...childLayouts] as (string | UILayoutDefinition)[];
+        // Mix children IDs and layout definitions
+        layout.children = [...childrenIds, ...childLayouts] as any;
       }
     }
 

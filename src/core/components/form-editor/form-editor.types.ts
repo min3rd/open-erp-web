@@ -106,7 +106,7 @@ export type ActionType = 'add' | 'remove' | 'move' | 'edit' | 'init';
  */
 export interface EditorAction {
   type: ActionType;
-  timestamp: number;
+  timestamp?: number;
   componentId?: string;
   previousState?: FormSchema;
   newState?: FormSchema;

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { Demo } from './demo/demo';
+import { DemoFormEditor } from './demo/form-editor/demo-form-editor';
 
 export const routes: Routes = [
   {
@@ -9,6 +10,10 @@ export const routes: Routes = [
   {
     path: 'demo',
     component: Demo,
+  },
+  {
+    path: 'demo/form-editor',
+    component: DemoFormEditor,
   },
   {
     path: '',
