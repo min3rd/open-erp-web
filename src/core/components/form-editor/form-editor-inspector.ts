@@ -2,11 +2,10 @@ import { Component, input, output, ChangeDetectionStrategy, signal } from '@angu
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoModule } from '@jsverse/transloco';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
-import { CheckboxModule } from 'primeng/checkbox';
-import { ButtonModule } from 'primeng/button';
-import { InputNumberModule } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
+import { Checkbox } from 'primeng/checkbox';
+import { Button } from 'primeng/button';
+import { InputNumber } from 'primeng/inputnumber';
 import { FormComponent, FormFieldConfig } from './form-editor.types';
 
 @Component({
@@ -15,11 +14,10 @@ import { FormComponent, FormFieldConfig } from './form-editor.types';
     CommonModule,
     FormsModule,
     TranslocoModule,
-    InputTextModule,
-    InputTextareaModule,
-    CheckboxModule,
-    ButtonModule,
-    InputNumberModule,
+    InputText,
+    Checkbox,
+    Button,
+    InputNumber,
   ],
   template: `
     <div id="form-editor-inspector" class="h-full flex flex-col bg-surface-50 dark:bg-surface-900">

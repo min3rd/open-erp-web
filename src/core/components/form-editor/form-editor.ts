@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
-import { ToolbarModule } from 'primeng/toolbar';
-import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
+import { Toolbar } from 'primeng/toolbar';
+import { Button } from 'primeng/button';
+import { Tooltip } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
+import { Toast } from 'primeng/toast';
 import { FormEditorService } from './form-editor.service';
 import { FormEditorPalette } from './form-editor-palette';
 import { FormEditorCanvas } from './form-editor-canvas';
 import { FormEditorInspector } from './form-editor-inspector';
 import { JSONSchemaConverter } from './json-schema-converter.service';
-import { ComponentDefinition } from './component-definitions';
+import { ComponentDefinition, COMPONENT_DEFINITIONS } from './component-definitions';
 import { FormComponent } from './form-editor.types';
 
 @Component({
@@ -19,10 +19,10 @@ import { FormComponent } from './form-editor.types';
   imports: [
     CommonModule,
     TranslocoModule,
-    ToolbarModule,
-    ButtonModule,
-    TooltipModule,
-    ToastModule,
+    Toolbar,
+    Button,
+    Tooltip,
+    Toast,
     FormEditorPalette,
     FormEditorCanvas,
     FormEditorInspector,
@@ -63,7 +63,7 @@ export class FormEditor {
     // Find component definition
     const component = this.findComponentDefinition(event.componentType);
     if (component) {
-      const id = this.editorService.addComponent(component.defaultConfig, event.parentId);
+      const id = this.editorService.addComponent(component.defaultConfig, event.parentId || undefined);
       this.editorService.selectComponent(id);
       this.messageService.add({
         severity: 'success',
@@ -174,9 +174,7 @@ export class FormEditor {
    * Find component definition by type
    */
   private findComponentDefinition(type: string): ComponentDefinition | undefined {
-    // Import component definitions
-    const { COMPONENT_DEFINITIONS } = require('./component-definitions');
-    return COMPONENT_DEFINITIONS.find((def: ComponentDefinition) => def.type === type);
+    return COMPONENT_DEFINITIONS.find((def) => def.type === type);
   }
 
   /**

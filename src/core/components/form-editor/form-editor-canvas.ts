@@ -2,42 +2,42 @@ import { Component, input, output, ChangeDetectionStrategy } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { FormComponent, LayoutComponentConfig, FormFieldConfig } from './form-editor.types';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
-import { DropdownModule } from 'primeng/dropdown';
-import { CheckboxModule } from 'primeng/checkbox';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { CalendarModule } from 'primeng/calendar';
-import { ButtonModule } from 'primeng/button';
-import { DividerModule } from 'primeng/divider';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { ColorPickerModule } from 'primeng/colorpicker';
-import { RatingModule } from 'primeng/rating';
-import { SliderModule } from 'primeng/slider';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputText } from 'primeng/inputtext';
+import { Textarea } from 'primeng/textarea';
+import { Select } from 'primeng/select';
+import { Checkbox } from 'primeng/checkbox';
+import { RadioButton } from 'primeng/radiobutton';
+import { DatePicker } from 'primeng/datepicker';
+import { Button } from 'primeng/button';
+import { Divider } from 'primeng/divider';
+import { AutoComplete } from 'primeng/autocomplete';
+import { ColorPicker } from 'primeng/colorpicker';
+import { Rating } from 'primeng/rating';
+import { Slider } from 'primeng/slider';
+import { SelectButton } from 'primeng/selectbutton';
+import { ToggleButton } from 'primeng/togglebutton';
+import { ToggleSwitch } from 'primeng/toggleswitch';
 
 @Component({
   selector: 'form-editor-canvas',
   imports: [
     CommonModule,
     TranslocoModule,
-    InputTextModule,
-    InputTextareaModule,
-    DropdownModule,
-    CheckboxModule,
-    RadioButtonModule,
-    CalendarModule,
-    ButtonModule,
-    DividerModule,
-    AutoCompleteModule,
-    ColorPickerModule,
-    RatingModule,
-    SliderModule,
-    SelectButtonModule,
-    ToggleButtonModule,
-    InputSwitchModule,
+    InputText,
+    Textarea,
+    Select,
+    Checkbox,
+    RadioButton,
+    DatePicker,
+    Button,
+    Divider,
+    AutoComplete,
+    ColorPicker,
+    Rating,
+    Slider,
+    SelectButton,
+    ToggleButton,
+    ToggleSwitch,
   ],
   template: `
     <div
@@ -80,9 +80,9 @@ import { InputSwitchModule } from 'primeng/inputswitch';
                         (dragover)="onDragOver($event)"
                         (drop)="onDrop($event, component.id)"
                       >
-                        @if (component.children && component.children.length > 0) {
+                        @if (getLayoutChildren(component).length > 0) {
                           <div class="space-y-3">
-                            @for (child of component.children; track child.id) {
+                            @for (child of getLayoutChildren(component); track child.id) {
                               <div
                                 [id]="'form-editor-canvas-' + child.id"
                                 [class.ring-2]="child.id === selectedComponentId()"
@@ -143,7 +143,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
           }
           @case ('textarea') {
             <textarea
-              pInputTextarea
+              pTextarea
               [placeholder]="component.placeholder || (component.placeholderKey | transloco)"
               [disabled]="component.disabled"
               [required]="component.required"
@@ -153,10 +153,9 @@ import { InputSwitchModule } from 'primeng/inputswitch';
             ></textarea>
           }
           @case ('select') {
-            <p-dropdown
+            <p-select
               [placeholder]="component.placeholder || (component.placeholderKey | transloco)"
               [disabled]="component.disabled"
-              [required]="component.required"
               [options]="component.options || []"
               optionLabel="label"
               optionValue="value"
@@ -173,7 +172,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
             <div class="flex flex-col gap-2">
               @for (option of component.options || []; track option.value) {
                 <div class="flex items-center gap-2">
-                  <p-radioButton
+                  <p-radiobutton
                     [name]="component.id"
                     [value]="option.value"
                     [disabled]="component.disabled"
@@ -184,16 +183,15 @@ import { InputSwitchModule } from 'primeng/inputswitch';
             </div>
           }
           @case ('date-picker') {
-            <p-calendar
+            <p-datepicker
               [placeholder]="component.placeholder || (component.placeholderKey | transloco)"
               [disabled]="component.disabled"
-              [required]="component.required"
               [showIcon]="true"
               class="w-full"
             />
           }
           @case ('autocomplete') {
-            <p-autoComplete
+            <p-autocomplete
               [placeholder]="component.placeholder || (component.placeholderKey | transloco)"
               [disabled]="component.disabled"
               [suggestions]="component.options || []"
@@ -202,16 +200,16 @@ import { InputSwitchModule } from 'primeng/inputswitch';
             />
           }
           @case ('color-picker') {
-            <p-colorPicker [disabled]="component.disabled" />
+            <p-colorpicker [disabled]="component.disabled" />
           }
           @case ('rating') {
-            <p-rating [disabled]="component.disabled" [cancel]="false" />
+            <p-rating [disabled]="component.disabled" />
           }
           @case ('slider') {
             <p-slider [disabled]="component.disabled" class="w-full" />
           }
           @case ('select-button') {
-            <p-selectButton
+            <p-selectbutton
               [options]="component.options || []"
               optionLabel="label"
               optionValue="value"
@@ -219,14 +217,14 @@ import { InputSwitchModule } from 'primeng/inputswitch';
             />
           }
           @case ('toggle-button') {
-            <p-toggleButton
+            <p-togglebutton
               [onLabel]="component.label || 'On'"
               [offLabel]="component.label || 'Off'"
               [disabled]="component.disabled"
             />
           }
           @case ('toggle-switch') {
-            <p-inputSwitch [disabled]="component.disabled" />
+            <p-toggleswitch [disabled]="component.disabled" />
           }
         }
       </div>
@@ -249,6 +247,14 @@ export class FormEditorCanvas {
       'divider',
       'button',
     ].includes(component.type);
+  }
+
+  getLayoutChildren(component: FormComponent): FormComponent[] {
+    if (this.isLayoutComponent(component)) {
+      const layoutComp = component as LayoutComponentConfig;
+      return layoutComp.children || [];
+    }
+    return [];
   }
 
   onComponentClick(event: MouseEvent, component: FormComponent): void {
