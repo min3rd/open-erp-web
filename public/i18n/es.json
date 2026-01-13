@@ -1184,7 +1184,7 @@
       },
       "districtCode": {
         "label": "Distrito",
-        "placeholder": "Seleccione distrito",
+        "placeholder": "Seleccione distrito (opcional para gobierno de 2 niveles)",
         "errors": {
           "required": "El distrito es requerido"
         }

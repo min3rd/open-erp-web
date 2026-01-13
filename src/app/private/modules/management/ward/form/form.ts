@@ -28,8 +28,6 @@ import { MapComponent } from '../../../../../../core/components/map/map.componen
 
 // Services and types
 import { WardService } from '../services/ward.service';
-import { ProvinceService } from '../../province/services/province.service';
-import { DistrictService } from '../../district/services/district.service';
 import { Ward, CreateWardDto, UpdateWardDto } from '../ward.types';
 import { Province } from '../../province/province.types';
 import { District } from '../../district/district.types';
@@ -57,8 +55,6 @@ export class WardForm implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   private wardService = inject(WardService);
-  private provinceService = inject(ProvinceService);
-  private districtService = inject(DistrictService);
   private messageService = inject(MessageService);
   private translocoService = inject(TranslocoService);
   private destroy$ = new Subject<void>();
@@ -106,38 +102,18 @@ export class WardForm implements OnInit, OnDestroy {
       name: ['', [Validators.required, Validators.minLength(2)]],
       nameEn: [''],
       provinceCode: ['', [Validators.required]],
-      districtCode: ['', [Validators.required]],
+      districtCode: [''], // Not required - supports 2-level government structure
       note: [''],
       isLegacy: [false],
     });
 
-    // Load provinces for dropdown
-    this.provinceService.getProvinces({ page: 1, limit: 1000 }).subscribe({
-      next: (data) => {
-        this.provinces.set(data.items);
-      },
-      error: (error) => {
-        console.error('Failed to load provinces:', error);
-        this.messageService.add({
-          severity: 'warn',
-          summary: this.translocoService.translate('wardForm.messages.error'),
-          detail: this.translocoService.translate('wardForm.messages.provinceLoadFailed'),
-        });
+    // Load provinces and districts from resolver (already preloaded by parent route)
+    this.route.parent?.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      if (data['provinceList']) {
+        this.provinces.set(data['provinceList'].items);
       }
-    });
-
-    // Load all districts for dropdown
-    this.districtService.getDistricts({ page: 1, limit: 10000 }).subscribe({
-      next: (data) => {
-        this.districts.set(data.items);
-      },
-      error: (error) => {
-        console.error('Failed to load districts:', error);
-        this.messageService.add({
-          severity: 'warn',
-          summary: this.translocoService.translate('wardForm.messages.error'),
-          detail: this.translocoService.translate('wardForm.messages.districtLoadFailed'),
-        });
+      if (data['districtList']) {
+        this.districts.set(data['districtList'].items);
       }
     });
 
