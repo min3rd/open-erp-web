@@ -58,7 +58,7 @@
         <p-menu
           #actionsMenu
           id="administrative-unit-actions-menu"
-          [model]="actionsMenuItems"
+          [model]="actionsMenuItems()"
           [popup]="true"
         ></p-menu>
         <button
@@ -135,7 +135,7 @@
                     icon="pi pi-ellipsis-v"
                     class="p-button-text p-button-sm"
                     [id]="'administrative-unit-row-actions-' + rowData.code"
-                    (click)="selectedNode.set(rowNode); rowMenu.toggle($event)"
+                    (click)="onRowActionsClick(rowNode, $event, rowMenu)"
                     [pTooltip]="'administrativeUnit.table.rowActions' | transloco"
                   ></button>
                 </td>
@@ -245,7 +245,7 @@
         ></button>
         <p-menu
           #actionsMobileMenu
-          [model]="actionsMenuItems"
+          [model]="actionsMenuItems()"
           [popup]="true"
         ></p-menu>
         <button
@@ -321,7 +321,7 @@
               icon="pi pi-ellipsis-v"
               class="p-button-text p-button-sm"
               [id]="'administrative-unit-mobile-item-actions-' + node.data.code"
-              (click)="selectedNode.set(node); rowMenuMobile.toggle($event)"
+              (click)="onRowActionsClick(node, $event, rowMenuMobile)"
             ></button>
           </div>
           <div class="text-sm text-gray-600 mb-2">
