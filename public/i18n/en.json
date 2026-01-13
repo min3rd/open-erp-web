@@ -1350,5 +1350,117 @@
       "updateSuccess": "Ward updated successfully",
       "updateFailed": "Failed to update ward"
     }
+  },
+  "formEditor": {
+    "title": "Form Editor",
+    "toolbar": {
+      "undo": "Undo",
+      "redo": "Redo",
+      "export": "Export Schema",
+      "clear": "Clear All",
+      "loadExample": "Load Example"
+    },
+    "panels": {
+      "components": "Components",
+      "properties": "Properties",
+      "preview": "Preview"
+    },
+    "categories": {
+      "layout": "Layout Components",
+      "form": "Form Components"
+    },
+    "components": {
+      "layout1Column": "1 Column",
+      "layout2Column": "2 Columns",
+      "layout3Column": "3 Columns",
+      "divider": "Divider",
+      "button": "Button",
+      "input": "Input",
+      "textarea": "Text Area",
+      "select": "Select",
+      "checkbox": "Checkbox",
+      "radioButton": "Radio Button",
+      "datePicker": "Date Picker",
+      "autocomplete": "Autocomplete",
+      "cascadeSelect": "Cascade Select",
+      "colorPicker": "Color Picker",
+      "rating": "Rating",
+      "selectButton": "Select Button",
+      "slider": "Slider",
+      "toggleButton": "Toggle Button",
+      "toggleSwitch": "Toggle Switch"
+    },
+    "defaults": {
+      "button": "Button",
+      "input": "Input Field",
+      "inputPlaceholder": "Enter text",
+      "textarea": "Text Area",
+      "textareaPlaceholder": "Enter text",
+      "select": "Select",
+      "selectPlaceholder": "Choose option",
+      "checkbox": "Checkbox",
+      "radioButton": "Radio Button",
+      "datePicker": "Date Picker",
+      "datePickerPlaceholder": "Select date",
+      "autocomplete": "Autocomplete",
+      "autocompletePlaceholder": "Search...",
+      "cascadeSelect": "Cascade Select",
+      "cascadeSelectPlaceholder": "Select option",
+      "colorPicker": "Color Picker",
+      "rating": "Rating",
+      "selectButton": "Select Button",
+      "slider": "Slider",
+      "toggleButton": "Toggle Button",
+      "toggleSwitch": "Toggle Switch"
+    },
+    "properties": {
+      "general": "General",
+      "label": "Label",
+      "labelKey": "Label i18n Key",
+      "placeholder": "Placeholder",
+      "placeholderKey": "Placeholder i18n Key",
+      "id": "ID",
+      "cssClasses": "CSS Classes",
+      "required": "Required",
+      "disabled": "Disabled",
+      "defaultValue": "Default Value",
+      "validation": "Validation",
+      "minLength": "Min Length",
+      "maxLength": "Max Length",
+      "min": "Minimum",
+      "max": "Maximum",
+      "pattern": "Pattern",
+      "email": "Email Format",
+      "url": "URL Format",
+      "options": "Options",
+      "addOption": "Add Option",
+      "optionLabel": "Label",
+      "optionValue": "Value",
+      "removeOption": "Remove"
+    },
+    "actions": {
+      "addComponent": "Add Component",
+      "removeComponent": "Remove Component",
+      "selectComponent": "Select Component",
+      "dragComponent": "Drag to add"
+    },
+    "messages": {
+      "noComponentSelected": "No component selected. Select a component to edit its properties.",
+      "emptyCanvas": "Drag components from the left panel or click + to add components to your form.",
+      "exportSuccess": "Schema exported successfully",
+      "exportError": "Failed to export schema",
+      "validationError": "Schema validation failed",
+      "clearConfirm": "Are you sure you want to clear the form? This action cannot be undone.",
+      "componentAdded": "Component added",
+      "componentRemoved": "Component removed",
+      "componentUpdated": "Component updated",
+      "undoAction": "Undo: {{action}}",
+      "redoAction": "Redo: {{action}}"
+    },
+    "validation": {
+      "required": "This field is required",
+      "idRequired": "ID is required",
+      "invalidId": "Invalid ID format"
+    }
   }
 }
