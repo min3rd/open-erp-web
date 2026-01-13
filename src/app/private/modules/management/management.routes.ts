@@ -31,6 +31,11 @@ export const routes: Routes = [
         path: 'ward',
         loadChildren: () => import('./ward/ward.routes').then((m) => m.routes),
       },
+      {
+        path: 'administrative-unit',
+        loadChildren: () =>
+          import('./administrative-unit/administrative-unit.routes').then((m) => m.routes),
+      },
     ],
   },
 ];

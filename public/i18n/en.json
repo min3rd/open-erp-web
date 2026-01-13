@@ -1463,5 +1463,142 @@
       "idRequired": "ID is required",
       "invalidId": "Invalid ID format"
     }
+  },
+  "administrativeUnit": {
+    "title": "Administrative Unit Management",
+    "search": {
+      "label": "Search units",
+      "placeholder": "Search by name or code...",
+      "openSearch": "Open search",
+      "closeSearch": "Close search",
+      "clearSearch": "Clear search"
+    },
+    "addButton": {
+      "label": "Add Province",
+      "tooltip": "Add new province"
+    },
+    "refreshButton": {
+      "label": "Refresh",
+      "tooltip": "Refresh list"
+    },
+    "actionsButton": {
+      "label": "Actions"
+    },
+    "actions": {
+      "exportCSV": "Export to CSV",
+      "exportGeoJSON": "Export to GeoJSON",
+      "bulkDelete": "Bulk Delete"
+    },
+    "table": {
+      "name": "Name",
+      "code": "Code",
+      "type": "Type",
+      "region": "Region",
+      "actions": "Actions",
+      "rowActions": "Row actions"
+    },
+    "types": {
+      "province": "Province",
+      "district": "District",
+      "ward": "Ward"
+    },
+    "contextMenu": {
+      "view": "View",
+      "edit": "Edit",
+      "createChild": "Create Child",
+      "delete": "Delete"
+    },
+    "pagination": {
+      "showing": "Showing {first}-{last} of {total}",
+      "itemsPerPage": "Items per page",
+      "page": "Page"
+    },
+    "messages": {
+      "loading": "Loading administrative units...",
+      "loaded": "{{count}} units loaded",
+      "noData": "No administrative units found",
+      "error": "Error",
+      "success": "Success",
+      "loadFailed": "Failed to load units",
+      "loadChildrenFailed": "Failed to load children",
+      "deleteSuccess": "{{name}} deleted successfully",
+      "deleteFailed": "Failed to delete unit",
+      "createSuccess": "Unit created successfully",
+      "createFailed": "Failed to create unit",
+      "updateSuccess": "Unit updated successfully",
+      "updateFailed": "Failed to update unit",
+      "refreshed": "List refreshed successfully",
+      "notImplemented": "Not Implemented",
+      "exportSoon": "Export functionality coming soon",
+      "bulkDeleteSoon": "Bulk delete functionality coming soon"
+    },
+    "confirmDelete": {
+      "header": "Confirm Delete",
+      "message": "Are you sure you want to delete {{name}}?",
+      "bulkMessage": "Are you sure you want to delete {{count}} units?",
+      "accept": "Delete",
+      "reject": "Cancel"
+    },
+    "form": {
+      "title": {
+        "create": "Create Administrative Unit",
+        "edit": "Edit Administrative Unit",
+        "view": "View Administrative Unit"
+      },
+      "fields": {
+        "code": {
+          "label": "Code",
+          "placeholder": "Enter code",
+          "errors": {
+            "required": "Code is required",
+            "minlength": "Code must be at least 2 characters"
+          }
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "Enter name",
+          "errors": {
+            "required": "Name is required",
+            "minlength": "Name must be at least 2 characters"
+          }
+        },
+        "nameEn": {
+          "label": "Name (English)",
+          "placeholder": "Enter English name"
+        },
+        "type": {
+          "label": "Type"
+        },
+        "province": {
+          "label": "Province",
+          "placeholder": "Select province"
+        },
+        "district": {
+          "label": "District",
+          "placeholder": "Select district"
+        },
+        "region": {
+          "label": "Region",
+          "placeholder": "Enter region (e.g., Northern, Central, Southern)"
+        },
+        "population": {
+          "label": "Population",
+          "placeholder": "Enter population"
+        },
+        "note": {
+          "label": "Note",
+          "placeholder": "Enter additional notes"
+        }
+      },
+      "mapPreview": {
+        "label": "Map Preview"
+      },
+      "buttons": {
+        "create": "Create",
+        "update": "Update",
+        "cancel": "Cancel",
+        "close": "Close"
+      }
+    }
   }
 }
