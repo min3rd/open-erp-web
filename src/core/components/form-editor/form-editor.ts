@@ -48,29 +48,45 @@ export class FormEditor {
   onComponentSelected(component: ComponentDefinition): void {
     const id = this.editorService.addComponent(component.defaultConfig);
     this.editorService.selectComponent(id);
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Component Added',
-      detail: `${component.type} component added to form`,
-      life: 3000,
-    });
   }
 
   /**
    * Handle component drop from palette
    */
-  onComponentDropped(event: { componentType: string; parentId: string | null }): void {
+  onComponentDropped(event: { componentType: string; parentId: string | null; columnIndex: number; position: number }): void {
     // Find component definition
     const component = this.findComponentDefinition(event.componentType);
     if (component) {
-      const id = this.editorService.addComponent(component.defaultConfig, event.parentId || undefined);
+      const id = this.editorService.addComponent(component.defaultConfig, event.parentId || undefined, event.position >= 0 ? event.position : undefined);
       this.editorService.selectComponent(id);
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Component Added',
-        detail: `${component.type} component added`,
-        life: 3000,
-      });
+    }
+  }
+
+  /**
+   * Handle moving existing component
+   */
+  onComponentMoved(event: { componentId: string; targetParentId: string | null; columnIndex: number; position: number }): void {
+    this.editorService.moveComponent(
+      event.componentId,
+      event.targetParentId,
+      event.position >= 0 ? event.position : 0
+    );
+  }
+
+  /**
+   * Handle add component button click
+   */
+  onAddComponentRequested(event: { parentId: string | null; position: number }): void {
+    // For now, we'll just show a message. In the future, we can show a dropdown menu
+    // For this implementation, we'll add a default input component
+    const defaultComponent = this.findComponentDefinition('input');
+    if (defaultComponent) {
+      const id = this.editorService.addComponent(
+        defaultComponent.defaultConfig,
+        event.parentId || undefined,
+        event.position >= 0 ? event.position : undefined
+      );
+      this.editorService.selectComponent(id);
     }
   }
 
@@ -93,12 +109,6 @@ export class FormEditor {
    */
   onComponentRemoved(componentId: string): void {
     this.editorService.removeComponent(componentId);
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Component Removed',
-      detail: 'Component removed from form',
-      life: 3000,
-    });
   }
 
   /**
