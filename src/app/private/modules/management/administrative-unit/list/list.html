@@ -130,7 +130,7 @@
                 </td>
                 <td>{{ rowData.region || '-' }}</td>
                 <td>
-                  <p-menu #rowMenu [model]="contextMenuItems()" [popup]="true"></p-menu>
+                  <p-menu #rowMenu [model]="contextMenuItems()" [popup]="true" appendTo="body"></p-menu>
                   <p-button
                     icon="pi pi-ellipsis-v"
                     variant="text"
