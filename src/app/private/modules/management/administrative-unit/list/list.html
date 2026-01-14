@@ -4,9 +4,35 @@
   <div class="p-2 border-b border-surface-200 dark:border-surface-700">
     <p-toolbar id="administrative-unit-toolbar">
       <ng-template #start>
-        <h2 class="text-2xl font-semibold m-0">
-          {{ 'administrativeUnit.title' | transloco }}
-        </h2>
+        <div class="flex items-center gap-4">
+          <h2 class="text-2xl font-semibold m-0">
+            {{ 'administrativeUnit.title' | transloco }}
+          </h2>
+          
+          <!-- View Mode Selector -->
+          <p-selectbutton
+            id="administrative-unit-view-mode"
+            [(ngModel)]="viewMode"
+            [options]="viewModeOptions"
+            optionLabel="label"
+            optionValue="value"
+          >
+            <ng-template #item let-option>
+              <i [class]="option.icon" class="mr-2"></i>
+              {{ option.label }}
+            </ng-template>
+          </p-selectbutton>
+          
+          <!-- Legacy Toggle -->
+          <p-togglebutton
+            id="administrative-unit-legacy-toggle"
+            [(ngModel)]="showLegacy"
+            onLabel="Hiện Legacy"
+            offLabel="Ẩn Legacy"
+            onIcon="pi pi-eye"
+            offIcon="pi pi-eye-slash"
+          ></p-togglebutton>
+        </div>
       </ng-template>
       <ng-template #end>
         <div class="flex items-center gap-2">
@@ -101,7 +127,7 @@
                 <th>{{ 'administrativeUnit.table.code' | transloco }}</th>
                 <th>{{ 'administrativeUnit.table.type' | transloco }}</th>
                 <th>{{ 'administrativeUnit.table.region' | transloco }}</th>
-                <th style="width: 100px">{{ 'administrativeUnit.table.actions' | transloco }}</th>
+                <th style="width: 60px">{{ 'administrativeUnit.table.actions' | transloco }}</th>
               </tr>
             </ng-template>
             <ng-template #body let-rowNode let-rowData="rowData">
@@ -112,7 +138,7 @@
               >
                 <td>
                   <p-treetabletoggler [rowNode]="rowNode"></p-treetabletoggler>
-                  <i [class]="getTypeIcon(rowData.type)" class="mr-2"></i>
+                  <i [class]="getTypeIconFromData(rowData)" class="mr-2"></i>
                   {{ rowData.name }}
                 </td>
                 <td>{{ rowData.code }}</td>
@@ -120,12 +146,12 @@
                   <span
                     class="px-2 py-1 rounded text-sm"
                     [ngClass]="{
-                      'bg-blue-100 text-blue-800': rowData.type === 'province',
-                      'bg-green-100 text-green-800': rowData.type === 'district',
-                      'bg-purple-100 text-purple-800': rowData.type === 'ward'
+                      'bg-blue-100 text-blue-800': !rowData.provinceCode,
+                      'bg-green-100 text-green-800': rowData.provinceCode && !rowData.districtCode,
+                      'bg-purple-100 text-purple-800': rowData.districtCode
                     }"
                   >
-                    {{ getTypeLabel(rowData.type) }}
+                    {{ getTypeLabelFromData(rowData) }}
                   </span>
                 </td>
                 <td>{{ rowData.region || '-' }}</td>
@@ -151,49 +177,21 @@
           </p-treetable>
 
           <!-- Pagination -->
-          <div class="mt-4 flex items-center justify-between" id="administrative-unit-pagination">
-            <div class="flex items-center gap-2">
-              <label for="administrative-unit-page-size">
-                {{ 'administrativeUnit.pagination.itemsPerPage' | transloco }}:
-              </label>
-              <select
-                id="administrative-unit-page-size"
-                class="p-2 border rounded"
-                [ngModel]="limit()"
-                (ngModelChange)="onPageSizeChange($event)"
-              >
-                @for (option of pageSizeOptions; track option) {
-                <option [value]="option">{{ option }}</option>
-                }
-              </select>
-            </div>
-            <div class="flex items-center gap-2">
-              <p-button
-                icon="pi pi-chevron-left"
-                class="p-button-text"
-                id="administrative-unit-pagination-prev"
-                [disabled]="page() <= 1"
-                (click)="onPageChange(page() - 1)"
-              ></p-button>
-              <span>
-                {{
-                  'administrativeUnit.pagination.showing'
-                    | transloco
-                      : {
-                          first: (page() - 1) * limit() + 1,
-                          last: page() * limit() > total() ? total() : page() * limit(),
-                          total: total()
-                        }
-                }}
-              </span>
-              <p-button
-                icon="pi pi-chevron-right"
-                class="p-button-text"
-                id="administrative-unit-pagination-next"
-                [disabled]="page() >= totalPages()"
-                (click)="onPageChange(page() + 1)"
-              ></p-button>
-            </div>
+          <div class="border-t border-surface-200 dark:border-surface-700 p-4">
+            <p-paginator
+              id="administrative-unit-pagination"
+              [rows]="limit()"
+              [totalRecords]="total()"
+              [first]="(page() - 1) * limit()"
+              [rowsPerPageOptions]="pageSizeOptions"
+              (onPageChange)="onPaginatorPageChange($event)"
+              [showCurrentPageReport]="true"
+              currentPageReportTemplate="{{ 'administrativeUnit.pagination.showing' | transloco: {
+                first: '{first}',
+                last: '{last}',
+                total: '{totalRecords}'
+              } }}"
+            ></p-paginator>
           </div>
         </div>
       </ng-template>
@@ -291,7 +289,7 @@
     <div class="bg-white rounded-lg shadow-sm p-4 mb-3 border">
       <div class="flex items-center justify-between mb-2">
         <div class="flex items-center gap-2">
-          <i [class]="getTypeIcon(node.data.type)"></i>
+          <i [class]="getTypeIconFromData(node.data)"></i>
           <span class="font-semibold">{{ node.data.name }}</span>
         </div>
         <p-menu #rowMenuMobile [model]="contextMenuItems()" [popup]="true"></p-menu>
@@ -313,12 +311,12 @@
         <span
           class="ml-2 px-2 py-1 rounded text-xs"
           [ngClass]="{
-            'bg-blue-100 text-blue-800': node.data.type === 'province',
-            'bg-green-100 text-green-800': node.data.type === 'district',
-            'bg-purple-100 text-purple-800': node.data.type === 'ward'
+            'bg-blue-100 text-blue-800': !node.data.provinceCode,
+            'bg-green-100 text-green-800': node.data.provinceCode && !node.data.districtCode,
+            'bg-purple-100 text-purple-800': node.data.districtCode
           }"
         >
-          {{ getTypeLabel(node.data.type) }}
+          {{ getTypeLabelFromData(node.data) }}
         </span>
       </div>
       @if (node.data.region) {

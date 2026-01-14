@@ -1,9 +1,13 @@
 import { Routes } from '@angular/router';
 import { AdministrativeUnit } from './administrative-unit';
 import { AdministrativeUnitList } from './list/list';
-import { AdministrativeUnitForm } from './form/form';
 import { adminUnitTreeResolver } from './resolvers/admin-unit-tree.resolver';
-import { adminUnitDetailResolver } from './resolvers/admin-unit-detail.resolver';
+import { ProvinceForm } from '../province/form/form';
+import { DistrictForm } from '../district/form/form';
+import { WardForm } from '../ward/form/form';
+import { provinceDetailResolver } from '../province/resolvers/province-detail.resolver';
+import { districtDetailResolver } from '../district/resolvers/district-detail.resolver';
+import { wardDetailResolver } from '../ward/resolvers/ward-detail.resolver';
 
 export const routes: Routes = [
   {
@@ -28,14 +32,15 @@ export const routes: Routes = [
                   treeData: adminUnitTreeResolver,
                 },
                 children: [
+                  // Province routes
                   {
-                    path: 'new/:parentType/:parentCode',
-                    component: AdministrativeUnitForm,
+                    path: 'province/new',
+                    component: ProvinceForm,
                   },
                   {
-                    path: ':type/:code',
+                    path: 'province/:code',
                     resolve: {
-                      unit: adminUnitDetailResolver,
+                      province: provinceDetailResolver,
                     },
                     children: [
                       {
@@ -45,11 +50,63 @@ export const routes: Routes = [
                       },
                       {
                         path: 'view',
-                        component: AdministrativeUnitForm,
+                        component: ProvinceForm,
                       },
                       {
                         path: 'edit',
-                        component: AdministrativeUnitForm,
+                        component: ProvinceForm,
+                      },
+                    ],
+                  },
+                  // District routes
+                  {
+                    path: 'district/new',
+                    component: DistrictForm,
+                  },
+                  {
+                    path: 'district/:code',
+                    resolve: {
+                      district: districtDetailResolver,
+                    },
+                    children: [
+                      {
+                        path: '',
+                        pathMatch: 'full',
+                        redirectTo: 'view',
+                      },
+                      {
+                        path: 'view',
+                        component: DistrictForm,
+                      },
+                      {
+                        path: 'edit',
+                        component: DistrictForm,
+                      },
+                    ],
+                  },
+                  // Ward routes
+                  {
+                    path: 'ward/new',
+                    component: WardForm,
+                  },
+                  {
+                    path: 'ward/:code',
+                    resolve: {
+                      ward: wardDetailResolver,
+                    },
+                    children: [
+                      {
+                        path: '',
+                        pathMatch: 'full',
+                        redirectTo: 'view',
+                      },
+                      {
+                        path: 'view',
+                        component: WardForm,
+                      },
+                      {
+                        path: 'edit',
+                        component: WardForm,
                       },
                     ],
                   },
