@@ -466,6 +466,10 @@
       "district": "Quận/Huyện",
       "ward": "Phường/Xã"
     },
+    "viewMode": {
+      "2-level": "2 Cấp",
+      "3-level": "3 Cấp"
+    },
     "contextMenu": {
       "view": "Xem",
       "edit": "Sửa",

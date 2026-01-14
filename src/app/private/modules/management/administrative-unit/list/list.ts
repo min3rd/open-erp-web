@@ -103,10 +103,18 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
   // View mode and filters
   protected readonly viewMode = signal<'2-level' | '3-level'>('3-level');
   protected readonly showLegacy = signal<boolean>(true);
-  protected readonly viewModeOptions = [
-    { label: '2 cấp', value: '2-level', icon: 'pi pi-list' },
-    { label: '3 cấp', value: '3-level', icon: 'pi pi-sitemap' },
-  ];
+  protected readonly viewModeOptions = computed(() => [
+    { 
+      label: this.translocoService.translate('administrativeUnit.viewMode.2-level'), 
+      value: '2-level', 
+      icon: 'pi pi-list' 
+    },
+    { 
+      label: this.translocoService.translate('administrativeUnit.viewMode.3-level'), 
+      value: '3-level', 
+      icon: 'pi pi-sitemap' 
+    },
+  ]);
 
   // Page size options
   protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
@@ -153,6 +161,18 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
       },
       { allowSignalWrites: true }
     );
+
+    // Watch view mode changes and reload tree
+    effect(() => {
+      const mode = this.viewMode();
+      // Collapse all nodes when switching view mode
+      const nodes = this.treeNodes();
+      nodes.forEach(node => {
+        node.expanded = false;
+        node.children = [];
+      });
+      this.treeNodes.set([...nodes]);
+    });
 
     // Setup context menu items
     effect(
@@ -241,9 +261,9 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
     // Set loading state
     node.loading = true;
 
-    // Load children
+    // Load children with current view mode
     this.service
-      .loadChildren(node)
+      .loadChildren(node, this.viewMode())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (children) => {
