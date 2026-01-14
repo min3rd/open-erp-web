@@ -1373,6 +1373,10 @@
       "district": "Distrito",
       "ward": "Comuna"
     },
+    "viewMode": {
+      "2-level": "2 Niveles",
+      "3-level": "3 Niveles"
+    },
     "contextMenu": {
       "view": "Ver",
       "edit": "Editar",

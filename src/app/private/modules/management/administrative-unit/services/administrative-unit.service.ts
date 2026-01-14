@@ -71,21 +71,33 @@ export class AdministrativeUnitService {
 
   /**
    * Load children for a node (lazy loading)
-   * If node is a province, load its districts
+   * If node is a province, load its districts (3-level) or wards (2-level)
    * If node is a district, load its wards
+   * @param node The tree node to load children for
+   * @param viewMode The current view mode (2-level or 3-level)
    */
-  loadChildren(node: AdministrativeUnitTreeNode): Observable<AdministrativeUnitTreeNode[]> {
+  loadChildren(
+    node: AdministrativeUnitTreeNode, 
+    viewMode: '2-level' | '3-level' = '3-level'
+  ): Observable<AdministrativeUnitTreeNode[]> {
     const unit = node.data;
 
-    if (unit.type === AdminUnitType.PROVINCE) {
-      // Load districts for this province
-      return this.getDistrictsByProvince(unit.code);
-    } else if (unit.type === AdminUnitType.DISTRICT) {
-      // Load wards for this district
+    // Determine type from data structure
+    if (unit.districtCode) {
+      // Has districtCode = ward, wards are leaf nodes
+      return of([]);
+    } else if (unit.provinceCode) {
+      // Has only provinceCode = district, load wards
       return this.getWardsByDistrict(unit.code);
     } else {
-      // Wards are leaf nodes
-      return of([]);
+      // No parent codes = province
+      if (viewMode === '2-level') {
+        // In 2-level mode, load wards directly under provinces
+        return this.getWardsByProvince(unit.code);
+      } else {
+        // In 3-level mode, load districts under provinces
+        return this.getDistrictsByProvince(unit.code);
+      }
     }
   }
 
@@ -121,6 +133,31 @@ export class AdministrativeUnitService {
     const params = new HttpParams()
       .set('districtCode', districtCode)
       .set('limit', '1000'); // Get all wards for this district
+
+    return this.http.get<any>(`${this.apiUrl}/wards`, { params }).pipe(
+      map((response) => {
+        const unwrapped = unwrap<any>(response);
+        const wards = unwrapped.items as Ward[];
+        return wards.map((ward) => {
+          const adminUnit = wardToAdminUnit(ward);
+          // Wards are leaf nodes
+          return mapToTreeNode(adminUnit, false);
+        });
+      }),
+      catchError((error) => {
+        console.error('Error fetching wards:', error);
+        return of([]);
+      })
+    );
+  }
+
+  /**
+   * Get wards for a province (for 2-level view)
+   */
+  private getWardsByProvince(provinceCode: string): Observable<AdministrativeUnitTreeNode[]> {
+    const params = new HttpParams()
+      .set('provinceCode', provinceCode)
+      .set('limit', '10000'); // Get all wards for this province
 
     return this.http.get<any>(`${this.apiUrl}/wards`, { params }).pipe(
       map((response) => {

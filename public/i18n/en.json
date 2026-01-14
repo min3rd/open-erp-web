@@ -1502,6 +1502,10 @@
       "district": "District",
       "ward": "Ward"
     },
+    "viewMode": {
+      "2-level": "2 Levels",
+      "3-level": "3 Levels"
+    },
     "contextMenu": {
       "view": "View",
       "edit": "Edit",
