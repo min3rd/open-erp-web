@@ -30,6 +30,9 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SplitterModule } from 'primeng/splitter';
 import { CheckboxModule } from 'primeng/checkbox';
+import { PaginatorModule } from 'primeng/paginator';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 
 // Core components
 import { MapComponent } from '../../../../../../core/components/map/map.component';
@@ -63,6 +66,9 @@ import {
     ConfirmDialogModule,
     SplitterModule,
     CheckboxModule,
+    PaginatorModule,
+    SelectButtonModule,
+    ToggleButtonModule,
     MapComponent,
   ],
   templateUrl: './list.html',
@@ -93,6 +99,14 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
   protected readonly limit = signal<number>(100);
   protected readonly total = signal<number>(0);
   protected readonly totalPages = signal<number>(0);
+
+  // View mode and filters
+  protected readonly viewMode = signal<'2-level' | '3-level'>('3-level');
+  protected readonly showLegacy = signal<boolean>(true);
+  protected readonly viewModeOptions = [
+    { label: '2 cấp', value: '2-level', icon: 'pi pi-list' },
+    { label: '3 cấp', value: '3-level', icon: 'pi pi-sitemap' },
+  ];
 
   // Page size options
   protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
@@ -333,7 +347,9 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
    */
   protected viewNode(node: AdministrativeUnitTreeNode): void {
     const unit = node.data;
-    this.router.navigate([unit.type, unit.code, 'view'], { relativeTo: this.route });
+    // Determine type from node level in tree
+    const nodeType = this.getNodeType(node);
+    this.router.navigate([nodeType, unit.code, 'view'], { relativeTo: this.route });
   }
 
   /**
@@ -341,7 +357,8 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
    */
   protected editNode(node: AdministrativeUnitTreeNode): void {
     const unit = node.data;
-    this.router.navigate([unit.type, unit.code, 'edit'], { relativeTo: this.route });
+    const nodeType = this.getNodeType(node);
+    this.router.navigate([nodeType, unit.code, 'edit'], { relativeTo: this.route });
   }
 
   /**
@@ -349,7 +366,15 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
    */
   protected createChild(node: AdministrativeUnitTreeNode): void {
     const unit = node.data;
-    this.router.navigate(['new', unit.type, unit.code], { relativeTo: this.route });
+    const nodeType = this.getNodeType(node);
+    // Determine child type based on parent
+    const childType = nodeType === 'province' ? 'district' : 'ward';
+    this.router.navigate([childType, 'new'], { 
+      relativeTo: this.route,
+      queryParams: { 
+        [nodeType === 'province' ? 'provinceCode' : 'districtCode']: unit.code 
+      }
+    });
   }
 
   /**
@@ -357,6 +382,7 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
    */
   protected deleteNode(node: AdministrativeUnitTreeNode): void {
     const unit = node.data;
+    const nodeType = this.getNodeType(node);
     this.confirmationService.confirm({
       header: this.translocoService.translate('administrativeUnit.confirmDelete.header'),
       message: this.translocoService.translate('administrativeUnit.confirmDelete.message', {
@@ -365,7 +391,7 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.service
-          .deleteUnit(unit.code, unit.type)
+          .deleteUnit(unit.code, nodeType as any)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
@@ -394,7 +420,25 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
    * Add new root unit (province)
    */
   protected addNewProvince(): void {
-    this.router.navigate(['new', 'root', 'none'], { relativeTo: this.route });
+    this.router.navigate(['province', 'new'], { relativeTo: this.route });
+  }
+
+  /**
+   * Get node type based on tree hierarchy
+   * Root nodes are provinces, their children are districts, grandchildren are wards
+   */
+  private getNodeType(node: AdministrativeUnitTreeNode): 'province' | 'district' | 'ward' {
+    // Check if this node has a parent by looking at the data
+    if (node.data.districtCode) {
+      // Has both province and district code = ward
+      return 'ward';
+    } else if (node.data.provinceCode) {
+      // Has only province code = district
+      return 'district';
+    } else {
+      // No parent codes = province (root)
+      return 'province';
+    }
   }
 
   /**
@@ -452,6 +496,18 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
   }
 
   /**
+   * Handle paginator page change event
+   */
+  protected onPaginatorPageChange(event: any): void {
+    const newPage = Math.floor(event.first / event.rows) + 1;
+    const newLimit = event.rows;
+    
+    this.router.navigate([
+      `/private/modules/management/administrative-unit/${this.filter()}/${newPage}/${newLimit}`,
+    ]);
+  }
+
+  /**
    * Handle page size change
    */
   protected onPageSizeChange(newLimit: number): void {
@@ -485,9 +541,35 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
   }
 
   /**
+   * Get type icon from data (without using type field)
+   */
+  protected getTypeIconFromData(data: AdministrativeUnit): string {
+    if (data.districtCode) {
+      return 'pi pi-map-marker'; // Ward
+    } else if (data.provinceCode) {
+      return 'pi pi-building'; // District
+    } else {
+      return 'pi pi-map'; // Province
+    }
+  }
+
+  /**
    * Get type label
    */
   protected getTypeLabel(type: AdminUnitType): string {
     return this.translocoService.translate(`administrativeUnit.types.${type}`);
+  }
+
+  /**
+   * Get type label from data (without using type field)
+   */
+  protected getTypeLabelFromData(data: AdministrativeUnit): string {
+    if (data.districtCode) {
+      return this.translocoService.translate('administrativeUnit.types.ward');
+    } else if (data.provinceCode) {
+      return this.translocoService.translate('administrativeUnit.types.district');
+    } else {
+      return this.translocoService.translate('administrativeUnit.types.province');
+    }
   }
 }
