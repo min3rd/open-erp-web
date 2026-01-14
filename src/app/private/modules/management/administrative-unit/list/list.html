@@ -177,7 +177,7 @@
           </p-treetable>
 
           <!-- Pagination -->
-          <div class="border-t border-surface-200 dark:border-surface-700 p-4">
+          <div class="border-t border-surface-200 dark:border-surface-700">
             <p-paginator
               id="administrative-unit-pagination"
               [rows]="limit()"
@@ -186,11 +186,6 @@
               [rowsPerPageOptions]="pageSizeOptions"
               (onPageChange)="onPaginatorPageChange($event)"
               [showCurrentPageReport]="true"
-              currentPageReportTemplate="{{ 'administrativeUnit.pagination.showing' | transloco: {
-                first: '{first}',
-                last: '{last}',
-                total: '{totalRecords}'
-              } }}"
             ></p-paginator>
           </div>
         </div>
