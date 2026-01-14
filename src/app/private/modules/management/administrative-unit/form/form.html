@@ -193,7 +193,17 @@
 
       <!-- Form Actions -->
       @if (!isViewMode()) {
-      <div class="flex gap-2 mt-6">
+      <div class="flex gap-2">
+        <p-button
+          type="button"
+          [label]="'administrativeUnit.form.buttons.cancel' | transloco"
+          icon="pi pi-times"
+          id="administrative-unit-form-cancel-button"
+          (click)="onClose()"
+          [disabled]="loading()"
+          variant="text"
+          severity="secondary"
+        ></p-button>
         <p-button
           type="submit"
           [label]="
@@ -203,16 +213,7 @@
           icon="pi pi-check"
           id="administrative-unit-form-submit-button"
           [loading]="loading()"
-          class="flex-1"
-        ></p-button>
-        <p-button
-          type="button"
-          [label]="'administrativeUnit.form.buttons.cancel' | transloco"
-          icon="pi pi-times"
-          class="p-button-secondary flex-1"
-          id="administrative-unit-form-cancel-button"
-          (click)="onClose()"
-          [disabled]="loading()"
+          class="ml-auto"
         ></p-button>
       </div>
       } @if (isViewMode()) {
@@ -221,7 +222,6 @@
           type="button"
           [label]="'administrativeUnit.form.buttons.close' | transloco"
           icon="pi pi-times"
-          class="flex-1"
           id="administrative-unit-form-close-button"
           (click)="onClose()"
         ></p-button>
