@@ -135,8 +135,10 @@ export class NavigationEditorComponent implements OnInit {
     effect(() => {
       const formValue = this.form().value;
       const label = formValue.label;
+      const currentMode = this.mode();
       
-      if (this.isAutoGeneratingId() && label) {
+      // Only auto-generate in create mode or when explicitly enabled
+      if (this.isAutoGeneratingId() && label && currentMode === 'create') {
         const generatedId = slugify(label, 128);
         this.idPreview.set(generatedId);
         
@@ -145,8 +147,18 @@ export class NavigationEditorComponent implements OnInit {
         if (idControl) {
           idControl.setValue(generatedId, { emitEvent: false });
         }
+      } else if (this.isAutoGeneratingId() && label && currentMode !== 'create') {
+        // In edit mode with auto-generation enabled, still update preview but don't change the form
+        const generatedId = slugify(label, 128);
+        this.idPreview.set(generatedId);
       } else if (!label) {
         this.idPreview.set('');
+      } else {
+        // Update preview with current ID value when not auto-generating
+        const currentId = this.form().get('id')?.value;
+        if (currentId) {
+          this.idPreview.set(currentId);
+        }
       }
     });
   }
