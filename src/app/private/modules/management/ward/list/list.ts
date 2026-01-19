@@ -293,7 +293,7 @@ export class WardList implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     this.router.navigate(
       [
-        '../../../..',
+        '../../../../..',
         this.selectedProvinceCode(),
         this.selectedDistrictCode(),
         input.value || 'all',
