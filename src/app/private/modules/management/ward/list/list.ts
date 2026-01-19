@@ -26,7 +26,6 @@ import { MenuModule } from 'primeng/menu';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { ContextMenu } from 'primeng/contextmenu';
 import { TooltipModule } from 'primeng/tooltip';
-import { PaginatorModule } from 'primeng/paginator';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -37,6 +36,7 @@ import { SplitterModule } from 'primeng/splitter';
 
 // Core components and constants
 import { MapComponent } from '../../../../../../core/components/map/map.component';
+import { PaginationComponent } from '../../../../../../core/components/pagination/pagination';
 import { PAGE_SIZE_OPTIONS } from '../../../../../../core/constant';
 
 // Services
@@ -59,7 +59,7 @@ import { District } from '../../district/district.types';
     MenuModule,
     ContextMenuModule,
     TooltipModule,
-    PaginatorModule,
+    PaginationComponent,
     InputGroupModule,
     InputGroupAddonModule,
     Select,
@@ -95,7 +95,7 @@ export class WardList implements OnInit, OnDestroy {
   protected readonly isLoading = signal(false);
   protected readonly searchQuery = signal('');
   protected readonly currentPage = signal(1);
-  protected readonly pageSize = signal(100);
+  protected readonly pageSize = signal(PAGE_SIZE_OPTIONS[0]);
   protected readonly totalRecords = signal(0);
   protected readonly isMobile = signal(false);
   protected readonly isSearchOpen = signal(false);
@@ -262,13 +262,14 @@ export class WardList implements OnInit, OnDestroy {
     // Subscribe to route params for pagination and filters
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const page = parseInt(params['page'], 10) || 1;
-      const limit = parseInt(params['limit'], 10) || 100;
+      const limit = parseInt(params['limit'], 10) || PAGE_SIZE_OPTIONS[0];
+      const normalizedLimit = PAGE_SIZE_OPTIONS.includes(limit) ? limit : PAGE_SIZE_OPTIONS[0];
       const search = params['filter'] || '';
       const provinceFilter = params['provinceFilter'] || 'all-provinces';
       const districtFilter = params['districtFilter'] || 'all-districts';
 
       this.currentPage.set(page);
-      this.pageSize.set(limit);
+      this.pageSize.set(normalizedLimit);
       this.searchQuery.set(search === 'all' ? '' : search);
       this.selectedProvinceCode.set(provinceFilter);
       this.selectedDistrictCode.set(districtFilter);
@@ -342,9 +343,9 @@ export class WardList implements OnInit, OnDestroy {
   /**
    * Handle page change
    */
-  protected onPageChange(event: any): void {
-    const newPage = event.page + 1;
-    const newPageSize = event.rows;
+  protected onPageChange(event: { page: number; pageSize: number }): void {
+    const newPage = event.page;
+    const newPageSize = event.pageSize;
 
     this.router.navigate(
       [

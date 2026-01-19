@@ -245,15 +245,12 @@
 
         <!-- Pagination -->
         <div class="border-t border-surface-200 dark:border-surface-700 p-4">
-          <p-paginator
-            id="province-list-pagination"
-            [rows]="pageSize()"
+          <core-pagination
+            [idPrefix]="'province-list'"
             [totalRecords]="totalRecords()"
-            [first]="(currentPage() - 1) * pageSize()"
-            [rowsPerPageOptions]="[10, 20, 50, 100]"
-            (onPageChange)="onPageChange($event)"
-            [showCurrentPageReport]="true"
-            [currentPageReportTemplate]="'provinceList.pagination.report' | transloco"
+            [currentPage]="currentPage()"
+            [pageSize]="pageSize()"
+            (pageChange)="onPageChange($event)"
           />
         </div>
       </div>
@@ -352,57 +349,13 @@
       <div
         class="border-t border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 p-4"
       >
-        <div id="province-list-pagination-mobile" class="flex items-center justify-between gap-4">
-          <!-- Previous Button -->
-          <p-button
-            id="province-list-pagination-prev-mobile"
-            icon="pi pi-chevron-left"
-            [rounded]="true"
-            [outlined]="true"
-            (onClick)="onPreviousPage()"
-            [disabled]="currentPage() === 1"
-            [attr.aria-label]="'provinceList.pagination.previous' | transloco"
-            class="min-w-[44px] min-h-[44px]"
-          />
-
-          <!-- Page Info & Items Per Page -->
-          <div class="flex-1 flex flex-col items-center gap-2">
-            <div class="text-sm text-surface-600 dark:text-surface-400">
-              {{
-                'provinceList.pagination.showing'
-                  | transloco
-                    : {
-                        first: (currentPage() - 1) * pageSize() + 1,
-                        last:
-                          currentPage() * pageSize() > totalRecords()
-                            ? totalRecords()
-                            : currentPage() * pageSize(),
-                        total: totalRecords()
-                      }
-              }}
-            </div>
-            <p-select
-              id="province-list-page-size-mobile"
-              [options]="[10, 20, 50, 100]"
-              [(ngModel)]="pageSize"
-              (onChange)="onPageSizeChangeMobile($event)"
-              [style]="{ width: '100px' }"
-              [attr.aria-label]="'provinceList.pagination.itemsPerPage' | transloco"
-            />
-          </div>
-
-          <!-- Next Button -->
-          <p-button
-            id="province-list-pagination-next-mobile"
-            icon="pi pi-chevron-right"
-            [rounded]="true"
-            [outlined]="true"
-            (onClick)="onNextPage()"
-            [disabled]="currentPage() >= totalPages()"
-            [attr.aria-label]="'provinceList.pagination.next' | transloco"
-            class="min-w-[44px] min-h-[44px]"
-          />
-        </div>
+        <core-pagination
+          [idPrefix]="'province-list-mobile'"
+          [totalRecords]="totalRecords()"
+          [currentPage]="currentPage()"
+          [pageSize]="pageSize()"
+          (pageChange)="onPageChange($event)"
+        />
       </div>
     </div>
     }

@@ -1604,5 +1604,13 @@
         "close": "Close"
       }
     }
+  },
+  "pagination": {
+    "first": "First page",
+    "previous": "Previous page",
+    "next": "Next page",
+    "last": "Last page",
+    "page": "Page {{page}}",
+    "pageSize": "Items per page"
   }
 }

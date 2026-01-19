@@ -301,15 +301,12 @@
 
         <!-- Pagination -->
         <div class="border-t border-surface-200 dark:border-surface-700 p-4">
-          <p-paginator
-            id="ward-list-pagination"
-            [rows]="pageSize()"
+          <core-pagination
+            [idPrefix]="'ward-list'"
             [totalRecords]="totalRecords()"
-            [first]="(currentPage() - 1) * pageSize()"
-            [rowsPerPageOptions]="PAGE_SIZE_OPTIONS"
-            (onPageChange)="onPageChange($event)"
-            [showCurrentPageReport]="true"
-            [currentPageReportTemplate]="'wardList.pagination.report' | transloco"
+            [currentPage]="currentPage()"
+            [pageSize]="pageSize()"
+            (pageChange)="onPageChange($event)"
           />
         </div>
       </div>
@@ -411,57 +408,13 @@
       <div
         class="border-t border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 p-4"
       >
-        <div id="ward-list-pagination-mobile" class="flex items-center justify-between gap-4">
-          <!-- Previous Button -->
-          <p-button
-            id="ward-list-pagination-prev-mobile"
-            icon="pi pi-chevron-left"
-            [rounded]="true"
-            [outlined]="true"
-            (onClick)="onPreviousPage()"
-            [disabled]="currentPage() === 1"
-            [attr.aria-label]="'wardList.pagination.previous' | transloco"
-            class="min-w-[44px] min-h-[44px]"
-          />
-
-          <!-- Page Info & Items Per Page -->
-          <div class="flex-1 flex flex-col items-center gap-2">
-            <div class="text-sm text-surface-600 dark:text-surface-400">
-              {{
-                'wardList.pagination.showing'
-                  | transloco
-                    : {
-                        first: (currentPage() - 1) * pageSize() + 1,
-                        last:
-                          currentPage() * pageSize() > totalRecords()
-                            ? totalRecords()
-                            : currentPage() * pageSize(),
-                        total: totalRecords()
-                      }
-              }}
-            </div>
-            <p-select
-              id="ward-list-page-size-mobile"
-              [options]="PAGE_SIZE_OPTIONS"
-              [(ngModel)]="pageSize"
-              (onChange)="onPageSizeChangeMobile($event)"
-              [style]="{ width: '100px' }"
-              [attr.aria-label]="'wardList.pagination.itemsPerPage' | transloco"
-            />
-          </div>
-
-          <!-- Next Button -->
-          <p-button
-            id="ward-list-pagination-next-mobile"
-            icon="pi pi-chevron-right"
-            [rounded]="true"
-            [outlined]="true"
-            (onClick)="onNextPage()"
-            [disabled]="currentPage() >= totalPages()"
-            [attr.aria-label]="'wardList.pagination.next' | transloco"
-            class="min-w-[44px] min-h-[44px]"
-          />
-        </div>
+        <core-pagination
+          [idPrefix]="'ward-list-mobile'"
+          [totalRecords]="totalRecords()"
+          [currentPage]="currentPage()"
+          [pageSize]="pageSize()"
+          (pageChange)="onPageChange($event)"
+        />
       </div>
     </div>
     }

@@ -405,76 +405,13 @@
       <div
         class="border-t border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 p-4"
       >
-        <!-- Desktop Pagination -->
-        @if (!isMobile()) {
-        <div class="flex items-center justify-between">
-          <p-paginator
-            id="user-list-pagination"
-            [rows]="pageSize()"
-            [totalRecords]="totalRecords()"
-            [first]="(currentPage() - 1) * pageSize()"
-            [rowsPerPageOptions]="[100, 200, 500, 1000]"
-            (onPageChange)="onPageChange($event)"
-            [showCurrentPageReport]="true"
-            [currentPageReportTemplate]="'userList.pagination.report' | transloco"
-          />
-        </div>
-        }
-
-        <!-- Mobile Pagination -->
-        @if (isMobile()) {
-        <div id="user-list-pagination-mobile" class="flex items-center justify-between gap-4">
-          <!-- Previous Button -->
-          <p-button
-            id="user-list-pagination-prev-mobile"
-            icon="pi pi-chevron-left"
-            [rounded]="true"
-            [outlined]="true"
-            (onClick)="onPreviousPage()"
-            [disabled]="currentPage() === 1"
-            [attr.aria-label]="'userList.pagination.previous' | transloco"
-            class="min-w-[44px] min-h-[44px]"
-          />
-
-          <!-- Page Info & Items Per Page -->
-          <div class="flex-1 flex flex-col items-center gap-2">
-            <div class="text-sm text-surface-600 dark:text-surface-400">
-              {{
-                'userList.pagination.showing'
-                  | transloco
-                    : {
-                        first: (currentPage() - 1) * pageSize() + 1,
-                        last:
-                          currentPage() * pageSize() > totalRecords()
-                            ? totalRecords()
-                            : currentPage() * pageSize(),
-                        total: totalRecords()
-                      }
-              }}
-            </div>
-            <p-select
-              id="user-list-page-size-mobile"
-              [options]="[100, 200, 500, 1000]"
-              [(ngModel)]="pageSize"
-              (onChange)="onPageSizeChangeMobile($event)"
-              [style]="{ width: '100px' }"
-              [attr.aria-label]="'userList.pagination.itemsPerPage' | transloco"
-            />
-          </div>
-
-          <!-- Next Button -->
-          <p-button
-            id="user-list-pagination-next-mobile"
-            icon="pi pi-chevron-right"
-            [rounded]="true"
-            [outlined]="true"
-            (onClick)="onNextPage()"
-            [disabled]="currentPage() >= totalPages()"
-            [attr.aria-label]="'userList.pagination.next' | transloco"
-            class="min-w-[44px] min-h-[44px]"
-          />
-        </div>
-        }
+        <core-pagination
+          [idPrefix]="'user-list'"
+          [totalRecords]="totalRecords()"
+          [currentPage]="currentPage()"
+          [pageSize]="pageSize()"
+          (pageChange)="onPageChange($event)"
+        />
       </div>
 
       <!-- Screen Reader Status Announcements -->
