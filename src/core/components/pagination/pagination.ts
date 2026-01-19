@@ -1,9 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  output,
+  Renderer2,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { TranslocoModule } from '@jsverse/transloco';
-import { ButtonModule } from 'primeng/button';
-import { Select } from 'primeng/select';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { PaginatorModule } from 'primeng/paginator';
+import { PaginatorState } from 'primeng/paginator';
 import { PAGE_SIZE_OPTIONS } from '../../constant';
 
 export interface PaginationChange {
@@ -13,11 +23,11 @@ export interface PaginationChange {
 
 @Component({
   selector: 'core-pagination',
-  imports: [CommonModule, FormsModule, TranslocoModule, ButtonModule, Select],
+  imports: [CommonModule, TranslocoModule, PaginatorModule],
   templateUrl: './pagination.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PaginationComponent {
+export class PaginationComponent implements AfterViewInit {
   totalRecords = input<number>(0);
   currentPage = input<number>(1);
   pageSize = input<number>(PAGE_SIZE_OPTIONS[0]);
@@ -27,6 +37,11 @@ export class PaginationComponent {
   pageChange = output<PaginationChange>();
   navigateTo = output<number>();
   changePageSize = output<number>();
+
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly renderer = inject(Renderer2);
+  private readonly translocoService = inject(TranslocoService);
+  private viewInitialized = false;
 
   protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
 
@@ -39,85 +54,43 @@ export class PaginationComponent {
     return Math.min(Math.max(page || 1, 1), this.totalPages());
   });
 
-  protected readonly isFirstPage = computed(() => this.currentPageValue() <= 1);
-  protected readonly isLastPage = computed(() => this.currentPageValue() >= this.totalPages());
-
-  protected readonly pageNumbers = computed(() => {
-    const totalPages = this.totalPages();
-    const currentPage = this.currentPageValue();
-    const linkSize = Math.max(1, this.pageLinkSize());
-    const half = Math.floor(linkSize / 2);
-
-    let start = Math.max(1, currentPage - half);
-    let end = Math.min(totalPages, start + linkSize - 1);
-    start = Math.max(1, end - linkSize + 1);
-
-    const pages: number[] = [];
-    for (let page = start; page <= end; page += 1) {
-      pages.push(page);
-    }
-    return pages;
-  });
-
   protected readonly paginationId = computed(() => `${this.idPrefix()}-pagination`);
   protected readonly firstButtonId = computed(() => `${this.idPrefix()}-pagination-first-button`);
   protected readonly prevButtonId = computed(() => `${this.idPrefix()}-pagination-prev-button`);
   protected readonly nextButtonId = computed(() => `${this.idPrefix()}-pagination-next-button`);
   protected readonly lastButtonId = computed(() => `${this.idPrefix()}-pagination-last-button`);
   protected readonly pageSizeId = computed(() => `${this.idPrefix()}-pagination-page-size`);
-  protected readonly pageSizeLabelId = computed(
-    () => `${this.idPrefix()}-pagination-page-size-label`
-  );
 
-  protected getPageButtonId(page: number): string {
-    return `${this.idPrefix()}-pagination-page-${page}`;
+  constructor() {
+    effect(() => {
+      this.currentPage();
+      this.pageSize();
+      this.totalRecords();
+      this.pageLinkSize();
+      if (this.viewInitialized) {
+        queueMicrotask(() => this.applyPaginatorAttributes());
+      }
+    });
   }
 
-  protected onFirstPage(): void {
-    if (this.isFirstPage()) {
-      return;
-    }
-    this.emitChange(1, this.pageSize());
+  ngAfterViewInit(): void {
+    this.viewInitialized = true;
+    this.applyPaginatorAttributes();
   }
 
-  protected onPreviousPage(): void {
-    if (this.isFirstPage()) {
-      return;
-    }
-    this.emitChange(this.currentPageValue() - 1, this.pageSize());
-  }
+  protected onPaginatorChange(event: PaginatorState): void {
+    const newPageSize = event.rows ?? this.pageSize();
+    const isPageSizeChange = newPageSize !== this.pageSize();
+    const targetPage = isPageSizeChange
+      ? this.calculateTargetPageForNewSize(newPageSize)
+      : (event.page ?? 0) + 1;
 
-  protected onNextPage(): void {
-    if (this.isLastPage()) {
-      return;
+    if (isPageSizeChange) {
+      this.changePageSize.emit(newPageSize);
     }
-    this.emitChange(this.currentPageValue() + 1, this.pageSize());
-  }
 
-  protected onLastPage(): void {
-    if (this.isLastPage()) {
-      return;
-    }
-    this.emitChange(this.totalPages(), this.pageSize());
-  }
-
-  protected onPageSelect(page: number): void {
-    if (page === this.currentPageValue()) {
-      return;
-    }
-    this.emitChange(page, this.pageSize());
-  }
-
-  protected onPageSizeSelect(event: { value: number }): void {
-    const newPageSize = event.value;
-    if (!newPageSize || newPageSize === this.pageSize()) {
-      return;
-    }
-    // Preserve the current dataset position when changing page size.
-    const firstItemIndex = (this.currentPageValue() - 1) * this.pageSize() + 1;
-    const targetPage = Math.ceil(firstItemIndex / newPageSize);
-    this.changePageSize.emit(newPageSize);
     this.emitChange(targetPage, newPageSize);
+    queueMicrotask(() => this.applyPaginatorAttributes());
   }
 
   private emitChange(page: number, pageSize: number): void {
@@ -128,5 +101,83 @@ export class PaginationComponent {
     }
     this.pageChange.emit({ page: targetPage, pageSize });
     this.navigateTo.emit(targetPage);
+  }
+
+  private calculateTargetPageForNewSize(newPageSize: number): number {
+    const firstItemIndex = (this.currentPageValue() - 1) * this.pageSize() + 1;
+    return Math.ceil(firstItemIndex / newPageSize);
+  }
+
+  private applyPaginatorAttributes(): void {
+    const host = this.host.nativeElement;
+    this.applyButtonAttributes(
+      host.querySelector('button.p-paginator-first') as HTMLButtonElement | null,
+      this.firstButtonId(),
+      this.translocoService.translate('pagination.first')
+    );
+    this.applyButtonAttributes(
+      host.querySelector('button.p-paginator-prev') as HTMLButtonElement | null,
+      this.prevButtonId(),
+      this.translocoService.translate('pagination.previous')
+    );
+    this.applyButtonAttributes(
+      host.querySelector('button.p-paginator-next') as HTMLButtonElement | null,
+      this.nextButtonId(),
+      this.translocoService.translate('pagination.next')
+    );
+    this.applyButtonAttributes(
+      host.querySelector('button.p-paginator-last') as HTMLButtonElement | null,
+      this.lastButtonId(),
+      this.translocoService.translate('pagination.last')
+    );
+
+    const pageButtons = Array.from(
+      host.querySelectorAll('button.p-paginator-page')
+    ) as HTMLButtonElement[];
+    pageButtons.forEach((button: HTMLButtonElement) => {
+      const pageNumber = Number(button.textContent?.trim());
+      if (!Number.isNaN(pageNumber)) {
+        this.renderer.setAttribute(
+          button,
+          'id',
+          `${this.idPrefix()}-pagination-page-${pageNumber}`
+        );
+        this.renderer.setAttribute(
+          button,
+          'aria-label',
+          this.translocoService.translate('pagination.page', { page: pageNumber })
+        );
+      }
+    });
+
+    const rowsDropdown = host.querySelector('.p-paginator-rpp-dropdown') as HTMLElement | null;
+    if (rowsDropdown) {
+      this.renderer.setAttribute(rowsDropdown, 'id', this.pageSizeId());
+      this.renderer.setAttribute(
+        rowsDropdown,
+        'aria-label',
+        this.translocoService.translate('pagination.pageSize')
+      );
+      const dropdownButton = rowsDropdown.querySelector('button') as HTMLButtonElement | null;
+      if (dropdownButton) {
+        this.renderer.setAttribute(
+          dropdownButton,
+          'aria-label',
+          this.translocoService.translate('pagination.pageSize')
+        );
+      }
+    }
+  }
+
+  private applyButtonAttributes(
+    button: HTMLButtonElement | null,
+    id: string,
+    ariaLabel: string
+  ): void {
+    if (!button) {
+      return;
+    }
+    this.renderer.setAttribute(button, 'id', id);
+    this.renderer.setAttribute(button, 'aria-label', ariaLabel);
   }
 }

@@ -57,9 +57,10 @@ describe('PaginationComponent', () => {
     expect(lastButton?.getAttribute('aria-label')).toBe('Last page');
     expect(pageSizeSelect).toBeTruthy();
     expect(currentPageButton?.getAttribute('aria-current')).toBe('page');
+    expect(currentPageButton?.getAttribute('aria-label')).toBe('Page 2');
   });
 
-  it('should emit pageChange and navigateTo when next button is clicked', () => {
+  it('should emit pageChange and navigateTo when paginator changes page', () => {
     let pageChangeValue: { page: number; pageSize: number } | null = null;
     let navigateToValue: number | null = null;
     component.pageChange.subscribe((value) => {
@@ -69,10 +70,7 @@ describe('PaginationComponent', () => {
       navigateToValue = value;
     });
 
-    const nextButton = fixture.nativeElement.querySelector(
-      '#test-list-pagination-next-button button'
-    ) as HTMLButtonElement;
-    nextButton.click();
+    component['onPaginatorChange']({ page: 2, rows: 100 });
 
     expect(pageChangeValue).toEqual({ page: 3, pageSize: 100 });
     expect(navigateToValue).toBe(3);
@@ -88,7 +86,7 @@ describe('PaginationComponent', () => {
       pageSizeValue = value;
     });
 
-    component['onPageSizeSelect']({ value: 500 });
+    component['onPaginatorChange']({ page: 0, rows: 500 });
 
     expect(pageSizeValue).toBe(500);
     expect(pageChangeValue).toEqual({ page: 1, pageSize: 500 });
