@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 // PrimeNG imports
@@ -32,6 +32,9 @@ import {
   UpdateNavigationItemDto,
 } from '../dto/navigation-item.dto';
 
+// Utilities
+import { slugify } from '../../../../../../core/utils/slugify';
+
 interface IconOption {
   name: string;
   label: string;
@@ -43,6 +46,7 @@ interface IconOption {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     TranslocoModule,
     InputTextModule,
     TextareaModule,
@@ -79,6 +83,12 @@ export class NavigationEditorComponent implements OnInit {
   // Form
   protected readonly form = signal<FormGroup>(this.createForm());
   protected readonly isSubmitting = signal(false);
+
+  // ID field state
+  protected readonly isAutoGeneratingId = signal(true);
+  protected readonly idPreview = signal('');
+  protected readonly isCheckingIdUniqueness = signal(false);
+  protected readonly idUniquenessError = signal<string | null>(null);
 
   // Icons
   protected readonly availableIcons = signal<IconOption[]>([]);
@@ -119,6 +129,25 @@ export class NavigationEditorComponent implements OnInit {
         this.form().get('moduleId')?.clearValidators();
       }
       this.form().get('moduleId')?.updateValueAndValidity();
+    });
+
+    // Watch label changes to auto-generate ID
+    effect(() => {
+      const formValue = this.form().value;
+      const label = formValue.label;
+      
+      if (this.isAutoGeneratingId() && label) {
+        const generatedId = slugify(label, 128);
+        this.idPreview.set(generatedId);
+        
+        // Update the form control without triggering user edit
+        const idControl = this.form().get('id');
+        if (idControl) {
+          idControl.setValue(generatedId, { emitEvent: false });
+        }
+      } else if (!label) {
+        this.idPreview.set('');
+      }
     });
   }
 
@@ -214,7 +243,14 @@ export class NavigationEditorComponent implements OnInit {
    */
   private createForm(): FormGroup {
     return this.fb.group({
-      id: [''],
+      id: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(128),
+          Validators.pattern(/^[a-z0-9\-_]+$/),
+        ],
+      ],
       label: ['', [Validators.required]],
       icon: [''],
       subtitle: [''],
@@ -240,6 +276,9 @@ export class NavigationEditorComponent implements OnInit {
    * Patch form with item data
    */
   private patchForm(item: NavigationItemDto): void {
+    // When editing an existing item, disable auto-generation
+    this.isAutoGeneratingId.set(false);
+    
     this.form().patchValue({
       id: item.id,
       label: item.label,
@@ -270,6 +309,9 @@ export class NavigationEditorComponent implements OnInit {
     if (item.permissions?.exclude) {
       this.excludePermissions.set([...item.permissions.exclude]);
     }
+    
+    // Update ID preview
+    this.idPreview.set(item.id);
   }
 
   /**
@@ -298,19 +340,8 @@ export class NavigationEditorComponent implements OnInit {
       }
     }
 
-    // Generate ID from label if not provided (backend requires `id` on create)
-    const generateId = (label: string) => {
-      const slug = String(label || '')
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9_-]/g, '')
-        .slice(0, 100);
-      return slug || `nav-${Date.now()}`;
-    };
-
     const dto: any = {
-      id: generateId(formValue.label),
+      id: formValue.id,
       label: formValue.label,
       icon: iconName || undefined,
       subtitle: formValue.subtitle || undefined,
@@ -357,10 +388,16 @@ export class NavigationEditorComponent implements OnInit {
     }
 
     if (control.errors['required']) {
-      return this.translocoService.translate('navigationManagement.validation.requiredField');
+      return this.translocoService.translate(`navigationManagement.editor.form.${controlName}.errors.required`);
     }
     if (control.errors['email']) {
       return this.translocoService.translate('navigationManagement.validation.invalidUrl');
+    }
+    if (control.errors['pattern']) {
+      return this.translocoService.translate(`navigationManagement.editor.form.${controlName}.errors.pattern`);
+    }
+    if (control.errors['maxlength']) {
+      return this.translocoService.translate(`navigationManagement.editor.form.${controlName}.errors.maxlength`);
     }
 
     return '';
@@ -404,5 +441,89 @@ export class NavigationEditorComponent implements OnInit {
    */
   protected onRemoveExcludePermission(value: string): void {
     this.excludePermissions.update((perms) => perms.filter((p) => p !== value));
+  }
+
+  /**
+   * Handle manual ID input (disables auto-generation)
+   */
+  protected onIdInput(): void {
+    this.isAutoGeneratingId.set(false);
+    const idControl = this.form().get('id');
+    if (idControl) {
+      this.idPreview.set(idControl.value || '');
+    }
+    // Clear uniqueness error when user types
+    this.idUniquenessError.set(null);
+  }
+
+  /**
+   * Toggle auto-generation of ID
+   */
+  protected toggleAutoGenerateId(): void {
+    const newValue = !this.isAutoGeneratingId();
+    this.isAutoGeneratingId.set(newValue);
+    
+    if (newValue) {
+      // Re-generate from label
+      this.regenerateIdFromLabel();
+    }
+  }
+
+  /**
+   * Regenerate ID from label
+   */
+  protected regenerateIdFromLabel(): void {
+    const label = this.form().get('label')?.value;
+    if (label) {
+      const generatedId = slugify(label, 128);
+      this.idPreview.set(generatedId);
+      this.form().get('id')?.setValue(generatedId);
+      this.isAutoGeneratingId.set(true);
+      // Clear uniqueness error
+      this.idUniquenessError.set(null);
+    }
+  }
+
+  /**
+   * Check ID uniqueness on blur
+   */
+  protected onIdBlur(): void {
+    const idControl = this.form().get('id');
+    const currentId = idControl?.value;
+    
+    // Skip check if ID is empty or invalid
+    if (!currentId || idControl?.invalid) {
+      return;
+    }
+
+    // Skip check if editing and ID hasn't changed
+    const existingItem = this.item();
+    if (existingItem && existingItem.id === currentId) {
+      return;
+    }
+
+    // Check uniqueness by trying to fetch the item
+    this.isCheckingIdUniqueness.set(true);
+    this.idUniquenessError.set(null);
+
+    this.http.get(`/api/v1/navigations/${currentId}`).subscribe({
+      next: () => {
+        // ID exists - show error
+        this.idUniquenessError.set(
+          this.translocoService.translate('navigationManagement.editor.form.id.errors.duplicate')
+        );
+        this.isCheckingIdUniqueness.set(false);
+      },
+      error: (err) => {
+        // 404 means ID is available (good)
+        if (err.status === 404) {
+          this.idUniquenessError.set(null);
+        } else {
+          // Other errors - log but don't block
+          console.error('Error checking ID uniqueness:', err);
+        }
+        this.isCheckingIdUniqueness.set(false);
+      },
+    });
   }
 }

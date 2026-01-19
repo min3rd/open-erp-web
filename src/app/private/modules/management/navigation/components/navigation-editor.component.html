@@ -3,6 +3,80 @@
   id="navigation-editor-form"
   class="space-y-4 p-4"
 >
+  <!-- ID Field (Required, Auto-generated) -->
+  <div class="flex flex-col gap-2">
+    <div class="flex items-center justify-between">
+      <label for="navigation-editor-id" class="font-semibold">
+        {{ 'navigationManagement.editor.form.id.label' | transloco }}
+        <span class="text-red-500">*</span>
+      </label>
+      <div class="flex items-center gap-2">
+        <p-checkbox
+          id="navigation-editor-auto-generate-id"
+          [binary]="true"
+          [ngModel]="isAutoGeneratingId()"
+          (ngModelChange)="toggleAutoGenerateId()"
+          [ngModelOptions]="{standalone: true}"
+          [attr.aria-label]="'navigationManagement.editor.form.id.autoGenerate' | transloco"
+        />
+        <label for="navigation-editor-auto-generate-id" class="text-sm cursor-pointer">
+          {{ 'navigationManagement.editor.form.id.autoGenerate' | transloco }}
+        </label>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <input
+        id="navigation-editor-id"
+        type="text"
+        pInputText
+        formControlName="id"
+        [placeholder]="'navigationManagement.editor.form.id.placeholder' | transloco"
+        [class.p-invalid]="hasError('id') || idUniquenessError()"
+        [attr.aria-label]="'navigationManagement.editor.form.id.label' | transloco"
+        [attr.aria-required]="true"
+        [attr.aria-describedby]="hasError('id') || idUniquenessError() ? 'navigation-editor-id-error' : 'navigation-editor-id-help'"
+        (input)="onIdInput()"
+        (blur)="onIdBlur()"
+        class="flex-1"
+      />
+      <button
+        id="navigation-editor-regenerate-id-button"
+        type="button"
+        pButton
+        [label]="'navigationManagement.editor.form.id.regenerate' | transloco"
+        icon="pi pi-refresh"
+        (click)="regenerateIdFromLabel()"
+        [disabled]="!form().get('label')?.value"
+        class="p-button-outlined"
+      />
+    </div>
+    @if (idPreview() && !hasError('id')) {
+    <small id="navigation-editor-id-preview" class="text-surface-600">
+      {{ 'navigationManagement.editor.form.id.preview' | transloco: { id: idPreview() } }}
+    </small>
+    }
+    @if (hasError('id')) {
+    <small id="navigation-editor-id-error" class="text-red-500">
+      {{ getErrorMessage('id') }}
+    </small>
+    }
+    @if (idUniquenessError() && !hasError('id')) {
+    <small id="navigation-editor-id-uniqueness-error" class="text-red-500">
+      {{ idUniquenessError() }}
+    </small>
+    }
+    @if (isCheckingIdUniqueness()) {
+    <small id="navigation-editor-id-checking" class="text-surface-500">
+      <i class="pi pi-spin pi-spinner"></i> Checking availability...
+    </small>
+    }
+    @if (!hasError('id') && !idUniquenessError()) {
+    <small id="navigation-editor-id-help" class="text-surface-500">
+      {{ 'navigationManagement.editor.form.id.help' | transloco }}
+    </small>
+    }
+  </div>
+
   <!-- Label (Required) -->
   <div class="flex flex-col gap-2">
     <label for="navigation-editor-label" class="font-semibold">
