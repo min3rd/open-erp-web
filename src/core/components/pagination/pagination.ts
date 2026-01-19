@@ -113,8 +113,10 @@ export class PaginationComponent {
     if (!newPageSize || newPageSize === this.pageSize()) {
       return;
     }
+    const firstItemIndex = (this.currentPageValue() - 1) * this.pageSize() + 1;
+    const targetPage = Math.ceil(firstItemIndex / newPageSize);
     this.changePageSize.emit(newPageSize);
-    this.emitChange(1, newPageSize);
+    this.emitChange(targetPage, newPageSize);
   }
 
   private emitChange(page: number, pageSize: number): void {
