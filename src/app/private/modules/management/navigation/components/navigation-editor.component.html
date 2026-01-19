@@ -48,7 +48,7 @@
         (click)="regenerateIdFromLabel()"
         [disabled]="!form().get('label')?.value"
         class="p-button-outlined"
-      />
+      ></button>
     </div>
     @if (idPreview() && !hasError('id')) {
     <small id="navigation-editor-id-preview" class="text-surface-600">
