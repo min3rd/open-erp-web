@@ -67,7 +67,7 @@
     }
     @if (isCheckingIdUniqueness()) {
     <small id="navigation-editor-id-checking" class="text-surface-500">
-      <i class="pi pi-spin pi-spinner"></i> Checking availability...
+      <i class="pi pi-spin pi-spinner"></i> {{ 'navigationManagement.editor.form.id.checking' | transloco }}
     </small>
     }
     @if (!hasError('id') && !idUniquenessError()) {

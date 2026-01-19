@@ -41,8 +41,9 @@ export function slugify(text: string, maxLength: number = 128): string {
  * @returns A slug with timestamp if base is empty
  */
 export function generateUniqueSlug(baseSlug: string): string {
-  if (baseSlug && baseSlug.length > 0) {
-    return baseSlug;
+  const trimmedSlug = String(baseSlug || '').trim();
+  if (trimmedSlug && trimmedSlug.length > 0) {
+    return trimmedSlug;
   }
   // Fallback to timestamp-based ID if slug is empty
   return `nav-${Date.now()}`;

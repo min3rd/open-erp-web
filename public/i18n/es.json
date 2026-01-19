@@ -709,6 +709,7 @@
           "autoGenerate": "Auto-generar ID",
           "regenerate": "Regenerar desde etiqueta",
           "preview": "Vista previa: {{id}}",
+          "checking": "Verificando disponibilidad...",
           "errors": {
             "required": "El ID es obligatorio",
             "pattern": "El ID debe contener solo letras minúsculas, números, guiones y guiones bajos",
