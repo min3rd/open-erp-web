@@ -702,6 +702,20 @@
         "view": "Detalles del Elemento de Navegación"
       },
       "form": {
+        "id": {
+          "label": "ID",
+          "placeholder": "Auto-generado desde etiqueta",
+          "help": "Identificador único (minúsculas, kebab-case)",
+          "autoGenerate": "Auto-generar ID",
+          "regenerate": "Regenerar desde etiqueta",
+          "preview": "Vista previa: {{id}}",
+          "errors": {
+            "required": "El ID es obligatorio",
+            "pattern": "El ID debe contener solo letras minúsculas, números, guiones y guiones bajos",
+            "maxlength": "El ID no debe exceder 128 caracteres",
+            "duplicate": "Este ID ya existe. Por favor elija un ID diferente"
+          }
+        },
         "label": {
           "label": "Etiqueta",
           "placeholder": "Ingrese la etiqueta de visualización",

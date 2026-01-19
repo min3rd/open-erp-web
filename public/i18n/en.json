@@ -702,6 +702,20 @@
         "view": "Navigation Item Details"
       },
       "form": {
+        "id": {
+          "label": "ID",
+          "placeholder": "Auto-generated from label",
+          "help": "Unique identifier (lowercase, kebab-case)",
+          "autoGenerate": "Auto-generate ID",
+          "regenerate": "Regenerate from label",
+          "preview": "Preview: {{id}}",
+          "errors": {
+            "required": "ID is required",
+            "pattern": "ID must contain only lowercase letters, numbers, hyphens, and underscores",
+            "maxlength": "ID must not exceed 128 characters",
+            "duplicate": "This ID already exists. Please choose a different ID"
+          }
+        },
         "label": {
           "label": "Label",
           "placeholder": "Enter display label",
