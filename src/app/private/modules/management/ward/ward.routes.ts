@@ -50,11 +50,6 @@ export const routes: Routes = [
                             },
                             children: [
                               {
-                                path: '',
-                                pathMatch: 'full',
-                                redirectTo: 'view',
-                              },
-                              {
                                 path: 'view',
                                 component: WardForm,
                               },

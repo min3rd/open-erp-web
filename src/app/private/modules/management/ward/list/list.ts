@@ -349,7 +349,7 @@ export class WardList implements OnInit, OnDestroy {
 
     this.router.navigate(
       [
-        '../../../..',
+        '../../../../..',
         this.selectedProvinceCode(),
         this.selectedDistrictCode(),
         this.searchQuery() || 'all',
