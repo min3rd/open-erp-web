@@ -36,6 +36,10 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./administrative-unit/administrative-unit.routes').then((m) => m.routes),
       },
+      {
+        path: 'warehouse',
+        loadChildren: () => import('./warehouse/warehouse.routes').then((m) => m.routes),
+      },
     ],
   },
 ];
