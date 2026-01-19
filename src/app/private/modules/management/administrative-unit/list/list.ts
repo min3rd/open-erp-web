@@ -30,12 +30,12 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SplitterModule } from 'primeng/splitter';
 import { CheckboxModule } from 'primeng/checkbox';
-import { PaginatorModule } from 'primeng/paginator';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 
 // Core components
 import { MapComponent } from '../../../../../../core/components/map/map.component';
+import { PaginationComponent } from '../../../../../../core/components/pagination/pagination';
 import { PAGE_SIZE_OPTIONS } from '../../../../../../core/constant';
 
 // Services and types
@@ -66,7 +66,7 @@ import {
     ConfirmDialogModule,
     SplitterModule,
     CheckboxModule,
-    PaginatorModule,
+    PaginationComponent,
     SelectButtonModule,
     ToggleButtonModule,
     MapComponent,
@@ -96,7 +96,7 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
   // Route parameters
   protected readonly filter = signal<string>('all');
   protected readonly page = signal<number>(1);
-  protected readonly limit = signal<number>(100);
+  protected readonly limit = signal<number>(PAGE_SIZE_OPTIONS[0]);
   protected readonly total = signal<number>(0);
   protected readonly totalPages = signal<number>(0);
 
@@ -115,9 +115,6 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
       icon: 'pi pi-sitemap' 
     },
   ]);
-
-  // Page size options
-  protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
 
   // Computed values
   protected readonly selectedGeometry = computed(() => {
@@ -226,7 +223,11 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.filter.set(params.get('filter') || 'all');
       this.page.set(parseInt(params.get('page') || '1', 10));
-      this.limit.set(parseInt(params.get('limit') || '100', 10));
+      const limitParam = parseInt(params.get('limit') || PAGE_SIZE_OPTIONS[0].toString(), 10);
+      const normalizedLimit = PAGE_SIZE_OPTIONS.includes(limitParam)
+        ? limitParam
+        : PAGE_SIZE_OPTIONS[0];
+      this.limit.set(normalizedLimit);
 
       if (this.filter() !== 'all') {
         this.searchTerm.set(this.filter());
@@ -509,30 +510,9 @@ export class AdministrativeUnitList implements OnInit, OnDestroy {
   /**
    * Handle page change
    */
-  protected onPageChange(newPage: number): void {
+  protected onPageChange(event: { page: number; pageSize: number }): void {
     this.router.navigate([
-      `/private/modules/management/administrative-unit/${this.filter()}/${newPage}/${this.limit()}`,
-    ]);
-  }
-
-  /**
-   * Handle paginator page change event
-   */
-  protected onPaginatorPageChange(event: any): void {
-    const newPage = Math.floor(event.first / event.rows) + 1;
-    const newLimit = event.rows;
-    
-    this.router.navigate([
-      `/private/modules/management/administrative-unit/${this.filter()}/${newPage}/${newLimit}`,
-    ]);
-  }
-
-  /**
-   * Handle page size change
-   */
-  protected onPageSizeChange(newLimit: number): void {
-    this.router.navigate([
-      `/private/modules/management/administrative-unit/${this.filter()}/1/${newLimit}`,
+      `/private/modules/management/administrative-unit/${this.filter()}/${event.page}/${event.pageSize}`,
     ]);
   }
 

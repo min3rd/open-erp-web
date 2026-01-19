@@ -177,14 +177,14 @@
           </p-treetable>
 
           <!-- Pagination -->
-          <div class="border-t border-surface-200 dark:border-surface-700">
-            <p-paginator
-              id="administrative-unit-pagination"
-              [rows]="limit()"
+          <div class="border-t border-surface-200 dark:border-surface-700 p-4">
+            <core-pagination
+              [idPrefix]="'administrative-unit'"
               [totalRecords]="total()"
-              [rowsPerPageOptions]="pageSizeOptions"
-              (onPageChange)="onPaginatorPageChange($event)"
-            ></p-paginator>
+              [currentPage]="page()"
+              [pageSize]="limit()"
+              (pageChange)="onPageChange($event)"
+            />
           </div>
         </div>
       </ng-template>
@@ -337,27 +337,14 @@
   </div>
 
   <!-- Mobile Pagination -->
-  <div
-    class="p-4 border-t flex items-center justify-between"
-    id="administrative-unit-pagination-mobile"
-  >
-    <p-button
-      icon="pi pi-chevron-left"
-      class="p-button-sm"
-      id="administrative-unit-pagination-prev-mobile"
-      [disabled]="page() <= 1"
-      (click)="onPageChange(page() - 1)"
-    ></p-button>
-    <span class="text-sm">
-      {{ 'administrativeUnit.pagination.page' | transloco }} {{ page() }} / {{ totalPages() }}
-    </span>
-    <p-button
-      icon="pi pi-chevron-right"
-      class="p-button-sm"
-      id="administrative-unit-pagination-next-mobile"
-      [disabled]="page() >= totalPages()"
-      (click)="onPageChange(page() + 1)"
-    ></p-button>
+  <div class="border-t border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 p-4">
+    <core-pagination
+      [idPrefix]="'administrative-unit-mobile'"
+      [totalRecords]="total()"
+      [currentPage]="page()"
+      [pageSize]="limit()"
+      (pageChange)="onPageChange($event)"
+    />
   </div>
 </div>
 

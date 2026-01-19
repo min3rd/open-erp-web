@@ -1475,5 +1475,13 @@
         "close": "Cerrar"
       }
     }
+  },
+  "pagination": {
+    "first": "Primera página",
+    "previous": "Página anterior",
+    "next": "Página siguiente",
+    "last": "Última página",
+    "page": "Página {{page}}",
+    "pageSize": "Elementos por página"
   }
 }

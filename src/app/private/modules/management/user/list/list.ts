@@ -29,12 +29,12 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
-import { PaginatorModule } from 'primeng/paginator';
+import { PAGE_SIZE_OPTIONS } from '../../../../../../core/constant';
 import { MessageService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { Select } from 'primeng/select';
+import { PaginationComponent } from '../../../../../../core/components/pagination/pagination';
 
 // Services
 import { UserService, User, GetUsersParams } from '../../../../../../core/services/user-service';
@@ -58,10 +58,9 @@ import { OrganizationContextService } from '../../../../../../core/services/orga
     AvatarModule,
     TagModule,
     TooltipModule,
-    PaginatorModule,
+    PaginationComponent,
     InputGroupModule,
     InputGroupAddonModule,
-    Select,
   ],
   templateUrl: './list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -88,7 +87,7 @@ export class List implements OnInit, OnDestroy {
   protected readonly isLoading = signal(false);
   protected readonly searchQuery = signal('');
   protected readonly currentPage = signal(1);
-  protected readonly pageSize = signal(10);
+  protected readonly pageSize = signal(PAGE_SIZE_OPTIONS[0]);
   protected readonly totalRecords = signal(0);
   protected readonly scope = signal<'global' | 'organization'>('global');
   protected readonly selectedUser = signal<User | null>(null);
@@ -211,11 +210,12 @@ export class List implements OnInit, OnDestroy {
     // Subscribe to route params for pagination
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const page = parseInt(params['page'], 10) || 1;
-      const limit = parseInt(params['limit'], 10) || 10;
+      const limit = parseInt(params['limit'], 10) || PAGE_SIZE_OPTIONS[0];
+      const normalizedLimit = PAGE_SIZE_OPTIONS.includes(limit) ? limit : PAGE_SIZE_OPTIONS[0];
       const search = params['filter'] || '';
 
       this.currentPage.set(page);
-      this.pageSize.set(limit);
+      this.pageSize.set(normalizedLimit);
       this.searchQuery.set(search === 'all' ? '' : search);
 
       // Load initial data
@@ -302,9 +302,9 @@ export class List implements OnInit, OnDestroy {
   /**
    * Handle page change
    */
-  protected onPageChange(event: any): void {
-    const newPage = event.page + 1; // PrimeNG uses 0-based index
-    const newPageSize = event.rows;
+  protected onPageChange(event: { page: number; pageSize: number }): void {
+    const newPage = event.page;
+    const newPageSize = event.pageSize;
 
     // Update URL with relative navigation
     this.router.navigate(['../../..', this.searchQuery(), newPage, newPageSize], {
@@ -317,7 +317,7 @@ export class List implements OnInit, OnDestroy {
    */
   protected onPageSizeChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
-    this.onPageChange({ page: 0, rows: +select.value });
+    this.onPageChange({ page: 1, pageSize: +select.value });
   }
 
   /**

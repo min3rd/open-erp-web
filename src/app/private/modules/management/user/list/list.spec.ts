@@ -283,74 +283,19 @@ describe('List', () => {
     expect(compiled.querySelector('#user-list-table')).toBeFalsy();
   });
 
-  it('should show mobile pagination with prev/next buttons', () => {
+  it('should render shared pagination controls', () => {
     const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
     initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
 
-    component['isMobile'].set(true);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('#user-list-pagination-mobile')).toBeTruthy();
-    expect(compiled.querySelector('#user-list-pagination-prev-mobile')).toBeTruthy();
-    expect(compiled.querySelector('#user-list-pagination-next-mobile')).toBeTruthy();
-    expect(compiled.querySelector('#user-list-page-size-mobile')).toBeTruthy();
-  });
-
-  it('should disable previous button on first page', () => {
-    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
-    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
-
-    component['isMobile'].set(true);
-    component['currentPage'].set(1);
-    fixture.detectChanges();
-
-    const prevButton = fixture.nativeElement.querySelector(
-      '#user-list-pagination-prev-mobile button'
-    );
-    expect(prevButton?.disabled).toBe(true);
-  });
-
-  it('should disable next button on last page', () => {
-    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
-    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
-
-    component['isMobile'].set(true);
-    component['currentPage'].set(component['totalPages']());
-    fixture.detectChanges();
-
-    const nextButton = fixture.nativeElement.querySelector(
-      '#user-list-pagination-next-mobile button'
-    );
-    expect(nextButton?.disabled).toBe(true);
-  });
-
-  it('should navigate to previous page when prev button clicked', () => {
-    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
-    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
-
-    component['isMobile'].set(true);
-    component['currentPage'].set(2);
-
-    component['onPreviousPage']();
-
-    // Router navigation should be called (already tested in existing tests)
-    expect(component['currentPage']()).toBe(2); // Signal not updated until route changes
-  });
-
-  it('should navigate to next page when next button clicked', () => {
-    const initialReq = httpMock.expectOne((req) => req.url.includes(`${API_URI_USER}/v1/users`));
-    initialReq.flush({ data: [], total: 0, page: 1, limit: 10 });
-
-    component['isMobile'].set(true);
-    component['currentPage'].set(1);
-    component['totalRecords'].set(50);
-    component['pageSize'].set(10);
-
-    component['onNextPage']();
-
-    // Router navigation should be called
-    expect(component['totalPages']()).toBe(5);
+    expect(compiled.querySelector('#user-list-pagination')).toBeTruthy();
+    expect(compiled.querySelector('#user-list-pagination-first-button')).toBeTruthy();
+    expect(compiled.querySelector('#user-list-pagination-prev-button')).toBeTruthy();
+    expect(compiled.querySelector('#user-list-pagination-next-button')).toBeTruthy();
+    expect(compiled.querySelector('#user-list-pagination-last-button')).toBeTruthy();
+    expect(compiled.querySelector('#user-list-pagination-page-size')).toBeTruthy();
   });
 
   it('should get user initials correctly', () => {
