@@ -113,6 +113,7 @@ export class PaginationComponent {
     if (!newPageSize || newPageSize === this.pageSize()) {
       return;
     }
+    // Preserve the current dataset position when changing page size.
     const firstItemIndex = (this.currentPageValue() - 1) * this.pageSize() + 1;
     const targetPage = Math.ceil(firstItemIndex / newPageSize);
     this.changePageSize.emit(newPageSize);

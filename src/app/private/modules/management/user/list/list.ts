@@ -313,14 +313,6 @@ export class List implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle page size change
-   */
-  protected onPageSizeChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    this.onPageChange({ page: 1, pageSize: +select.value });
-  }
-
-  /**
    * Toggle select all users on current page
    */
   protected onToggleSelectAll(event: any): void {
