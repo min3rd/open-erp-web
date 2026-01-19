@@ -1,80 +1,15 @@
-<div
+<p-paginator
   [id]="paginationId()"
-  class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
->
-  <div class="flex flex-wrap items-center gap-2">
-    <p-button
-      [id]="firstButtonId()"
-      icon="pi pi-angle-double-left"
-      [text]="true"
-      [rounded]="true"
-      [disabled]="isFirstPage()"
-      (onClick)="onFirstPage()"
-      [attr.aria-label]="'pagination.first' | transloco"
-      type="button"
-      class="min-w-[44px] min-h-[44px]"
-    />
-    <p-button
-      [id]="prevButtonId()"
-      icon="pi pi-angle-left"
-      [text]="true"
-      [rounded]="true"
-      [disabled]="isFirstPage()"
-      (onClick)="onPreviousPage()"
-      [attr.aria-label]="'pagination.previous' | transloco"
-      type="button"
-      class="min-w-[44px] min-h-[44px]"
-    />
-    <div class="flex flex-wrap items-center gap-1">
-      @for (page of pageNumbers(); track page) {
-      <p-button
-        [id]="getPageButtonId(page)"
-        [label]="page.toString()"
-        [text]="page !== currentPageValue()"
-        [outlined]="page !== currentPageValue()"
-        [rounded]="true"
-        [attr.aria-current]="page === currentPageValue() ? 'page' : null"
-        [attr.aria-label]="'pagination.page' | transloco: { page: page }"
-        (onClick)="onPageSelect(page)"
-        type="button"
-        class="min-w-[44px] min-h-[44px]"
-      />
-      }
-    </div>
-    <p-button
-      [id]="nextButtonId()"
-      icon="pi pi-angle-right"
-      [text]="true"
-      [rounded]="true"
-      [disabled]="isLastPage()"
-      (onClick)="onNextPage()"
-      [attr.aria-label]="'pagination.next' | transloco"
-      type="button"
-      class="min-w-[44px] min-h-[44px]"
-    />
-    <p-button
-      [id]="lastButtonId()"
-      icon="pi pi-angle-double-right"
-      [text]="true"
-      [rounded]="true"
-      [disabled]="isLastPage()"
-      (onClick)="onLastPage()"
-      [attr.aria-label]="'pagination.last' | transloco"
-      type="button"
-      class="min-w-[44px] min-h-[44px]"
-    />
-  </div>
-  <div class="flex items-center gap-2">
-    <label [id]="pageSizeLabelId()" [for]="pageSizeId()" class="sr-only">
-      {{ 'pagination.pageSize' | transloco }}
-    </label>
-    <p-select
-      [id]="pageSizeId()"
-      [options]="pageSizeOptions"
-      [ngModel]="pageSize()"
-      (onChange)="onPageSizeSelect($event)"
-      [attr.aria-labelledby]="pageSizeLabelId()"
-      class="min-w-[120px]"
-    />
-  </div>
-</div>
+  class="w-full"
+  [rows]="pageSize()"
+  [totalRecords]="totalRecords()"
+  [first]="(currentPageValue() - 1) * pageSize()"
+  [rowsPerPageOptions]="pageSizeOptions"
+  [pageLinkSize]="pageLinkSize()"
+  [showCurrentPageReport]="false"
+  [showJumpToPageDropdown]="false"
+  [showJumpToPageInput]="false"
+  [showPageLinks]="true"
+  [showFirstLastIcon]="true"
+  (onPageChange)="onPaginatorChange($event)"
+/>
