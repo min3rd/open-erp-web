@@ -9,6 +9,7 @@ import {
   input,
   output,
   Renderer2,
+  DestroyRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
@@ -41,7 +42,10 @@ export class PaginationComponent implements AfterViewInit {
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly renderer = inject(Renderer2);
   private readonly translocoService = inject(TranslocoService);
+  private readonly destroyRef = inject(DestroyRef);
   private viewInitialized = false;
+  private destroyed = false;
+  private pendingAttributeUpdate = false;
 
   protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
 
@@ -62,20 +66,23 @@ export class PaginationComponent implements AfterViewInit {
   protected readonly pageSizeId = computed(() => `${this.idPrefix()}-pagination-page-size`);
 
   constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.destroyed = true;
+    });
     effect(() => {
       this.currentPage();
       this.pageSize();
       this.totalRecords();
       this.pageLinkSize();
       if (this.viewInitialized) {
-        queueMicrotask(() => this.applyPaginatorAttributes());
+        this.scheduleAttributeUpdate();
       }
     });
   }
 
   ngAfterViewInit(): void {
     this.viewInitialized = true;
-    this.applyPaginatorAttributes();
+    this.scheduleAttributeUpdate();
   }
 
   protected onPaginatorChange(event: PaginatorState): void {
@@ -90,7 +97,7 @@ export class PaginationComponent implements AfterViewInit {
     }
 
     this.emitChange(targetPage, newPageSize);
-    queueMicrotask(() => this.applyPaginatorAttributes());
+    this.scheduleAttributeUpdate();
   }
 
   private emitChange(page: number, pageSize: number): void {
@@ -106,6 +113,20 @@ export class PaginationComponent implements AfterViewInit {
   private calculateTargetPageForNewSize(newPageSize: number): number {
     const firstItemIndex = (this.currentPageValue() - 1) * this.pageSize() + 1;
     return Math.ceil(firstItemIndex / newPageSize);
+  }
+
+  private scheduleAttributeUpdate(): void {
+    if (this.pendingAttributeUpdate || this.destroyed) {
+      return;
+    }
+    this.pendingAttributeUpdate = true;
+    queueMicrotask(() => {
+      if (this.destroyed) {
+        return;
+      }
+      this.pendingAttributeUpdate = false;
+      this.applyPaginatorAttributes();
+    });
   }
 
   private applyPaginatorAttributes(): void {
