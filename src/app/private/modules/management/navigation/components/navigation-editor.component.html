@@ -196,6 +196,43 @@
   </div>
   }
 
+  <!-- Parent (Optional) -->
+  <div class="flex flex-col gap-2">
+    <label for="navigation-editor-parent-id" class="font-semibold">
+      {{ 'navigationManagement.editor.form.parent.label' | transloco }}
+    </label>
+    <p-select
+      id="navigation-editor-parent-id"
+      formControlName="parentId"
+      [options]="filteredParents()"
+      optionLabel="label"
+      optionValue="id"
+      [filter]="true"
+      filterBy="label,id"
+      [showClear]="true"
+      [placeholder]="'navigationManagement.editor.form.parent.placeholder' | transloco"
+      [attr.aria-label]="'navigationManagement.editor.form.parent.label' | transloco"
+      styleClass="w-full"
+    >
+      <ng-template let-item #item>
+        <div class="flex items-center gap-2">
+            <i [class]="item.icon" *ngIf="item.icon"></i>
+            <span>{{ item.label }}</span>
+            <small class="text-surface-500" *ngIf="item.scope === 'module'">({{ item.moduleId }})</small>
+        </div>
+      </ng-template>
+      <ng-template let-item #selectedItem>
+        <div class="flex items-center gap-2" *ngIf="item">
+            <i [class]="item.icon" *ngIf="item.icon"></i>
+            <span>{{ item.label }}</span>
+        </div>
+      </ng-template>
+    </p-select>
+    <small id="navigation-editor-parent-id-help" class="text-surface-500">
+      {{ 'navigationManagement.editor.form.parent.help' | transloco }}
+    </small>
+  </div>
+
   <!-- Router Link -->
   <div class="flex flex-col gap-2">
     <label for="navigation-editor-router-link" class="font-semibold">

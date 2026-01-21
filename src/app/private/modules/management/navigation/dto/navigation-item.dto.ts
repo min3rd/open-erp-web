@@ -30,6 +30,7 @@ export interface NavigationItemDto {
   updatedAt?: string;
   createdBy?: string;
   updatedBy?: string;
+  parentId?: string | null;
 }
 
 /**

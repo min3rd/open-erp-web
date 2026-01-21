@@ -52,6 +52,7 @@ export class NavigationDetail implements OnInit, OnDestroy {
   protected readonly mode = signal<'create' | 'edit' | 'view'>('view');
   protected readonly defaultScope = signal<'global' | 'module'>('global');
   protected readonly defaultModule = signal<string | null>(null);
+  protected readonly availableParents = signal<NavigationItemDto[]>([]);
 
   // Computed values
   protected readonly drawerTitle = computed(() => {
@@ -100,6 +101,9 @@ export class NavigationDetail implements OnInit, OnDestroy {
       }
       this.cdr.markForCheck();
     });
+
+    // Load available parents
+    this.loadAvailableParents();
 
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       if (data['item']) {
@@ -204,6 +208,49 @@ export class NavigationDetail implements OnInit, OnDestroy {
           },
         });
     }
+  }
+
+  protected onEdit(): void {
+    const item = this.item();
+    if (item) {
+        this.router.navigate(['./edit'], { relativeTo: this.route });
+    }
+  }
+
+  private loadAvailableParents(): void {
+    // Always load global navigation for parents
+    this.navigationService
+      .getGlobalNavigation({ includeHidden: true })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((items) => {
+        const flatItems = this.flattenNavigationItems(items);
+        this.availableParents.set(flatItems);
+        
+        if (this.defaultScope() === 'module' && this.defaultModule()) {
+           this.navigationService.getModuleNavigation(this.defaultModule()!, { includeHidden: true })
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(moduleItems => {
+                const flatModuleItems = this.flattenNavigationItems(moduleItems);
+                this.availableParents.update(current => {
+                    // Filter duplicates by ID
+                    const ids = new Set(current.map(i => i.id));
+                    const newItems = flatModuleItems.filter(i => !ids.has(i.id));
+                    return [...current, ...newItems];
+                });
+            });
+        }
+      });
+  }
+
+  private flattenNavigationItems(items: NavigationItemDto[]): NavigationItemDto[] {
+    let result: NavigationItemDto[] = [];
+    for (const item of items) {
+      result.push(item);
+      if (item.items && item.items.length > 0) {
+        result = result.concat(this.flattenNavigationItems(item.items));
+      }
+    }
+    return result;
   }
 
   get availableModules() {

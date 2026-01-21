@@ -7,6 +7,7 @@ import {
   inject,
   OnInit,
   effect,
+  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -71,6 +72,13 @@ export class NavigationEditorComponent implements OnInit {
   // Context inputs for auto-filling form based on user context
   readonly defaultScope = input<'global' | 'module'>('global');
   readonly defaultModule = input<string | null>(null);
+
+  protected readonly filteredParents = computed(() => {
+    const parents = this.availableParents();
+    const currentId = this.item()?.id;
+    if (!currentId) return parents;
+    return parents.filter((p) => p.id !== currentId);
+  });
 
   // Outputs
   readonly formValid = output<boolean>();
@@ -288,8 +296,6 @@ export class NavigationEditorComponent implements OnInit {
    * Patch form with item data
    */
   private patchForm(item: NavigationItemDto): void {
-    console.log(item);
-    
     // When editing an existing item, disable auto-generation
     this.isAutoGeneratingId.set(false);
     
@@ -326,7 +332,10 @@ export class NavigationEditorComponent implements OnInit {
     
     // Update ID preview
     this.idPreview.set(item.id);
-  }
+    // Set parentId if it exists (for compatibility with new field)
+    if (item.parentId) {
+      this.form().patchValue({ parentId: item.parentId });
+    }  }
 
   /**
    * Handle form submission

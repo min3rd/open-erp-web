@@ -26,7 +26,7 @@
       [defaultScope]="defaultScope()"
       [defaultModule]="defaultModule()"
       [availableModules]="availableModules"
-      [availableParents]="[]"
+      [availableParents]="availableParents()"
       (formValid)="onFormValidChange($event)"
       (formData)="onFormDataChange($event)"
     />
@@ -44,6 +44,16 @@
         (onClick)="onClose()"
         [attr.aria-label]="'navigationManagement.editor.buttons.cancel' | transloco"
       />
+      @if (mode() === 'view') {
+      <p-button
+        id="navigation-detail-edit-button"
+        type="button"
+        [label]="'navigationManagement.editor.buttons.edit' | transloco"
+        icon="pi pi-pencil"
+        (onClick)="onEdit()"
+        [attr.aria-label]="'navigationManagement.editor.buttons.edit' | transloco"
+      />
+      }
       @if (mode() !== 'view') {
       <p-button
         id="navigation-detail-save-button"
