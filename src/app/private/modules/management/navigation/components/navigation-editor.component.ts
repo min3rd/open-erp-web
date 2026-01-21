@@ -288,6 +288,8 @@ export class NavigationEditorComponent implements OnInit {
    * Patch form with item data
    */
   private patchForm(item: NavigationItemDto): void {
+    console.log(item);
+    
     // When editing an existing item, disable auto-generation
     this.isAutoGeneratingId.set(false);
     

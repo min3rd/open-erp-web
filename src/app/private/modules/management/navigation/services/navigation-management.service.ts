@@ -87,10 +87,12 @@ export class NavigationManagementService {
   /**
    * Get a single navigation item by ID
    */
-  getNavigationItem(id: string): Observable<NavigationItemDto> {
-    return this.http
-      .get<NavigationItemDto>(`${this.baseUrl}/${id}`)
-      .pipe(catchError(this.handleError));
+  getNavigationItem(id: string): Observable<ApiSingleResponse<NavigationItemDto>> {
+    return this.http.get<ApiSingleResponse<NavigationItemDto>>(`${this.baseUrl}/${id}`).pipe(
+      map((response: ApiSingleResponse<NavigationItemDto>) => {
+        return response;
+      })
+    );
   }
 
   /**

@@ -73,6 +73,8 @@ export class NavigationDetail implements OnInit, OnDestroy {
       const isEditRoute = this.route.snapshot.url.some((segment) => segment.path === 'edit');
       const isNewRoute = this.route.snapshot.url.some((segment) => segment.path === 'new');
 
+      console.log(this.route.snapshot.url, id, moduleId, isEditRoute, isNewRoute);
+
       if (isNewRoute) {
         // Create mode
         this.mode.set('create');
@@ -88,17 +90,23 @@ export class NavigationDetail implements OnInit, OnDestroy {
           this.defaultScope.set('global');
           this.defaultModule.set(null);
         }
-      } else if (id) {
+      } else if (id || moduleId) {
         // View or edit mode
         if (isEditRoute) {
           this.mode.set('edit');
         } else {
           this.mode.set('view');
         }
-        this.loadItem(id);
       }
-
       this.cdr.markForCheck();
+    });
+
+    this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      if (data['item']) {
+        this.item.set(data['item']);
+      } else if (data['moduleItem']) {
+        this.item.set(data['moduleItem']);
+      }
     });
   }
 
@@ -108,44 +116,12 @@ export class NavigationDetail implements OnInit, OnDestroy {
   }
 
   /**
-   * Load navigation item by ID
-   */
-  private loadItem(id: string): void {
-    this.isLoading.set(true);
-    this.navigationService
-      .getNavigationItem(id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (item) => {
-          this.item.set(item);
-          this.isLoading.set(false);
-        },
-        error: (error) => {
-          console.error('Failed to load navigation item:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.translocoService.translate('navigationManagement.messages.error'),
-            detail: error.message,
-          });
-          this.isLoading.set(false);
-          this.onClose();
-        },
-      });
-  }
-
-  /**
    * Handle drawer close
    */
   protected onClose(): void {
-    // Determine how many levels to go back based on context
-    const moduleId = this.route.snapshot.params['moduleId'];
-    const itemId = this.route.snapshot.params['id'];
-    
     // If we're viewing/editing an item within a module, go back to the module view
     // Otherwise go back to the global list
-    const navigateUp = moduleId && itemId ? '../../../' : '../../';
-    
-    this.router.navigate([navigateUp], { relativeTo: this.route }).then(() => {
+    this.router.navigate(['../../../'], { relativeTo: this.route }).then(() => {
       this.isOpen.set(false);
     });
   }
