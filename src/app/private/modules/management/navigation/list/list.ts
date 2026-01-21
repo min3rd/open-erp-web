@@ -98,9 +98,6 @@ export class NavigationList implements OnInit, OnDestroy {
       window.addEventListener('resize', this.resizeHandler);
     }
 
-    // Initialize context menu items
-    this.initializeContextMenu();
-
     // Watch route params for scope changes
     effect(() => {
       const scope = this.activeScope();
@@ -113,6 +110,9 @@ export class NavigationList implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Initialize context menu items
+    this.initializeContextMenu();
+
     // Subscribe to route params to detect selected item
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const scope = params['scope'] || 'global';
@@ -182,6 +182,8 @@ export class NavigationList implements OnInit, OnDestroy {
         command: () => this.onMoveDown(),
       },
     ]);
+
+    this.cdr.markForCheck();
   }
 
   /**
@@ -288,13 +290,13 @@ export class NavigationList implements OnInit, OnDestroy {
     // Determine navigation path based on context
     // If selecting from global tree and item has children (is a module)
     const isGlobalModule = item.scope === 'global' && item.id;
-    
+
     if (isGlobalModule) {
       // This is a top-level module item in global navigation
       this.selectedModule.set(item);
       this.loadModuleNavigation(item.id);
       this.cdr.markForCheck();
-      
+
       // Navigate to the module view
       this.router.navigate(['modules', item.id], { relativeTo: this.route });
     } else if (this.selectedModule()?.id) {
@@ -345,12 +347,13 @@ export class NavigationList implements OnInit, OnDestroy {
 
     // Check if we're in module context
     const module = this.selectedModule();
+
     if (module && module.id) {
       // Editing a module navigation item - include module in path
       this.router.navigate(['modules', module.id, item.id, 'edit'], { relativeTo: this.route });
     } else {
       // Editing a global navigation item
-      this.router.navigate([item.id, 'edit'], { relativeTo: this.route });
+      this.router.navigate(['modules', item.id, 'edit'], { relativeTo: this.route });
     }
   }
 

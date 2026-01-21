@@ -1,16 +1,19 @@
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, Routes } from '@angular/router';
 import { Navigation } from './navigation';
 import { inject } from '@angular/core';
 import { NavigationManagementService } from './services/navigation-management.service';
-import { catchError, of } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
+import { NavigationList } from './list/list';
+import { NavigationDetail } from './detail/detail';
+import { ApiSingleResponse } from '../../../../../core/api';
+import { NavigationItemDto } from './dto/navigation-item.dto';
 
 /**
  * Resolver for loading global navigation items before route activation
  * Returns observable that emits navigation items or navigates to error page on failure
  */
-const globalListResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+const globalListResolver = () => {
   const navigationManagementService = inject(NavigationManagementService);
-  const router = inject(Router);
 
   return navigationManagementService.getGlobalNavigation({ includeHidden: true }).pipe(
     catchError((error) => {
@@ -25,9 +28,8 @@ const globalListResolver = (route: ActivatedRouteSnapshot, state: RouterStateSna
  * Resolver for loading module-specific navigation items before route activation
  * Returns observable that emits navigation items or navigates to error page on failure
  */
-const moduleListResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+const moduleListResolver = (route: ActivatedRouteSnapshot) => {
   const navigationManagementService = inject(NavigationManagementService);
-  const router = inject(Router);
   const moduleId = route.params['moduleId'];
 
   if (!moduleId) {
@@ -48,11 +50,25 @@ const moduleListResolver = (route: ActivatedRouteSnapshot, state: RouterStateSna
     );
 };
 
+const moduleDetailResolver = (route: ActivatedRouteSnapshot) => {
+  const navigationManagementService = inject(NavigationManagementService);
+  const moduleId = route.params['moduleId'];
+  if (!moduleId) {
+    return of(null);
+  }
+
+  return navigationManagementService.getNavigationItem(moduleId).pipe(
+    map((response: ApiSingleResponse<NavigationItemDto>) => {
+      return response.data?.item || null;
+    })
+  );
+};
+
 /**
  * Resolver for loading a single navigation item before route activation
  * Returns observable that emits navigation item or navigates to error page on failure
  */
-const detailResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+const detailResolver = (route: ActivatedRouteSnapshot) => {
   const navigationManagementService = inject(NavigationManagementService);
   const router = inject(Router);
   const id = route.params['id'];
@@ -63,11 +79,8 @@ const detailResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapsho
   }
 
   return navigationManagementService.getNavigationItem(id).pipe(
-    catchError((error) => {
-      console.error(`Failed to load navigation item ${id}:`, error);
-      // Navigate back to list on error
-      router.navigate(['/management/navigation/global']);
-      return of(null);
+    map((response: ApiSingleResponse<NavigationItemDto>) => {
+      return response.data?.item || null;
     })
   );
 };
@@ -85,12 +98,12 @@ export const routes: Routes = [
       {
         path: 'global',
         resolve: [globalListResolver],
-        loadComponent: () => import('./list/list').then((m) => m.NavigationList),
+        component: NavigationList,
         children: [
           {
             path: 'new',
             pathMatch: 'full',
-            loadComponent: () => import('./detail/detail').then((m) => m.NavigationDetail),
+            component: NavigationDetail,
           },
           {
             path: 'modules',
@@ -100,36 +113,33 @@ export const routes: Routes = [
                 resolve: [moduleListResolver],
                 children: [
                   {
-                    path: '',
+                    path: 'new',
+                    pathMatch: 'full',
+                    component: NavigationDetail,
+                  },
+                  {
+                    path: 'edit',
+                    pathMatch: 'full',
+                    resolve: {
+                      moduleItem: moduleDetailResolver,
+                    },
+                    component: NavigationDetail,
+                  },
+                  {
+                    path: ':id',
+                    resolve: {
+                      item: detailResolver,
+                    },
                     children: [
                       {
-                        path: 'new',
+                        path: '',
                         pathMatch: 'full',
-                        loadComponent: () =>
-                          import('./detail/detail').then((m) => m.NavigationDetail),
+                        component: NavigationDetail,
                       },
                       {
                         path: 'edit',
                         pathMatch: 'full',
-                        resolve: [detailResolver],
-                        // edit global navigation item
-                        loadComponent: () =>
-                          import('./detail/detail').then((m) => m.NavigationDetail),
-                      },
-                      {
-                        path: ':id',
-                        resolve: [detailResolver],
-                        loadComponent: () =>
-                          import('./detail/detail').then((m) => m.NavigationDetail),
-                        children: [
-                          {
-                            path: 'edit',
-                            pathMatch: 'full',
-                            resolve: [detailResolver],
-                            loadComponent: () =>
-                              import('./detail/detail').then((m) => m.NavigationDetail),
-                          },
-                        ],
+                        component: NavigationDetail,
                       },
                     ],
                   },

@@ -568,5 +568,10 @@
         "close": "Đóng"
       }
     }
+  },
+  "navigationManagement": {
+    "contextMenu": {
+      "edit": "Chỉnh sửa mục"
+    }
   }
 }
