@@ -66,6 +66,7 @@ import { OrganizationContextService } from '../../../../../../core/services/orga
     IconFieldModule,
     InputIconModule
   ],
+  providers: [MessageService],
   templateUrl: './list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -94,7 +95,7 @@ export class List implements OnInit, OnDestroy {
   protected readonly pageSize = signal(PAGE_SIZE_OPTIONS[0]);
   protected readonly totalRecords = signal(0);
   protected readonly scope = signal<'global' | 'organization'>('global');
-  protected readonly selectedUser = signal<User | null>(null);
+  protected selectedUser: User | null = null; // Used by PrimeNG contextMenuSelection
   protected readonly isMobile = signal(false);
   protected readonly isSearchOpen = signal(false);
 
@@ -147,7 +148,7 @@ export class List implements OnInit, OnDestroy {
 
   // Context menu items for row actions
   protected get contextMenuItems(): MenuItem[] {
-    const user = this.selectedUser();
+    const user = this.selectedUser;
     if (!user) return [];
 
     return [
@@ -481,15 +482,6 @@ export class List implements OnInit, OnDestroy {
    */
   protected onRowClick(user: User): void {
     this.router.navigate([user.id], { relativeTo: this.route });
-  }
-
-  /**
-   * Handle row right-click to show context menu
-   */
-  protected onRowRightClick(event: MouseEvent, user: User): void {
-    event.preventDefault();
-    this.selectedUser.set(user);
-    this.contextMenu.show(event);
   }
 
   /**
