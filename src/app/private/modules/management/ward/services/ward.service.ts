@@ -28,6 +28,7 @@ export class WardService {
 
   /**
    * Get wards list with pagination and filtering
+   * Note: Backend doesn't support sort parameter yet, so we apply client-side sorting
    */
   getWards(params: GetWardsParams): Observable<{ items: Ward[]; total: number; page: number; limit: number; totalPages: number }> {
     let httpParams = new HttpParams()
@@ -54,6 +55,9 @@ export class WardService {
       httpParams = httpParams.set('isLegacy', params.isLegacy.toString());
     }
 
+    // NOTE: Backend doesn't support sort parameter yet
+    // TODO: Add backend support for sort parameter, see issue #[number]
+
     return this.http
       .get<ApiPaginatedResponse<Ward>>(
         `${API_URI_COMMON}/v1/wards`,
@@ -64,8 +68,21 @@ export class WardService {
       .pipe(
         map((response) => {
           const data = unwrap(response);
-          this.wardsSubject.next(data.items);
-          return data;
+          
+          // Apply client-side sorting (on current page only)
+          let sortedItems = [...data.items];
+          if (params.sort) {
+            const [field, direction] = params.sort.split(':') as ['name', 'asc' | 'desc'];
+            sortedItems.sort((a, b) => {
+              const aVal = (a[field] || '').toString().toLowerCase();
+              const bVal = (b[field] || '').toString().toLowerCase();
+              const comparison = aVal.localeCompare(bVal, 'vi-VN');
+              return direction === 'asc' ? comparison : -comparison;
+            });
+          }
+          
+          this.wardsSubject.next(sortedItems);
+          return { ...data, items: sortedItems };
         })
       );
   }

@@ -1085,84 +1085,6 @@
       "updateFailed": "Error al actualizar distrito"
     }
   },
-  "wardList": {
-    "title": "Gestión de Barrios",
-    "search": {
-      "label": "Buscar barrios",
-      "placeholder": "Buscar por nombre, código...",
-      "openSearch": "Abrir búsqueda",
-      "closeSearch": "Cerrar búsqueda"
-    },
-    "filter": {
-      "allProvinces": "Todas las Provincias",
-      "allDistricts": "Todos los Distritos",
-      "selectProvince": "Filtrar por Provincia",
-      "selectDistrict": "Filtrar por Distrito"
-    },
-    "addButton": {
-      "label": "Agregar Barrio",
-      "tooltip": "Agregar nuevo barrio"
-    },
-    "refreshButton": {
-      "label": "Actualizar",
-      "tooltip": "Actualizar lista"
-    },
-    "actionsButton": {
-      "label": "Acciones"
-    },
-    "actions": {
-      "exportCSV": "Exportar a CSV",
-      "exportGeoJSON": "Exportar a GeoJSON",
-      "import": "Importar Barrios"
-    },
-    "table": {
-      "code": "Código",
-      "name": "Nombre",
-      "nameVi": "Nombre (Vietnamita)",
-      "nameEn": "Nombre (Inglés)",
-      "province": "Provincia",
-      "district": "Distrito",
-      "rowActions": "Acciones de fila"
-    },
-    "contextMenu": {
-      "view": "Ver",
-      "edit": "Editar",
-      "delete": "Eliminar"
-    },
-    "pagination": {
-      "report": "Mostrando {first} a {last} de {totalRecords} barrios",
-      "previous": "Página anterior",
-      "next": "Página siguiente",
-      "showing": "Mostrando {first}-{last} de {total}",
-      "itemsPerPage": "Elementos por página"
-    },
-    "messages": {
-      "loading": "Cargando barrios...",
-      "loaded": "{{count}} barrios cargados",
-      "noResults": "No se encontraron barrios para '{{query}}'",
-      "noWards": "No hay barrios disponibles",
-      "error": "Error",
-      "success": "Éxito",
-      "loadFailed": "Error al cargar barrios",
-      "provinceLoadFailed": "Error al cargar provincias para filtro",
-      "districtLoadFailed": "Error al cargar distritos para filtro",
-      "exportSuccess": "Exportación completada exitosamente",
-      "exportFailed": "Exportación fallida. Por favor, inténtalo de nuevo.",
-      "notImplemented": "Próximamente",
-      "importSoon": "La funcionalidad de importación estará disponible pronto",
-      "deleteSuccess": "Barrio '{{name}}' eliminado exitosamente",
-      "deleteFailed": "Error al eliminar barrio. Por favor, inténtalo de nuevo."
-    },
-    "confirmDelete": {
-      "header": "Confirmar Eliminación",
-      "message": "¿Estás seguro de que quieres eliminar '{{name}}'? Esta acción no se puede deshacer.",
-      "accept": "Eliminar",
-      "reject": "Cancelar"
-    },
-    "mobileList": {
-      "itemActions": "Acciones del elemento"
-    }
-  },
   "wardForm": {
     "title": {
       "create": "Crear Nuevo Barrio",
@@ -1740,6 +1662,93 @@
       "saveFailed": "Error al guardar el almacén",
       "validationFailed": "Por favor complete todos los campos requeridos",
       "invalidLocation": "Selección de provincia o distrito inválida"
+    }
+  },
+  "wardList": {
+    "title": "Gestión de Barrios",
+    "search": {
+      "label": "Buscar barrios",
+      "placeholder": "Buscar por nombre, código...",
+      "openSearch": "Abrir búsqueda",
+      "closeSearch": "Cerrar búsqueda"
+    },
+    "filter": {
+      "allProvinces": "Todas las Provincias",
+      "allDistricts": "Todos los Distritos",
+      "selectProvince": "Filtrar por Provincia",
+      "selectDistrict": "Filtrar por Distrito"
+    },
+    "sort": {
+      "label": "Ordenar por",
+      "nameAsc": "Nombre (A → Z)",
+      "nameDesc": "Nombre (Z → A)"
+    },
+    "grouping": {
+      "toggleGroup": "Alternar grupo {{name}}",
+      "wards": "barrios"
+    },
+    "addButton": {
+      "label": "Agregar Barrio",
+      "tooltip": "Agregar nuevo barrio"
+    },
+    "refreshButton": {
+      "label": "Actualizar",
+      "tooltip": "Actualizar lista"
+    },
+    "actionsButton": {
+      "label": "Acciones"
+    },
+    "actions": {
+      "exportCSV": "Exportar a CSV",
+      "exportGeoJSON": "Exportar a GeoJSON",
+      "import": "Importar Barrios"
+    },
+    "table": {
+      "code": "Código",
+      "name": "Nombre",
+      "nameVi": "Nombre (Vietnamita)",
+      "nameEn": "Nombre (Inglés)",
+      "province": "Provincia",
+      "district": "Distrito",
+      "rowActions": "Acciones de fila"
+    },
+    "contextMenu": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "pagination": {
+      "report": "Mostrando {first} a {last} de {totalRecords} barrios",
+      "previous": "Página anterior",
+      "next": "Página siguiente",
+      "showing": "Mostrando {first}-{last} de {total}",
+      "itemsPerPage": "Elementos por página"
+    },
+    "messages": {
+      "loading": "Cargando barrios...",
+      "loaded": "{{count}} barrios cargados",
+      "noResults": "No se encontraron barrios para '{{query}}'",
+      "noWards": "No hay barrios disponibles",
+      "error": "Error",
+      "success": "Éxito",
+      "loadFailed": "Error al cargar barrios",
+      "provinceLoadFailed": "Error al cargar provincias para filtro",
+      "districtLoadFailed": "Error al cargar distritos para filtro",
+      "exportSuccess": "Exportación completada exitosamente",
+      "exportFailed": "Exportación fallida. Por favor, inténtalo de nuevo.",
+      "notImplemented": "Próximamente",
+      "importSoon": "La funcionalidad de importación estará disponible pronto",
+      "deleteSuccess": "Barrio '{{name}}' eliminado exitosamente",
+      "deleteFailed": "Error al eliminar barrio. Por favor, inténtalo de nuevo."
+    },
+    "confirmDelete": {
+      "header": "Confirmar Eliminación",
+      "message": "¿Estás seguro de que quieres eliminar '{{name}}'? Esta acción no se puede deshacer.",
+      "accept": "Eliminar",
+      "reject": "Cancelar"
+    },
+    "mobileList": {
+      "itemActions": "Acciones del elemento"
     }
   }
 }

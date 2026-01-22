@@ -42,6 +42,7 @@ export interface GetWardsParams {
   districtCode?: string;
   version?: string;
   isLegacy?: boolean;
+  sort?: 'name:asc' | 'name:desc'; // Sort by name (client-side)
 }
 
 /**

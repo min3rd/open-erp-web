@@ -20,12 +20,22 @@ export const wardListResolver: ResolveFn<{ items: any[]; total: number; page: nu
   const provinceFilter = route.paramMap.get('provinceFilter') || 'all-provinces';
   const districtFilter = route.paramMap.get('districtFilter') || 'all-districts';
   
+  // Get sort from query params
+  const sort = route.queryParamMap.get('sort') as 'name:asc' | 'name:desc' | null;
+  
   // Get search query and filters
   const q = filter !== 'all' ? filter : undefined;
   const provinceCode = provinceFilter !== 'all-provinces' ? provinceFilter : undefined;
   const districtCode = districtFilter !== 'all-districts' ? districtFilter : undefined;
 
-  return wardService.getWards({ page, limit, q, provinceCode, districtCode }).pipe(
+  return wardService.getWards({ 
+    page, 
+    limit, 
+    q, 
+    provinceCode, 
+    districtCode,
+    sort: sort || 'name:asc' // Default to name ascending
+  }).pipe(
     catchError((error) => {
       console.error('Failed to resolve ward list:', error);
       return of(null);

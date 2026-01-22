@@ -30,6 +30,19 @@
           [attr.aria-label]="'wardList.filter.selectDistrict' | transloco"
         />
         
+        <!-- Sort Order -->
+        <p-select
+          id="ward-list-sort-select"
+          [options]="sortOptions()"
+          [(ngModel)]="sortOrder"
+          (onChange)="onSortChange($event)"
+          [placeholder]="'wardList.sort.label' | transloco"
+          optionLabel="label"
+          optionValue="value"
+          [style]="{ width: '180px', marginRight: '8px' }"
+          [attr.aria-label]="'wardList.sort.label' | transloco"
+        />
+        
         <!-- Search Input -->
         <p-inputgroup>
           <p-inputgroup-addon>
@@ -183,6 +196,19 @@
         [attr.aria-label]="'wardList.filter.selectDistrict' | transloco"
       />
       
+      <!-- Sort Order Mobile -->
+      <p-select
+        id="ward-list-sort-select-mobile"
+        [options]="sortOptions()"
+        [(ngModel)]="sortOrder"
+        (onChange)="onSortChange($event)"
+        [placeholder]="'wardList.sort.label' | transloco"
+        optionLabel="label"
+        optionValue="value"
+        [style]="{ width: '100%', marginBottom: '8px' }"
+        [attr.aria-label]="'wardList.sort.label' | transloco"
+      />
+      
       <p-inputgroup>
         <input
           #mobileSearchInput
@@ -233,16 +259,43 @@
           >
             <ng-template #header>
               <tr>
+                <th class="w-12"></th>
                 <th>{{ 'wardList.table.code' | transloco }}</th>
                 <th>{{ 'wardList.table.nameVi' | transloco }}</th>
                 <th>{{ 'wardList.table.nameEn' | transloco }}</th>
-                <th>{{ 'wardList.table.province' | transloco }}</th>
                 <th>{{ 'wardList.table.district' | transloco }}</th>
                 <th class="w-16"></th>
               </tr>
             </ng-template>
 
-            <ng-template #body let-ward>
+            <ng-template #body let-ward let-rowIndex="rowIndex">
+              <!-- Province Group Header -->
+              @if (rowIndex === 0 || wards()[rowIndex - 1].provinceCode !== ward.provinceCode) {
+              <tr class="bg-surface-100 dark:bg-surface-800">
+                <td colspan="6" class="font-semibold">
+                  <button
+                    [id]="'ward-list-group-toggle-' + ward.provinceCode"
+                    type="button"
+                    class="flex items-center gap-2 w-full px-2 py-1 text-left hover:bg-surface-200 dark:hover:bg-surface-700 rounded transition-colors"
+                    (click)="toggleGroup(ward.provinceCode)"
+                    [attr.aria-expanded]="isGroupExpanded(ward.provinceCode)"
+                    [attr.aria-label]="'wardList.grouping.toggleGroup' | transloco : { name: wardsByProvince().find(g => g.provinceCode === ward.provinceCode)?.provinceName }"
+                  >
+                    <i 
+                      [class]="isGroupExpanded(ward.provinceCode) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                      class="text-xs"
+                    ></i>
+                    <span>{{ wardsByProvince().find(g => g.provinceCode === ward.provinceCode)?.provinceName }}</span>
+                    <span class="text-surface-500 text-sm ml-2">
+                      ({{ wardsByProvince().find(g => g.provinceCode === ward.provinceCode)?.wards.length }} {{ 'wardList.grouping.wards' | transloco }})
+                    </span>
+                  </button>
+                </td>
+              </tr>
+              }
+              
+              <!-- Ward Row - Only show if group is expanded -->
+              @if (isGroupExpanded(ward.provinceCode)) {
               <tr
                 [id]="'ward-list-row-' + ward.id"
                 (click)="onRowClick(ward)"
@@ -251,12 +304,12 @@
                 [class.bg-primary-50]="selectedWard()?.id === ward.id"
                 [class.dark:bg-primary-900]="selectedWard()?.id === ward.id"
               >
+                <td></td>
                 <td>{{ ward.code }}</td>
                 <td>
                   <div class="font-medium">{{ ward.name }}</div>
                 </td>
                 <td>{{ ward.nameEn || ward.name }}</td>
-                <td>{{ ward.provinceCode || '-' }}</td>
                 <td>{{ ward.districtCode || '-' }}</td>
                 <td (click)="$event.stopPropagation()">
                   <p-button
@@ -276,6 +329,7 @@
                   />
                 </td>
               </tr>
+              }
             </ng-template>
 
             <ng-template #empty>
@@ -357,46 +411,76 @@
             }
           </div>
           } @else {
-          <!-- Ward list items -->
+          <!-- Ward list items with grouping -->
           <div class="space-y-2">
-            @for (ward of wards(); track ward.id) {
-            <div
-              [id]="'ward-list-item-' + ward.id"
-              class="p-3 bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors cursor-pointer"
-              (click)="onRowClick(ward)"
-              [class.bg-primary-50]="selectedWard()?.id === ward.id"
-              [class.dark:bg-primary-900]="selectedWard()?.id === ward.id"
-            >
-              <div class="flex items-start gap-3">
-                <!-- Ward Info -->
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between gap-2 mb-1">
-                    <div class="font-semibold text-base">{{ ward.name }}</div>
-                    <span class="text-sm text-surface-600 dark:text-surface-400">{{
-                      ward.code
-                    }}</span>
-                  </div>
-                  <div class="text-sm text-surface-500 dark:text-surface-500 mb-1">
-                    {{ ward.nameEn || ward.name }}
-                  </div>
-                  <div class="text-xs text-surface-400 dark:text-surface-600">
-                    {{ ward.districtCode || '-' }} / {{ ward.provinceCode || '-' }}
+            @for (group of wardsByProvince(); track group.provinceCode) {
+            <!-- Province Group Header -->
+            <div class="bg-surface-100 dark:bg-surface-800 rounded-lg">
+              <button
+                [id]="'ward-list-group-toggle-mobile-' + group.provinceCode"
+                type="button"
+                class="flex items-center justify-between w-full p-3 text-left hover:bg-surface-200 dark:hover:bg-surface-700 rounded-lg transition-colors"
+                (click)="toggleGroup(group.provinceCode)"
+                [attr.aria-expanded]="isGroupExpanded(group.provinceCode)"
+                [attr.aria-label]="'wardList.grouping.toggleGroup' | transloco : { name: group.provinceName }"
+              >
+                <div class="flex items-center gap-2">
+                  <i 
+                    [class]="isGroupExpanded(group.provinceCode) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                    class="text-xs"
+                  ></i>
+                  <span class="font-semibold">{{ group.provinceName }}</span>
+                </div>
+                <span class="text-surface-500 text-sm">
+                  {{ group.wards.length }} {{ 'wardList.grouping.wards' | transloco }}
+                </span>
+              </button>
+              
+              <!-- Wards in this group -->
+              @if (isGroupExpanded(group.provinceCode)) {
+              <div class="border-t border-surface-200 dark:border-surface-700">
+                @for (ward of group.wards; track ward.id) {
+                <div
+                  [id]="'ward-list-item-' + ward.id"
+                  class="p-3 border-b border-surface-200 dark:border-surface-700 last:border-b-0 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors cursor-pointer"
+                  (click)="onRowClick(ward)"
+                  [class.bg-primary-50]="selectedWard()?.id === ward.id"
+                  [class.dark:bg-primary-900]="selectedWard()?.id === ward.id"
+                >
+                  <div class="flex items-start gap-3">
+                    <!-- Ward Info -->
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-start justify-between gap-2 mb-1">
+                        <div class="font-semibold text-base">{{ ward.name }}</div>
+                        <span class="text-sm text-surface-600 dark:text-surface-400">{{
+                          ward.code
+                        }}</span>
+                      </div>
+                      <div class="text-sm text-surface-500 dark:text-surface-500 mb-1">
+                        {{ ward.nameEn || ward.name }}
+                      </div>
+                      <div class="text-xs text-surface-400 dark:text-surface-600">
+                        {{ ward.districtCode || '-' }}
+                      </div>
+                    </div>
+
+                    <!-- Actions Menu Button -->
+                    <p-button
+                      [id]="'ward-list-item-menu-' + ward.id"
+                      icon="pi pi-ellipsis-v"
+                      [rounded]="true"
+                      [text]="true"
+                      (onClick)="rowMenu.toggle($event); $event.stopPropagation()"
+                      [attr.aria-label]="'wardList.mobileList.itemActions' | transloco"
+                      aria-haspopup="true"
+                      class="flex-shrink-0 min-w-[44px] min-h-[44px]"
+                    />
+                    <p-menu #rowMenu [model]="getRowMenuItems(ward)" [popup]="true" appendTo="body" />
                   </div>
                 </div>
-
-                <!-- Actions Menu Button -->
-                <p-button
-                  [id]="'ward-list-item-menu-' + ward.id"
-                  icon="pi pi-ellipsis-v"
-                  [rounded]="true"
-                  [text]="true"
-                  (onClick)="rowMenu.toggle($event); $event.stopPropagation()"
-                  [attr.aria-label]="'wardList.mobileList.itemActions' | transloco"
-                  aria-haspopup="true"
-                  class="flex-shrink-0 min-w-[44px] min-h-[44px]"
-                />
-                <p-menu #rowMenu [model]="getRowMenuItems(ward)" [popup]="true" appendTo="body" />
+                }
               </div>
+              }
             </div>
             }
           </div>
