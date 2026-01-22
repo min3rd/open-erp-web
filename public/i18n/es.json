@@ -1498,5 +1498,115 @@
     "last": "Última página",
     "page": "Página {{page}}",
     "pageSize": "Elementos por página"
+  },
+  "warehouseList": {
+    "title": "Gestión de Almacenes",
+    "scope": {
+      "label": "Alcance"
+    },
+    "search": {
+      "label": "Buscar almacenes",
+      "placeholder": "Buscar por nombre, código o dirección...",
+      "openSearch": "Abrir búsqueda",
+      "closeSearch": "Cerrar búsqueda"
+    },
+    "addButton": {
+      "label": "Añadir Almacén",
+      "tooltip": "Añadir nuevo almacén"
+    },
+    "refreshButton": {
+      "label": "Actualizar",
+      "tooltip": "Actualizar lista"
+    },
+    "actionsButton": {
+      "label": "Acciones"
+    },
+    "actions": {
+      "exportCSV": "Exportar a CSV",
+      "exportGeoJSON": "Exportar a GeoJSON",
+      "import": "Importar Almacenes",
+      "deleteSelected": "Eliminar Seleccionados"
+    },
+    "table": {
+      "code": "Código",
+      "name": "Nombre",
+      "organization": "Organización",
+      "address": "Dirección",
+      "rowActions": "Acciones de fila"
+    },
+    "contextMenu": {
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "resultCount": "{{count}} almacenes",
+    "messages": {
+      "loading": "Cargando almacenes...",
+      "noResults": "No se encontraron almacenes para '{{query}}'",
+      "noWarehouses": "No hay almacenes disponibles",
+      "error": "Error",
+      "success": "Éxito",
+      "exportSuccess": "Exportación completada exitosamente",
+      "exportFailed": "Error al exportar almacenes",
+      "deleteSuccess": "Almacén {{name}} eliminado exitosamente",
+      "deleteFailed": "Error al eliminar almacén",
+      "bulkDeleteSuccess": "{{count}} almacenes eliminados exitosamente",
+      "bulkDeleteFailed": "Error al eliminar almacenes",
+      "notImplemented": "No Implementado",
+      "importSoon": "La funcionalidad de importación estará disponible pronto"
+    },
+    "confirmDelete": {
+      "header": "Confirmar Eliminación",
+      "message": "¿Está seguro de que desea eliminar el almacén {{name}}?",
+      "accept": "Eliminar",
+      "reject": "Cancelar"
+    },
+    "confirmBulkDelete": {
+      "header": "Confirmar Eliminación Múltiple",
+      "message": "¿Está seguro de que desea eliminar {{count}} almacenes?",
+      "accept": "Eliminar",
+      "reject": "Cancelar"
+    }
+  },
+  "warehouseForm": {
+    "title": {
+      "new": "Añadir Almacén",
+      "edit": "Editar Almacén",
+      "view": "Ver Almacén"
+    },
+    "fields": {
+      "code": {
+        "label": "Código de Almacén",
+        "placeholder": "Ingrese código de almacén"
+      },
+      "name": {
+        "label": "Nombre de Almacén",
+        "placeholder": "Ingrese nombre de almacén"
+      },
+      "address": {
+        "label": "Dirección",
+        "placeholder": "Ingrese dirección del almacén"
+      },
+      "type": {
+        "label": "Tipo",
+        "placeholder": "Ingrese tipo de almacén"
+      },
+      "status": {
+        "label": "Estado",
+        "placeholder": "Ingrese estado"
+      }
+    },
+    "actions": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "close": "Cerrar"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Éxito",
+      "createSuccess": "Almacén creado exitosamente",
+      "updateSuccess": "Almacén actualizado exitosamente",
+      "saveFailed": "Error al guardar almacén"
+    }
   }
 }
