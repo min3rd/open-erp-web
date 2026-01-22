@@ -573,5 +573,115 @@
     "contextMenu": {
       "edit": "Chỉnh sửa mục"
     }
+  },
+  "warehouseList": {
+    "title": "Quản lý Kho hàng",
+    "scope": {
+      "label": "Phạm vi"
+    },
+    "search": {
+      "label": "Tìm kiếm kho hàng",
+      "placeholder": "Tìm theo tên, mã, hoặc địa chỉ...",
+      "openSearch": "Mở tìm kiếm",
+      "closeSearch": "Đóng tìm kiếm"
+    },
+    "addButton": {
+      "label": "Thêm Kho",
+      "tooltip": "Thêm kho mới"
+    },
+    "refreshButton": {
+      "label": "Làm mới",
+      "tooltip": "Làm mới danh sách"
+    },
+    "actionsButton": {
+      "label": "Thao tác"
+    },
+    "actions": {
+      "exportCSV": "Xuất CSV",
+      "exportGeoJSON": "Xuất GeoJSON",
+      "import": "Nhập Kho",
+      "deleteSelected": "Xóa mục đã chọn"
+    },
+    "table": {
+      "code": "Mã",
+      "name": "Tên",
+      "organization": "Tổ chức",
+      "address": "Địa chỉ",
+      "rowActions": "Thao tác hàng"
+    },
+    "contextMenu": {
+      "view": "Xem",
+      "edit": "Sửa",
+      "delete": "Xóa"
+    },
+    "resultCount": "{{count}} kho hàng",
+    "messages": {
+      "loading": "Đang tải kho hàng...",
+      "noResults": "Không tìm thấy kho nào cho '{{query}}'",
+      "noWarehouses": "Không có kho nào",
+      "error": "Lỗi",
+      "success": "Thành công",
+      "exportSuccess": "Xuất thành công",
+      "exportFailed": "Xuất thất bại",
+      "deleteSuccess": "Đã xóa kho {{name}}",
+      "deleteFailed": "Xóa thất bại",
+      "bulkDeleteSuccess": "Đã xóa {{count}} kho",
+      "bulkDeleteFailed": "Xóa hàng loạt thất bại",
+      "notImplemented": "Chưa triển khai",
+      "importSoon": "Tính năng nhập sẽ có sớm"
+    },
+    "confirmDelete": {
+      "header": "Xác nhận xóa",
+      "message": "Bạn có chắc muốn xóa kho {{name}}?",
+      "accept": "Xóa",
+      "reject": "Hủy"
+    },
+    "confirmBulkDelete": {
+      "header": "Xác nhận xóa hàng loạt",
+      "message": "Bạn có chắc muốn xóa {{count}} kho?",
+      "accept": "Xóa",
+      "reject": "Hủy"
+    }
+  },
+  "warehouseForm": {
+    "title": {
+      "new": "Thêm Kho",
+      "edit": "Sửa Kho",
+      "view": "Xem Kho"
+    },
+    "fields": {
+      "code": {
+        "label": "Mã kho",
+        "placeholder": "Nhập mã kho"
+      },
+      "name": {
+        "label": "Tên kho",
+        "placeholder": "Nhập tên kho"
+      },
+      "address": {
+        "label": "Địa chỉ",
+        "placeholder": "Nhập địa chỉ kho"
+      },
+      "type": {
+        "label": "Loại",
+        "placeholder": "Nhập loại kho"
+      },
+      "status": {
+        "label": "Trạng thái",
+        "placeholder": "Nhập trạng thái"
+      }
+    },
+    "actions": {
+      "save": "Lưu",
+      "cancel": "Hủy",
+      "close": "Đóng"
+    },
+    "messages": {
+      "error": "Lỗi",
+      "success": "Thành công",
+      "createSuccess": "Đã tạo kho thành công",
+      "updateSuccess": "Đã cập nhật kho thành công",
+      "saveFailed": "Lưu kho thất bại"
+    }
   }
 }

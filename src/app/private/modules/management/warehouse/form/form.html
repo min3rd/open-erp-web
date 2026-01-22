@@ -1,0 +1,123 @@
+<p-drawer
+  id="warehouse-form-drawer"
+  [(visible)]="isVisible"
+  position="right"
+  [style]="{ width: '500px' }"
+  (onHide)="onClose()"
+>
+  <ng-template #header>
+    <h2 id="warehouse-form-title">
+      @if (isViewMode()) {
+        {{ 'warehouseForm.title.view' | transloco }}
+      } @else if (isEditMode()) {
+        {{ 'warehouseForm.title.edit' | transloco }}
+      } @else {
+        {{ 'warehouseForm.title.new' | transloco }}
+      }
+    </h2>
+  </ng-template>
+
+  <div id="warehouse-form-content" class="p-4">
+    <form [formGroup]="form" class="space-y-4">
+      <!-- Code -->
+      <div>
+        <label for="warehouse-form-code" class="block text-sm font-medium mb-2">
+          {{ 'warehouseForm.fields.code.label' | transloco }}
+        </label>
+        <input
+          id="warehouse-form-code"
+          type="text"
+          pInputText
+          formControlName="code"
+          [placeholder]="'warehouseForm.fields.code.placeholder' | transloco"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Name -->
+      <div>
+        <label for="warehouse-form-name" class="block text-sm font-medium mb-2">
+          {{ 'warehouseForm.fields.name.label' | transloco }}
+        </label>
+        <input
+          id="warehouse-form-name"
+          type="text"
+          pInputText
+          formControlName="name"
+          [placeholder]="'warehouseForm.fields.name.placeholder' | transloco"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Address -->
+      <div>
+        <label for="warehouse-form-address" class="block text-sm font-medium mb-2">
+          {{ 'warehouseForm.fields.address.label' | transloco }}
+        </label>
+        <textarea
+          id="warehouse-form-address"
+          pInputTextarea
+          formControlName="address"
+          [placeholder]="'warehouseForm.fields.address.placeholder' | transloco"
+          rows="3"
+          class="w-full"
+        ></textarea>
+      </div>
+
+      <!-- Type -->
+      <div>
+        <label for="warehouse-form-type" class="block text-sm font-medium mb-2">
+          {{ 'warehouseForm.fields.type.label' | transloco }}
+        </label>
+        <input
+          id="warehouse-form-type"
+          type="text"
+          pInputText
+          formControlName="type"
+          [placeholder]="'warehouseForm.fields.type.placeholder' | transloco"
+          class="w-full"
+        />
+      </div>
+
+      <!-- Status -->
+      <div>
+        <label for="warehouse-form-status" class="block text-sm font-medium mb-2">
+          {{ 'warehouseForm.fields.status.label' | transloco }}
+        </label>
+        <input
+          id="warehouse-form-status"
+          type="text"
+          pInputText
+          formControlName="status"
+          [placeholder]="'warehouseForm.fields.status.placeholder' | transloco"
+          class="w-full"
+        />
+      </div>
+    </form>
+  </div>
+
+  <ng-template #footer>
+    <div id="warehouse-form-actions" class="flex justify-end gap-2">
+      @if (!isViewMode()) {
+      <p-button
+        id="warehouse-form-cancel-button"
+        [label]="'warehouseForm.actions.cancel' | transloco"
+        severity="secondary"
+        (onClick)="onClose()"
+      />
+      <p-button
+        id="warehouse-form-save-button"
+        [label]="'warehouseForm.actions.save' | transloco"
+        [loading]="isLoading()"
+        (onClick)="onSave()"
+      />
+      } @else {
+      <p-button
+        id="warehouse-form-close-button"
+        [label]="'warehouseForm.actions.close' | transloco"
+        (onClick)="onClose()"
+      />
+      }
+    </div>
+  </ng-template>
+</p-drawer>

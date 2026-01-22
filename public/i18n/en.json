@@ -1366,6 +1366,116 @@
       "updateFailed": "Failed to update ward"
     }
   },
+  "warehouseList": {
+    "title": "Warehouse Management",
+    "scope": {
+      "label": "Scope"
+    },
+    "search": {
+      "label": "Search warehouses",
+      "placeholder": "Search by name, code, or address...",
+      "openSearch": "Open search",
+      "closeSearch": "Close search"
+    },
+    "addButton": {
+      "label": "Add Warehouse",
+      "tooltip": "Add new warehouse"
+    },
+    "refreshButton": {
+      "label": "Refresh",
+      "tooltip": "Refresh list"
+    },
+    "actionsButton": {
+      "label": "Actions"
+    },
+    "actions": {
+      "exportCSV": "Export to CSV",
+      "exportGeoJSON": "Export to GeoJSON",
+      "import": "Import Warehouses",
+      "deleteSelected": "Delete Selected"
+    },
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "organization": "Organization",
+      "address": "Address",
+      "rowActions": "Row actions"
+    },
+    "contextMenu": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "resultCount": "{{count}} warehouses",
+    "messages": {
+      "loading": "Loading warehouses...",
+      "noResults": "No warehouses found for '{{query}}'",
+      "noWarehouses": "No warehouses available",
+      "error": "Error",
+      "success": "Success",
+      "exportSuccess": "Export completed successfully",
+      "exportFailed": "Failed to export warehouses",
+      "deleteSuccess": "Warehouse {{name}} deleted successfully",
+      "deleteFailed": "Failed to delete warehouse",
+      "bulkDeleteSuccess": "{{count}} warehouses deleted successfully",
+      "bulkDeleteFailed": "Failed to delete warehouses",
+      "notImplemented": "Not Implemented",
+      "importSoon": "Import functionality coming soon"
+    },
+    "confirmDelete": {
+      "header": "Confirm Delete",
+      "message": "Are you sure you want to delete warehouse {{name}}?",
+      "accept": "Delete",
+      "reject": "Cancel"
+    },
+    "confirmBulkDelete": {
+      "header": "Confirm Bulk Delete",
+      "message": "Are you sure you want to delete {{count}} warehouses?",
+      "accept": "Delete",
+      "reject": "Cancel"
+    }
+  },
+  "warehouseForm": {
+    "title": {
+      "new": "Add Warehouse",
+      "edit": "Edit Warehouse",
+      "view": "View Warehouse"
+    },
+    "fields": {
+      "code": {
+        "label": "Warehouse Code",
+        "placeholder": "Enter warehouse code"
+      },
+      "name": {
+        "label": "Warehouse Name",
+        "placeholder": "Enter warehouse name"
+      },
+      "address": {
+        "label": "Address",
+        "placeholder": "Enter warehouse address"
+      },
+      "type": {
+        "label": "Type",
+        "placeholder": "Enter warehouse type"
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Enter status"
+      }
+    },
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Success",
+      "createSuccess": "Warehouse created successfully",
+      "updateSuccess": "Warehouse updated successfully",
+      "saveFailed": "Failed to save warehouse"
+    }
+  },
   "formEditor": {
     "title": "Form Editor",
     "toolbar": {
