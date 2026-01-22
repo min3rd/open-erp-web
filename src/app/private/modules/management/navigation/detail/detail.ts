@@ -74,8 +74,6 @@ export class NavigationDetail implements OnInit, OnDestroy {
       const isEditRoute = this.route.snapshot.url.some((segment) => segment.path === 'edit');
       const isNewRoute = this.route.snapshot.url.some((segment) => segment.path === 'new');
 
-      console.log(this.route.snapshot.url, id, moduleId, isEditRoute, isNewRoute);
-
       if (isNewRoute) {
         // Create mode
         this.mode.set('create');

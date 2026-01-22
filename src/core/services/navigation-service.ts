@@ -60,11 +60,11 @@ export class NavigationService {
   /**
    * Get module-specific navigation observable
    */
-  getModuleNavigation$(moduleKey: string): Observable<MenuItem[]> {
-    if (!this._moduleNavigation.has(moduleKey)) {
-      this._moduleNavigation.set(moduleKey, new BehaviorSubject<MenuItem[]>([]));
+  getModuleNavigation$(moduleId: string): Observable<MenuItem[]> {
+    if (!this._moduleNavigation.has(moduleId)) {
+      this._moduleNavigation.set(moduleId, new BehaviorSubject<MenuItem[]>([]));
     }
-    return this._moduleNavigation.get(moduleKey)!.asObservable();
+    return this._moduleNavigation.get(moduleId)!.asObservable();
   }
 
   /**

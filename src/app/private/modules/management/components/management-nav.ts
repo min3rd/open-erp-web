@@ -43,7 +43,7 @@ export class ManagementNav implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Load module navigation
-    this.navigationService.getModuleNavigation$('management')
+    this.navigationService.getModuleNavigation$('nav-management')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((items) => {
         this.items = items || [];
@@ -52,7 +52,7 @@ export class ManagementNav implements OnInit, OnDestroy {
       });
 
     // Load module navigation data
-    this.navigationService.loadModuleNavigation('management')
+    this.navigationService.loadModuleNavigation('nav-management')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe();
 
