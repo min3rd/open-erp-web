@@ -242,7 +242,7 @@
                   }
                 </td>
                 <td>{{ warehouse.organizationName || '-' }}</td>
-                <td>{{ warehouse.address || '-' }}</td>
+                <td>{{ warehouse.addressDetail || '-' }}</td>
                 <td (click)="$event.stopPropagation()">
                   <p-button
                     [id]="'warehouse-list-row-menu-' + warehouse.id"
@@ -366,9 +366,9 @@
                     <i class="pi pi-building mr-1"></i>{{ warehouse.organizationName }}
                   </div>
                   }
-                  @if (warehouse.address) {
+                  @if (warehouse.addressDetail) {
                   <div class="text-xs text-surface-500 dark:text-surface-500 mt-1">
-                    <i class="pi pi-map-marker mr-1"></i>{{ warehouse.address }}
+                    <i class="pi pi-map-marker mr-1"></i>{{ warehouse.addressDetail }}
                   </div>
                   }
                 </div>

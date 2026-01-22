@@ -4,6 +4,10 @@
  */
 import type { Geometry } from 'geojson';
 import type { ApiPaginatedData } from '../../../../../core/api/interfaces';
+import type { Warehouse } from '../../../../../core/services/warehouse/warehouse.service';
+
+// Re-export Warehouse type from service to avoid duplication
+export type { Warehouse };
 
 /**
  * Warehouse Type enum (from backend)
@@ -163,79 +167,7 @@ export interface AccessControlDto {
   securityGuards?: number;
 }
 
-/**
- * Complete Warehouse interface matching backend
- */
-export interface Warehouse {
-  id: string;
-  warehouseId?: string;
-  code: string;
-  name: string;
-  type: WarehouseType;
-  status: WarehouseStatus;
-  
-  // Legal/Management
-  organizationId?: string;
-  businessLicense?: string;
-  warehouseLicense?: string;
-  customsCode?: string;
-  
-  // Address (structured)
-  addressDetail: string;
-  ward: WardDto;
-  province: ProvinceDto;
-  region?: Region;
-  location?: LocationDto;
-  
-  // Capacity
-  totalAreaM2?: number;
-  usableAreaM2?: number;
-  storageCapacity?: number;
-  capacityUnit?: CapacityUnit;
-  zonesCount?: number;
-  racksCount?: number;
-  floorsCount?: number;
-  
-  // Storage conditions
-  temperatureMin?: number;
-  temperatureMax?: number;
-  humidityMin?: number;
-  humidityMax?: number;
-  specialConditions?: SpecialCondition[];
-  
-  // Operations
-  manager?: ManagerDto;
-  contactPhone?: string;
-  contactEmail?: string;
-  workersCount?: number;
-  workingShift?: WorkingShift;
-  operatingHours?: string;
-  
-  // Security
-  fireProtectionCert?: string;
-  securityLevel?: SecurityLevel;
-  cameraSystem?: CameraSystemDto;
-  accessControl?: AccessControlDto;
-  insurancePolicy?: string;
-  
-  // Finance
-  storageFee?: number;
-  handlingFee?: number;
-  currency?: Currency;
-  paymentTerm?: PaymentTerm;
-  
-  // Audit
-  createdBy?: string;
-  updatedBy?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  deletedAt?: string | null;
-  tenantId?: string;
-  
-  // For display (computed)
-  organizationName?: string;
-  fullAddress?: string;
-}
+/* NOTE: Warehouse interface removed from here - now re-exported from service at top of file */
 
 /**
  * Create Warehouse DTO matching backend exactly
