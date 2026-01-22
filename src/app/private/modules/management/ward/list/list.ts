@@ -32,6 +32,11 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { Select } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SplitterModule } from 'primeng/splitter';
+import { Accordion } from 'primeng/accordion';
+import { AccordionPanel } from 'primeng/accordion';
+import { AccordionHeader } from 'primeng/accordion';
+import { AccordionContent } from 'primeng/accordion';
+import { Scroller } from 'primeng/scroller';
 
 // Core components and constants
 import { MapComponent } from '../../../../../../core/components/map/map.component';
@@ -57,13 +62,17 @@ import { District } from '../../district/district.types';
     MenuModule,
     ContextMenuModule,
     TooltipModule,
-    PaginationComponent,
     InputGroupModule,
     InputGroupAddonModule,
     Select,
     ConfirmDialogModule,
     SplitterModule,
     MapComponent,
+    Accordion,
+    AccordionPanel,
+    AccordionHeader,
+    AccordionContent,
+    Scroller,
   ],
   providers: [ConfirmationService],
   templateUrl: './list.html',
@@ -714,6 +723,44 @@ export class WardList implements OnInit, OnDestroy {
       queryParams: { sort: newSort },
       queryParamsHandling: 'merge',
     });
+  }
+
+  /**
+   * Get active values for accordion (all group indexes that are expanded)
+   */
+  protected getActiveValues(): number[] {
+    const expanded = this.expandedGroups();
+    const groups = this.wardsByProvince();
+    const values: number[] = [];
+    
+    groups.forEach((group, index) => {
+      if (expanded.has(group.provinceCode)) {
+        values.push(index);
+      }
+    });
+    
+    return values;
+  }
+
+  /**
+   * Handle accordion value change
+   */
+  protected onAccordionValueChange(value: string | number | string[] | number[] | null | undefined): void {
+    const groups = this.wardsByProvince();
+    const newExpanded = new Set<string>();
+    
+    // Ensure we have an array of numbers
+    const values: number[] = Array.isArray(value) 
+      ? value.map(v => typeof v === 'number' ? v : parseInt(String(v), 10)).filter(v => !isNaN(v))
+      : [];
+    
+    values.forEach(index => {
+      if (index < groups.length) {
+        newExpanded.add(groups[index].provinceCode);
+      }
+    });
+    
+    this.expandedGroups.set(newExpanded);
   }
 
   /**
