@@ -48,9 +48,8 @@ import {
     AutoCompleteModule,
     Select,
     InputNumberModule,
-    GeoEditorComponent,
-    MapComponent,
-  ],
+    MapComponent
+],
   templateUrl: './form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
