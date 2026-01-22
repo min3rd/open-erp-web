@@ -300,7 +300,7 @@
       <ng-template #panel>
         <!-- Right Pane: Map -->
         <div id="warehouse-list-right-pane" class="flex flex-col h-full">
-          <div class="flex-1 h-full">
+          <div class="flex-1 h-full" (contextmenu)="onMapRightClick($event)">
             <core-map
               id="warehouse-list-map"
               [geometry]="selectedGeometry()"
@@ -417,6 +417,14 @@
   #contextMenu
   id="warehouse-list-context-menu"
   [model]="contextMenuItems"
+  appendTo="body"
+/>
+
+<!-- Map Context Menu -->
+<p-contextMenu
+  #mapContextMenu
+  id="warehouse-list-map-context-menu"
+  [model]="mapContextMenuItems"
   appendTo="body"
 />
 

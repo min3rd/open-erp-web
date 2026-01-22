@@ -96,6 +96,27 @@ export class WarehouseForm implements OnInit {
     this.isViewMode.set(routePath === 'view');
     this.isEditMode.set(routePath === 'edit');
 
+    // Check for location from query params (from map context menu)
+    const queryParams = this.route.snapshot.queryParams;
+    if (queryParams['lat'] && queryParams['lng']) {
+      const lat = parseFloat(queryParams['lat']);
+      const lng = parseFloat(queryParams['lng']);
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+        this.form.patchValue({
+          latitude: lat,
+          longitude: lng,
+        });
+        
+        // Create Point geometry
+        const pointGeometry: GeoJSON.Point = {
+          type: 'Point',
+          coordinates: [lng, lat],
+        };
+        this.currentGeometry.set(pointGeometry);
+      }
+    }
+
     // Load warehouse data if available
     this.route.data.subscribe((data) => {
       const warehouse = data['warehouse'];

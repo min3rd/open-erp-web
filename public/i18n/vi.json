@@ -614,6 +614,11 @@
       "edit": "Sửa",
       "delete": "Xóa"
     },
+    "mapContextMenu": {
+      "createHere": "Tạo Kho Tại Đây",
+      "viewCoordinates": "Xem Tọa Độ",
+      "coordinates": "Tọa Độ Vị Trí"
+    },
     "resultCount": "{{count}} kho hàng",
     "messages": {
       "loading": "Đang tải kho hàng...",

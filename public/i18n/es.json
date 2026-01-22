@@ -1539,6 +1539,11 @@
       "edit": "Editar",
       "delete": "Eliminar"
     },
+    "mapContextMenu": {
+      "createHere": "Crear Almacén Aquí",
+      "viewCoordinates": "Ver Coordenadas",
+      "coordinates": "Coordenadas de Ubicación"
+    },
     "resultCount": "{{count}} almacenes",
     "messages": {
       "loading": "Cargando almacenes...",

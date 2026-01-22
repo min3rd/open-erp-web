@@ -75,6 +75,7 @@ interface ScopeOption {
 })
 export class WarehouseList implements OnInit, OnDestroy {
   @ViewChild('contextMenu') contextMenu!: ContextMenu;
+  @ViewChild('mapContextMenu') mapContextMenu?: ContextMenu;
   @ViewChild('mobileSearchInput') mobileSearchInput?: ElementRef<HTMLInputElement>;
 
   private router = inject(Router);
@@ -105,6 +106,9 @@ export class WarehouseList implements OnInit, OnDestroy {
   // Computed values
   protected readonly totalPages = computed(() => Math.ceil(this.totalRecords() / this.pageSize()));
   protected readonly selectedGeometry = computed(() => this.selectedWarehouse()?.geometry || null);
+
+  // Map context menu state
+  protected readonly mapClickLocation = signal<{ lat: number; lng: number } | null>(null);
 
   // Scope options
   protected readonly scopeOptions: ScopeOption[] = [
@@ -169,6 +173,25 @@ export class WarehouseList implements OnInit, OnDestroy {
         label: this.translocoService.translate('warehouseList.contextMenu.delete'),
         icon: 'pi pi-trash',
         command: () => this.onDeleteWarehouse(warehouse),
+      },
+    ];
+  }
+
+  // Map context menu items for creating warehouse at location
+  protected get mapContextMenuItems(): MenuItem[] {
+    const location = this.mapClickLocation();
+    if (!location) return [];
+
+    return [
+      {
+        label: this.translocoService.translate('warehouseList.mapContextMenu.createHere'),
+        icon: 'pi pi-plus',
+        command: () => this.onCreateWarehouseAtLocation(location),
+      },
+      {
+        label: this.translocoService.translate('warehouseList.mapContextMenu.viewCoordinates'),
+        icon: 'pi pi-map-marker',
+        command: () => this.showCoordinates(location),
       },
     ];
   }
@@ -574,5 +597,58 @@ export class WarehouseList implements OnInit, OnDestroy {
         command: () => this.onDeleteWarehouse(warehouse),
       },
     ];
+  }
+
+  /**
+   * Handle right-click on map to show context menu
+   */
+  protected onMapRightClick(event: MouseEvent): void {
+    event.preventDefault();
+    
+    // Get the map container and calculate relative position
+    const mapContainer = (event.target as HTMLElement).closest('#warehouse-list-map');
+    if (!mapContainer) return;
+
+    const rect = mapContainer.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    // Calculate approximate lat/lng (this is a simplified calculation)
+    // In a real implementation, you'd use the Leaflet map instance
+    // For now, store the click event coordinates
+    const lat = 15.9749 + (0.5 - y / rect.height) * 20; // Rough approximation
+    const lng = 108.2515 + (x / rect.width - 0.5) * 20;
+
+    this.mapClickLocation.set({ lat, lng });
+    
+    if (this.mapContextMenu) {
+      this.mapContextMenu.show(event);
+    }
+  }
+
+  /**
+   * Create warehouse at clicked map location
+   */
+  protected onCreateWarehouseAtLocation(location: { lat: number; lng: number }): void {
+    // Navigate to create form and pass location via query params
+    this.router.navigate(['new'], {
+      relativeTo: this.route,
+      queryParams: {
+        lat: location.lat.toFixed(6),
+        lng: location.lng.toFixed(6),
+      },
+    });
+  }
+
+  /**
+   * Show coordinates in a toast message
+   */
+  protected showCoordinates(location: { lat: number; lng: number }): void {
+    this.messageService.add({
+      severity: 'info',
+      summary: this.translocoService.translate('warehouseList.mapContextMenu.coordinates'),
+      detail: `Lat: ${location.lat.toFixed(6)}, Lng: ${location.lng.toFixed(6)}`,
+      life: 5000,
+    });
   }
 }

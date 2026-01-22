@@ -1406,6 +1406,11 @@
       "edit": "Edit",
       "delete": "Delete"
     },
+    "mapContextMenu": {
+      "createHere": "Create Warehouse Here",
+      "viewCoordinates": "View Coordinates",
+      "coordinates": "Location Coordinates"
+    },
     "resultCount": "{{count}} warehouses",
     "messages": {
       "loading": "Loading warehouses...",
