@@ -5,7 +5,7 @@
     <p-toolbar id="warehouse-list-toolbar">
       <ng-template #start>
         <!-- Scope Selector -->
-        <p-dropdown
+        <p-select
           id="warehouse-list-scope-dropdown"
           [options]="scopeOptions"
           [(ngModel)]="currentScope"
@@ -205,9 +205,7 @@
             [loading]="isLoading()"
             [rowHover]="true"
             dataKey="id"
-            [(selection)]="selectedWarehouses"
-            (onRowSelect)="onSelectionChange($event)"
-            (onRowUnselect)="onSelectionChange($event)"
+            [(selection)]="selectedWarehousesArray"
             styleClass="p-datatable-sm"
             responsiveLayout="scroll"
           >

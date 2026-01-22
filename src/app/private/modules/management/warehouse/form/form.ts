@@ -7,7 +7,7 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 // PrimeNG imports
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TextareaModule } from 'primeng/textarea';
 import { DrawerModule } from 'primeng/drawer';
 import { MessageService } from 'primeng/api';
 
@@ -23,7 +23,7 @@ import { Warehouse } from '../warehouse.types';
     TranslocoModule,
     ButtonModule,
     InputTextModule,
-    InputTextareaModule,
+    TextareaModule,
     DrawerModule,
   ],
   templateUrl: './form.html',
