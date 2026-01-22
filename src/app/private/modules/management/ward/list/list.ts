@@ -111,7 +111,10 @@ export class WardList implements OnInit, OnDestroy {
   protected readonly selectedProvinceCode = signal<string>('all-provinces');
   protected readonly selectedDistrictCode = signal<string>('all-districts');
   protected readonly sortOrder = signal<'name:asc' | 'name:desc'>('name:asc');
-  protected readonly expandedGroups = signal<Set<string>>(new Set());
+  protected readonly expandedGroups = signal<Set<string>>(new Set()); // Start empty - all collapsed
+  
+  // Map to store wards per province (lazy loaded)
+  protected readonly wardsByProvinceMap = signal<Map<string, { wards: Ward[]; loading: boolean; loaded: boolean }>>(new Map());
 
   // Computed values
   protected readonly totalPages = computed(() => Math.ceil(this.totalRecords() / this.pageSize()));
@@ -134,35 +137,17 @@ export class WardList implements OnInit, OnDestroy {
     return null;
   });
 
-  // Group wards by province
+  // Group wards by province - now based on provinces list, not wards
   protected readonly wardsByProvince = computed(() => {
-    const wardsList = this.wards();
     const provincesList = this.provinces();
-    const groups = new Map<string, { provinceName: string; wards: Ward[] }>();
-
-    wardsList.forEach((ward) => {
-      const provinceCode = ward.provinceCode;
-      if (!groups.has(provinceCode)) {
-        const province = provincesList.find((p) => p.code === provinceCode);
-        const provinceName = province?.name || `Unknown (${provinceCode})`;
-        
-        // Log warning if province name not found
-        if (!province) {
-          console.warn(`Province name not found for code: ${provinceCode}`);
-        }
-        
-        groups.set(provinceCode, {
-          provinceName,
-          wards: [],
-        });
-      }
-      groups.get(provinceCode)!.wards.push(ward);
-    });
-
-    return Array.from(groups.entries()).map(([code, data]) => ({
-      provinceCode: code,
-      provinceName: data.provinceName,
-      wards: data.wards,
+    const wardsMap = this.wardsByProvinceMap();
+    
+    return provincesList.map((province) => ({
+      provinceCode: province.code,
+      provinceName: province.name,
+      wards: wardsMap.get(province.code)?.wards || [],
+      loading: wardsMap.get(province.code)?.loading || false,
+      loaded: wardsMap.get(province.code)?.loaded || false,
     }));
   });
 
@@ -282,12 +267,13 @@ export class WardList implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Load data from resolver
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
-      const wardListData = data['wardList'];
-      if (wardListData) {
-        this.wards.set(wardListData.items);
-        this.totalRecords.set(wardListData.total);
-        this.isLoading.set(false);
-      }
+      // Don't load wards upfront - they will be loaded lazily per province
+      // const wardListData = data['wardList'];
+      // if (wardListData) {
+      //   this.wards.set(wardListData.items);
+      //   this.totalRecords.set(wardListData.total);
+      //   this.isLoading.set(false);
+      // }
 
       if (data['provinceList']) {
         this.provinces.set(data['provinceList'].items);
@@ -300,17 +286,12 @@ export class WardList implements OnInit, OnDestroy {
       this.cdr.markForCheck();
     });
 
-    // Subscribe to route params for pagination and filters
+    // Subscribe to route params for filters (no pagination needed anymore)
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-      const page = parseInt(params['page'], 10) || 1;
-      const limit = parseInt(params['limit'], 10) || PAGE_SIZE_OPTIONS[0];
-      const normalizedLimit = PAGE_SIZE_OPTIONS.includes(limit) ? limit : PAGE_SIZE_OPTIONS[0];
       const search = params['filter'] || '';
       const provinceFilter = params['provinceFilter'] || 'all-provinces';
       const districtFilter = params['districtFilter'] || 'all-districts';
 
-      this.currentPage.set(page);
-      this.pageSize.set(normalizedLimit);
       this.searchQuery.set(search === 'all' ? '' : search);
       this.selectedProvinceCode.set(provinceFilter);
       this.selectedDistrictCode.set(districtFilter);
@@ -743,7 +724,7 @@ export class WardList implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle accordion value change
+   * Handle accordion value change - load wards when province is expanded
    */
   protected onAccordionValueChange(value: string | number | string[] | number[] | null | undefined): void {
     const groups = this.wardsByProvince();
@@ -754,13 +735,77 @@ export class WardList implements OnInit, OnDestroy {
       ? value.map(v => typeof v === 'number' ? v : parseInt(String(v), 10)).filter(v => !isNaN(v))
       : [];
     
+    // Track which provinces are being expanded
+    const previousExpanded = this.expandedGroups();
+    
     values.forEach(index => {
       if (index < groups.length) {
-        newExpanded.add(groups[index].provinceCode);
+        const provinceCode = groups[index].provinceCode;
+        newExpanded.add(provinceCode);
+        
+        // Load wards for this province if not already loaded or loading
+        if (!previousExpanded.has(provinceCode)) {
+          this.loadWardsForProvince(provinceCode);
+        }
       }
     });
     
     this.expandedGroups.set(newExpanded);
+  }
+
+  /**
+   * Load wards for a specific province
+   */
+  private loadWardsForProvince(provinceCode: string): void {
+    const currentMap = this.wardsByProvinceMap();
+    
+    // Check if already loaded or loading
+    if (currentMap.get(provinceCode)?.loaded || currentMap.get(provinceCode)?.loading) {
+      return;
+    }
+    
+    // Set loading state
+    const newMap = new Map(currentMap);
+    newMap.set(provinceCode, { wards: [], loading: true, loaded: false });
+    this.wardsByProvinceMap.set(newMap);
+    
+    // Fetch wards for this province
+    this.wardService
+      .getWards({
+        page: 1,
+        limit: 10000, // Load all wards for this province
+        provinceCode: provinceCode,
+        sort: this.sortOrder(),
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const updatedMap = new Map(this.wardsByProvinceMap());
+          updatedMap.set(provinceCode, {
+            wards: response.items,
+            loading: false,
+            loaded: true,
+          });
+          this.wardsByProvinceMap.set(updatedMap);
+        },
+        error: (error) => {
+          console.error(`Failed to load wards for province ${provinceCode}:`, error);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translocoService.translate('wardList.messages.error'),
+            detail: this.translocoService.translate('wardList.messages.loadFailed'),
+          });
+          
+          // Clear loading state
+          const updatedMap = new Map(this.wardsByProvinceMap());
+          updatedMap.set(provinceCode, {
+            wards: [],
+            loading: false,
+            loaded: false,
+          });
+          this.wardsByProvinceMap.set(updatedMap);
+        },
+      });
   }
 
   /**
