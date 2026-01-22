@@ -1575,49 +1575,154 @@
   },
   "warehouseForm": {
     "title": {
-      "new": "Añadir Almacén",
+      "new": "Agregar Almacén",
       "edit": "Editar Almacén",
       "view": "Ver Almacén"
     },
+    "sections": {
+      "required": "Información Requerida",
+      "location": "Ubicación y Coordenadas",
+      "capacity": "Capacidad",
+      "storageConditions": "Condiciones de Almacenamiento",
+      "operations": "Operaciones",
+      "security": "Seguridad",
+      "finance": "Finanzas"
+    },
     "fields": {
       "code": {
-        "label": "Código de Almacén",
-        "placeholder": "Ingrese código de almacén"
+        "label": "Código del Almacén",
+        "placeholder": "Ingrese el código del almacén"
       },
       "name": {
-        "label": "Nombre de Almacén",
-        "placeholder": "Ingrese nombre de almacén"
+        "label": "Nombre del Almacén",
+        "placeholder": "Ingrese el nombre del almacén"
       },
-      "locationSearch": {
-        "label": "Buscar Ubicación",
-        "placeholder": "Escriba para buscar una ubicación...",
-        "hint": "Busque y seleccione una ubicación para auto-llenar dirección y coordenadas"
+      "type": {
+        "label": "Tipo de Almacén",
+        "placeholder": "Seleccione el tipo de almacén"
       },
-      "address": {
+      "status": {
+        "label": "Estado",
+        "placeholder": "Seleccione el estado"
+      },
+      "addressSearch": {
         "label": "Dirección",
-        "placeholder": "Ingrese dirección del almacén"
+        "placeholder": "Buscar dirección...",
+        "hint": "Escriba para buscar usando Nominatim. Seleccionar un resultado llenará las coordenadas."
+      },
+      "province": {
+        "label": "Provincia",
+        "placeholder": "Seleccione la provincia"
+      },
+      "ward": {
+        "label": "Distrito",
+        "placeholder": "Seleccione el distrito"
       },
       "latitude": {
         "label": "Latitud",
-        "placeholder": "Ej: 10.8231"
+        "placeholder": "ej., 10.8231"
       },
       "longitude": {
         "label": "Longitud",
-        "placeholder": "Ej: 106.6297"
+        "placeholder": "ej., 106.6297"
       },
-      "location": {
-        "label": "Ubicación (GeoJSON)"
+      "geometry": {
+        "label": "Editor de Geometría"
       },
       "mapPreview": {
         "label": "Vista Previa del Mapa"
       },
-      "type": {
-        "label": "Tipo de Almacén",
-        "placeholder": "Seleccione o escriba el tipo de almacén"
+      "totalAreaM2": {
+        "label": "Área Total (m²)",
+        "placeholder": "Ingrese el área total"
       },
-      "status": {
-        "label": "Estado",
-        "placeholder": "Seleccione estado"
+      "usableAreaM2": {
+        "label": "Área Utilizable (m²)",
+        "placeholder": "Ingrese el área utilizable"
+      },
+      "storageCapacity": {
+        "label": "Capacidad de Almacenamiento",
+        "placeholder": "Ingrese la capacidad"
+      },
+      "capacityUnit": {
+        "label": "Unidad de Capacidad",
+        "placeholder": "Seleccione la unidad"
+      },
+      "zonesCount": {
+        "label": "Zonas",
+        "placeholder": "Número de zonas"
+      },
+      "racksCount": {
+        "label": "Estanterías",
+        "placeholder": "Número de estanterías"
+      },
+      "floorsCount": {
+        "label": "Pisos",
+        "placeholder": "Número de pisos"
+      },
+      "temperatureMin": {
+        "label": "Temperatura Mínima (°C)",
+        "placeholder": "ej., -20"
+      },
+      "temperatureMax": {
+        "label": "Temperatura Máxima (°C)",
+        "placeholder": "ej., 25"
+      },
+      "humidityMin": {
+        "label": "Humedad Mínima (%)",
+        "placeholder": "ej., 30"
+      },
+      "humidityMax": {
+        "label": "Humedad Máxima (%)",
+        "placeholder": "ej., 80"
+      },
+      "managerName": {
+        "label": "Nombre del Gerente",
+        "placeholder": "Ingrese el nombre del gerente"
+      },
+      "contactPhone": {
+        "label": "Teléfono de Contacto",
+        "placeholder": "Ingrese el número de teléfono"
+      },
+      "contactEmail": {
+        "label": "Correo de Contacto",
+        "placeholder": "Ingrese la dirección de correo"
+      },
+      "workersCount": {
+        "label": "Cantidad de Trabajadores",
+        "placeholder": "Número de trabajadores"
+      },
+      "workingShift": {
+        "label": "Turno de Trabajo",
+        "placeholder": "Seleccione el turno"
+      },
+      "operatingHours": {
+        "label": "Horario de Operación",
+        "placeholder": "ej., Lun-Vie 8:00-17:00"
+      },
+      "securityLevel": {
+        "label": "Nivel de Seguridad",
+        "placeholder": "Seleccione el nivel de seguridad"
+      },
+      "fireProtectionCert": {
+        "label": "Certificado de Protección contra Incendios",
+        "placeholder": "Ingrese el número de certificado"
+      },
+      "storageFee": {
+        "label": "Tarifa de Almacenamiento",
+        "placeholder": "Ingrese la tarifa de almacenamiento"
+      },
+      "handlingFee": {
+        "label": "Tarifa de Manipulación",
+        "placeholder": "Ingrese la tarifa de manipulación"
+      },
+      "currency": {
+        "label": "Moneda",
+        "placeholder": "Seleccione la moneda"
+      },
+      "paymentTerm": {
+        "label": "Término de Pago",
+        "placeholder": "Seleccione el término de pago"
       }
     },
     "actions": {
@@ -1630,7 +1735,9 @@
       "success": "Éxito",
       "createSuccess": "Almacén creado exitosamente",
       "updateSuccess": "Almacén actualizado exitosamente",
-      "saveFailed": "Error al guardar almacén"
+      "saveFailed": "Error al guardar el almacén",
+      "validationFailed": "Por favor complete todos los campos requeridos",
+      "invalidLocation": "Selección de provincia o distrito inválida"
     }
   }
 }

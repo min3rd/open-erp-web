@@ -12,6 +12,7 @@ import { DrawerModule } from 'primeng/drawer';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { Select } from 'primeng/select';
 import { MessageService } from 'primeng/api';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 // Core components
 import { GeoEditorComponent } from '../../../../../../core/components/geo-editor/geo-editor.component';
@@ -19,10 +20,20 @@ import { MapComponent } from '../../../../../../core/components/map/map.componen
 
 // Core services
 import { GeocodingService, GeocodingResult } from '../../../../../../core/services/geocoding.service';
+import { WarehouseService } from '../../../../../../core/services/warehouse/warehouse.service';
+import type { ProvinceDto, WardDto, CreateWarehouseDto, UpdateWarehouseDto, Warehouse as WarehouseResponse } from '../../../../../../core/services/warehouse/warehouse.service';
 
-// Services
-import { WarehouseService } from '../services/warehouse.service';
-import { Warehouse } from '../warehouse.types';
+// Types
+import {
+  Warehouse,
+  WarehouseType,
+  WarehouseStatus,
+  CapacityUnit,
+  SecurityLevel,
+  WorkingShift,
+  Currency,
+  PaymentTerm,
+} from '../warehouse.types';
 
 @Component({
   selector: 'management-warehouse-form',
@@ -36,6 +47,7 @@ import { Warehouse } from '../warehouse.types';
     DrawerModule,
     AutoCompleteModule,
     Select,
+    InputNumberModule,
     GeoEditorComponent,
     MapComponent,
   ],
@@ -43,15 +55,15 @@ import { Warehouse } from '../warehouse.types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WarehouseForm implements OnInit {
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private fb = inject(FormBuilder);
-  private warehouseService = inject(WarehouseService);
-  private messageService = inject(MessageService);
-  private translocoService = inject(TranslocoService);
-  private geocodingService = inject(GeocodingService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly fb = inject(FormBuilder);
+  private readonly warehouseService = inject(WarehouseService);
+  private readonly messageService = inject(MessageService);
+  private readonly translocoService = inject(TranslocoService);
+  private readonly geocodingService = inject(GeocodingService);
 
-  protected readonly warehouse = signal<Warehouse | null>(null);
+  protected readonly warehouse = signal<WarehouseResponse | null>(null);
   protected readonly isEditMode = signal(false);
   protected readonly isViewMode = signal(false);
   protected readonly isVisible = signal(true);
@@ -62,30 +74,53 @@ export class WarehouseForm implements OnInit {
   protected readonly locationSuggestions = signal<GeocodingResult[]>([]);
   protected readonly isSearchingLocation = signal(false);
 
-  // Warehouse type options (from backend enum)
-  protected readonly warehouseTypes = [
-    'General',
-    'Cold Storage',
-    'Bonded',
-    'Distribution Center',
-    'Cross Dock',
-    'Automated',
-    'Hazmat',
-    'Pharmaceutical',
-    'Food Grade',
-    'Textile',
-    'Electronics',
-    'Customs',
-  ];
-  protected readonly filteredTypes = signal<string[]>(this.warehouseTypes);
+  // Province and Ward dropdowns
+  protected readonly provinces = signal<ProvinceDto[]>([]);
+  protected readonly wards = signal<WardDto[]>([]);
+  protected readonly isLoadingProvinces = signal(false);
+  protected readonly isLoadingWards = signal(false);
 
-  // Status options (from backend enum)
-  protected readonly statusOptions = [
-    { label: 'Active', value: 'active' },
-    { label: 'Paused', value: 'paused' },
-    { label: 'Maintenance', value: 'maintenance' },
-    { label: 'Inactive', value: 'inactive' },
-  ];
+  // Warehouse type options (from enum)
+  protected readonly warehouseTypeOptions = Object.values(WarehouseType).map(type => ({
+    label: this.formatEnumLabel(type),
+    value: type,
+  }));
+
+  // Status options (from enum)
+  protected readonly statusOptions = Object.values(WarehouseStatus).map(status => ({
+    label: this.formatEnumLabel(status),
+    value: status,
+  }));
+
+  // Capacity unit options
+  protected readonly capacityUnitOptions = Object.values(CapacityUnit).map(unit => ({
+    label: unit,
+    value: unit,
+  }));
+
+  // Security level options
+  protected readonly securityLevelOptions = Object.values(SecurityLevel).map(level => ({
+    label: this.formatEnumLabel(level),
+    value: level,
+  }));
+
+  // Working shift options
+  protected readonly workingShiftOptions = Object.values(WorkingShift).map(shift => ({
+    label: shift === '24/7' ? '24/7' : this.formatEnumLabel(shift),
+    value: shift,
+  }));
+
+  // Currency options
+  protected readonly currencyOptions = Object.values(Currency).map(currency => ({
+    label: currency,
+    value: currency,
+  }));
+
+  // Payment term options
+  protected readonly paymentTermOptions = Object.values(PaymentTerm).map(term => ({
+    label: this.formatEnumLabel(term),
+    value: term,
+  }));
 
   protected form!: FormGroup;
   
@@ -93,16 +128,68 @@ export class WarehouseForm implements OnInit {
   protected readonly mapGeometry = computed(() => this.currentGeometry());
 
   ngOnInit(): void {
-    // Initialize form
+    // Initialize form with all fields
     this.form = this.fb.group({
+      // Required fields
       code: ['', Validators.required],
       name: ['', Validators.required],
-      address: [''],
-      organizationId: [''],
-      type: [''],
-      status: ['active'], // Default to active
+      type: [null, Validators.required],
+      addressDetail: ['', Validators.required],
+      provinceCode: [null, Validators.required],
+      wardCode: [null, Validators.required],
+      
+      // Status defaults to active
+      status: [WarehouseStatus.ACTIVE],
+      
+      // Location fields
       latitude: [null],
       longitude: [null],
+      
+      // Capacity fields
+      totalAreaM2: [null],
+      usableAreaM2: [null],
+      storageCapacity: [null],
+      capacityUnit: [null],
+      zonesCount: [null],
+      racksCount: [null],
+      floorsCount: [null],
+      
+      // Storage conditions
+      temperatureMin: [null],
+      temperatureMax: [null],
+      humidityMin: [null],
+      humidityMax: [null],
+      
+      // Operations
+      managerName: [''],
+      contactPhone: [''],
+      contactEmail: [''],
+      workersCount: [null],
+      workingShift: [null],
+      operatingHours: [''],
+      
+      // Security
+      securityLevel: [null],
+      fireProtectionCert: [''],
+      
+      // Finance
+      storageFee: [null],
+      handlingFee: [null],
+      currency: [null],
+      paymentTerm: [null],
+    });
+
+    // Load provinces on init
+    this.loadProvinces();
+
+    // Watch province changes to load wards
+    this.form.get('provinceCode')?.valueChanges.subscribe((provinceCode) => {
+      if (provinceCode) {
+        this.loadWards(provinceCode);
+      } else {
+        this.wards.set([]);
+        this.form.patchValue({ wardCode: null });
+      }
     });
 
     // Determine mode from route
@@ -133,28 +220,107 @@ export class WarehouseForm implements OnInit {
 
     // Load warehouse data if available
     this.route.data.subscribe((data) => {
-      const warehouse = data['warehouse'];
+      const warehouse = data['warehouse'] as WarehouseResponse;
       if (warehouse) {
         this.warehouse.set(warehouse);
-        this.form.patchValue(warehouse);
+        
+        // Populate form from warehouse data
+        this.form.patchValue({
+          code: warehouse.code,
+          name: warehouse.name,
+          type: warehouse.type,
+          addressDetail: warehouse.addressDetail,
+          provinceCode: warehouse.province?.code,
+          wardCode: warehouse.ward?.code,
+          status: warehouse.status,
+          totalAreaM2: warehouse.totalAreaM2,
+          usableAreaM2: warehouse.usableAreaM2,
+          storageCapacity: warehouse.storageCapacity,
+          capacityUnit: warehouse.capacityUnit,
+          zonesCount: warehouse.zonesCount,
+          racksCount: warehouse.racksCount,
+          floorsCount: warehouse.floorsCount,
+          temperatureMin: warehouse.temperatureMin,
+          temperatureMax: warehouse.temperatureMax,
+          humidityMin: warehouse.humidityMin,
+          humidityMax: warehouse.humidityMax,
+          managerName: warehouse.manager?.name,
+          contactPhone: warehouse.contactPhone,
+          contactEmail: warehouse.contactEmail,
+          workersCount: warehouse.workersCount,
+          workingShift: warehouse.workingShift,
+          operatingHours: warehouse.operatingHours,
+          securityLevel: warehouse.securityLevel,
+          fireProtectionCert: warehouse.fireProtectionCert,
+          storageFee: warehouse.storageFee,
+          handlingFee: warehouse.handlingFee,
+          currency: warehouse.currency,
+          paymentTerm: warehouse.paymentTerm,
+        });
         
         // Load geometry if available
-        if (warehouse.geometry) {
-          this.currentGeometry.set(warehouse.geometry);
+        if (warehouse.location) {
+          const pointGeometry: GeoJSON.Point = {
+            type: 'Point',
+            coordinates: warehouse.location.coordinates,
+          };
+          this.currentGeometry.set(pointGeometry);
           
-          // Extract lat/lng from point geometry
-          if (warehouse.geometry.type === 'Point' && Array.isArray(warehouse.geometry.coordinates)) {
-            this.form.patchValue({
-              longitude: warehouse.geometry.coordinates[0],
-              latitude: warehouse.geometry.coordinates[1],
-            });
-          }
+          // Extract lat/lng from coordinates
+          this.form.patchValue({
+            longitude: warehouse.location.coordinates[0],
+            latitude: warehouse.location.coordinates[1],
+          });
         }
         
         if (this.isViewMode()) {
           this.form.disable();
         }
       }
+    });
+  }
+
+  /**
+   * Format enum value for display (e.g., "cold_storage" -> "Cold Storage")
+   */
+  private formatEnumLabel(value: string): string {
+    return value
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
+
+  /**
+   * Load provinces from API
+   */
+  private loadProvinces(): void {
+    this.isLoadingProvinces.set(true);
+    this.warehouseService.getProvinces().subscribe({
+      next: (provinces) => {
+        this.provinces.set(provinces);
+        this.isLoadingProvinces.set(false);
+      },
+      error: (error) => {
+        console.error('Failed to load provinces:', error);
+        this.isLoadingProvinces.set(false);
+      },
+    });
+  }
+
+  /**
+   * Load wards by province code from API
+   */
+  private loadWards(provinceCode: string): void {
+    this.isLoadingWards.set(true);
+    this.warehouseService.getWardsByProvince(provinceCode).subscribe({
+      next: (wards) => {
+        this.wards.set(wards);
+        this.isLoadingWards.set(false);
+      },
+      error: (error) => {
+        console.error('Failed to load wards:', error);
+        this.isLoadingWards.set(false);
+      },
     });
   }
 
@@ -171,16 +337,6 @@ export class WarehouseForm implements OnInit {
         latitude: geometry.coordinates[1],
       });
     }
-  }
-
-  /**
-   * Filter warehouse types for autocomplete
-   */
-  protected filterTypes(event: { query: string }): void {
-    const query = event.query.toLowerCase();
-    this.filteredTypes.set(
-      this.warehouseTypes.filter((type) => type.toLowerCase().includes(query))
-    );
   }
 
   /**
@@ -208,15 +364,15 @@ export class WarehouseForm implements OnInit {
   }
 
   /**
-   * Handle location selection from autocomplete
+   * Handle location selection from Nominatim autocomplete
    */
   protected onLocationSelect(event: any): void {
     const result = event.value as GeocodingResult;
     if (!result) return;
 
-    // Update address field
+    // Update address field with full address
     this.form.patchValue({
-      address: result.display_name,
+      addressDetail: result.display_name,
     });
 
     // Update coordinates
@@ -234,42 +390,102 @@ export class WarehouseForm implements OnInit {
     this.currentGeometry.set(pointGeometry);
   }
 
-  /**
-   * Format location result for display in autocomplete
-   */
-  protected formatLocationDisplay(result: GeocodingResult): string {
-    return result.display_name;
-  }
-
   protected onSave(): void {
     if (this.form.invalid) {
+      Object.keys(this.form.controls).forEach(key => {
+        const control = this.form.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translocoService.translate('warehouseForm.messages.error'),
+        detail: this.translocoService.translate('warehouseForm.messages.validationFailed'),
+      });
       return;
     }
 
     this.isLoading.set(true);
     const formValue = this.form.getRawValue();
 
-    // Build geometry from lat/lng if available
-    const geometry = this.currentGeometry();
-    
-    // If no geometry but we have lat/lng, create a Point geometry
-    if (!geometry && formValue.latitude && formValue.longitude) {
-      const pointGeometry: GeoJSON.Point = {
+    // Get selected province and ward
+    const selectedProvince = this.provinces().find(p => p.code === formValue.provinceCode);
+    const selectedWard = this.wards().find(w => w.code === formValue.wardCode);
+
+    if (!selectedProvince || !selectedWard) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translocoService.translate('warehouseForm.messages.error'),
+        detail: this.translocoService.translate('warehouseForm.messages.invalidLocation'),
+      });
+      this.isLoading.set(false);
+      return;
+    }
+
+    // Build DTO matching backend expectations
+    const dto: CreateWarehouseDto | UpdateWarehouseDto = {
+      code: formValue.code,
+      name: formValue.name,
+      type: formValue.type,
+      status: formValue.status,
+      addressDetail: formValue.addressDetail,
+      province: {
+        code: selectedProvince.code,
+        name: selectedProvince.name,
+      },
+      ward: {
+        code: selectedWard.code,
+        name: selectedWard.name,
+      },
+    };
+
+    // Add location if coordinates are available
+    if (formValue.latitude && formValue.longitude) {
+      dto.location = {
         type: 'Point',
         coordinates: [formValue.longitude, formValue.latitude],
       };
-      formValue.geometry = pointGeometry;
-    } else if (geometry) {
-      formValue.geometry = geometry;
     }
 
-    // Remove lat/lng from the payload as they're not part of the DTO
-    delete formValue.latitude;
-    delete formValue.longitude;
+    // Add optional capacity fields
+    if (formValue.totalAreaM2) dto.totalAreaM2 = formValue.totalAreaM2;
+    if (formValue.usableAreaM2) dto.usableAreaM2 = formValue.usableAreaM2;
+    if (formValue.storageCapacity) dto.storageCapacity = formValue.storageCapacity;
+    if (formValue.capacityUnit) dto.capacityUnit = formValue.capacityUnit;
+    if (formValue.zonesCount) dto.zonesCount = formValue.zonesCount;
+    if (formValue.racksCount) dto.racksCount = formValue.racksCount;
+    if (formValue.floorsCount) dto.floorsCount = formValue.floorsCount;
+
+    // Add optional storage condition fields
+    if (formValue.temperatureMin !== null) dto.temperatureMin = formValue.temperatureMin;
+    if (formValue.temperatureMax !== null) dto.temperatureMax = formValue.temperatureMax;
+    if (formValue.humidityMin !== null) dto.humidityMin = formValue.humidityMin;
+    if (formValue.humidityMax !== null) dto.humidityMax = formValue.humidityMax;
+
+    // Add optional operations fields
+    if (formValue.managerName) {
+      dto.manager = { name: formValue.managerName };
+    }
+    if (formValue.contactPhone) dto.contactPhone = formValue.contactPhone;
+    if (formValue.contactEmail) dto.contactEmail = formValue.contactEmail;
+    if (formValue.workersCount) dto.workersCount = formValue.workersCount;
+    if (formValue.workingShift) dto.workingShift = formValue.workingShift;
+    if (formValue.operatingHours) dto.operatingHours = formValue.operatingHours;
+
+    // Add optional security fields
+    if (formValue.securityLevel) dto.securityLevel = formValue.securityLevel;
+    if (formValue.fireProtectionCert) dto.fireProtectionCert = formValue.fireProtectionCert;
+
+    // Add optional finance fields
+    if (formValue.storageFee) dto.storageFee = formValue.storageFee;
+    if (formValue.handlingFee) dto.handlingFee = formValue.handlingFee;
+    if (formValue.currency) dto.currency = formValue.currency;
+    if (formValue.paymentTerm) dto.paymentTerm = formValue.paymentTerm;
 
     const saveOperation = this.warehouse()
-      ? this.warehouseService.updateWarehouse(this.warehouse()!.id, formValue)
-      : this.warehouseService.createWarehouse(formValue);
+      ? this.warehouseService.updateWarehouse(this.warehouse()!.id, dto)
+      : this.warehouseService.createWarehouse(dto as CreateWarehouseDto);
 
     saveOperation.subscribe({
       next: () => {
@@ -289,7 +505,7 @@ export class WarehouseForm implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: this.translocoService.translate('warehouseForm.messages.error'),
-          detail: this.translocoService.translate('warehouseForm.messages.saveFailed'),
+          detail: error?.error?.message || this.translocoService.translate('warehouseForm.messages.saveFailed'),
         });
         this.isLoading.set(false);
       },

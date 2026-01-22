@@ -1446,6 +1446,15 @@
       "edit": "Edit Warehouse",
       "view": "View Warehouse"
     },
+    "sections": {
+      "required": "Required Information",
+      "location": "Location & Coordinates",
+      "capacity": "Capacity",
+      "storageConditions": "Storage Conditions",
+      "operations": "Operations",
+      "security": "Security",
+      "finance": "Finance"
+    },
     "fields": {
       "code": {
         "label": "Warehouse Code",
@@ -1455,14 +1464,26 @@
         "label": "Warehouse Name",
         "placeholder": "Enter warehouse name"
       },
-      "locationSearch": {
-        "label": "Search Location",
-        "placeholder": "Type to search for a location...",
-        "hint": "Search and select a location to auto-fill address and coordinates"
+      "type": {
+        "label": "Warehouse Type",
+        "placeholder": "Select warehouse type"
       },
-      "address": {
+      "status": {
+        "label": "Status",
+        "placeholder": "Select status"
+      },
+      "addressSearch": {
         "label": "Address",
-        "placeholder": "Enter warehouse address"
+        "placeholder": "Search for address...",
+        "hint": "Type to search using Nominatim. Selecting a result will fill coordinates."
+      },
+      "province": {
+        "label": "Province",
+        "placeholder": "Select province"
+      },
+      "ward": {
+        "label": "Ward",
+        "placeholder": "Select ward"
       },
       "latitude": {
         "label": "Latitude",
@@ -1472,19 +1493,103 @@
         "label": "Longitude",
         "placeholder": "e.g., 106.6297"
       },
-      "location": {
-        "label": "Location (GeoJSON)"
+      "geometry": {
+        "label": "Geometry Editor"
       },
       "mapPreview": {
         "label": "Map Preview"
       },
-      "type": {
-        "label": "Warehouse Type",
-        "placeholder": "Select or type warehouse type"
+      "totalAreaM2": {
+        "label": "Total Area (m²)",
+        "placeholder": "Enter total area"
       },
-      "status": {
-        "label": "Status",
-        "placeholder": "Select status"
+      "usableAreaM2": {
+        "label": "Usable Area (m²)",
+        "placeholder": "Enter usable area"
+      },
+      "storageCapacity": {
+        "label": "Storage Capacity",
+        "placeholder": "Enter storage capacity"
+      },
+      "capacityUnit": {
+        "label": "Capacity Unit",
+        "placeholder": "Select unit"
+      },
+      "zonesCount": {
+        "label": "Zones",
+        "placeholder": "Number of zones"
+      },
+      "racksCount": {
+        "label": "Racks",
+        "placeholder": "Number of racks"
+      },
+      "floorsCount": {
+        "label": "Floors",
+        "placeholder": "Number of floors"
+      },
+      "temperatureMin": {
+        "label": "Min Temperature (°C)",
+        "placeholder": "e.g., -20"
+      },
+      "temperatureMax": {
+        "label": "Max Temperature (°C)",
+        "placeholder": "e.g., 25"
+      },
+      "humidityMin": {
+        "label": "Min Humidity (%)",
+        "placeholder": "e.g., 30"
+      },
+      "humidityMax": {
+        "label": "Max Humidity (%)",
+        "placeholder": "e.g., 80"
+      },
+      "managerName": {
+        "label": "Manager Name",
+        "placeholder": "Enter manager name"
+      },
+      "contactPhone": {
+        "label": "Contact Phone",
+        "placeholder": "Enter phone number"
+      },
+      "contactEmail": {
+        "label": "Contact Email",
+        "placeholder": "Enter email address"
+      },
+      "workersCount": {
+        "label": "Workers Count",
+        "placeholder": "Number of workers"
+      },
+      "workingShift": {
+        "label": "Working Shift",
+        "placeholder": "Select working shift"
+      },
+      "operatingHours": {
+        "label": "Operating Hours",
+        "placeholder": "e.g., Mon-Fri 8:00-17:00"
+      },
+      "securityLevel": {
+        "label": "Security Level",
+        "placeholder": "Select security level"
+      },
+      "fireProtectionCert": {
+        "label": "Fire Protection Certificate",
+        "placeholder": "Enter certificate number"
+      },
+      "storageFee": {
+        "label": "Storage Fee",
+        "placeholder": "Enter storage fee"
+      },
+      "handlingFee": {
+        "label": "Handling Fee",
+        "placeholder": "Enter handling fee"
+      },
+      "currency": {
+        "label": "Currency",
+        "placeholder": "Select currency"
+      },
+      "paymentTerm": {
+        "label": "Payment Term",
+        "placeholder": "Select payment term"
       }
     },
     "actions": {
@@ -1497,7 +1602,9 @@
       "success": "Success",
       "createSuccess": "Warehouse created successfully",
       "updateSuccess": "Warehouse updated successfully",
-      "saveFailed": "Failed to save warehouse"
+      "saveFailed": "Failed to save warehouse",
+      "validationFailed": "Please fill in all required fields",
+      "invalidLocation": "Invalid province or ward selection"
     }
   },
   "formEditor": {

@@ -39,8 +39,9 @@ import { MapComponent } from '../../../../../../core/components/map/map.componen
 import { PaginationComponent } from '../../../../../../core/components/pagination/pagination';
 
 // Services
-import { WarehouseService } from '../services/warehouse.service';
-import { Warehouse, GetWarehousesParams } from '../warehouse.types';
+import { WarehouseService } from '../../../../../../core/services/warehouse/warehouse.service';
+import type { QueryWarehouseParams } from '../../../../../../core/services/warehouse/warehouse.service';
+import { Warehouse } from '../warehouse.types';
 
 interface ScopeOption {
   label: string;
@@ -105,7 +106,14 @@ export class WarehouseList implements OnInit, OnDestroy {
 
   // Computed values
   protected readonly totalPages = computed(() => Math.ceil(this.totalRecords() / this.pageSize()));
-  protected readonly selectedGeometry = computed(() => this.selectedWarehouse()?.geometry || null);
+  protected readonly selectedGeometry = computed(() => {
+    const warehouse = this.selectedWarehouse();
+    if (!warehouse?.location) return null;
+    return {
+      type: 'Point',
+      coordinates: warehouse.location.coordinates
+    } as GeoJSON.Point;
+  });
 
   // Map context menu state
   protected readonly mapClickLocation = signal<{ lat: number; lng: number } | null>(null);
@@ -295,13 +303,12 @@ export class WarehouseList implements OnInit, OnDestroy {
    * Export warehouses to CSV
    */
   protected onExportCSV(): void {
-    const params: GetWarehousesParams = {
+    const params: QueryWarehouseParams = {
       search: this.searchQuery() || undefined,
-      scope: this.currentScope() !== 'all' ? this.currentScope() : undefined,
     };
 
-    this.warehouseService.exportToCSV(params).subscribe({
-      next: (blob) => {
+    this.warehouseService.exportCSV(params).subscribe({
+      next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -314,7 +321,7 @@ export class WarehouseList implements OnInit, OnDestroy {
           detail: this.translocoService.translate('warehouseList.messages.exportSuccess'),
         });
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Export failed:', error);
         this.messageService.add({
           severity: 'error',
@@ -329,13 +336,12 @@ export class WarehouseList implements OnInit, OnDestroy {
    * Export warehouses to GeoJSON
    */
   protected onExportGeoJSON(): void {
-    const params: GetWarehousesParams = {
+    const params: QueryWarehouseParams = {
       search: this.searchQuery() || undefined,
-      scope: this.currentScope() !== 'all' ? this.currentScope() : undefined,
     };
 
-    this.warehouseService.exportToGeoJSON(params).subscribe({
-      next: (blob) => {
+    this.warehouseService.exportGeoJSON(params).subscribe({
+      next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -348,7 +354,7 @@ export class WarehouseList implements OnInit, OnDestroy {
           detail: this.translocoService.translate('warehouseList.messages.exportSuccess'),
         });
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Export failed:', error);
         this.messageService.add({
           severity: 'error',
@@ -387,7 +393,7 @@ export class WarehouseList implements OnInit, OnDestroy {
       rejectLabel: this.translocoService.translate('warehouseList.confirmDelete.reject'),
       accept: () => {
         const ids = selected.map((w) => w.id);
-        this.warehouseService.deleteWarehouses(ids).subscribe({
+        this.warehouseService.bulkDeleteWarehouses(ids).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',
@@ -399,7 +405,7 @@ export class WarehouseList implements OnInit, OnDestroy {
             this.selectedWarehousesArray = [];
             this.onRefresh();
           },
-          error: (error) => {
+          error: (error: any) => {
             console.error('Bulk delete failed:', error);
             this.messageService.add({
               severity: 'error',
@@ -477,7 +483,7 @@ export class WarehouseList implements OnInit, OnDestroy {
             }
             this.onRefresh();
           },
-          error: (error) => {
+          error: (error: any) => {
             console.error('Delete failed:', error);
             this.messageService.add({
               severity: 'error',
@@ -521,11 +527,10 @@ export class WarehouseList implements OnInit, OnDestroy {
    * Refresh warehouse list
    */
   protected onRefresh(): void {
-    const params: GetWarehousesParams = {
+    const params: QueryWarehouseParams = {
       page: this.currentPage(),
       limit: this.pageSize(),
       search: this.searchQuery() || undefined,
-      scope: this.currentScope() !== 'all' ? this.currentScope() : undefined,
     };
 
     this.warehouseService.getWarehouses(params).subscribe({

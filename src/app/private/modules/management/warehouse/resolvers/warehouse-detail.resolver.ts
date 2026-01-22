@@ -2,8 +2,8 @@ import { inject } from '@angular/core';
 import { ResolveFn, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { WarehouseService } from '../services/warehouse.service';
-import { Warehouse } from '../warehouse.types';
+import { WarehouseService } from '../../../../../../core/services/warehouse/warehouse.service';
+import type { Warehouse } from '../../../../../../core/services/warehouse/warehouse.service';
 
 export const warehouseDetailResolver: ResolveFn<Warehouse | null> = (
   route: ActivatedRouteSnapshot
@@ -15,7 +15,7 @@ export const warehouseDetailResolver: ResolveFn<Warehouse | null> = (
     return of(null);
   }
 
-  return service.getWarehouse(id).pipe(
+  return service.getWarehouseById(id).pipe(
     catchError((error) => {
       console.error('Failed to load warehouse:', error);
       return of(null);
