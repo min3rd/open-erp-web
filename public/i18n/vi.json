@@ -662,13 +662,27 @@
         "label": "Địa chỉ",
         "placeholder": "Nhập địa chỉ kho"
       },
+      "latitude": {
+        "label": "Vĩ độ",
+        "placeholder": "Ví dụ: 10.8231"
+      },
+      "longitude": {
+        "label": "Kinh độ",
+        "placeholder": "Ví dụ: 106.6297"
+      },
+      "location": {
+        "label": "Vị trí (GeoJSON)"
+      },
+      "mapPreview": {
+        "label": "Xem bản đồ"
+      },
       "type": {
-        "label": "Loại",
-        "placeholder": "Nhập loại kho"
+        "label": "Loại kho",
+        "placeholder": "Chọn hoặc nhập loại kho"
       },
       "status": {
         "label": "Trạng thái",
-        "placeholder": "Nhập trạng thái"
+        "placeholder": "Chọn trạng thái"
       }
     },
     "actions": {

@@ -1454,13 +1454,27 @@
         "label": "Address",
         "placeholder": "Enter warehouse address"
       },
+      "latitude": {
+        "label": "Latitude",
+        "placeholder": "e.g., 10.8231"
+      },
+      "longitude": {
+        "label": "Longitude",
+        "placeholder": "e.g., 106.6297"
+      },
+      "location": {
+        "label": "Location (GeoJSON)"
+      },
+      "mapPreview": {
+        "label": "Map Preview"
+      },
       "type": {
-        "label": "Type",
-        "placeholder": "Enter warehouse type"
+        "label": "Warehouse Type",
+        "placeholder": "Select or type warehouse type"
       },
       "status": {
         "label": "Status",
-        "placeholder": "Enter status"
+        "placeholder": "Select status"
       }
     },
     "actions": {

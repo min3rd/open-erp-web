@@ -2,7 +2,7 @@
   id="warehouse-form-drawer"
   [(visible)]="isVisible"
   position="right"
-  [style]="{ width: '500px' }"
+  [style]="{ width: '600px' }"
   (onHide)="onClose()"
 >
   <ng-template #header>
@@ -23,6 +23,7 @@
       <div>
         <label for="warehouse-form-code" class="block text-sm font-medium mb-2">
           {{ 'warehouseForm.fields.code.label' | transloco }}
+          <span class="text-red-500">*</span>
         </label>
         <input
           id="warehouse-form-code"
@@ -38,6 +39,7 @@
       <div>
         <label for="warehouse-form-name" class="block text-sm font-medium mb-2">
           {{ 'warehouseForm.fields.name.label' | transloco }}
+          <span class="text-red-500">*</span>
         </label>
         <input
           id="warehouse-form-name"
@@ -59,38 +61,93 @@
           pTextarea
           formControlName="address"
           [placeholder]="'warehouseForm.fields.address.placeholder' | transloco"
-          rows="3"
+          rows="2"
           class="w-full"
         ></textarea>
       </div>
 
-      <!-- Type -->
+      <!-- Location Coordinates -->
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label for="warehouse-form-latitude" class="block text-sm font-medium mb-2">
+            {{ 'warehouseForm.fields.latitude.label' | transloco }}
+          </label>
+          <input
+            id="warehouse-form-latitude"
+            type="number"
+            step="any"
+            pInputText
+            formControlName="latitude"
+            [placeholder]="'warehouseForm.fields.latitude.placeholder' | transloco"
+            class="w-full"
+          />
+        </div>
+        <div>
+          <label for="warehouse-form-longitude" class="block text-sm font-medium mb-2">
+            {{ 'warehouseForm.fields.longitude.label' | transloco }}
+          </label>
+          <input
+            id="warehouse-form-longitude"
+            type="number"
+            step="any"
+            pInputText
+            formControlName="longitude"
+            [placeholder]="'warehouseForm.fields.longitude.placeholder' | transloco"
+            class="w-full"
+          />
+        </div>
+      </div>
+
+      <!-- Geometry Editor -->
+      <div>
+        <label class="block text-sm font-medium mb-2">
+          {{ 'warehouseForm.fields.location.label' | transloco }}
+        </label>
+        <core-geo-editor
+          [geometry]="currentGeometry()"
+          (geometryChange)="onGeometryChange($event)"
+        />
+      </div>
+
+      <!-- Map Preview -->
+      <div>
+        <label class="block text-sm font-medium mb-2">
+          {{ 'warehouseForm.fields.mapPreview.label' | transloco }}
+        </label>
+        <div class="h-48 border border-surface-200 dark:border-surface-700 rounded">
+          <core-map [geometry]="mapGeometry()" />
+        </div>
+      </div>
+
+      <!-- Type (Autocomplete) -->
       <div>
         <label for="warehouse-form-type" class="block text-sm font-medium mb-2">
           {{ 'warehouseForm.fields.type.label' | transloco }}
         </label>
-        <input
+        <p-autocomplete
           id="warehouse-form-type"
-          type="text"
-          pInputText
           formControlName="type"
+          [suggestions]="filteredTypes()"
+          (completeMethod)="filterTypes($event)"
           [placeholder]="'warehouseForm.fields.type.placeholder' | transloco"
-          class="w-full"
+          [style]="{ width: '100%' }"
+          [inputStyle]="{ width: '100%' }"
         />
       </div>
 
-      <!-- Status -->
+      <!-- Status (Select with default) -->
       <div>
         <label for="warehouse-form-status" class="block text-sm font-medium mb-2">
           {{ 'warehouseForm.fields.status.label' | transloco }}
         </label>
-        <input
+        <p-select
           id="warehouse-form-status"
-          type="text"
-          pInputText
           formControlName="status"
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
           [placeholder]="'warehouseForm.fields.status.placeholder' | transloco"
-          class="w-full"
+          [style]="{ width: '100%' }"
         />
       </div>
     </form>

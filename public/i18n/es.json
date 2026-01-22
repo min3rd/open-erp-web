@@ -1587,13 +1587,27 @@
         "label": "Dirección",
         "placeholder": "Ingrese dirección del almacén"
       },
+      "latitude": {
+        "label": "Latitud",
+        "placeholder": "Ej: 10.8231"
+      },
+      "longitude": {
+        "label": "Longitud",
+        "placeholder": "Ej: 106.6297"
+      },
+      "location": {
+        "label": "Ubicación (GeoJSON)"
+      },
+      "mapPreview": {
+        "label": "Vista Previa del Mapa"
+      },
       "type": {
-        "label": "Tipo",
-        "placeholder": "Ingrese tipo de almacén"
+        "label": "Tipo de Almacén",
+        "placeholder": "Seleccione o escriba el tipo de almacén"
       },
       "status": {
         "label": "Estado",
-        "placeholder": "Ingrese estado"
+        "placeholder": "Seleccione estado"
       }
     },
     "actions": {
