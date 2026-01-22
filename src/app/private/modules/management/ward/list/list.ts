@@ -719,6 +719,22 @@ export class WardList implements OnInit, OnDestroy {
   }
 
   /**
+   * Get province name by code
+   */
+  protected getProvinceName(provinceCode: string): string {
+    const group = this.wardsByProvince().find((g) => g.provinceCode === provinceCode);
+    return group?.provinceName || `Unknown (${provinceCode})`;
+  }
+
+  /**
+   * Get ward count for province
+   */
+  protected getWardCount(provinceCode: string): number {
+    const group = this.wardsByProvince().find((g) => g.provinceCode === provinceCode);
+    return group?.wards.length || 0;
+  }
+
+  /**
    * Toggle group expansion
    */
   protected toggleGroup(provinceCode: string): void {
