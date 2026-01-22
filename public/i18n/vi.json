@@ -663,6 +663,11 @@
         "label": "Tên kho",
         "placeholder": "Nhập tên kho"
       },
+      "locationSearch": {
+        "label": "Tìm Vị Trí",
+        "placeholder": "Nhập để tìm vị trí...",
+        "hint": "Tìm và chọn vị trí để tự động điền địa chỉ và tọa độ"
+      },
       "address": {
         "label": "Địa chỉ",
         "placeholder": "Nhập địa chỉ kho"

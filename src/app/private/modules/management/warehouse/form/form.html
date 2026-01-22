@@ -51,6 +51,36 @@
         />
       </div>
 
+      <!-- Location Search with Nominatim -->
+      <div>
+        <label for="warehouse-form-location-search" class="block text-sm font-medium mb-2">
+          {{ 'warehouseForm.fields.locationSearch.label' | transloco }}
+        </label>
+        <p-autocomplete
+          id="warehouse-form-location-search"
+          [suggestions]="locationSuggestions()"
+          (completeMethod)="searchLocation($event)"
+          (onSelect)="onLocationSelect($event)"
+          [placeholder]="'warehouseForm.fields.locationSearch.placeholder' | transloco"
+          [style]="{ width: '100%' }"
+          [inputStyle]="{ width: '100%' }"
+          field="display_name"
+          [forceSelection]="false"
+        >
+          <ng-template let-result #item>
+            <div class="flex flex-col py-1">
+              <span class="font-medium text-sm">{{ result.display_name }}</span>
+              @if (result.type) {
+              <span class="text-xs text-surface-500">{{ result.type }}</span>
+              }
+            </div>
+          </ng-template>
+        </p-autocomplete>
+        <small class="text-surface-500">
+          {{ 'warehouseForm.fields.locationSearch.hint' | transloco }}
+        </small>
+      </div>
+
       <!-- Address -->
       <div>
         <label for="warehouse-form-address" class="block text-sm font-medium mb-2">

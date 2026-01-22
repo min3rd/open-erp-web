@@ -109,6 +109,25 @@ export class WarehouseList implements OnInit, OnDestroy {
 
   // Map context menu state
   protected readonly mapClickLocation = signal<{ lat: number; lng: number } | null>(null);
+  
+  // Map context menu items - computed based on click location
+  protected readonly mapContextMenuItems = computed<MenuItem[]>(() => {
+    const location = this.mapClickLocation();
+    if (!location) return [];
+
+    return [
+      {
+        label: this.translocoService.translate('warehouseList.mapContextMenu.createHere'),
+        icon: 'pi pi-plus',
+        command: () => this.onCreateWarehouseAtLocation(location),
+      },
+      {
+        label: this.translocoService.translate('warehouseList.mapContextMenu.viewCoordinates'),
+        icon: 'pi pi-map-marker',
+        command: () => this.showCoordinates(location),
+      },
+    ];
+  });
 
   // Scope options
   protected readonly scopeOptions: ScopeOption[] = [
@@ -173,25 +192,6 @@ export class WarehouseList implements OnInit, OnDestroy {
         label: this.translocoService.translate('warehouseList.contextMenu.delete'),
         icon: 'pi pi-trash',
         command: () => this.onDeleteWarehouse(warehouse),
-      },
-    ];
-  }
-
-  // Map context menu items for creating warehouse at location
-  protected get mapContextMenuItems(): MenuItem[] {
-    const location = this.mapClickLocation();
-    if (!location) return [];
-
-    return [
-      {
-        label: this.translocoService.translate('warehouseList.mapContextMenu.createHere'),
-        icon: 'pi pi-plus',
-        command: () => this.onCreateWarehouseAtLocation(location),
-      },
-      {
-        label: this.translocoService.translate('warehouseList.mapContextMenu.viewCoordinates'),
-        icon: 'pi pi-map-marker',
-        command: () => this.showCoordinates(location),
       },
     ];
   }

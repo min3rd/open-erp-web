@@ -1588,6 +1588,11 @@
         "label": "Nombre de Almacén",
         "placeholder": "Ingrese nombre de almacén"
       },
+      "locationSearch": {
+        "label": "Buscar Ubicación",
+        "placeholder": "Escriba para buscar una ubicación...",
+        "hint": "Busque y seleccione una ubicación para auto-llenar dirección y coordenadas"
+      },
       "address": {
         "label": "Dirección",
         "placeholder": "Ingrese dirección del almacén"
