@@ -221,131 +221,136 @@
       <ng-template #panel>
         <!-- Left Pane: Ward List -->
         <div id="ward-list-left-pane" class="flex flex-col h-full">
-          <!-- Group-based table structure -->
-          <div class="flex-1 overflow-auto">
-            <table class="w-full">
-              <thead class="bg-surface-50 dark:bg-surface-800 sticky top-0 z-10">
-                <tr>
-                  <th class="w-12 text-left p-3 font-semibold text-sm"></th>
-                  <th class="text-left p-3 font-semibold text-sm">
-                    {{ 'wardList.table.code' | transloco }}
-                  </th>
-                  <th class="text-left p-3 font-semibold text-sm cursor-pointer hover:bg-surface-100 dark:hover:bg-surface-700" (click)="toggleSort()">
-                    <div class="flex items-center gap-2">
-                      {{ 'wardList.table.nameVi' | transloco }}
-                      <i [class]="sortOrder() === 'name:asc' ? 'pi pi-sort-alpha-down' : 'pi pi-sort-alpha-up'"></i>
-                    </div>
-                  </th>
-                  <th class="text-left p-3 font-semibold text-sm">
-                    {{ 'wardList.table.nameEn' | transloco }}
-                  </th>
-                  <th class="text-left p-3 font-semibold text-sm">
-                    {{ 'wardList.table.district' | transloco }}
-                  </th>
-                  <th class="w-16 text-left p-3 font-semibold text-sm"></th>
-                </tr>
-              </thead>
-              <tbody>
-                @if (isLoading()) {
-                  <tr>
-                    <td colspan="6" class="text-center py-8 text-surface-500">
-                      <i class="pi pi-spin pi-spinner text-2xl"></i>
-                      <p class="mt-2">{{ 'wardList.messages.loading' | transloco }}</p>
-                    </td>
-                  </tr>
-                } @else if (wardsByProvince().length === 0) {
-                  <tr>
-                    <td colspan="6" class="text-center py-8 text-surface-500">
-                      @if (searchQuery()) {
-                        <i class="pi pi-search text-2xl"></i>
-                        <p class="mt-2">
-                          {{ 'wardList.messages.noResults' | transloco : { query: searchQuery() } }}
-                        </p>
-                      } @else {
-                        <i class="pi pi-map text-2xl"></i>
-                        <p class="mt-2">{{ 'wardList.messages.noWards' | transloco }}</p>
-                      }
-                    </td>
-                  </tr>
+          <!-- Loading State -->
+          @if (isLoading()) {
+            <div class="flex-1 flex items-center justify-center">
+              <div class="text-center">
+                <i class="pi pi-spin pi-spinner text-4xl text-primary"></i>
+                <p class="mt-4 text-lg">{{ 'wardList.messages.loading' | transloco }}</p>
+              </div>
+            </div>
+          }
+          
+          <!-- Empty State -->
+          @else if (wardsByProvince().length === 0) {
+            <div class="flex-1 flex items-center justify-center">
+              <div class="text-center text-surface-500">
+                @if (searchQuery()) {
+                  <i class="pi pi-search text-4xl mb-4"></i>
+                  <p class="text-lg">
+                    {{ 'wardList.messages.noResults' | transloco : { query: searchQuery() } }}
+                  </p>
                 } @else {
-                  @for (group of wardsByProvince(); track group.provinceCode) {
-                    <!-- Province Group Header -->
-                    <tr class="bg-surface-100 dark:bg-surface-800 border-y border-surface-200 dark:border-surface-700">
-                      <td colspan="6" class="p-0">
-                        <button
-                          [id]="'ward-list-group-toggle-' + group.provinceCode"
-                          type="button"
-                          class="flex items-center gap-2 w-full px-3 py-2 text-left hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors font-semibold"
-                          (click)="toggleGroup(group.provinceCode)"
-                          [attr.aria-expanded]="isGroupExpanded(group.provinceCode)"
-                          [attr.aria-label]="'wardList.grouping.toggleGroup' | transloco : { name: group.provinceName }"
-                        >
-                          <i 
-                            [class]="isGroupExpanded(group.provinceCode) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-                            class="text-xs"
-                          ></i>
-                          <span>{{ group.provinceName }}</span>
-                          <span class="text-surface-500 text-sm ml-2 font-normal">
-                            ({{ group.wards.length }} {{ 'wardList.grouping.wards' | transloco }})
-                          </span>
-                        </button>
-                      </td>
-                    </tr>
-                    
-                    <!-- Ward Rows - Only show if group is expanded -->
-                    @if (isGroupExpanded(group.provinceCode)) {
-                      @for (ward of group.wards; track ward.id) {
-                        <tr
-                          [id]="'ward-list-row-' + ward.id"
-                          (click)="onRowClick(ward)"
-                          (contextmenu)="onRowRightClick($event, ward)"
-                          class="cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800 border-b border-surface-200 dark:border-surface-700"
-                          [class.bg-primary-50]="selectedWard()?.id === ward.id"
-                          [class.dark:bg-primary-900]="selectedWard()?.id === ward.id"
-                        >
-                          <td class="p-3"></td>
-                          <td class="p-3">{{ ward.code }}</td>
-                          <td class="p-3">
-                            <div class="font-medium">{{ ward.name }}</div>
-                          </td>
-                          <td class="p-3">{{ ward.nameEn || ward.name }}</td>
-                          <td class="p-3">{{ ward.districtCode || '-' }}</td>
-                          <td class="p-3" (click)="$event.stopPropagation()">
-                            <p-button
-                              [id]="'ward-list-row-menu-' + ward.id"
-                              icon="pi pi-ellipsis-v"
-                              [rounded]="true"
-                              [text]="true"
-                              size="small"
-                              (onClick)="rowMenu.toggle($event)"
-                              [attr.aria-label]="'wardList.table.rowActions' | transloco"
-                            />
-                            <p-menu
-                              #rowMenu
-                              [model]="getRowMenuItems(ward)"
-                              [popup]="true"
-                              appendTo="body"
-                            />
-                          </td>
-                        </tr>
-                      }
-                    }
-                  }
+                  <i class="pi pi-map text-4xl mb-4"></i>
+                  <p class="text-lg">{{ 'wardList.messages.noWards' | transloco }}</p>
                 }
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Pagination -->
-          <div class="border-t border-surface-200 dark:border-surface-700 p-4">
-            <core-pagination
-              [idPrefix]="'ward-list'"
-              [totalRecords]="totalRecords()"
-              [currentPage]="currentPage()"
-              [pageSize]="pageSize()"
-              (pageChange)="onPageChange($event)"
-            />
-          </div>
+              </div>
+            </div>
+          }
+          
+          <!-- Accordion with Virtual Scroll -->
+          @else {
+            <div class="flex-1 overflow-auto">
+              <p-accordion 
+                [multiple]="true"
+                [value]="getActiveValues()"
+                (valueChange)="onAccordionValueChange($event)"
+              >
+                @for (group of wardsByProvince(); track group.provinceCode; let idx = $index) {
+                  <p-accordion-panel [value]="idx">
+                    <p-accordion-header>
+                      <div class="flex items-center justify-between w-full">
+                        <span class="font-semibold text-base">{{ group.provinceName }}</span>
+                        <span class="text-surface-500 text-sm ml-2">
+                          ({{ group.wards.length }} {{ 'wardList.grouping.wards' | transloco }})
+                        </span>
+                      </div>
+                    </p-accordion-header>
+                    
+                    <p-accordion-content>
+                      <!-- Virtual Scroller for wards in this province -->
+                      <p-scroller 
+                        [items]="group.wards" 
+                        [itemSize]="50"
+                        scrollHeight="400px"
+                        styleClass="border border-surface-200 dark:border-surface-700"
+                      >
+                        <ng-template #header>
+                          <div class="grid grid-cols-12 gap-4 p-3 bg-surface-50 dark:bg-surface-800 border-b border-surface-200 dark:border-surface-700 font-semibold text-sm">
+                            <div class="col-span-2">{{ 'wardList.table.code' | transloco }}</div>
+                            <div class="col-span-3 cursor-pointer hover:text-primary" (click)="toggleSort()">
+                              <div class="flex items-center gap-2">
+                                {{ 'wardList.table.nameVi' | transloco }}
+                                <i [class]="sortOrder() === 'name:asc' ? 'pi pi-sort-alpha-down' : 'pi pi-sort-alpha-up'"></i>
+                              </div>
+                            </div>
+                            <div class="col-span-3">{{ 'wardList.table.nameEn' | transloco }}</div>
+                            <div class="col-span-3">{{ 'wardList.table.district' | transloco }}</div>
+                            <div class="col-span-1"></div>
+                          </div>
+                        </ng-template>
+                        
+                        <ng-template #item let-ward let-options="options">
+                          <div 
+                            [id]="'ward-list-row-' + ward.id"
+                            class="flex items-center p-3 border-b border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800 cursor-pointer transition-colors"
+                            [class.bg-primary-50]="selectedWard()?.id === ward.id"
+                            [class.dark:bg-primary-900]="selectedWard()?.id === ward.id"
+                            (click)="onRowClick(ward)"
+                            (contextmenu)="onRowRightClick($event, ward)"
+                            [style.height.px]="options.height"
+                          >
+                            <div class="flex-1 grid grid-cols-12 gap-4 items-center">
+                              <!-- Code -->
+                              <div class="col-span-2">
+                                <span class="text-sm font-medium">{{ ward.code }}</span>
+                              </div>
+                              
+                              <!-- Name (Vietnamese) -->
+                              <div class="col-span-3">
+                                <div class="font-semibold">{{ ward.name }}</div>
+                              </div>
+                              
+                              <!-- Name (English) -->
+                              <div class="col-span-3">
+                                <span class="text-sm text-surface-600 dark:text-surface-400">
+                                  {{ ward.nameEn || ward.name }}
+                                </span>
+                              </div>
+                              
+                              <!-- District -->
+                              <div class="col-span-3">
+                                <span class="text-sm">{{ ward.districtCode || '-' }}</span>
+                              </div>
+                              
+                              <!-- Actions -->
+                              <div class="col-span-1 flex justify-end">
+                                <p-button
+                                  [id]="'ward-list-row-menu-' + ward.id"
+                                  icon="pi pi-ellipsis-v"
+                                  [rounded]="true"
+                                  [text]="true"
+                                  size="small"
+                                  (onClick)="rowMenu.toggle($event); $event.stopPropagation()"
+                                  [attr.aria-label]="'wardList.table.rowActions' | transloco"
+                                />
+                                <p-menu
+                                  #rowMenu
+                                  [model]="getRowMenuItems(ward)"
+                                  [popup]="true"
+                                  appendTo="body"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </p-scroller>
+                    </p-accordion-content>
+                  </p-accordion-panel>
+                }
+              </p-accordion>
+            </div>
+          }
         </div>
       </ng-template>
 
@@ -380,7 +385,7 @@
             </div>
             }
           </div>
-          } @else if (wards().length === 0) {
+          } @else if (wardsByProvince().length === 0) {
           <!-- Empty state -->
           <div class="text-center py-16 text-surface-500">
             @if (searchQuery()) {
@@ -394,94 +399,79 @@
             }
           </div>
           } @else {
-          <!-- Ward list items with grouping -->
-          <div class="space-y-2">
-            @for (group of wardsByProvince(); track group.provinceCode) {
-            <!-- Province Group Header -->
-            <div class="bg-surface-100 dark:bg-surface-800 rounded-lg">
-              <button
-                [id]="'ward-list-group-toggle-mobile-' + group.provinceCode"
-                type="button"
-                class="flex items-center justify-between w-full p-3 text-left hover:bg-surface-200 dark:hover:bg-surface-700 rounded-lg transition-colors"
-                (click)="toggleGroup(group.provinceCode)"
-                [attr.aria-expanded]="isGroupExpanded(group.provinceCode)"
-                [attr.aria-label]="'wardList.grouping.toggleGroup' | transloco : { name: group.provinceName }"
-              >
-                <div class="flex items-center gap-2">
-                  <i 
-                    [class]="isGroupExpanded(group.provinceCode) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-                    class="text-xs"
-                  ></i>
-                  <span class="font-semibold">{{ group.provinceName }}</span>
-                </div>
-                <span class="text-surface-500 text-sm">
-                  {{ group.wards.length }} {{ 'wardList.grouping.wards' | transloco }}
-                </span>
-              </button>
-              
-              <!-- Wards in this group -->
-              @if (isGroupExpanded(group.provinceCode)) {
-              <div class="border-t border-surface-200 dark:border-surface-700">
-                @for (ward of group.wards; track ward.id) {
-                <div
-                  [id]="'ward-list-item-' + ward.id"
-                  class="p-3 border-b border-surface-200 dark:border-surface-700 last:border-b-0 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors cursor-pointer"
-                  (click)="onRowClick(ward)"
-                  [class.bg-primary-50]="selectedWard()?.id === ward.id"
-                  [class.dark:bg-primary-900]="selectedWard()?.id === ward.id"
-                >
-                  <div class="flex items-start gap-3">
-                    <!-- Ward Info -->
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-start justify-between gap-2 mb-1">
-                        <div class="font-semibold text-base">{{ ward.name }}</div>
-                        <span class="text-sm text-surface-600 dark:text-surface-400">{{
-                          ward.code
-                        }}</span>
-                      </div>
-                      <div class="text-sm text-surface-500 dark:text-surface-500 mb-1">
-                        {{ ward.nameEn || ward.name }}
-                      </div>
-                      <div class="text-xs text-surface-400 dark:text-surface-600">
-                        {{ ward.districtCode || '-' }}
-                      </div>
-                    </div>
-
-                    <!-- Actions Menu Button -->
-                    <p-button
-                      [id]="'ward-list-item-menu-' + ward.id"
-                      icon="pi pi-ellipsis-v"
-                      [rounded]="true"
-                      [text]="true"
-                      (onClick)="rowMenu.toggle($event); $event.stopPropagation()"
-                      [attr.aria-label]="'wardList.mobileList.itemActions' | transloco"
-                      aria-haspopup="true"
-                      class="flex-shrink-0 min-w-[44px] min-h-[44px]"
-                    />
-                    <p-menu #rowMenu [model]="getRowMenuItems(ward)" [popup]="true" appendTo="body" />
+          <!-- Ward list with accordion and virtual scroll -->
+          <p-accordion 
+            [multiple]="true"
+            [value]="getActiveValues()"
+            (valueChange)="onAccordionValueChange($event)"
+          >
+            @for (group of wardsByProvince(); track group.provinceCode; let idx = $index) {
+              <p-accordion-panel [value]="idx">
+                <p-accordion-header>
+                  <div class="flex items-center justify-between w-full">
+                    <span class="font-semibold">{{ group.provinceName }}</span>
+                    <span class="text-surface-500 text-sm">
+                      {{ group.wards.length }} {{ 'wardList.grouping.wards' | transloco }}
+                    </span>
                   </div>
-                </div>
-                }
-              </div>
-              }
-            </div>
+                </p-accordion-header>
+                
+                <p-accordion-content>
+                  <!-- Virtual Scroller for mobile -->
+                  <p-scroller 
+                    [items]="group.wards" 
+                    [itemSize]="80"
+                    scrollHeight="300px"
+                    styleClass="border border-surface-200 dark:border-surface-700"
+                  >
+                    <ng-template #item let-ward let-options="options">
+                      <div
+                        [id]="'ward-list-item-' + ward.id"
+                        class="p-3 border-b border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors cursor-pointer"
+                        [class.bg-primary-50]="selectedWard()?.id === ward.id"
+                        [class.dark:bg-primary-900]="selectedWard()?.id === ward.id"
+                        (click)="onRowClick(ward)"
+                        [style.height.px]="options.height"
+                      >
+                        <div class="flex items-start gap-3">
+                          <!-- Ward Info -->
+                          <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-2 mb-1">
+                              <div class="font-semibold text-base">{{ ward.name }}</div>
+                              <span class="text-sm text-surface-600 dark:text-surface-400">{{
+                                ward.code
+                              }}</span>
+                            </div>
+                            <div class="text-sm text-surface-500 dark:text-surface-500 mb-1">
+                              {{ ward.nameEn || ward.name }}
+                            </div>
+                            <div class="text-xs text-surface-400 dark:text-surface-600">
+                              {{ ward.districtCode || '-' }}
+                            </div>
+                          </div>
+
+                          <!-- Actions Menu Button -->
+                          <p-button
+                            [id]="'ward-list-item-menu-' + ward.id"
+                            icon="pi pi-ellipsis-v"
+                            [rounded]="true"
+                            [text]="true"
+                            (onClick)="rowMenu.toggle($event); $event.stopPropagation()"
+                            [attr.aria-label]="'wardList.mobileList.itemActions' | transloco"
+                            aria-haspopup="true"
+                            class="flex-shrink-0 min-w-[44px] min-h-[44px]"
+                          />
+                          <p-menu #rowMenu [model]="getRowMenuItems(ward)" [popup]="true" appendTo="body" />
+                        </div>
+                      </div>
+                    </ng-template>
+                  </p-scroller>
+                </p-accordion-content>
+              </p-accordion-panel>
             }
-          </div>
+          </p-accordion>
           }
         </div>
-      </div>
-
-      <!-- Mobile Pagination -->
-      <div
-        class="border-t border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 p-4"
-      >
-        <core-pagination
-          [idPrefix]="'ward-list-mobile'"
-          [totalRecords]="totalRecords()"
-          [currentPage]="currentPage()"
-          [pageSize]="pageSize()"
-          (pageChange)="onPageChange($event)"
-        />
       </div>
     </div>
     }
