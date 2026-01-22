@@ -18,7 +18,6 @@ import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Subject, takeUntil } from 'rxjs';
 
 // PrimeNG imports
-import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -52,7 +51,6 @@ import { District } from '../../district/district.types';
     RouterOutlet,
     FormsModule,
     TranslocoModule,
-    TableModule,
     ButtonModule,
     InputTextModule,
     ToolbarModule,
@@ -158,18 +156,6 @@ export class WardList implements OnInit, OnDestroy {
       wards: data.wards,
     }));
   });
-
-  // Sort options for dropdown
-  protected readonly sortOptions = computed(() => [
-    {
-      label: this.translocoService.translate('wardList.sort.nameAsc'),
-      value: 'name:asc',
-    },
-    {
-      label: this.translocoService.translate('wardList.sort.nameDesc'),
-      value: 'name:desc',
-    },
-  ]);
 
   // Province filter options for dropdown
   protected readonly provinceOptions = computed(() => {
@@ -719,19 +705,15 @@ export class WardList implements OnInit, OnDestroy {
   }
 
   /**
-   * Get province name by code
+   * Toggle sort order between asc and desc
    */
-  protected getProvinceName(provinceCode: string): string {
-    const group = this.wardsByProvince().find((g) => g.provinceCode === provinceCode);
-    return group?.provinceName || `Unknown (${provinceCode})`;
-  }
-
-  /**
-   * Get ward count for province
-   */
-  protected getWardCount(provinceCode: string): number {
-    const group = this.wardsByProvince().find((g) => g.provinceCode === provinceCode);
-    return group?.wards.length || 0;
+  protected toggleSort(): void {
+    const newSort = this.sortOrder() === 'name:asc' ? 'name:desc' : 'name:asc';
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { sort: newSort },
+      queryParamsHandling: 'merge',
+    });
   }
 
   /**
