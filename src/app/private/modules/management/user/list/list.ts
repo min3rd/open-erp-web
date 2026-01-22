@@ -23,7 +23,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MenuModule } from 'primeng/menu';
 import { ContextMenuModule } from 'primeng/contextmenu';
-import { ContextMenu } from 'primeng/contextmenu';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { AvatarModule } from 'primeng/avatar';
@@ -34,8 +33,6 @@ import { MessageService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 import { PaginationComponent } from '../../../../../../core/components/pagination/pagination';
 
 // Services
@@ -63,15 +60,12 @@ import { OrganizationContextService } from '../../../../../../core/services/orga
     PaginationComponent,
     InputGroupModule,
     InputGroupAddonModule,
-    IconFieldModule,
-    InputIconModule
   ],
   providers: [MessageService],
   templateUrl: './list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class List implements OnInit, OnDestroy {
-  @ViewChild('contextMenu') contextMenu!: ContextMenu;
   @ViewChild('mobileSearchInput') mobileSearchInput?: ElementRef<HTMLInputElement>;
 
   private router = inject(Router);
@@ -82,7 +76,7 @@ export class List implements OnInit, OnDestroy {
   private translocoService = inject(TranslocoService);
   private destroy$ = new Subject<void>();
   private resizeHandler: (() => void) | null = null;
-  
+
   // Constants
   private readonly SEARCH_FOCUS_DELAY = 100; // Delay for focusing search input to ensure DOM is ready
 
@@ -103,10 +97,10 @@ export class List implements OnInit, OnDestroy {
   protected readonly totalPages = computed(() => Math.ceil(this.totalRecords() / this.pageSize()));
   protected readonly hasSelection = computed(() => this.selectedUsers().length > 0);
   protected readonly currentOrganization = computed(() =>
-    this.organizationContext.currentOrganization()
+    this.organizationContext.currentOrganization(),
   );
   protected readonly allSelected = computed(
-    () => this.users().length > 0 && this.selectedUsers().length === this.users().length
+    () => this.users().length > 0 && this.selectedUsers().length === this.users().length,
   );
 
   // Scope options for toggle
@@ -147,44 +141,7 @@ export class List implements OnInit, OnDestroy {
   }
 
   // Context menu items for row actions
-  protected get contextMenuItems(): MenuItem[] {
-    const user = this.selectedUser;
-    if (!user) return [];
-
-    return [
-      {
-        label: this.translocoService.translate('userList.contextMenu.viewDetails'),
-        icon: 'pi pi-eye',
-        command: () => this.onViewUserDetails(user),
-      },
-      {
-        label: this.translocoService.translate('userList.contextMenu.edit'),
-        icon: 'pi pi-pencil',
-        command: () => this.onEditUser(user),
-      },
-      {
-        separator: true,
-      },
-      {
-        label: this.translocoService.translate('userList.contextMenu.block'),
-        icon: 'pi pi-ban',
-        command: () => this.onBlockUser(user),
-      },
-      {
-        label: this.translocoService.translate('userList.contextMenu.revokeSession'),
-        icon: 'pi pi-sign-out',
-        command: () => this.onRevokeUserSession(user),
-      },
-      {
-        separator: true,
-      },
-      {
-        label: this.translocoService.translate('userList.contextMenu.sendNotification'),
-        icon: 'pi pi-send',
-        command: () => this.onSendNotification(user),
-      },
-    ];
-  }
+  contextMenuItems!: MenuItem[];
 
   constructor() {
     // Load users when scope changes
@@ -233,12 +190,46 @@ export class List implements OnInit, OnDestroy {
         this.loadUsers();
       }
     });
+
+    this.contextMenuItems = [
+      {
+        label: this.translocoService.translate('userList.contextMenu.viewDetails'),
+        icon: 'pi pi-eye',
+        command: () => this.onViewUserDetails(this.selectedUser as User),
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.edit'),
+        icon: 'pi pi-pencil',
+        command: () => this.onEditUser(this.selectedUser as User),
+      },
+      {
+        separator: true,
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.block'),
+        icon: 'pi pi-ban',
+        command: () => this.onBlockUser(this.selectedUser as User),
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.revokeSession'),
+        icon: 'pi pi-sign-out',
+        command: () => this.onRevokeUserSession(this.selectedUser as User),
+      },
+      {
+        separator: true,
+      },
+      {
+        label: this.translocoService.translate('userList.contextMenu.sendNotification'),
+        icon: 'pi pi-send',
+        command: () => this.onSendNotification(this.selectedUser as User),
+      },
+    ];
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    
+
     if (typeof window !== 'undefined' && this.resizeHandler) {
       window.removeEventListener('resize', this.resizeHandler);
     }
@@ -269,7 +260,7 @@ export class List implements OnInit, OnDestroy {
         this.announceStatus(
           this.translocoService.translate('userList.messages.loaded', {
             count: response.data.length,
-          })
+          }),
         );
       },
       error: (error) => {
@@ -601,16 +592,16 @@ export class List implements OnInit, OnDestroy {
     if (!user.fullName) {
       return '??';
     }
-    
+
     const nameParts = user.fullName
       .split(' ')
-      .map(part => part.trim())
-      .filter(part => part.length > 0);
-      
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0);
+
     if (nameParts.length === 0) {
       return '??';
     }
-    
+
     return nameParts
       .map((n) => n[0])
       .join('')
