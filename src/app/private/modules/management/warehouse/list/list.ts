@@ -25,7 +25,7 @@ import { MenuModule } from 'primeng/menu';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { ContextMenu } from 'primeng/contextmenu';
 import { TooltipModule } from 'primeng/tooltip';
-import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
 import { PAGE_SIZE_OPTIONS } from '../../../../../../core/constant';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
@@ -61,7 +61,7 @@ interface ScopeOption {
     MenuModule,
     ContextMenuModule,
     TooltipModule,
-    DropdownModule,
+    Select,
     PaginationComponent,
     InputGroupModule,
     InputGroupAddonModule,
@@ -91,7 +91,7 @@ export class WarehouseList implements OnInit, OnDestroy {
 
   // State signals
   protected readonly warehouses = signal<Warehouse[]>([]);
-  protected readonly selectedWarehouses = signal<Warehouse[]>([]);
+  protected selectedWarehousesArray: Warehouse[] = []; // For PrimeNG table binding
   protected readonly selectedWarehouse = signal<Warehouse | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly searchQuery = signal('');
@@ -140,7 +140,7 @@ export class WarehouseList implements OnInit, OnDestroy {
       {
         label: this.translocoService.translate('warehouseList.actions.deleteSelected'),
         icon: 'pi pi-trash',
-        disabled: this.selectedWarehouses().length === 0,
+        disabled: this.selectedWarehousesArray.length === 0,
         command: () => this.onBulkDelete(),
       },
     ];
@@ -351,7 +351,7 @@ export class WarehouseList implements OnInit, OnDestroy {
    * Bulk delete selected warehouses
    */
   protected onBulkDelete(): void {
-    const selected = this.selectedWarehouses();
+    const selected = this.selectedWarehousesArray;
     if (selected.length === 0) return;
 
     this.confirmationService.confirm({
@@ -373,7 +373,7 @@ export class WarehouseList implements OnInit, OnDestroy {
                 count: selected.length,
               }),
             });
-            this.selectedWarehouses.set([]);
+            this.selectedWarehousesArray = [];
             this.onRefresh();
           },
           error: (error) => {
@@ -399,8 +399,9 @@ export class WarehouseList implements OnInit, OnDestroy {
   /**
    * Handle row selection change
    */
-  protected onSelectionChange(event: { value: Warehouse[] }): void {
-    this.selectedWarehouses.set(event.value);
+  protected onSelectionChange(): void {
+    // This will be called when selection changes via two-way binding
+    // No action needed as the array is directly bound
   }
 
   /**
