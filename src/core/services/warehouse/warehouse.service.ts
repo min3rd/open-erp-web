@@ -165,7 +165,7 @@ export interface QueryWarehouseParams {
 })
 export class WarehouseService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${API_URI_INVENTORY}/warehouses`;
+  private readonly baseUrl = `${API_URI_INVENTORY}/v1/warehouses`;
 
   /**
    * Get all warehouses with filtering and pagination
