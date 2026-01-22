@@ -34,6 +34,8 @@ import { MessageService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 import { PaginationComponent } from '../../../../../../core/components/pagination/pagination';
 
 // Services
@@ -61,6 +63,8 @@ import { OrganizationContextService } from '../../../../../../core/services/orga
     PaginationComponent,
     InputGroupModule,
     InputGroupAddonModule,
+    IconFieldModule,
+    InputIconModule
   ],
   templateUrl: './list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
