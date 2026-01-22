@@ -200,6 +200,8 @@
             id="user-list-table"
             [value]="users()"
             [(selection)]="selectedUsers"
+            [(contextMenuSelection)]="selectedUser"
+            [contextMenu]="contextMenu"
             [loading]="isLoading()"
             showGridlines
             [resizableColumns]="true"
@@ -241,8 +243,8 @@
             <ng-template #body let-user let-rowIndex="rowIndex">
               <tr
                 [id]="'user-list-row-' + user.id"
+                [pContextMenuRow]="user"
                 (click)="onRowClick(user)"
-                (contextmenu)="onRowRightClick($event, user)"
                 class="cursor-pointer"
               >
                 <td (click)="$event.stopPropagation()">
@@ -406,6 +408,7 @@
           #contextMenu
           id="user-list-context-menu"
           [model]="contextMenuItems"
+          (onHide)="selectedUser = null"
           appendTo="body"
         />
       </div>
