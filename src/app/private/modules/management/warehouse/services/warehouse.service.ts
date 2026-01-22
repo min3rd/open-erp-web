@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { API_URI_COMMON } from '../../../../../../core/constant';
+import { API_URI_INVENTORY } from '../../../../../../core/constant';
 import { 
   ApiPaginatedResponse, 
   ApiSingleResponse,
@@ -50,7 +50,7 @@ export class WarehouseService {
 
     return this.http
       .get<ApiPaginatedResponse<Warehouse> | WarehouseListResponse>(
-        `${API_URI_COMMON}/v1/warehouses`,
+        `${API_URI_INVENTORY}/v1/warehouses`,
         {
           params: httpParams,
         }
@@ -84,7 +84,7 @@ export class WarehouseService {
    */
   getWarehouse(id: string): Observable<Warehouse | null> {
     return this.http
-      .get<ApiSingleResponse<Warehouse> | Warehouse>(`${API_URI_COMMON}/v1/warehouses/${id}`)
+      .get<ApiSingleResponse<Warehouse> | Warehouse>(`${API_URI_INVENTORY}/v1/warehouses/${id}`)
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
@@ -101,7 +101,7 @@ export class WarehouseService {
    */
   createWarehouse(dto: CreateWarehouseDto): Observable<Warehouse | null> {
     return this.http
-      .post<ApiSingleResponse<Warehouse> | Warehouse>(`${API_URI_COMMON}/v1/warehouses`, dto)
+      .post<ApiSingleResponse<Warehouse> | Warehouse>(`${API_URI_INVENTORY}/v1/warehouses`, dto)
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
@@ -119,7 +119,7 @@ export class WarehouseService {
   updateWarehouse(id: string, dto: UpdateWarehouseDto): Observable<Warehouse | null> {
     return this.http
       .patch<ApiSingleResponse<Warehouse> | Warehouse>(
-        `${API_URI_COMMON}/v1/warehouses/${id}`,
+        `${API_URI_INVENTORY}/v1/warehouses/${id}`,
         dto
       )
       .pipe(
@@ -137,14 +137,14 @@ export class WarehouseService {
    * Delete a warehouse
    */
   deleteWarehouse(id: string): Observable<void> {
-    return this.http.delete<void>(`${API_URI_COMMON}/v1/warehouses/${id}`);
+    return this.http.delete<void>(`${API_URI_INVENTORY}/v1/warehouses/${id}`);
   }
 
   /**
    * Delete multiple warehouses
    */
   deleteWarehouses(ids: string[]): Observable<void> {
-    return this.http.post<void>(`${API_URI_COMMON}/v1/warehouses/bulk-delete`, { ids });
+    return this.http.post<void>(`${API_URI_INVENTORY}/v1/warehouses/bulk-delete`, { ids });
   }
 
   /**
@@ -165,7 +165,7 @@ export class WarehouseService {
       httpParams = httpParams.set('organizationId', params.organizationId);
     }
 
-    return this.http.get(`${API_URI_COMMON}/v1/warehouses/export/csv`, {
+    return this.http.get(`${API_URI_INVENTORY}/v1/warehouses/export/csv`, {
       params: httpParams,
       responseType: 'blob',
     });
@@ -189,7 +189,7 @@ export class WarehouseService {
       httpParams = httpParams.set('organizationId', params.organizationId);
     }
 
-    return this.http.get(`${API_URI_COMMON}/v1/warehouses/export/geojson`, {
+    return this.http.get(`${API_URI_INVENTORY}/v1/warehouses/export/geojson`, {
       params: httpParams,
       responseType: 'blob',
     });
@@ -204,7 +204,7 @@ export class WarehouseService {
 
     return this.http
       .post<ApiSingleResponse<ImportResult> | ImportResult>(
-        `${API_URI_COMMON}/v1/warehouses/import`,
+        `${API_URI_INVENTORY}/v1/warehouses/import`,
         formData
       )
       .pipe(
