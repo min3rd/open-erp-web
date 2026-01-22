@@ -3,7 +3,7 @@ import { ResolveFn, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { WarehouseService } from '../services/warehouse.service';
-import { WarehouseListResponse } from '../warehouse.types';
+import { WarehouseListResponse, GetWarehousesParams } from '../warehouse.types';
 
 export const warehouseListResolver: ResolveFn<WarehouseListResponse | null> = (
   route: ActivatedRouteSnapshot
@@ -17,7 +17,7 @@ export const warehouseListResolver: ResolveFn<WarehouseListResponse | null> = (
   const limit = parseInt(route.paramMap.get('limit') || '100', 10);
 
   // Build params
-  const params: any = {
+  const params: GetWarehousesParams = {
     page,
     limit,
   };

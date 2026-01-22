@@ -59,7 +59,7 @@ export class WarehouseService {
         map((response) => {
           // Check if response is the new API envelope format
           if (isApiResponse(response)) {
-            const data = unwrap(response as ApiPaginatedResponse<Warehouse>);
+            const data = unwrap(response);
             // Store the items in the subject for list management
             this.warehousesSubject.next(data.items);
             return data;
@@ -82,15 +82,14 @@ export class WarehouseService {
   /**
    * Get a single warehouse by ID
    */
-  getWarehouse(id: string): Observable<Warehouse> {
+  getWarehouse(id: string): Observable<Warehouse | null> {
     return this.http
       .get<ApiSingleResponse<Warehouse> | Warehouse>(`${API_URI_COMMON}/v1/warehouses/${id}`)
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            const singleResponse = response as ApiSingleResponse<Warehouse>;
-            const data = unwrap(singleResponse);
-            return data.item!;
+            const data = unwrap(response);
+            return data.item || null;
           }
           return response as Warehouse;
         })
@@ -100,14 +99,14 @@ export class WarehouseService {
   /**
    * Create a new warehouse
    */
-  createWarehouse(dto: CreateWarehouseDto): Observable<Warehouse> {
+  createWarehouse(dto: CreateWarehouseDto): Observable<Warehouse | null> {
     return this.http
       .post<ApiSingleResponse<Warehouse> | Warehouse>(`${API_URI_COMMON}/v1/warehouses`, dto)
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            const data = unwrap(response as ApiSingleResponse<Warehouse>);
-            return data.item!;
+            const data = unwrap(response);
+            return data.item || null;
           }
           return response as Warehouse;
         })
@@ -117,7 +116,7 @@ export class WarehouseService {
   /**
    * Update an existing warehouse
    */
-  updateWarehouse(id: string, dto: UpdateWarehouseDto): Observable<Warehouse> {
+  updateWarehouse(id: string, dto: UpdateWarehouseDto): Observable<Warehouse | null> {
     return this.http
       .patch<ApiSingleResponse<Warehouse> | Warehouse>(
         `${API_URI_COMMON}/v1/warehouses/${id}`,
@@ -126,8 +125,8 @@ export class WarehouseService {
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            const data = unwrap(response as ApiSingleResponse<Warehouse>);
-            return data.item!;
+            const data = unwrap(response);
+            return data.item || null;
           }
           return response as Warehouse;
         })
@@ -199,7 +198,7 @@ export class WarehouseService {
   /**
    * Import warehouses from file
    */
-  importWarehouses(file: File): Observable<ImportResult> {
+  importWarehouses(file: File): Observable<ImportResult | null> {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -211,8 +210,8 @@ export class WarehouseService {
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            const data = unwrap(response as ApiSingleResponse<ImportResult>);
-            return data.item!;
+            const data = unwrap(response);
+            return data.item || null;
           }
           return response as ImportResult;
         })

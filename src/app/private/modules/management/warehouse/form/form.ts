@@ -113,9 +113,13 @@ export class WarehouseForm implements OnInit {
 
   protected onClose(): void {
     this.isVisible.set(false);
-    // Navigate back to list
-    const urlSegments = this.route.snapshot.url;
-    const stepsBack = this.warehouse() ? 3 : 1; // Different depths for edit vs new
-    this.router.navigate([Array(stepsBack).fill('..')], { relativeTo: this.route });
+    // Navigate back to list - use relative navigation to parent
+    if (this.warehouse()) {
+      // For edit/view mode: go up 3 levels (../../../)
+      this.router.navigate(['../../..'], { relativeTo: this.route });
+    } else {
+      // For new mode: go up 1 level (../)
+      this.router.navigate(['..'], { relativeTo: this.route });
+    }
   }
 }
