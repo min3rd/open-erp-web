@@ -17,6 +17,9 @@ import { MessageService } from 'primeng/api';
 import { GeoEditorComponent } from '../../../../../../core/components/geo-editor/geo-editor.component';
 import { MapComponent } from '../../../../../../core/components/map/map.component';
 
+// Core services
+import { GeocodingService, GeocodingResult } from '../../../../../../core/services/geocoding.service';
+
 // Services
 import { WarehouseService } from '../services/warehouse.service';
 import { Warehouse } from '../warehouse.types';
@@ -46,6 +49,7 @@ export class WarehouseForm implements OnInit {
   private warehouseService = inject(WarehouseService);
   private messageService = inject(MessageService);
   private translocoService = inject(TranslocoService);
+  private geocodingService = inject(GeocodingService);
 
   protected readonly warehouse = signal<Warehouse | null>(null);
   protected readonly isEditMode = signal(false);
@@ -54,23 +58,33 @@ export class WarehouseForm implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly currentGeometry = signal<GeoJSON.Geometry | null>(null);
 
+  // Location search
+  protected readonly locationSuggestions = signal<GeocodingResult[]>([]);
+  protected readonly isSearchingLocation = signal(false);
+
   // Warehouse type options (from backend enum)
   protected readonly warehouseTypes = [
-    'Distribution Center',
-    'Storage',
-    'Hub',
-    'Cross-Dock',
+    'General',
     'Cold Storage',
-    'Retail',
+    'Bonded',
+    'Distribution Center',
+    'Cross Dock',
+    'Automated',
+    'Hazmat',
+    'Pharmaceutical',
+    'Food Grade',
+    'Textile',
+    'Electronics',
+    'Customs',
   ];
   protected readonly filteredTypes = signal<string[]>(this.warehouseTypes);
 
-  // Status options
+  // Status options (from backend enum)
   protected readonly statusOptions = [
     { label: 'Active', value: 'active' },
-    { label: 'Inactive', value: 'inactive' },
-    { label: 'Under Construction', value: 'under_construction' },
+    { label: 'Paused', value: 'paused' },
     { label: 'Maintenance', value: 'maintenance' },
+    { label: 'Inactive', value: 'inactive' },
   ];
 
   protected form!: FormGroup;
@@ -167,6 +181,64 @@ export class WarehouseForm implements OnInit {
     this.filteredTypes.set(
       this.warehouseTypes.filter((type) => type.toLowerCase().includes(query))
     );
+  }
+
+  /**
+   * Search for locations using Nominatim API
+   */
+  protected searchLocation(event: { query: string }): void {
+    const query = event.query;
+    if (!query || query.length < 3) {
+      this.locationSuggestions.set([]);
+      return;
+    }
+
+    this.isSearchingLocation.set(true);
+    this.geocodingService.searchLocation(query, 10).subscribe({
+      next: (results) => {
+        this.locationSuggestions.set(results);
+        this.isSearchingLocation.set(false);
+      },
+      error: (error) => {
+        console.error('Location search failed:', error);
+        this.locationSuggestions.set([]);
+        this.isSearchingLocation.set(false);
+      },
+    });
+  }
+
+  /**
+   * Handle location selection from autocomplete
+   */
+  protected onLocationSelect(event: any): void {
+    const result = event.value as GeocodingResult;
+    if (!result) return;
+
+    // Update address field
+    this.form.patchValue({
+      address: result.display_name,
+    });
+
+    // Update coordinates
+    const coords = this.geocodingService.getCoordinates(result);
+    this.form.patchValue({
+      latitude: coords.lat,
+      longitude: coords.lng,
+    });
+
+    // Create Point geometry
+    const pointGeometry: GeoJSON.Point = {
+      type: 'Point',
+      coordinates: [coords.lng, coords.lat],
+    };
+    this.currentGeometry.set(pointGeometry);
+  }
+
+  /**
+   * Format location result for display in autocomplete
+   */
+  protected formatLocationDisplay(result: GeocodingResult): string {
+    return result.display_name;
   }
 
   protected onSave(): void {

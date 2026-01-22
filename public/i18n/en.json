@@ -1455,6 +1455,11 @@
         "label": "Warehouse Name",
         "placeholder": "Enter warehouse name"
       },
+      "locationSearch": {
+        "label": "Search Location",
+        "placeholder": "Type to search for a location...",
+        "hint": "Search and select a location to auto-fill address and coordinates"
+      },
       "address": {
         "label": "Address",
         "placeholder": "Enter warehouse address"
