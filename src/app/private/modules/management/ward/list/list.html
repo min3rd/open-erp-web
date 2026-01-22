@@ -279,15 +279,15 @@
                     class="flex items-center gap-2 w-full px-2 py-1 text-left hover:bg-surface-200 dark:hover:bg-surface-700 rounded transition-colors"
                     (click)="toggleGroup(ward.provinceCode)"
                     [attr.aria-expanded]="isGroupExpanded(ward.provinceCode)"
-                    [attr.aria-label]="'wardList.grouping.toggleGroup' | transloco : { name: wardsByProvince().find(g => g.provinceCode === ward.provinceCode)?.provinceName }"
+                    [attr.aria-label]="'wardList.grouping.toggleGroup' | transloco : { name: getProvinceName(ward.provinceCode) }"
                   >
                     <i 
                       [class]="isGroupExpanded(ward.provinceCode) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                       class="text-xs"
                     ></i>
-                    <span>{{ wardsByProvince().find(g => g.provinceCode === ward.provinceCode)?.provinceName }}</span>
+                    <span>{{ getProvinceName(ward.provinceCode) }}</span>
                     <span class="text-surface-500 text-sm ml-2">
-                      ({{ wardsByProvince().find(g => g.provinceCode === ward.provinceCode)?.wards.length }} {{ 'wardList.grouping.wards' | transloco }})
+                      ({{ getWardCount(ward.provinceCode) }} {{ 'wardList.grouping.wards' | transloco }})
                     </span>
                   </button>
                 </td>
