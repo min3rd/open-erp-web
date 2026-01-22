@@ -8,6 +8,7 @@ import { ProvinceListResponse } from '../province.types';
 /**
  * Resolver for province list
  * Pre-loads province list data before the route is activated
+ * For ward list, we need all provinces for grouping, so use a large limit
  */
 export const provinceListResolver: ResolveFn<ProvinceListResponse | null> = (
   route: ActivatedRouteSnapshot
@@ -16,7 +17,7 @@ export const provinceListResolver: ResolveFn<ProvinceListResponse | null> = (
   
   // Get pagination params from route
   const page = parseInt(route.paramMap.get('page') || '1', 10);
-  const limit = parseInt(route.paramMap.get('limit') || '100', 10);
+  const limit = parseInt(route.paramMap.get('limit') || '1000', 10); // Large limit to get all provinces
   const filter = route.paramMap.get('filter') || 'all';
   
   // Get search query from query params
