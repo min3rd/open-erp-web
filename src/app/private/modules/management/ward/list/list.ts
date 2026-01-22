@@ -103,6 +103,8 @@ export class WardList implements OnInit, OnDestroy {
   protected readonly districts = signal<District[]>([]);
   protected readonly selectedProvinceCode = signal<string>('all-provinces');
   protected readonly selectedDistrictCode = signal<string>('all-districts');
+  protected readonly sortOrder = signal<'name:asc' | 'name:desc'>('name:asc');
+  protected readonly expandedGroups = signal<Set<string>>(new Set());
 
   // Computed values
   protected readonly totalPages = computed(() => Math.ceil(this.totalRecords() / this.pageSize()));
@@ -124,6 +126,50 @@ export class WardList implements OnInit, OnDestroy {
 
     return null;
   });
+
+  // Group wards by province
+  protected readonly wardsByProvince = computed(() => {
+    const wardsList = this.wards();
+    const provincesList = this.provinces();
+    const groups = new Map<string, { provinceName: string; wards: Ward[] }>();
+
+    wardsList.forEach((ward) => {
+      const provinceCode = ward.provinceCode;
+      if (!groups.has(provinceCode)) {
+        const province = provincesList.find((p) => p.code === provinceCode);
+        const provinceName = province?.name || `Unknown (${provinceCode})`;
+        
+        // Log warning if province name not found
+        if (!province) {
+          console.warn(`Province name not found for code: ${provinceCode}`);
+        }
+        
+        groups.set(provinceCode, {
+          provinceName,
+          wards: [],
+        });
+      }
+      groups.get(provinceCode)!.wards.push(ward);
+    });
+
+    return Array.from(groups.entries()).map(([code, data]) => ({
+      provinceCode: code,
+      provinceName: data.provinceName,
+      wards: data.wards,
+    }));
+  });
+
+  // Sort options for dropdown
+  protected readonly sortOptions = computed(() => [
+    {
+      label: this.translocoService.translate('wardList.sort.nameAsc'),
+      value: 'name:asc',
+    },
+    {
+      label: this.translocoService.translate('wardList.sort.nameDesc'),
+      value: 'name:desc',
+    },
+  ]);
 
   // Province filter options for dropdown
   protected readonly provinceOptions = computed(() => {
@@ -275,6 +321,16 @@ export class WardList implements OnInit, OnDestroy {
       this.selectedDistrictCode.set(districtFilter);
       this.cdr.markForCheck();
     });
+
+    // Subscribe to query params for sort
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((queryParams) => {
+      const sort = queryParams['sort'] || 'name:asc';
+      this.sortOrder.set(sort as 'name:asc' | 'name:desc');
+      this.cdr.markForCheck();
+    });
+
+    // Initialize all groups as expanded
+    this.expandAllGroups();
   }
 
   ngOnDestroy(): void {
@@ -648,5 +704,55 @@ export class WardList implements OnInit, OnDestroy {
         command: () => this.onDeleteWard(ward),
       },
     ];
+  }
+
+  /**
+   * Handle sort order change
+   */
+  protected onSortChange(event: any): void {
+    const sortValue = event.value as 'name:asc' | 'name:desc';
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { sort: sortValue },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  /**
+   * Toggle group expansion
+   */
+  protected toggleGroup(provinceCode: string): void {
+    const expanded = this.expandedGroups();
+    const newExpanded = new Set(expanded);
+    
+    if (newExpanded.has(provinceCode)) {
+      newExpanded.delete(provinceCode);
+    } else {
+      newExpanded.add(provinceCode);
+    }
+    
+    this.expandedGroups.set(newExpanded);
+  }
+
+  /**
+   * Check if group is expanded
+   */
+  protected isGroupExpanded(provinceCode: string): boolean {
+    return this.expandedGroups().has(provinceCode);
+  }
+
+  /**
+   * Expand all groups
+   */
+  protected expandAllGroups(): void {
+    const allCodes = this.wardsByProvince().map((g) => g.provinceCode);
+    this.expandedGroups.set(new Set(allCodes));
+  }
+
+  /**
+   * Collapse all groups
+   */
+  protected collapseAllGroups(): void {
+    this.expandedGroups.set(new Set());
   }
 }
