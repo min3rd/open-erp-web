@@ -13,6 +13,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { Select } from 'primeng/select';
 import { MessageService } from 'primeng/api';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primeng/accordion';
 
 // Core components
 import { GeoEditorComponent } from '../../../../../../core/components/geo-editor/geo-editor.component';
@@ -48,6 +49,10 @@ import {
     AutoCompleteModule,
     Select,
     InputNumberModule,
+    Accordion,
+    AccordionPanel,
+    AccordionHeader,
+    AccordionContent,
     MapComponent
 ],
   templateUrl: './form.html',
@@ -76,7 +81,6 @@ export class WarehouseForm implements OnInit {
   // Province and Ward dropdowns
   protected readonly provinces = signal<ProvinceDto[]>([]);
   protected readonly wards = signal<WardDto[]>([]);
-  protected readonly isLoadingProvinces = signal(false);
   protected readonly isLoadingWards = signal(false);
 
   // Warehouse type options (from enum)
@@ -178,8 +182,13 @@ export class WarehouseForm implements OnInit {
       paymentTerm: [null],
     });
 
-    // Load provinces on init
-    this.loadProvinces();
+    // Get provinces from resolver
+    this.route.data.subscribe((data) => {
+      const provinces = data['provinces'] as ProvinceDto[];
+      if (provinces) {
+        this.provinces.set(provinces);
+      }
+    });
 
     // Watch province changes to load wards
     this.form.get('provinceCode')?.valueChanges.subscribe((provinceCode) => {
@@ -292,20 +301,6 @@ export class WarehouseForm implements OnInit {
   /**
    * Load provinces from API
    */
-  private loadProvinces(): void {
-    this.isLoadingProvinces.set(true);
-    this.warehouseService.getProvinces().subscribe({
-      next: (provinces) => {
-        this.provinces.set(provinces);
-        this.isLoadingProvinces.set(false);
-      },
-      error: (error) => {
-        console.error('Failed to load provinces:', error);
-        this.isLoadingProvinces.set(false);
-      },
-    });
-  }
-
   /**
    * Load wards by province code from API
    */

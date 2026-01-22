@@ -1583,6 +1583,7 @@
       "required": "Información Requerida",
       "location": "Ubicación y Coordenadas",
       "capacity": "Capacidad",
+      "storage": "Condiciones de Almacenamiento",
       "storageConditions": "Condiciones de Almacenamiento",
       "operations": "Operaciones",
       "security": "Seguridad",
@@ -1698,7 +1699,8 @@
       },
       "operatingHours": {
         "label": "Horario de Operación",
-        "placeholder": "ej., Lun-Vie 8:00-17:00"
+        "placeholder": "ej., Lun-Vie 8:00-17:00",
+        "hint": "Ejemplo: Lun-Vie 8:00-17:00, Sáb 8:00-12:00"
       },
       "securityLevel": {
         "label": "Nivel de Seguridad",

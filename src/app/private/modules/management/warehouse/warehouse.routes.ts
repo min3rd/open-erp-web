@@ -4,6 +4,7 @@ import { WarehouseList } from './list/list';
 import { WarehouseForm } from './form/form';
 import { warehouseDetailResolver } from './resolvers/warehouse-detail.resolver';
 import { warehouseListResolver } from './resolvers/warehouse-list.resolver';
+import { provincesResolver } from './resolvers/provinces.resolver';
 
 export const routes: Routes = [
   {
@@ -35,11 +36,15 @@ export const routes: Routes = [
                         path: 'new',
                         pathMatch: 'full',
                         component: WarehouseForm,
+                        resolve: {
+                          provinces: provincesResolver,
+                        },
                       },
                       {
                         path: ':id',
                         resolve: {
                           warehouse: warehouseDetailResolver,
+                          provinces: provincesResolver,
                         },
                         children: [
                           {
