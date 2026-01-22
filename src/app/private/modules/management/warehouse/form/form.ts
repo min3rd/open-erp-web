@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,7 +9,13 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 import { DrawerModule } from 'primeng/drawer';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { Select } from 'primeng/select';
 import { MessageService } from 'primeng/api';
+
+// Core components
+import { GeoEditorComponent } from '../../../../../../core/components/geo-editor/geo-editor.component';
+import { MapComponent } from '../../../../../../core/components/map/map.component';
 
 // Services
 import { WarehouseService } from '../services/warehouse.service';
@@ -25,6 +31,10 @@ import { Warehouse } from '../warehouse.types';
     InputTextModule,
     TextareaModule,
     DrawerModule,
+    AutoCompleteModule,
+    Select,
+    GeoEditorComponent,
+    MapComponent,
   ],
   templateUrl: './form.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,8 +52,31 @@ export class WarehouseForm implements OnInit {
   protected readonly isViewMode = signal(false);
   protected readonly isVisible = signal(true);
   protected readonly isLoading = signal(false);
+  protected readonly currentGeometry = signal<GeoJSON.Geometry | null>(null);
+
+  // Warehouse type options (from backend enum)
+  protected readonly warehouseTypes = [
+    'Distribution Center',
+    'Storage',
+    'Hub',
+    'Cross-Dock',
+    'Cold Storage',
+    'Retail',
+  ];
+  protected readonly filteredTypes = signal<string[]>(this.warehouseTypes);
+
+  // Status options
+  protected readonly statusOptions = [
+    { label: 'Active', value: 'active' },
+    { label: 'Inactive', value: 'inactive' },
+    { label: 'Under Construction', value: 'under_construction' },
+    { label: 'Maintenance', value: 'maintenance' },
+  ];
 
   protected form!: FormGroup;
+  
+  // Computed geometry for map preview
+  protected readonly mapGeometry = computed(() => this.currentGeometry());
 
   ngOnInit(): void {
     // Initialize form
@@ -53,7 +86,9 @@ export class WarehouseForm implements OnInit {
       address: [''],
       organizationId: [''],
       type: [''],
-      status: [''],
+      status: ['active'], // Default to active
+      latitude: [null],
+      longitude: [null],
     });
 
     // Determine mode from route
@@ -67,11 +102,50 @@ export class WarehouseForm implements OnInit {
       if (warehouse) {
         this.warehouse.set(warehouse);
         this.form.patchValue(warehouse);
+        
+        // Load geometry if available
+        if (warehouse.geometry) {
+          this.currentGeometry.set(warehouse.geometry);
+          
+          // Extract lat/lng from point geometry
+          if (warehouse.geometry.type === 'Point' && Array.isArray(warehouse.geometry.coordinates)) {
+            this.form.patchValue({
+              longitude: warehouse.geometry.coordinates[0],
+              latitude: warehouse.geometry.coordinates[1],
+            });
+          }
+        }
+        
         if (this.isViewMode()) {
           this.form.disable();
         }
       }
     });
+  }
+
+  /**
+   * Handle geometry change from geo editor
+   */
+  protected onGeometryChange(geometry: GeoJSON.Geometry | null): void {
+    this.currentGeometry.set(geometry);
+    
+    // Extract lat/lng from point geometry
+    if (geometry?.type === 'Point' && Array.isArray(geometry.coordinates)) {
+      this.form.patchValue({
+        longitude: geometry.coordinates[0],
+        latitude: geometry.coordinates[1],
+      });
+    }
+  }
+
+  /**
+   * Filter warehouse types for autocomplete
+   */
+  protected filterTypes(event: { query: string }): void {
+    const query = event.query.toLowerCase();
+    this.filteredTypes.set(
+      this.warehouseTypes.filter((type) => type.toLowerCase().includes(query))
+    );
   }
 
   protected onSave(): void {
@@ -81,6 +155,24 @@ export class WarehouseForm implements OnInit {
 
     this.isLoading.set(true);
     const formValue = this.form.getRawValue();
+
+    // Build geometry from lat/lng if available
+    const geometry = this.currentGeometry();
+    
+    // If no geometry but we have lat/lng, create a Point geometry
+    if (!geometry && formValue.latitude && formValue.longitude) {
+      const pointGeometry: GeoJSON.Point = {
+        type: 'Point',
+        coordinates: [formValue.longitude, formValue.latitude],
+      };
+      formValue.geometry = pointGeometry;
+    } else if (geometry) {
+      formValue.geometry = geometry;
+    }
+
+    // Remove lat/lng from the payload as they're not part of the DTO
+    delete formValue.latitude;
+    delete formValue.longitude;
 
     const saveOperation = this.warehouse()
       ? this.warehouseService.updateWarehouse(this.warehouse()!.id, formValue)
