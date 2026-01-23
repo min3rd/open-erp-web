@@ -16,6 +16,29 @@ import { SelectButtonChangeEvent, SelectButtonModule } from 'primeng/selectbutto
 import * as L from 'leaflet';
 
 /**
+ * Map styling constants
+ */
+const MAP_STYLES = {
+  // Background layer (e.g., province boundary)
+  background: {
+    color: '#94a3b8',      // Lighter border color (slate-400)
+    weight: 2,
+    opacity: 0.6,
+    fillColor: '#cbd5e1',  // Light background fill (slate-300)
+    fillOpacity: 0.15,     // Very transparent - 15% opacity
+  },
+  // Primary layer (e.g., selected ward)
+  primary: {
+    color: '#3b82f6',      // Primary blue color (blue-500)
+    weight: 2,
+    opacity: 0.8,
+    fillOpacity: 0.3,
+  },
+  // Map bounds padding
+  boundsPadding: [50, 50] as [number, number],
+};
+
+/**
  * Shared Map Component using Leaflet
  * Displays an OpenStreetMap base layer and optional GeoJSON layers
  * Supports multiple layers with different styles (e.g., province background + ward foreground)
@@ -161,13 +184,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Add new background layer if geometry exists
     if (geometry) {
       this.backgroundLayer = L.geoJSON(geometry, {
-        style: {
-          color: '#94a3b8', // Lighter border color
-          weight: 2,
-          opacity: 0.6,
-          fillColor: '#cbd5e1', // Light background fill
-          fillOpacity: 0.15, // Very transparent - 15% opacity
-        },
+        style: MAP_STYLES.background,
         interactive: true,
       }).addTo(this.map);
 
@@ -184,7 +201,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       if (!this.geometry()) {
         const bounds = this.backgroundLayer.getBounds();
         if (bounds.isValid()) {
-          this.map.fitBounds(bounds, { padding: [50, 50] });
+          this.map.fitBounds(bounds, { padding: MAP_STYLES.boundsPadding });
         }
       }
     }
@@ -205,12 +222,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Add new layer if geometry exists
     if (geometry) {
       this.geoJsonLayer = L.geoJSON(geometry, {
-        style: {
-          color: '#3b82f6', // Primary blue color
-          weight: 2,
-          opacity: 0.8,
-          fillOpacity: 0.3,
-        },
+        style: MAP_STYLES.primary,
         interactive: true,
       }).addTo(this.map);
 
@@ -226,13 +238,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       // Fit map to geometry bounds
       const bounds = this.geoJsonLayer.getBounds();
       if (bounds.isValid()) {
-        this.map.fitBounds(bounds, { padding: [50, 50] });
+        this.map.fitBounds(bounds, { padding: MAP_STYLES.boundsPadding });
       }
     } else if (this.backgroundLayer) {
       // If no primary geometry but have background, fit to background
       const bounds = this.backgroundLayer.getBounds();
       if (bounds.isValid()) {
-        this.map.fitBounds(bounds, { padding: [50, 50] });
+        this.map.fitBounds(bounds, { padding: MAP_STYLES.boundsPadding });
       }
     }
   }
@@ -251,7 +263,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   public fitBounds(bounds: L.LatLngBoundsExpression): void {
     if (this.map) {
-      this.map.fitBounds(bounds, { padding: [50, 50] });
+      this.map.fitBounds(bounds, { padding: MAP_STYLES.boundsPadding });
     }
   }
 }
