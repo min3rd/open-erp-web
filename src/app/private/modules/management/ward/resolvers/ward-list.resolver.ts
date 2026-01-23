@@ -4,6 +4,9 @@ import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { WardService } from '../services/ward.service';
 
+// Default limit for loading wards per province
+const DEFAULT_WARDS_PER_PROVINCE_LIMIT = 10000;
+
 /**
  * Resolver for ward list
  * Note: With the new route structure, wards are loaded lazily per province
@@ -21,7 +24,7 @@ export const wardListResolver: ResolveFn<{ items: any[]; total: number; page: nu
   const search = route.queryParamMap.get('search') || undefined;
   const sort = route.queryParamMap.get('sort') as 'name:asc' | 'name:desc' | null;
   const page = parseInt(route.queryParamMap.get('page') || '1', 10);
-  const limit = parseInt(route.queryParamMap.get('limit') || '10000', 10);
+  const limit = parseInt(route.queryParamMap.get('limit') || DEFAULT_WARDS_PER_PROVINCE_LIMIT.toString(), 10);
 
   return wardService.getWards({ 
     page, 
