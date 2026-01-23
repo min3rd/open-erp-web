@@ -150,6 +150,15 @@ export class WardList implements OnInit, OnDestroy {
     }));
   });
 
+  // Active province geometry for map background
+  protected readonly activeProvinceGeometry = computed(() => {
+    const provinceCode = this.activeProvinceCode();
+    if (!provinceCode) return null;
+
+    const province = this.provinces().find((p) => p.code === provinceCode);
+    return province?.geometry || null;
+  });
+
 
 
   // Actions menu items
