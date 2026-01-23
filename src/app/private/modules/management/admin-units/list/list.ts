@@ -155,21 +155,18 @@ export class AdminUnitsList implements OnInit, OnDestroy {
       }
     });
 
-    // Subscribe to route parameter changes
-    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-      const activeCode = params.get('activeProvinceCode');
-      this.activeProvinceCode.set(activeCode);
-      
-      // If there's an active province, ensure its panel is expanded
-      if (activeCode && this.provinces().length > 0) {
-        this.loadWardsForProvince(activeCode);
-      }
-    });
-
-    // Subscribe to query parameter changes
+    // Subscribe to query parameter changes for activeProvinceCode and search
     this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe((qParams) => {
       const search = qParams.get('search') || '';
       this.globalSearch.set(search);
+      
+      const activeCode = qParams.get('activeProvinceCode');
+      this.activeProvinceCode.set(activeCode);
+      
+      // If there's an active province code and provinces are loaded, load its wards
+      if (activeCode && this.provinces().length > 0) {
+        this.loadWardsForProvince(activeCode);
+      }
       
       // Parse ward search params (format: wards[provinceCode]=searchTerm)
       const wardSearchMap = new Map<string, string>();
