@@ -12,6 +12,11 @@ export const routes: Routes = [
     component: Ward,
     children: [
       {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'all',
+      },
+      {
         path: ':provinceCode',
         component: WardList,
         resolve: {

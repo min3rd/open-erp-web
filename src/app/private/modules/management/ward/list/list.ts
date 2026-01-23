@@ -570,8 +570,9 @@ export class WardList implements OnInit, OnDestroy {
         this.loadWardsForProvince(provinceCode);
         
         // Navigate to update route with provinceCode
-        this.router.navigate(['/management/ward', provinceCode], {
+        this.router.navigate(['../', provinceCode], {
           queryParamsHandling: 'preserve',
+          relativeTo: this.route,
         });
       }
     } else {
