@@ -6,7 +6,6 @@ import {
   inject,
   OnInit,
   OnDestroy,
-  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
@@ -144,17 +143,10 @@ export class AdminUnitsList implements OnInit, OnDestroy {
     },
   ]);
 
-  constructor() {
-    // Check if mobile
-    effect(
-      () => {
-        this.isMobile.set(window.innerWidth < 768);
-      },
-      { allowSignalWrites: true }
-    );
-  }
-
   ngOnInit(): void {
+    // Initialize mobile state
+    this.isMobile.set(window.innerWidth < 768);
+    
     // Load initial provinces from resolver
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       const provinces = data['provinces'] as Province[];
