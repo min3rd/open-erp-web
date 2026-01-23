@@ -4,32 +4,6 @@
   <div class="p-2 border-b border-surface-200 dark:border-surface-700">
     <p-toolbar id="ward-list-toolbar">
       <ng-template #start>
-        <!-- Province Filter -->
-        <p-select
-          id="ward-list-province-filter"
-          [options]="provinceOptions()"
-          [(ngModel)]="selectedProvinceCode"
-          (onChange)="onProvinceFilterChange($event)"
-          [placeholder]="'wardList.filter.selectProvince' | transloco"
-          optionLabel="label"
-          optionValue="value"
-          [style]="{ width: '180px', marginRight: '8px' }"
-          [attr.aria-label]="'wardList.filter.selectProvince' | transloco"
-        />
-        
-        <!-- District Filter -->
-        <p-select
-          id="ward-list-district-filter"
-          [options]="districtOptions()"
-          [(ngModel)]="selectedDistrictCode"
-          (onChange)="onDistrictFilterChange($event)"
-          [placeholder]="'wardList.filter.selectDistrict' | transloco"
-          optionLabel="label"
-          optionValue="value"
-          [style]="{ width: '180px', marginRight: '8px' }"
-          [attr.aria-label]="'wardList.filter.selectDistrict' | transloco"
-        />
-        
         <!-- Search Input -->
         <p-inputgroup>
           <p-inputgroup-addon>
@@ -49,6 +23,18 @@
       </ng-template>
 
       <ng-template #end>
+        <!-- Refresh Button -->
+        <p-button
+          id="ward-list-refresh-button"
+          icon="pi pi-refresh"
+          [rounded]="true"
+          [text]="true"
+          (onClick)="onRefresh()"
+          [pTooltip]="'wardList.refreshButton.tooltip' | transloco"
+          tooltipPosition="bottom"
+          [attr.aria-label]="'wardList.refreshButton.label' | transloco"
+        />
+
         <!-- Add New Button -->
         <p-button
           id="ward-list-add-button"
@@ -157,32 +143,6 @@
       id="ward-list-search-panel-mobile"
       class="p-2 bg-surface-50 dark:bg-surface-800 border-t border-surface-200 dark:border-surface-700"
     >
-      <!-- Province Filter Mobile -->
-      <p-select
-        id="ward-list-province-filter-mobile"
-        [options]="provinceOptions()"
-        [(ngModel)]="selectedProvinceCode"
-        (onChange)="onProvinceFilterChange($event)"
-        [placeholder]="'wardList.filter.selectProvince' | transloco"
-        optionLabel="label"
-        optionValue="value"
-        [style]="{ width: '100%', marginBottom: '8px' }"
-        [attr.aria-label]="'wardList.filter.selectProvince' | transloco"
-      />
-      
-      <!-- District Filter Mobile -->
-      <p-select
-        id="ward-list-district-filter-mobile"
-        [options]="districtOptions()"
-        [(ngModel)]="selectedDistrictCode"
-        (onChange)="onDistrictFilterChange($event)"
-        [placeholder]="'wardList.filter.selectDistrict' | transloco"
-        optionLabel="label"
-        optionValue="value"
-        [style]="{ width: '100%', marginBottom: '8px' }"
-        [attr.aria-label]="'wardList.filter.selectDistrict' | transloco"
-      />
-      
       <p-inputgroup>
         <input
           #mobileSearchInput
