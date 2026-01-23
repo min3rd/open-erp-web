@@ -88,6 +88,9 @@ export class AdminUnitsList implements OnInit, OnDestroy {
   protected readonly loading = signal<boolean>(false);
   protected readonly isMobile = signal<boolean>(false);
 
+  // Bound event handler for cleanup
+  private readonly resizeHandler = this.onResize.bind(this);
+
   // Ward state per province (map of provinceCode -> ward data)
   protected readonly provinceWards = signal<Map<string, Ward[]>>(new Map());
   protected readonly provinceWardSearch = signal<Map<string, string>>(new Map());
@@ -198,13 +201,13 @@ export class AdminUnitsList implements OnInit, OnDestroy {
     });
 
     // Listen for window resize
-    window.addEventListener('resize', this.onResize.bind(this));
+    window.addEventListener('resize', this.resizeHandler);
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    window.removeEventListener('resize', this.onResize.bind(this));
+    window.removeEventListener('resize', this.resizeHandler);
   }
 
   private onResize(): void {
@@ -214,7 +217,7 @@ export class AdminUnitsList implements OnInit, OnDestroy {
   /**
    * Handle accordion tab open
    */
-  protected onTabOpen(event: any): void {
+  protected onTabOpen(event: { index: number }): void {
     const index = event.index;
     const province = this.filteredProvinces()[index];
     

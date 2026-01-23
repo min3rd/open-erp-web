@@ -25,7 +25,8 @@
                     id="admin-units-global-search"
                     type="text"
                     pInputText
-                    [(ngModel)]="globalSearch"
+                    [ngModel]="globalSearch()"
+                    (ngModelChange)="globalSearch.set($event)"
                     [placeholder]="'adminUnits.search.placeholder' | transloco"
                     (keyup.enter)="onGlobalSearch()"
                     class="w-64"
@@ -310,7 +311,8 @@
             id="admin-units-mobile-search"
             type="text"
             pInputText
-            [(ngModel)]="globalSearch"
+            [ngModel]="globalSearch()"
+            (ngModelChange)="globalSearch.set($event)"
             [placeholder]="'adminUnits.search.placeholder' | transloco"
             (keyup.enter)="onGlobalSearch()"
             class="w-full"
