@@ -570,10 +570,16 @@ export class WardList implements OnInit, OnDestroy {
         const provinceCode = groups[latestIndex].provinceCode;
         this.expandedGroups.set(new Set([provinceCode]));
         this.loadWardsForProvince(provinceCode);
+        
+        // Navigate to update route with provinceCode
+        this.router.navigate(['/management/ward', provinceCode], {
+          queryParamsHandling: 'preserve',
+        });
       }
     } else {
-      // All collapsed
+      // All collapsed - navigate to first province or stay on current
       this.expandedGroups.set(new Set());
+      // Don't navigate away, just collapse
     }
   }
 
@@ -639,12 +645,17 @@ export class WardList implements OnInit, OnDestroy {
     const expanded = this.expandedGroups();
     
     if (expanded.has(provinceCode)) {
-      // Collapse this province
+      // Collapse this province - don't navigate, just collapse
       this.expandedGroups.set(new Set());
     } else {
       // Expand only this province, close all others
       this.expandedGroups.set(new Set([provinceCode]));
       this.loadWardsForProvince(provinceCode);
+      
+      // Navigate to update route with provinceCode
+      this.router.navigate(['/management/ward', provinceCode], {
+        queryParamsHandling: 'preserve',
+      });
     }
   }
 

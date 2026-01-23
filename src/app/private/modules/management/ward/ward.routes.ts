@@ -13,38 +13,6 @@ export const routes: Routes = [
     component: Ward,
     children: [
       {
-        path: '',
-        pathMatch: 'full',
-        component: WardList,
-        resolve: {
-          provinceList: provinceListResolver,
-          districtList: districtListResolver,
-        },
-        children: [
-          {
-            path: 'new',
-            pathMatch: 'full',
-            component: WardForm,
-          },
-          {
-            path: ':code',
-            resolve: {
-              ward: wardDetailResolver,
-            },
-            children: [
-              {
-                path: 'view',
-                component: WardForm,
-              },
-              {
-                path: 'edit',
-                component: WardForm,
-              },
-            ],
-          },
-        ],
-      },
-      {
         path: ':provinceCode',
         component: WardList,
         resolve: {
