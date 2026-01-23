@@ -57,21 +57,15 @@ describe('WardList Component - Grouping and Sorting', () => {
   beforeEach(async () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
     mockWardService = jasmine.createSpyObj('WardService', ['getWards', 'deleteWard', 'exportToCSV', 'exportToGeoJSON']);
+    mockWardService.getWards.and.returnValue(of({ items: mockWards, total: 3, page: 1, limit: 10000, totalPages: 1 }));
     mockTranslocoService = jasmine.createSpyObj('TranslocoService', ['translate']);
 
     mockActivatedRoute = {
       data: of({
-        wardList: { items: mockWards, total: 3, page: 1, limit: 100, totalPages: 1 },
         provinceList: { items: mockProvinces, total: 2, page: 1, limit: 1000, totalPages: 1 },
         districtList: { items: mockDistricts, total: 2, page: 1, limit: 10000, totalPages: 1 },
       }),
-      params: of({
-        page: '1',
-        limit: '100',
-        filter: 'all',
-        provinceFilter: 'all-provinces',
-        districtFilter: 'all-districts',
-      }),
+      params: of({}),
       queryParams: of({
         sort: 'name:asc',
       }),
@@ -127,71 +121,27 @@ describe('WardList Component - Grouping and Sorting', () => {
         const hanoiGroup = groups.find(g => g.provinceCode === '01');
         expect(hanoiGroup).toBeDefined();
         expect(hanoiGroup!.provinceName).toBe('Hà Nội');
-        expect(hanoiGroup!.wards.length).toBe(2);
 
         const hcmGroup = groups.find(g => g.provinceCode === '79');
         expect(hcmGroup).toBeDefined();
         expect(hcmGroup!.provinceName).toBe('Hồ Chí Minh');
-        expect(hcmGroup!.wards.length).toBe(1);
 
         done();
       }, 100);
     });
 
-    it('should display Unknown for missing province name', (done) => {
-      // Add a ward with unknown province
-      const wardsWithUnknown = [
-        ...mockWards,
-        {
-          id: '4',
-          code: '99999',
-          name: 'Unknown Ward',
-          nameEn: 'Unknown Ward',
-          provinceCode: '99',
-          districtCode: '999',
-        } as Ward,
-      ];
-
-      mockActivatedRoute.data = of({
-        wardList: { items: wardsWithUnknown, total: 4, page: 1, limit: 100, totalPages: 1 },
-        provinceList: { items: mockProvinces, total: 2, page: 1, limit: 1000, totalPages: 1 },
-        districtList: { items: mockDistricts, total: 2, page: 1, limit: 10000, totalPages: 1 },
-      });
-
+    it('should lazy load wards when province is expanded', (done) => {
       fixture.detectChanges();
 
       setTimeout(() => {
-        const groups = component['wardsByProvince']();
-        const unknownGroup = groups.find(g => g.provinceCode === '99');
-        expect(unknownGroup).toBeDefined();
-        expect(unknownGroup!.provinceName).toBe('Unknown (99)');
-        done();
-      }, 100);
-    });
-
-    it('should get province name by code', (done) => {
-      fixture.detectChanges();
-
-      setTimeout(() => {
-        const provinceName = component['getProvinceName']('01');
-        expect(provinceName).toBe('Hà Nội');
-
-        const unknownProvinceName = component['getProvinceName']('99');
-        expect(unknownProvinceName).toBe('Unknown (99)');
-
-        done();
-      }, 100);
-    });
-
-    it('should get ward count for province', (done) => {
-      fixture.detectChanges();
-
-      setTimeout(() => {
-        const wardCount = component['getWardCount']('01');
-        expect(wardCount).toBe(2);
-
-        const hcmWardCount = component['getWardCount']('79');
-        expect(hcmWardCount).toBe(1);
+        component['toggleGroup']('01');
+        
+        expect(mockWardService.getWards).toHaveBeenCalledWith({
+          page: 1,
+          limit: 10000,
+          provinceCode: '01',
+          sort: 'name:asc',
+        });
 
         done();
       }, 100);
@@ -199,55 +149,45 @@ describe('WardList Component - Grouping and Sorting', () => {
   });
 
   describe('Group Expansion', () => {
-    it('should initialize with all groups expanded', (done) => {
+    it('should initialize with all groups collapsed', (done) => {
       fixture.detectChanges();
 
       setTimeout(() => {
-        expect(component['isGroupExpanded']('01')).toBe(true);
-        expect(component['isGroupExpanded']('79')).toBe(true);
-        done();
-      }, 100);
-    });
-
-    it('should toggle group expansion', (done) => {
-      fixture.detectChanges();
-
-      setTimeout(() => {
-        component['toggleGroup']('01');
-        expect(component['isGroupExpanded']('01')).toBe(false);
-
-        component['toggleGroup']('01');
-        expect(component['isGroupExpanded']('01')).toBe(true);
-
-        done();
-      }, 100);
-    });
-
-    it('should expand all groups', (done) => {
-      fixture.detectChanges();
-
-      setTimeout(() => {
-        // First collapse all
-        component['collapseAllGroups']();
         expect(component['isGroupExpanded']('01')).toBe(false);
         expect(component['isGroupExpanded']('79')).toBe(false);
+        done();
+      }, 100);
+    });
 
-        // Then expand all
-        component['expandAllGroups']();
+    it('should only allow one province to be expanded at a time', (done) => {
+      fixture.detectChanges();
+
+      setTimeout(() => {
+        // Expand first province
+        component['toggleGroup']('01');
         expect(component['isGroupExpanded']('01')).toBe(true);
+        expect(component['isGroupExpanded']('79')).toBe(false);
+
+        // Expand second province - should close first
+        component['toggleGroup']('79');
+        expect(component['isGroupExpanded']('01')).toBe(false);
         expect(component['isGroupExpanded']('79')).toBe(true);
 
         done();
       }, 100);
     });
 
-    it('should collapse all groups', (done) => {
+    it('should collapse a province when toggling it while expanded', (done) => {
       fixture.detectChanges();
 
       setTimeout(() => {
-        component['collapseAllGroups']();
+        // Expand province
+        component['toggleGroup']('01');
+        expect(component['isGroupExpanded']('01')).toBe(true);
+
+        // Collapse it
+        component['toggleGroup']('01');
         expect(component['isGroupExpanded']('01')).toBe(false);
-        expect(component['isGroupExpanded']('79')).toBe(false);
 
         done();
       }, 100);
@@ -260,18 +200,6 @@ describe('WardList Component - Grouping and Sorting', () => {
 
       setTimeout(() => {
         expect(component['sortOrder']()).toBe('name:asc');
-        done();
-      }, 100);
-    });
-
-    it('should generate sort options', (done) => {
-      fixture.detectChanges();
-
-      setTimeout(() => {
-        const sortOptions = component['sortOptions']();
-        expect(sortOptions.length).toBe(2);
-        expect(sortOptions[0].value).toBe('name:asc');
-        expect(sortOptions[1].value).toBe('name:desc');
         done();
       }, 100);
     });
@@ -294,25 +222,11 @@ describe('WardList Component - Grouping and Sorting', () => {
   });
 
   describe('Data Loading from Resolver', () => {
-    it('should read wards from route.data', (done) => {
+    it('should read provinces from route.data', (done) => {
       fixture.detectChanges();
 
       setTimeout(() => {
-        expect(component['wards']()).toEqual(mockWards);
-        expect(component['totalRecords']()).toBe(3);
-        done();
-      }, 100);
-    });
-
-    it('should read provinces from route.data (not fetch directly)', (done) => {
-      fixture.detectChanges();
-
-      setTimeout(() => {
-        // Verify provinces are set
         expect(component['provinces']()).toEqual(mockProvinces);
-        // Verify the ward service getProvinces was NOT called
-        // (provinces should come from resolver, not component)
-        expect(component['wards']().length).toBeGreaterThan(0);
         done();
       }, 100);
     });
@@ -322,6 +236,177 @@ describe('WardList Component - Grouping and Sorting', () => {
 
       setTimeout(() => {
         expect(component['districts']()).toEqual(mockDistricts);
+        done();
+      }, 100);
+    });
+  });
+
+  describe('Active Province Navigation', () => {
+    it('should set active province from route params', (done) => {
+      mockActivatedRoute.params = of({ provinceCode: '01' });
+      fixture = TestBed.createComponent(WardList);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+
+      setTimeout(() => {
+        expect(component['activeProvinceCode']()).toBe('01');
+        done();
+      }, 100);
+    });
+
+    it('should auto-expand province when navigating with provinceCode', (done) => {
+      mockActivatedRoute.params = of({ provinceCode: '01' });
+      fixture = TestBed.createComponent(WardList);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+
+      setTimeout(() => {
+        expect(component['isGroupExpanded']('01')).toBe(true);
+        expect(component['isGroupExpanded']('79')).toBe(false);
+        done();
+      }, 100);
+    });
+
+    it('should compute active province geometry', (done) => {
+      const mockGeometry: GeoJSON.Geometry = {
+        type: 'Polygon',
+        coordinates: [[[105.8, 21.0], [105.9, 21.0], [105.9, 21.1], [105.8, 21.1], [105.8, 21.0]]],
+      };
+      
+      const provincesWithGeometry = mockProvinces.map(p => 
+        p.code === '01' ? { ...p, geometry: mockGeometry } : p
+      );
+      
+      mockActivatedRoute.data = of({
+        provinceList: { items: provincesWithGeometry, total: 2, page: 1, limit: 1000, totalPages: 1 },
+        districtList: { items: mockDistricts, total: 2, page: 1, limit: 10000, totalPages: 1 },
+      });
+      mockActivatedRoute.params = of({ provinceCode: '01' });
+      
+      fixture = TestBed.createComponent(WardList);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+
+      setTimeout(() => {
+        expect(component['activeProvinceGeometry']()).toEqual(mockGeometry);
+        done();
+      }, 100);
+    });
+
+    it('should navigate to province when onProvinceClick is called', () => {
+      fixture.detectChanges();
+
+      component['onProvinceClick']('01');
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        ['/management/ward', '01'],
+        jasmine.objectContaining({
+          queryParamsHandling: 'preserve',
+        })
+      );
+    });
+  });
+
+  describe('Search Functionality', () => {
+    it('should load search query from query params', (done) => {
+      mockActivatedRoute.queryParams = of({ search: 'test', sort: 'name:asc' });
+      fixture = TestBed.createComponent(WardList);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+
+      setTimeout(() => {
+        expect(component['searchQuery']()).toBe('test');
+        done();
+      }, 100);
+    });
+
+    it('should navigate with search query param on search change', () => {
+      fixture.detectChanges();
+
+      const event = { target: { value: 'test query' } } as any;
+      component['onSearchChange'](event);
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        [],
+        jasmine.objectContaining({
+          relativeTo: mockActivatedRoute,
+          queryParams: { search: 'test query' },
+          queryParamsHandling: 'merge',
+        })
+      );
+    });
+
+    it('should clear search param when empty', () => {
+      fixture.detectChanges();
+
+      const event = { target: { value: '' } } as any;
+      component['onSearchChange'](event);
+
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        [],
+        jasmine.objectContaining({
+          relativeTo: mockActivatedRoute,
+          queryParams: { search: undefined },
+          queryParamsHandling: 'merge',
+        })
+      );
+    });
+  });
+
+  describe('Export Functions', () => {
+    it('should export to CSV with current filters', (done) => {
+      const mockBlob = new Blob(['test'], { type: 'text/csv' });
+      mockWardService.exportToCSV.and.returnValue(of(mockBlob));
+      
+      fixture.detectChanges();
+
+      setTimeout(() => {
+        component['onExportCSV']();
+        
+        expect(mockWardService.exportToCSV).toHaveBeenCalledWith({
+          q: undefined,
+          provinceCode: undefined,
+        });
+        
+        done();
+      }, 100);
+    });
+
+    it('should export to CSV with active province filter', (done) => {
+      const mockBlob = new Blob(['test'], { type: 'text/csv' });
+      mockWardService.exportToCSV.and.returnValue(of(mockBlob));
+      
+      mockActivatedRoute.params = of({ provinceCode: '01' });
+      fixture = TestBed.createComponent(WardList);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+
+      setTimeout(() => {
+        component['onExportCSV']();
+        
+        expect(mockWardService.exportToCSV).toHaveBeenCalledWith({
+          q: undefined,
+          provinceCode: '01',
+        });
+        
+        done();
+      }, 100);
+    });
+
+    it('should export to GeoJSON with current filters', (done) => {
+      const mockBlob = new Blob(['test'], { type: 'application/geo+json' });
+      mockWardService.exportToGeoJSON.and.returnValue(of(mockBlob));
+      
+      fixture.detectChanges();
+
+      setTimeout(() => {
+        component['onExportGeoJSON']();
+        
+        expect(mockWardService.exportToGeoJSON).toHaveBeenCalledWith({
+          q: undefined,
+          provinceCode: undefined,
+        });
+        
         done();
       }, 100);
     });
