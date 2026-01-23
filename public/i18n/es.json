@@ -1750,5 +1750,65 @@
     "mobileList": {
       "itemActions": "Acciones del elemento"
     }
+  },
+  "adminUnits": {
+    "title": "Gestión de Provincias y Distritos",
+    "search": {
+      "placeholder": "Buscar provincias...",
+      "button": "Buscar",
+      "tooltip": "Buscar provincias por nombre o código",
+      "clear": "Limpiar búsqueda"
+    },
+    "addProvince": "Agregar Provincia",
+    "addProvinceTooltip": "Agregar una nueva provincia",
+    "addWard": "Agregar Distrito",
+    "editProvince": "Editar Provincia",
+    "deleteProvince": "Eliminar Provincia",
+    "editWard": "Editar Distrito",
+    "deleteWard": "Eliminar Distrito",
+    "refresh": "Actualizar",
+    "provinceCode": "Código",
+    "region": "Región",
+    "wards": "distritos",
+    "noProvinces": "No se encontraron provincias",
+    "noWards": "No hay distritos en esta provincia",
+    "selectProvinceForMap": "Seleccione una provincia para ver en el mapa",
+    "wardSearch": {
+      "placeholder": "Buscar distritos en esta provincia...",
+      "tooltip": "Buscar distritos por nombre o código"
+    },
+    "exportCSV": "Exportar CSV",
+    "exportGeoJSON": "Exportar GeoJSON",
+    "actions": {
+      "label": "Acciones",
+      "tooltip": "Más acciones",
+      "exportCSV": "Exportar Provincias a CSV",
+      "exportGeoJSON": "Exportar Provincias a GeoJSON",
+      "refresh": "Actualizar todo"
+    },
+    "table": {
+      "code": "Código",
+      "name": "Nombre",
+      "nameEn": "Nombre en inglés",
+      "districtCode": "Código de Distrito",
+      "actions": "Acciones"
+    },
+    "messages": {
+      "success": "Éxito",
+      "error": "Error",
+      "loadFailed": "Error al cargar datos",
+      "loadWardsFailed": "Error al cargar distritos",
+      "provinceDeleted": "Provincia {{name}} eliminada correctamente",
+      "wardDeleted": "Distrito {{name}} eliminado correctamente",
+      "deleteFailed": "Error al eliminar",
+      "refreshed": "Datos actualizados correctamente",
+      "exported": "Exportación completada correctamente",
+      "exportFailed": "Error en la exportación"
+    },
+    "confirmDelete": {
+      "header": "Confirmar eliminación",
+      "provinceMessage": "¿Está seguro de que desea eliminar la provincia {{name}}? Esto también eliminará todos los distritos asociados.",
+      "wardMessage": "¿Está seguro de que desea eliminar el distrito {{name}}?"
+    }
   }
 }
