@@ -10,7 +10,8 @@ import { Province } from '../../province/province.types';
 export const provincesResolver: ResolveFn<Province[]> = () => {
   const provinceService = inject(ProvinceService);
   
-  // Load all provinces without pagination (typically small dataset)
+  // Load provinces - Vietnam has 63 provinces, so 100 is sufficient
+  // If this becomes a concern, implement pagination at the component level
   return provinceService.getProvinces({ page: 1, limit: 100 }).pipe(
     map(response => response.items)
   );
