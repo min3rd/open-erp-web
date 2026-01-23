@@ -108,10 +108,9 @@ export class WardList implements OnInit, OnDestroy {
   protected readonly isSearchOpen = signal(false);
   protected readonly provinces = signal<Province[]>([]);
   protected readonly districts = signal<District[]>([]);
-  protected readonly selectedProvinceCode = signal<string>('all-provinces');
-  protected readonly selectedDistrictCode = signal<string>('all-districts');
   protected readonly sortOrder = signal<'name:asc' | 'name:desc'>('name:asc');
   protected readonly expandedGroups = signal<Set<string>>(new Set()); // Start empty - all collapsed
+  protected readonly activeProvinceCode = signal<string | null>(null);
   
   // Map to store wards per province (lazy loaded)
   protected readonly wardsByProvinceMap = signal<Map<string, { wards: Ward[]; loading: boolean; loaded: boolean }>>(new Map());
@@ -151,36 +150,7 @@ export class WardList implements OnInit, OnDestroy {
     }));
   });
 
-  // Province filter options for dropdown
-  protected readonly provinceOptions = computed(() => {
-    const provs = this.provinces();
-    return [
-      {
-        label: this.translocoService.translate('wardList.filter.allProvinces'),
-        value: 'all-provinces',
-      },
-      ...provs.map((p) => ({ label: p.name, value: p.code })),
-    ];
-  });
 
-  // District filter options for dropdown (filtered by province)
-  protected readonly districtOptions = computed(() => {
-    const dists = this.districts();
-    const selectedProvince = this.selectedProvinceCode();
-    
-    const filteredDistricts =
-      selectedProvince === 'all-provinces'
-        ? dists
-        : dists.filter((d) => d.provinceCode === selectedProvince);
-
-    return [
-      {
-        label: this.translocoService.translate('wardList.filter.allDistricts'),
-        value: 'all-districts',
-      },
-      ...filteredDistricts.map((d) => ({ label: d.name, value: d.code })),
-    ];
-  });
 
   // Actions menu items
   protected get actionMenuItems(): MenuItem[] {
@@ -250,31 +220,12 @@ export class WardList implements OnInit, OnDestroy {
       }
     });
 
-    // Reset district filter when province changes
-    effect(() => {
-      const provinceCode = this.selectedProvinceCode();
-      // If province changes and we have a district selected that doesn't belong to this province
-      const districtCode = this.selectedDistrictCode();
-      if (districtCode !== 'all-districts') {
-        const district = this.districts().find((d) => d.code === districtCode);
-        if (district && district.provinceCode !== provinceCode && provinceCode !== 'all-provinces') {
-          this.selectedDistrictCode.set('all-districts');
-        }
-      }
-    });
+
   }
 
   ngOnInit(): void {
     // Load data from resolver
     this.route.data.pipe(takeUntil(this.destroy$)).subscribe((data) => {
-      // Don't load wards upfront - they will be loaded lazily per province
-      // const wardListData = data['wardList'];
-      // if (wardListData) {
-      //   this.wards.set(wardListData.items);
-      //   this.totalRecords.set(wardListData.total);
-      //   this.isLoading.set(false);
-      // }
-
       if (data['provinceList']) {
         this.provinces.set(data['provinceList'].items);
       }
@@ -286,27 +237,29 @@ export class WardList implements OnInit, OnDestroy {
       this.cdr.markForCheck();
     });
 
-    // Subscribe to route params for filters (no pagination needed anymore)
+    // Subscribe to route params for provinceCode
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-      const search = params['filter'] || '';
-      const provinceFilter = params['provinceFilter'] || 'all-provinces';
-      const districtFilter = params['districtFilter'] || 'all-districts';
-
-      this.searchQuery.set(search === 'all' ? '' : search);
-      this.selectedProvinceCode.set(provinceFilter);
-      this.selectedDistrictCode.set(districtFilter);
+      const provinceCode = params['provinceCode'] || null;
+      this.activeProvinceCode.set(provinceCode);
+      
+      // Auto-expand the active province and close all others
+      if (provinceCode) {
+        this.expandedGroups.set(new Set([provinceCode]));
+        this.loadWardsForProvince(provinceCode);
+      }
+      
       this.cdr.markForCheck();
     });
 
-    // Subscribe to query params for sort
+    // Subscribe to query params for search and sort
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((queryParams) => {
+      const search = queryParams['search'] || '';
       const sort = queryParams['sort'] || 'name:asc';
+      
+      this.searchQuery.set(search);
       this.sortOrder.set(sort as 'name:asc' | 'name:desc');
       this.cdr.markForCheck();
     });
-
-    // Initialize all groups as expanded
-    this.expandAllGroups();
   }
 
   ngOnDestroy(): void {
@@ -323,75 +276,12 @@ export class WardList implements OnInit, OnDestroy {
    */
   protected onSearchChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.router.navigate(
-      [
-        '../../../../..',
-        this.selectedProvinceCode(),
-        this.selectedDistrictCode(),
-        input.value || 'all',
-        1,
-        this.pageSize(),
-      ],
-      {
-        relativeTo: this.route,
-      }
-    );
-  }
-
-  /**
-   * Handle province filter change
-   */
-  protected onProvinceFilterChange(event: any): void {
-    const provinceCode = event.value;
-    // Reset district filter when province changes
-    this.router.navigate(
-      ['../../../../..', provinceCode, 'all-districts', this.searchQuery() || 'all', 1, this.pageSize()],
-      {
-        relativeTo: this.route,
-      }
-    );
-  }
-
-  /**
-   * Handle district filter change
-   */
-  protected onDistrictFilterChange(event: any): void {
-    const districtCode = event.value;
-    this.router.navigate(
-      [
-        '../../../../..',
-        this.selectedProvinceCode(),
-        districtCode,
-        this.searchQuery() || 'all',
-        1,
-        this.pageSize(),
-      ],
-      {
-        relativeTo: this.route,
-      }
-    );
-  }
-
-  /**
-   * Handle page change
-   */
-  protected onPageChange(event: { page: number; pageSize: number }): void {
-    const newPage = event.page;
-    const newPageSize = event.pageSize;
-
-    this.router.navigate(
-      [
-        '../../../../..',
-        this.selectedProvinceCode(),
-        this.selectedDistrictCode(),
-        this.searchQuery() || 'all',
-        newPage,
-        newPageSize,
-      ],
-      {
-        relativeTo: this.route,
-      }
-    );
+    const value = input.value || '';
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: value || undefined },
+      queryParamsHandling: 'merge',
+    });
   }
 
   /**
@@ -407,10 +297,7 @@ export class WardList implements OnInit, OnDestroy {
   protected onExportCSV(): void {
     const params = {
       q: this.searchQuery() || undefined,
-      provinceCode:
-        this.selectedProvinceCode() !== 'all-provinces' ? this.selectedProvinceCode() : undefined,
-      districtCode:
-        this.selectedDistrictCode() !== 'all-districts' ? this.selectedDistrictCode() : undefined,
+      provinceCode: this.activeProvinceCode() || undefined,
     };
 
     this.wardService.exportToCSV(params).subscribe({
@@ -444,10 +331,7 @@ export class WardList implements OnInit, OnDestroy {
   protected onExportGeoJSON(): void {
     const params = {
       q: this.searchQuery() || undefined,
-      provinceCode:
-        this.selectedProvinceCode() !== 'all-provinces' ? this.selectedProvinceCode() : undefined,
-      districtCode:
-        this.selectedDistrictCode() !== 'all-districts' ? this.selectedDistrictCode() : undefined,
+      provinceCode: this.activeProvinceCode() || undefined,
     };
 
     this.wardService.exportToGeoJSON(params).subscribe({
@@ -577,12 +461,11 @@ export class WardList implements OnInit, OnDestroy {
   protected closeSearch(): void {
     this.isSearchOpen.set(false);
     this.searchQuery.set('');
-    this.router.navigate(
-      ['../../../..', this.selectedProvinceCode(), this.selectedDistrictCode(), 'all', 1, this.pageSize()],
-      {
-        relativeTo: this.route,
-      }
-    );
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: undefined },
+      queryParamsHandling: 'merge',
+    });
   }
 
   /**
@@ -592,69 +475,7 @@ export class WardList implements OnInit, OnDestroy {
     window.location.reload();
   }
 
-  /**
-   * Navigate to previous page
-   */
-  protected onPreviousPage(): void {
-    if (this.currentPage() > 1) {
-      const newPage = this.currentPage() - 1;
-      this.router.navigate(
-        [
-          '../../../..',
-          this.selectedProvinceCode(),
-          this.selectedDistrictCode(),
-          this.searchQuery() || 'all',
-          newPage,
-          this.pageSize(),
-        ],
-        {
-          relativeTo: this.route,
-        }
-      );
-    }
-  }
 
-  /**
-   * Navigate to next page
-   */
-  protected onNextPage(): void {
-    if (this.currentPage() < this.totalPages()) {
-      const newPage = this.currentPage() + 1;
-      this.router.navigate(
-        [
-          '../../../..',
-          this.selectedProvinceCode(),
-          this.selectedDistrictCode(),
-          this.searchQuery() || 'all',
-          newPage,
-          this.pageSize(),
-        ],
-        {
-          relativeTo: this.route,
-        }
-      );
-    }
-  }
-
-  /**
-   * Change page size
-   */
-  protected onPageSizeChangeMobile(event: { value: number }): void {
-    const newPageSize = event.value;
-    this.router.navigate(
-      [
-        '../../../..',
-        this.selectedProvinceCode(),
-        this.selectedDistrictCode(),
-        this.searchQuery() || 'all',
-        1,
-        newPageSize,
-      ],
-      {
-        relativeTo: this.route,
-      }
-    );
-  }
 
   /**
    * Get per-row menu items for mobile list
@@ -724,33 +545,28 @@ export class WardList implements OnInit, OnDestroy {
   }
 
   /**
-   * Handle accordion value change - load wards when province is expanded
+   * Handle accordion value change - only allow one province to be expanded at a time
    */
   protected onAccordionValueChange(value: string | number | string[] | number[] | null | undefined): void {
     const groups = this.wardsByProvince();
-    const newExpanded = new Set<string>();
     
     // Ensure we have an array of numbers
     const values: number[] = Array.isArray(value) 
       ? value.map(v => typeof v === 'number' ? v : parseInt(String(v), 10)).filter(v => !isNaN(v))
       : [];
     
-    // Track which provinces are being expanded
-    const previousExpanded = this.expandedGroups();
-    
-    values.forEach(index => {
-      if (index < groups.length) {
-        const provinceCode = groups[index].provinceCode;
-        newExpanded.add(provinceCode);
-        
-        // Load wards for this province if not already loaded or loading
-        if (!previousExpanded.has(provinceCode)) {
-          this.loadWardsForProvince(provinceCode);
-        }
+    // Only allow the most recently selected province to be expanded
+    if (values.length > 0) {
+      const latestIndex = values[values.length - 1];
+      if (latestIndex < groups.length) {
+        const provinceCode = groups[latestIndex].provinceCode;
+        this.expandedGroups.set(new Set([provinceCode]));
+        this.loadWardsForProvince(provinceCode);
       }
-    });
-    
-    this.expandedGroups.set(newExpanded);
+    } else {
+      // All collapsed
+      this.expandedGroups.set(new Set());
+    }
   }
 
   /**
@@ -809,19 +625,19 @@ export class WardList implements OnInit, OnDestroy {
   }
 
   /**
-   * Toggle group expansion
+   * Toggle group expansion - only allow one province expanded at a time
    */
   protected toggleGroup(provinceCode: string): void {
     const expanded = this.expandedGroups();
-    const newExpanded = new Set(expanded);
     
-    if (newExpanded.has(provinceCode)) {
-      newExpanded.delete(provinceCode);
+    if (expanded.has(provinceCode)) {
+      // Collapse this province
+      this.expandedGroups.set(new Set());
     } else {
-      newExpanded.add(provinceCode);
+      // Expand only this province, close all others
+      this.expandedGroups.set(new Set([provinceCode]));
+      this.loadWardsForProvince(provinceCode);
     }
-    
-    this.expandedGroups.set(newExpanded);
   }
 
   /**
@@ -829,20 +645,5 @@ export class WardList implements OnInit, OnDestroy {
    */
   protected isGroupExpanded(provinceCode: string): boolean {
     return this.expandedGroups().has(provinceCode);
-  }
-
-  /**
-   * Expand all groups
-   */
-  protected expandAllGroups(): void {
-    const allCodes = this.wardsByProvince().map((g) => g.provinceCode);
-    this.expandedGroups.set(new Set(allCodes));
-  }
-
-  /**
-   * Collapse all groups
-   */
-  protected collapseAllGroups(): void {
-    this.expandedGroups.set(new Set());
   }
 }
