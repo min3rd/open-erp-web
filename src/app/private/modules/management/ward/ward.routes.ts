@@ -15,55 +15,61 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'all-provinces/all-districts/all/1/100',
-      },
-      {
-        path: ':provinceFilter',
+        component: WardList,
+        resolve: {
+          provinceList: provinceListResolver,
+          districtList: districtListResolver,
+        },
         children: [
           {
-            path: ':districtFilter',
+            path: 'new',
+            pathMatch: 'full',
+            component: WardForm,
+          },
+          {
+            path: ':code',
+            resolve: {
+              ward: wardDetailResolver,
+            },
             children: [
               {
-                path: ':filter',
-                children: [
-                  {
-                    path: ':page',
-                    children: [
-                      {
-                        path: ':limit',
-                        component: WardList,
-                        resolve: {
-                          wardList: wardListResolver,
-                          provinceList: provinceListResolver,
-                          districtList: districtListResolver,
-                        },
-                        children: [
-                          {
-                            path: 'new',
-                            pathMatch: 'full',
-                            component: WardForm,
-                          },
-                          {
-                            path: ':code',
-                            resolve: {
-                              ward: wardDetailResolver,
-                            },
-                            children: [
-                              {
-                                path: 'view',
-                                component: WardForm,
-                              },
-                              {
-                                path: 'edit',
-                                component: WardForm,
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
+                path: 'view',
+                component: WardForm,
+              },
+              {
+                path: 'edit',
+                component: WardForm,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: ':provinceCode',
+        component: WardList,
+        resolve: {
+          provinceList: provinceListResolver,
+          districtList: districtListResolver,
+        },
+        children: [
+          {
+            path: 'new',
+            pathMatch: 'full',
+            component: WardForm,
+          },
+          {
+            path: ':code',
+            resolve: {
+              ward: wardDetailResolver,
+            },
+            children: [
+              {
+                path: 'view',
+                component: WardForm,
+              },
+              {
+                path: 'edit',
+                component: WardForm,
               },
             ],
           },
