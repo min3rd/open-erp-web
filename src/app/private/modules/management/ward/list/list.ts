@@ -646,4 +646,14 @@ export class WardList implements OnInit, OnDestroy {
   protected isGroupExpanded(provinceCode: string): boolean {
     return this.expandedGroups().has(provinceCode);
   }
+
+  /**
+   * Navigate to a specific province
+   */
+  protected onProvinceClick(provinceCode: string): void {
+    // Navigate to the province route
+    this.router.navigate(['/management/ward', provinceCode], {
+      queryParamsHandling: 'preserve',
+    });
+  }
 }
