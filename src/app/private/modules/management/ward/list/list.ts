@@ -64,7 +64,6 @@ import { District } from '../../district/district.types';
     TooltipModule,
     InputGroupModule,
     InputGroupAddonModule,
-    Select,
     ConfirmDialogModule,
     SplitterModule,
     MapComponent,
