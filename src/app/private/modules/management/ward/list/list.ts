@@ -636,42 +636,4 @@ export class WardList implements OnInit, OnDestroy {
         },
       });
   }
-
-  /**
-   * Toggle group expansion - only allow one province expanded at a time
-   */
-  protected toggleGroup(provinceCode: string): void {
-    const expanded = this.expandedGroups();
-    
-    if (expanded.has(provinceCode)) {
-      // Collapse this province - don't navigate, just collapse
-      this.expandedGroups.set(new Set());
-    } else {
-      // Expand only this province, close all others
-      this.expandedGroups.set(new Set([provinceCode]));
-      this.loadWardsForProvince(provinceCode);
-      
-      // Navigate to update route with provinceCode
-      this.router.navigate(['/management/ward', provinceCode], {
-        queryParamsHandling: 'preserve',
-      });
-    }
-  }
-
-  /**
-   * Check if group is expanded
-   */
-  protected isGroupExpanded(provinceCode: string): boolean {
-    return this.expandedGroups().has(provinceCode);
-  }
-
-  /**
-   * Navigate to a specific province
-   */
-  protected onProvinceClick(provinceCode: string): void {
-    // Navigate to the province route
-    this.router.navigate(['/management/ward', provinceCode], {
-      queryParamsHandling: 'preserve',
-    });
-  }
 }
