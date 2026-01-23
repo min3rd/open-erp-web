@@ -29,7 +29,6 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { Select } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SplitterModule } from 'primeng/splitter';
 import { Accordion } from 'primeng/accordion';
@@ -40,7 +39,6 @@ import { Scroller } from 'primeng/scroller';
 
 // Core components and constants
 import { MapComponent } from '../../../../../../core/components/map/map.component';
-import { PaginationComponent } from '../../../../../../core/components/pagination/pagination';
 import { PAGE_SIZE_OPTIONS } from '../../../../../../core/constant';
 
 // Services
