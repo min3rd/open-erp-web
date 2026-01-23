@@ -8,6 +8,7 @@ import {
   AfterViewInit,
   OnDestroy,
   signal,
+  output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +18,7 @@ import * as L from 'leaflet';
 /**
  * Shared Map Component using Leaflet
  * Displays an OpenStreetMap base layer and optional GeoJSON layers
+ * Supports multiple layers with different styles (e.g., province background + ward foreground)
  */
 @Component({
   selector: 'core-map',
@@ -28,14 +30,21 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef<HTMLDivElement>;
 
   // Input signals
-  // Accept any GeoJSON (Geometry, Feature, FeatureCollection)
+  // Primary geometry (e.g., selected ward) - shown with default style
   readonly geometry = input<GeoJSON.GeoJSON | null>(null);
+  // Background geometry (e.g., province boundary) - shown with lighter style
+  readonly backgroundGeometry = input<GeoJSON.GeoJSON | null>(null);
   readonly center = input<[number, number]>([15.9749, 108.2515]); // Vietnam center
   readonly zoom = input<number>(6);
   readonly showLabels = input<boolean>(true);
 
+  // Output events
+  readonly geometryClick = output<{ lat: number; lng: number; layer: L.Layer }>();
+  readonly backgroundClick = output<{ lat: number; lng: number; layer: L.Layer }>();
+
   private map: L.Map | null = null;
   private geoJsonLayer: L.GeoJSON | null = null;
+  private backgroundLayer: L.GeoJSON | null = null;
 
   // Base map layers
   private baseLayers: { [key: string]: L.TileLayer } = {};
@@ -51,11 +60,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   ];
 
   constructor() {
-    // React to geometry changes
+    // React to primary geometry changes
     effect(() => {
       const geom = this.geometry();
       if (this.map) {
         this.updateGeoJSON(geom);
+      }
+    });
+
+    // React to background geometry changes
+    effect(() => {
+      const bgGeom = this.backgroundGeometry();
+      if (this.map) {
+        this.updateBackgroundGeoJSON(bgGeom);
       }
     });
   }
@@ -97,7 +114,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.currentBaseLayer = this.baseLayers['osm'];
     this.currentBaseLayer.addTo(this.map);
 
-    // Add initial geometry if provided
+    // Add initial geometries if provided
+    const initialBgGeom = this.backgroundGeometry();
+    if (initialBgGeom) {
+      this.updateBackgroundGeoJSON(initialBgGeom);
+    }
+
     const initialGeom = this.geometry();
     if (initialGeom) {
       this.updateGeoJSON(initialGeom);
@@ -125,7 +147,51 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Update the GeoJSON layer on the map
+   * Update the background GeoJSON layer on the map (e.g., province boundary)
+   */
+  private updateBackgroundGeoJSON(geometry: GeoJSON.GeoJSON | null): void {
+    if (!this.map) return;
+
+    // Remove existing background layer
+    if (this.backgroundLayer) {
+      this.map.removeLayer(this.backgroundLayer);
+      this.backgroundLayer = null;
+    }
+
+    // Add new background layer if geometry exists
+    if (geometry) {
+      this.backgroundLayer = L.geoJSON(geometry, {
+        style: {
+          color: '#94a3b8', // Lighter border color
+          weight: 2,
+          opacity: 0.6,
+          fillColor: '#cbd5e1', // Light background fill
+          fillOpacity: 0.15, // Very transparent - 15% opacity
+        },
+        interactive: true,
+      }).addTo(this.map);
+
+      // Add click handler for background layer
+      this.backgroundLayer.on('click', (e: L.LeafletMouseEvent) => {
+        this.backgroundClick.emit({
+          lat: e.latlng.lat,
+          lng: e.latlng.lng,
+          layer: e.target,
+        });
+      });
+
+      // Fit map to background geometry bounds if no primary geometry
+      if (!this.geometry()) {
+        const bounds = this.backgroundLayer.getBounds();
+        if (bounds.isValid()) {
+          this.map.fitBounds(bounds, { padding: [50, 50] });
+        }
+      }
+    }
+  }
+
+  /**
+   * Update the primary GeoJSON layer on the map (e.g., selected ward)
    */
   private updateGeoJSON(geometry: GeoJSON.GeoJSON | null): void {
     if (!this.map) return;
@@ -140,15 +206,31 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     if (geometry) {
       this.geoJsonLayer = L.geoJSON(geometry, {
         style: {
-          color: '#3b82f6',
+          color: '#3b82f6', // Primary blue color
           weight: 2,
           opacity: 0.8,
           fillOpacity: 0.3,
         },
+        interactive: true,
       }).addTo(this.map);
+
+      // Add click handler
+      this.geoJsonLayer.on('click', (e: L.LeafletMouseEvent) => {
+        this.geometryClick.emit({
+          lat: e.latlng.lat,
+          lng: e.latlng.lng,
+          layer: e.target,
+        });
+      });
 
       // Fit map to geometry bounds
       const bounds = this.geoJsonLayer.getBounds();
+      if (bounds.isValid()) {
+        this.map.fitBounds(bounds, { padding: [50, 50] });
+      }
+    } else if (this.backgroundLayer) {
+      // If no primary geometry but have background, fit to background
+      const bounds = this.backgroundLayer.getBounds();
       if (bounds.isValid()) {
         this.map.fitBounds(bounds, { padding: [50, 50] });
       }
