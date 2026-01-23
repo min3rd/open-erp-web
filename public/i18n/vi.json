@@ -707,5 +707,65 @@
       "updateSuccess": "Đã cập nhật kho thành công",
       "saveFailed": "Lưu kho thất bại"
     }
+  },
+  "adminUnits": {
+    "title": "Quản lý Tỉnh và Xã",
+    "search": {
+      "placeholder": "Tìm kiếm tỉnh...",
+      "button": "Tìm kiếm",
+      "tooltip": "Tìm kiếm tỉnh theo tên hoặc mã",
+      "clear": "Xóa tìm kiếm"
+    },
+    "addProvince": "Thêm Tỉnh",
+    "addProvinceTooltip": "Thêm tỉnh mới",
+    "addWard": "Thêm Xã",
+    "editProvince": "Sửa Tỉnh",
+    "deleteProvince": "Xóa Tỉnh",
+    "editWard": "Sửa Xã",
+    "deleteWard": "Xóa Xã",
+    "refresh": "Làm mới",
+    "provinceCode": "Mã",
+    "region": "Vùng",
+    "wards": "xã",
+    "noProvinces": "Không tìm thấy tỉnh",
+    "noWards": "Không có xã nào trong tỉnh này",
+    "selectProvinceForMap": "Chọn một tỉnh để xem trên bản đồ",
+    "wardSearch": {
+      "placeholder": "Tìm kiếm xã trong tỉnh này...",
+      "tooltip": "Tìm kiếm xã theo tên hoặc mã"
+    },
+    "exportCSV": "Xuất CSV",
+    "exportGeoJSON": "Xuất GeoJSON",
+    "actions": {
+      "label": "Thao tác",
+      "tooltip": "Thêm thao tác",
+      "exportCSV": "Xuất Tỉnh ra CSV",
+      "exportGeoJSON": "Xuất Tỉnh ra GeoJSON",
+      "refresh": "Làm mới tất cả"
+    },
+    "table": {
+      "code": "Mã",
+      "name": "Tên",
+      "nameEn": "Tên tiếng Anh",
+      "districtCode": "Mã Huyện",
+      "actions": "Thao tác"
+    },
+    "messages": {
+      "success": "Thành công",
+      "error": "Lỗi",
+      "loadFailed": "Không thể tải dữ liệu",
+      "loadWardsFailed": "Không thể tải danh sách xã",
+      "provinceDeleted": "Đã xóa tỉnh {{name}} thành công",
+      "wardDeleted": "Đã xóa xã {{name}} thành công",
+      "deleteFailed": "Xóa không thành công",
+      "refreshed": "Đã làm mới dữ liệu thành công",
+      "exported": "Xuất dữ liệu thành công",
+      "exportFailed": "Xuất dữ liệu thất bại"
+    },
+    "confirmDelete": {
+      "header": "Xác nhận xóa",
+      "provinceMessage": "Bạn có chắc chắn muốn xóa tỉnh {{name}}? Điều này cũng sẽ xóa tất cả các xã liên quan.",
+      "wardMessage": "Bạn có chắc chắn muốn xóa xã {{name}}?"
+    }
   }
 }

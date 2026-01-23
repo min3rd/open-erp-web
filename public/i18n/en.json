@@ -1879,5 +1879,66 @@
     "mobileList": {
       "itemActions": "Item actions"
     }
+  },
+  "adminUnits": {
+    "title": "Province and Ward Management",
+    "search": {
+      "placeholder": "Search provinces...",
+      "button": "Search",
+      "tooltip": "Search provinces by name or code",
+      "clear": "Clear search"
+    },
+    "addProvince": "Add Province",
+    "addProvinceTooltip": "Add a new province",
+    "addWard": "Add Ward",
+    "editProvince": "Edit Province",
+    "deleteProvince": "Delete Province",
+    "editWard": "Edit Ward",
+    "deleteWard": "Delete Ward",
+    "refresh": "Refresh",
+    "provinceCode": "Code",
+    "region": "Region",
+    "wards": "wards",
+    "noProvinces": "No provinces found",
+    "noWards": "No wards found in this province",
+    "selectProvinceForMap": "Select a province to view on map",
+    "wardSearch": {
+      "placeholder": "Search wards in this province...",
+      "tooltip": "Search wards by name or code"
+    },
+    "exportCSV": "Export CSV",
+    "exportGeoJSON": "Export GeoJSON",
+    "actions": {
+      "label": "Actions",
+      "tooltip": "More actions",
+      "exportCSV": "Export Provinces to CSV",
+      "exportGeoJSON": "Export Provinces to GeoJSON",
+      "refresh": "Refresh All"
+    },
+    "table": {
+      "code": "Code",
+      "name": "Name",
+      "nameEn": "English Name",
+      "districtCode": "District Code",
+      "actions": "Actions"
+    },
+    "messages": {
+      "success": "Success",
+      "error": "Error",
+      "loadFailed": "Failed to load data",
+      "loadWardsFailed": "Failed to load wards",
+      "provinceDeleted": "Province {{name}} deleted successfully",
+      "wardDeleted": "Ward {{name}} deleted successfully",
+      "deleteFailed": "Failed to delete",
+      "refreshed": "Data refreshed successfully",
+      "exported": "Export completed successfully",
+      "exportFailed": "Export failed"
+    },
+    "confirmDelete": {
+      "header": "Confirm Delete",
+      "provinceMessage": "Are you sure you want to delete province {{name}}? This will also delete all associated wards.",
+      "wardMessage": "Are you sure you want to delete ward {{name}}?"
+    },
+    "mapPlaceholder": "Map visualization coming soon"
   }
 }
