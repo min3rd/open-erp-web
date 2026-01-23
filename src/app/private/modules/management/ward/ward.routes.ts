@@ -3,7 +3,6 @@ import { Ward } from './ward';
 import { WardList } from './list/list';
 import { WardForm } from './form/form';
 import { wardDetailResolver } from './resolvers/ward-detail.resolver';
-import { wardListResolver } from './resolvers/ward-list.resolver';
 import { provinceListResolver } from '../province/resolvers/province-list.resolver';
 import { districtListResolver } from '../district/resolvers/district-list.resolver';
 
