@@ -32,6 +32,7 @@ import { CardModule } from 'primeng/card';
 import { SplitterModule } from 'primeng/splitter';
 
 // Core components
+import { MapComponent } from '../../../../../../core/components/map/map.component';
 import { PAGE_SIZE_OPTIONS } from '../../../../../../core/constant';
 
 // Services and types
@@ -64,6 +65,7 @@ import { Ward } from '../../ward/ward.types';
     TableModule,
     CardModule,
     SplitterModule,
+    MapComponent,
   ],
   templateUrl: './list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
