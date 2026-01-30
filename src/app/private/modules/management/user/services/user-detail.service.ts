@@ -89,11 +89,16 @@ export interface UserActivityLog {
   id: string;
   userId: string;
   action: string;
+  entity?: string;
   description: string;
   ipAddress?: string;
   userAgent?: string;
+  status?: 'success' | 'failure';
+  payload?: Record<string, any>;
+  changes?: Record<string, any>;
   metadata?: Record<string, any>;
   timestamp: string;
+  createdAt?: string;
 }
 
 /**
@@ -340,13 +345,28 @@ export class UserDetailService {
   getUserActivityLogs(
     userId: string,
     page: number = 1,
-    limit: number = 20
+    limit: number = 20,
+    search?: string,
+    sortField?: string,
+    sortOrder?: 'asc' | 'desc'
   ): Observable<UserActivityLogsResponse> {
-    const params = new HttpParams().set('page', page.toString()).set('limit', limit.toString());
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+    
+    if (search) {
+      params = params.set('search', search);
+    }
+    if (sortField) {
+      params = params.set('sortField', sortField);
+    }
+    if (sortOrder) {
+      params = params.set('sortOrder', sortOrder);
+    }
 
     return this.http
       .get<ApiResponse<UserActivityLogsResponse>>(
-        `${API_URI_USER}/v1/users/${userId}/activity-logs`,
+        `${API_URI_USER}/v1/admin/users/${userId}/audit-logs`,
         { params }
       )
       .pipe(
@@ -355,6 +375,26 @@ export class UserDetailService {
             return unwrap(response);
           }
           return response as unknown as UserActivityLogsResponse;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Get audit log detail by ID
+   */
+  getAuditLogDetail(logId: string): Observable<UserActivityLog> {
+    return this.http
+      .get<ApiSingleResponse<UserActivityLog>>(
+        `${API_URI_USER}/v1/admin/users/audit-logs/${logId}`
+      )
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            const data = unwrap(response);
+            return data.item as UserActivityLog;
+          }
+          return response as unknown as UserActivityLog;
         }),
         catchError(this.handleError)
       );

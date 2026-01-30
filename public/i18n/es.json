@@ -1904,5 +1904,52 @@
       "provinceMessage": "¿Está seguro de que desea eliminar la provincia {{name}}? Esto también eliminará todos los distritos asociados.",
       "wardMessage": "¿Está seguro de que desea eliminar el distrito {{name}}?"
     }
+  },
+  "auditLogs": {
+    "title": "Registros de Auditoría",
+    "searchPlaceholder": "Buscar por acción o entidad...",
+    "empty": "No se encontraron registros de auditoría",
+    "table": {
+      "label": "Tabla de registros de auditoría"
+    },
+    "columns": {
+      "action": "Acción",
+      "entity": "Entidad",
+      "timestamp": "Fecha y Hora",
+      "ipAddress": "Dirección IP",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "status": {
+      "success": "Éxito",
+      "failure": "Fallo"
+    },
+    "actions": {
+      "view": "Ver detalles",
+      "viewDetail": "Ver detalles del registro",
+      "close": "Cerrar"
+    },
+    "pagination": {
+      "showing": "Mostrando",
+      "to": "a",
+      "of": "de",
+      "page": "Página",
+      "previous": "Página anterior",
+      "next": "Página siguiente"
+    },
+    "detail": {
+      "title": "Detalles del Registro",
+      "loading": "Cargando detalles...",
+      "action": "Acción",
+      "entity": "Entidad",
+      "description": "Descripción",
+      "timestamp": "Fecha y Hora",
+      "status": "Estado",
+      "networkInfo": "Información de Red",
+      "ipAddress": "Dirección IP",
+      "userAgent": "User Agent",
+      "payload": "Datos / Cambios",
+      "metadata": "Metadatos"
+    }
   }
 }

@@ -2145,5 +2145,52 @@
       "wardMessage": "Are you sure you want to delete ward {{name}}?"
     },
     "mapPlaceholder": "Map visualization coming soon"
+  },
+  "auditLogs": {
+    "title": "Audit Logs",
+    "searchPlaceholder": "Search by action or entity...",
+    "empty": "No audit logs found",
+    "table": {
+      "label": "Audit logs table"
+    },
+    "columns": {
+      "action": "Action",
+      "entity": "Entity",
+      "timestamp": "Timestamp",
+      "ipAddress": "IP Address",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "success": "Success",
+      "failure": "Failure"
+    },
+    "actions": {
+      "view": "View details",
+      "viewDetail": "View audit log detail",
+      "close": "Close"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "page": "Page",
+      "previous": "Previous page",
+      "next": "Next page"
+    },
+    "detail": {
+      "title": "Audit Log Details",
+      "loading": "Loading details...",
+      "action": "Action",
+      "entity": "Entity",
+      "description": "Description",
+      "timestamp": "Timestamp",
+      "status": "Status",
+      "networkInfo": "Network Information",
+      "ipAddress": "IP Address",
+      "userAgent": "User Agent",
+      "payload": "Payload / Changes",
+      "metadata": "Metadata"
+    }
   }
 }
