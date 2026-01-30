@@ -312,50 +312,60 @@ export class UserDetailService {
   }
 
   /**
-   * Get available roles for an organization or global roles
-   * @param orgId - Organization identifier (optional, for global roles omit this)
+   * Generic method to fetch resources (roles or permissions) from appropriate endpoint
+   * @param resourceType - Type of resource to fetch ('roles' or 'permissions')
+   * @param orgId - Organization identifier (optional, for global resources omit this)
+   * @param transform - Function to transform individual resource items
    */
-  getAvailableRoles(orgId?: string): Observable<Role[]> {
-    // Use different endpoints based on scope
-    const url = orgId 
-      ? `${API_URI_ORGANIZATION}/v1/orgs/roles`
-      : `${API_URI_COMMON}/v1/common/roles/global`;
+  private getResources<T>(
+    resourceType: 'roles' | 'permissions',
+    orgId: string | undefined,
+    transform: (item: any, orgId?: string) => T
+  ): Observable<T[]> {
+    // Use different endpoints based on scope and resource type
+    const url = orgId
+      ? `${API_URI_ORGANIZATION}/v1/orgs/${resourceType}`
+      : `${API_URI_COMMON}/v1/common/${resourceType}/global`;
 
     let params = new HttpParams();
     if (orgId) {
       params = params.set('orgId', orgId);
     }
 
-    return this.http
-      .get<ApiResponse<any[]>>(url, { params })
-      .pipe(
-        map((response) => {
-          if (isApiResponse(response)) {
-            const data = unwrap(response);
-            // Transform the response to Role[] format
-            // Backend returns string array of role names
-            return data.map((role: any) => {
-              if (typeof role === 'string') {
-                return {
-                  id: role,
-                  name: role,
-                  scope: orgId ? ('organization' as const) : ('global' as const),
-                };
-              }
-              // If backend returns objects, use them directly
-              return {
-                id: role.id || role.name,
-                name: role.name,
-                description: role.description,
-                scope: orgId ? ('organization' as const) : ('global' as const),
-                permissions: role.permissions,
-              };
-            });
-          }
-          return response as unknown as Role[];
-        }),
-        catchError(this.handleError)
-      );
+    return this.http.get<ApiResponse<any[]>>(url, { params }).pipe(
+      map((response) => {
+        if (isApiResponse(response)) {
+          const data = unwrap(response);
+          return data.map((item: any) => transform(item, orgId));
+        }
+        return response as unknown as T[];
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
+   * Get available roles for an organization or global roles
+   * @param orgId - Organization identifier (optional, for global roles omit this)
+   */
+  getAvailableRoles(orgId?: string): Observable<Role[]> {
+    return this.getResources<Role>('roles', orgId, (role: any, orgId) => {
+      if (typeof role === 'string') {
+        return {
+          id: role,
+          name: role,
+          scope: orgId ? ('organization' as const) : ('global' as const),
+        };
+      }
+      // If backend returns objects, use them directly
+      return {
+        id: role.id || role.name,
+        name: role.name,
+        description: role.description,
+        scope: orgId ? ('organization' as const) : ('global' as const),
+        permissions: role.permissions,
+      };
+    });
   }
 
   /**
@@ -363,45 +373,22 @@ export class UserDetailService {
    * @param orgId - Organization identifier (optional, for global permissions omit this)
    */
   getAvailablePermissions(orgId?: string): Observable<Permission[]> {
-    // Use different endpoints based on scope
-    const url = orgId 
-      ? `${API_URI_ORGANIZATION}/v1/orgs/permissions`
-      : `${API_URI_COMMON}/v1/common/permissions/global`;
-
-    let params = new HttpParams();
-    if (orgId) {
-      params = params.set('orgId', orgId);
-    }
-
-    return this.http
-      .get<ApiResponse<any[]>>(url, { params })
-      .pipe(
-        map((response) => {
-          if (isApiResponse(response)) {
-            const data = unwrap(response);
-            // Transform the response to Permission[] format
-            // Backend returns string array of permission names
-            return data.map((permission: any) => {
-              if (typeof permission === 'string') {
-                return {
-                  id: permission,
-                  name: permission,
-                };
-              }
-              // If backend returns objects, use them directly
-              return {
-                id: permission.id || permission.name,
-                name: permission.name,
-                description: permission.description,
-                resource: permission.resource,
-                action: permission.action,
-              };
-            });
-          }
-          return response as unknown as Permission[];
-        }),
-        catchError(this.handleError)
-      );
+    return this.getResources<Permission>('permissions', orgId, (permission: any) => {
+      if (typeof permission === 'string') {
+        return {
+          id: permission,
+          name: permission,
+        };
+      }
+      // If backend returns objects, use them directly
+      return {
+        id: permission.id || permission.name,
+        name: permission.name,
+        description: permission.description,
+        resource: permission.resource,
+        action: permission.action,
+      };
+    });
   }
 
   /**
