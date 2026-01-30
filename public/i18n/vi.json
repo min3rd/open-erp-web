@@ -941,5 +941,52 @@
         "reasonRequired": "Lý do là bắt buộc"
       }
     }
+  },
+  "auditLogs": {
+    "title": "Nhật Ký Kiểm Tra",
+    "searchPlaceholder": "Tìm kiếm theo hành động hoặc thực thể...",
+    "empty": "Không tìm thấy nhật ký kiểm tra",
+    "table": {
+      "label": "Bảng nhật ký kiểm tra"
+    },
+    "columns": {
+      "action": "Hành Động",
+      "entity": "Thực Thể",
+      "timestamp": "Thời Gian",
+      "ipAddress": "Địa Chỉ IP",
+      "status": "Trạng Thái",
+      "actions": "Thao Tác"
+    },
+    "status": {
+      "success": "Thành Công",
+      "failure": "Thất Bại"
+    },
+    "actions": {
+      "view": "Xem chi tiết",
+      "viewDetail": "Xem chi tiết nhật ký",
+      "close": "Đóng"
+    },
+    "pagination": {
+      "showing": "Hiển thị",
+      "to": "đến",
+      "of": "trong",
+      "page": "Trang",
+      "previous": "Trang trước",
+      "next": "Trang sau"
+    },
+    "detail": {
+      "title": "Chi Tiết Nhật Ký",
+      "loading": "Đang tải chi tiết...",
+      "action": "Hành Động",
+      "entity": "Thực Thể",
+      "description": "Mô Tả",
+      "timestamp": "Thời Gian",
+      "status": "Trạng Thái",
+      "networkInfo": "Thông Tin Mạng",
+      "ipAddress": "Địa Chỉ IP",
+      "userAgent": "User Agent",
+      "payload": "Dữ Liệu / Thay Đổi",
+      "metadata": "Metadata"
+    }
   }
 }

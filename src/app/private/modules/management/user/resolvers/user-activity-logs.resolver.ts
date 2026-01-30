@@ -18,7 +18,7 @@ export const userActivityLogsResolver: ResolveFn<UserActivityLogsResponse | null
     return of(null);
   }
 
-  return userDetailService.getUserActivityLogs(userId, 1, 20).pipe(
+  return userDetailService.getUserActivityLogs(userId, 1, 20, undefined, 'timestamp', 'desc').pipe(
     catchError((error) => {
       console.error('Failed to resolve user activity logs:', error);
       return of(null);
