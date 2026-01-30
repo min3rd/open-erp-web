@@ -254,6 +254,172 @@ export class UserDetailService {
   }
 
   /**
+   * Admin: Reset user password
+   */
+  adminResetPassword(
+    identifier: string,
+    data: {
+      password?: string;
+      forceResetOnNextLogin?: boolean;
+      sendEmail?: boolean;
+      revokeSessions?: boolean;
+      reason?: string;
+    }
+  ): Observable<{
+    success: boolean;
+    userId: string;
+    generatedPassword?: string;
+    emailSent: boolean;
+    sessionsRevoked: boolean;
+    tokenVersion: number;
+  }> {
+    return this.http
+      .post<
+        ApiResponse<{
+          success: boolean;
+          userId: string;
+          generatedPassword?: string;
+          emailSent: boolean;
+          sessionsRevoked: boolean;
+          tokenVersion: number;
+        }>
+      >(`${API_URI_USER}/v1/admin/users/${identifier}/reset-password`, data)
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            return unwrap(response);
+          }
+          return response as any;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Admin: Revoke user sessions
+   */
+  adminRevokeSessions(
+    identifier: string,
+    data: {
+      revokeRefreshTokens?: boolean;
+      revokeAllDevices?: boolean;
+      reason?: string;
+    }
+  ): Observable<{
+    success: boolean;
+    userId: string;
+    tokensRevoked: number;
+    tokenVersion: number;
+  }> {
+    return this.http
+      .post<
+        ApiResponse<{
+          success: boolean;
+          userId: string;
+          tokensRevoked: number;
+          tokenVersion: number;
+        }>
+      >(`${API_URI_USER}/v1/admin/users/${identifier}/revoke-sessions`, data)
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            return unwrap(response);
+          }
+          return response as any;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Admin: Block user
+   */
+  adminBlockUser(
+    identifier: string,
+    data: {
+      reason: string;
+      softBlock?: boolean;
+      revokeSessions?: boolean;
+      sendEmail?: boolean;
+    }
+  ): Observable<{
+    success: boolean;
+    userId: string;
+    blockedAt: Date;
+    reason: string;
+    emailSent: boolean;
+    sessionsRevoked: boolean;
+  }> {
+    return this.http
+      .post<
+        ApiResponse<{
+          success: boolean;
+          userId: string;
+          blockedAt: Date;
+          reason: string;
+          emailSent: boolean;
+          sessionsRevoked: boolean;
+        }>
+      >(`${API_URI_USER}/v1/admin/users/${identifier}/block`, data)
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            return unwrap(response);
+          }
+          return response as any;
+        }),
+        tap(() => {
+          // Reload user to update status
+          const user = this.userUpdatedSubject.value;
+          if (user && (user.id === identifier || user.username === identifier || user.email === identifier)) {
+            this.getUserDetail(user.id).subscribe();
+          }
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Admin: Unblock user
+   */
+  adminUnblockUser(
+    identifier: string,
+    data: {
+      reason?: string;
+      sendEmail?: boolean;
+    }
+  ): Observable<{
+    success: boolean;
+    userId: string;
+    emailSent: boolean;
+  }> {
+    return this.http
+      .post<
+        ApiResponse<{
+          success: boolean;
+          userId: string;
+          emailSent: boolean;
+        }>
+      >(`${API_URI_USER}/v1/admin/users/${identifier}/unblock`, data)
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            return unwrap(response);
+          }
+          return response as any;
+        }),
+        tap(() => {
+          // Reload user to update status
+          const user = this.userUpdatedSubject.value;
+          if (user && (user.id === identifier || user.username === identifier || user.email === identifier)) {
+            this.getUserDetail(user.id).subscribe();
+          }
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
    * Handle HTTP errors
    */
   private handleError(error: HttpErrorResponse | ApiResponseError): Observable<never> {
