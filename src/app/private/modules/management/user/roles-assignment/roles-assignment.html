@@ -16,7 +16,7 @@
             (onChange)="onScopeChange($event)"
             optionLabel="label"
             optionValue="value"
-            [attr.aria-label]="'Select scope for viewing roles and permissions'"
+            [attr.aria-label]="'userDetail.rolesAssignment.scopeSelector.ariaLabel' | transloco"
             styleClass="w-full sm:w-auto"
           />
         </div>
@@ -303,10 +303,10 @@
   [visible]="showGrantRolesDialog()"
   (onHide)="closeGrantRolesDialog()"
   [modal]="true"
-  [style]="{ width: '95vw', maxWidth: '600px' }"
   id="user-roles-grant-dialog"
   [header]="'userDetail.rolesAssignment.dialogs.grantRoles.title' | transloco"
   [breakpoints]="{ '640px': '95vw' }"
+  styleClass="w-[95vw] max-w-[600px]"
 >
   <ng-template #header>
     <h3 id="user-roles-grant-dialog-title" class="text-base sm:text-lg">
@@ -331,9 +331,9 @@
         optionLabel="name"
         optionValue="id"
         [placeholder]="'userDetail.rolesAssignment.dialogs.grantRoles.selectRolesPlaceholder' | transloco"
-        [style]="{ width: '100%' }"
         display="chip"
         [panelStyleClass]="'w-full'"
+        styleClass="w-full"
       />
     </div>
   </div>
@@ -364,9 +364,9 @@
   [visible]="showManageOrgRolesDialog()"
   (onHide)="closeManageOrgRolesDialog()"
   [modal]="true"
-  [style]="{ width: '95vw', maxWidth: '700px' }"
   id="user-roles-manage-org-dialog"
   [breakpoints]="{ '640px': '95vw' }"
+  styleClass="w-[95vw] max-w-[700px]"
 >
   <ng-template #header>
     <h3 id="user-roles-manage-org-dialog-title" class="text-base sm:text-lg">
@@ -392,9 +392,9 @@
           optionLabel="name"
           optionValue="id"
           [placeholder]="'userDetail.rolesAssignment.dialogs.grantRoles.selectRolesPlaceholder' | transloco"
-          [style]="{ width: '100%' }"
           display="chip"
           [panelStyleClass]="'w-full'"
+          styleClass="w-full"
         />
       </div>
     }

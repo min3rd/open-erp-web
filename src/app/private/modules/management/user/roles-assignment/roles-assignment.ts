@@ -28,7 +28,6 @@ import { MessageService } from 'primeng/api';
 import {
   UserDetailService,
   UserDetail,
-  UserMembership,
   UserRolesPermissions,
   OrganizationBasic,
   Role,
@@ -256,9 +255,23 @@ export class RolesAssignment implements OnInit, OnDestroy {
     const orgId = this.currentOrganization()?.id;
     const roleIds = this.selectedRoleIds();
 
-    if (!userData || !orgId || roleIds.length === 0) {
-      // TODO: Implement global role grants when backend endpoint is available
-      console.warn('Grant roles requires organization ID. Global role grants not yet implemented.');
+    if (!userData || roleIds.length === 0) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translocoService.translate('userDetail.messages.error'),
+        detail: this.translocoService.translate('userDetail.rolesAssignment.dialogs.grantRoles.error'),
+      });
+      return;
+    }
+
+    if (!orgId) {
+      // Global role grants are not yet supported by the backend; provide clear UI feedback
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.translocoService.translate('userDetail.messages.error'),
+        detail: 'Global role grants are not yet implemented. Please select an organization scope.',
+      });
+      this.showGrantRolesDialog.set(false);
       return;
     }
 
@@ -414,22 +427,6 @@ export class RolesAssignment implements OnInit, OnDestroy {
   protected formatDate(dateString: string): string {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString();
-  }
-
-  /**
-   * Get role names as comma-separated string
-   */
-  protected getRolesDisplay(roles: Role[]): string {
-    if (!roles || roles.length === 0) return '-';
-    return roles.map(r => r.name).join(', ');
-  }
-
-  /**
-   * Get permission names as comma-separated string
-   */
-  protected getPermissionsDisplay(permissions: Permission[] | any[]): string {
-    if (!permissions || permissions.length === 0) return '-';
-    return permissions.map((p: any) => p.name || p).join(', ');
   }
 }
 

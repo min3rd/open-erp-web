@@ -643,7 +643,8 @@
       "title": "Gestión de Roles y Membresías",
       "scopeSelector": {
         "global": "Global",
-        "organization": "Organización"
+        "organization": "Organización",
+        "ariaLabel": "Seleccionar ámbito para ver roles y permisos"
       },
       "globalScope": {
         "title": "Ámbito Global",
