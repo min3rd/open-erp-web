@@ -23,7 +23,6 @@ import { ButtonModule } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { MultiSelect } from 'primeng/multiselect';
 import { MessageService } from 'primeng/api';
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primeng/accordion';
 
 // Services and types
 import {
@@ -35,8 +34,9 @@ import {
   Role,
 } from '../services/user-detail.service';
 import { UserRolesPermissionsData } from '../resolvers/user-roles-permissions.resolver';
-import { AuthService } from '../../../../../core/services/auth-service';
-import { OrganizationContextService } from '../../../../../core/services/organization-context.service';
+import { AuthService } from '../../../../../../core/services/auth-service';
+import { OrganizationContextService } from '../../../../../../core/services/organization-context.service';
+import { UserDto } from '../../../../../../core/interfaces/user.types';
 
 type ScopeType = 'global' | 'organization';
 
@@ -59,10 +59,6 @@ interface ScopeOption {
     ButtonModule,
     Dialog,
     MultiSelect,
-    Accordion,
-    AccordionPanel,
-    AccordionHeader,
-    AccordionContent,
   ],
   templateUrl: './roles-assignment.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -78,7 +74,7 @@ export class RolesAssignment implements OnInit, OnDestroy {
 
   // State signals
   protected readonly user = signal<UserDetail | null>(null);
-  protected readonly currentUser = signal<any>(null);
+  protected readonly currentUser = signal<UserDto | null>(null);
   protected readonly rolesPermissions = signal<UserRolesPermissions | null>(null);
   protected readonly organizations = signal<OrganizationBasic[]>([]);
   protected readonly isLoading = signal(false);
@@ -133,7 +129,7 @@ export class RolesAssignment implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Get current authenticated user
-    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
+    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user: UserDto | null) => {
       this.currentUser.set(user);
     });
 
