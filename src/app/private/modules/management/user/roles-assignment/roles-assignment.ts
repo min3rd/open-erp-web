@@ -102,10 +102,18 @@ export class RolesAssignment implements OnInit, OnDestroy {
   ]);
 
   // Check if current user has global permissions
+  // Super admin users bypass all permission checks
   protected readonly hasGlobalPermissions = computed(() => {
     const user = this.currentUser();
-    if (!user || !user.permissions) return false;
+    if (!user) return false;
     
+    // Super admin role bypasses all permission checks
+    if (user.roles && user.roles.includes('SUPER_ADMIN')) {
+      return true;
+    }
+    
+    // Otherwise check for specific permissions
+    if (!user.permissions) return false;
     const permissions = user.permissions;
     return permissions.includes('MANAGE_USER') || permissions.includes('MANAGE_ORG');
   });
