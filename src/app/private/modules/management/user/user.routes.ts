@@ -10,6 +10,7 @@ import { AuditLogs } from './audit-logs/audit-logs';
 import { userDetailResolver } from './resolvers/user-detail.resolver';
 import { userMembershipsResolver } from './resolvers/user-memberships.resolver';
 import { userActivityLogsResolver } from './resolvers/user-activity-logs.resolver';
+import { userRolesPermissionsResolver } from './resolvers/user-roles-permissions.resolver';
 
 export const routes: Routes = [
   {
@@ -53,7 +54,10 @@ export const routes: Routes = [
                       {
                         path: 'roles-assignment',
                         component: RolesAssignment,
-                        resolve: { memberships: userMembershipsResolver },
+                        resolve: { 
+                          memberships: userMembershipsResolver,
+                          rolesPermissionsData: userRolesPermissionsResolver
+                        },
                       },
                       {
                         path: 'reset-password',

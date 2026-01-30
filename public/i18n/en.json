@@ -639,6 +639,99 @@
       "joinedAt": "Joined",
       "noMemberships": "No organization memberships found"
     },
+    "rolesAssignment": {
+      "title": "Roles & Membership Management",
+      "scopeSelector": {
+        "global": "Global",
+        "organization": "Organization"
+      },
+      "globalScope": {
+        "title": "Global Scope",
+        "subtitle": "System-wide roles and organization memberships",
+        "rolesPermissions": {
+          "title": "Global Roles & Permissions",
+          "noRoles": "No global roles assigned",
+          "noPermissions": "No global permissions assigned",
+          "roles": "Roles",
+          "permissions": "Permissions",
+          "grantRole": "Grant Global Role",
+          "grantPermission": "Grant Permission"
+        },
+        "organizationMemberships": {
+          "title": "Organization Memberships",
+          "subtitle": "All organizations this user belongs to",
+          "noMemberships": "User is not a member of any organization",
+          "table": {
+            "organization": "Organization",
+            "code": "Code",
+            "roles": "Roles",
+            "joinedAt": "Joined Date",
+            "actions": "Actions"
+          },
+          "actions": {
+            "manageRoles": "Manage Roles",
+            "viewOrg": "View Organization"
+          }
+        },
+        "restricted": {
+          "title": "Access Restricted",
+          "message": "You do not have permission to view global scope settings. This section requires MANAGE_USER or MANAGE_ORG global permissions."
+        }
+      },
+      "organizationScope": {
+        "title": "Organization Scope",
+        "subtitle": "Roles and permissions for the current organization",
+        "currentOrg": "Current Organization",
+        "rolesPermissions": {
+          "title": "Organization Roles & Permissions",
+          "noRoles": "No roles assigned in this organization",
+          "noPermissions": "No permissions assigned in this organization",
+          "roles": "Roles",
+          "permissions": "Permissions",
+          "grantRole": "Grant Role",
+          "revokeRole": "Revoke Role"
+        },
+        "noOrganization": {
+          "title": "No Organization Selected",
+          "message": "Please select an organization to manage roles and permissions."
+        }
+      },
+      "dialogs": {
+        "grantRoles": {
+          "title": "Grant Roles",
+          "subtitle": "Assign roles to user",
+          "selectRoles": "Select Roles",
+          "selectRolesPlaceholder": "Choose one or more roles",
+          "cancel": "Cancel",
+          "grant": "Grant Roles",
+          "success": "Roles granted successfully",
+          "error": "Failed to grant roles"
+        },
+        "revokeRoles": {
+          "title": "Revoke Roles",
+          "subtitle": "Remove roles from user",
+          "selectRoles": "Select Roles to Revoke",
+          "cancel": "Cancel",
+          "revoke": "Revoke Roles",
+          "confirm": "Are you sure you want to revoke the selected roles?",
+          "success": "Roles revoked successfully",
+          "error": "Failed to revoke roles"
+        },
+        "manageOrgRoles": {
+          "title": "Manage Organization Roles",
+          "subtitle": "Manage user roles for {{orgName}}",
+          "currentRoles": "Current Roles",
+          "availableRoles": "Available Roles",
+          "cancel": "Cancel",
+          "save": "Save Changes",
+          "success": "Organization roles updated successfully",
+          "error": "Failed to update organization roles"
+        }
+      },
+      "loading": "Loading roles and permissions...",
+      "loadError": "Failed to load roles and permissions",
+      "noData": "No data available"
+    },
     "activity": {
       "title": "Activity History",
       "loadMore": "Load More",
