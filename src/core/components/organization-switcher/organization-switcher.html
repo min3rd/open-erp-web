@@ -229,28 +229,28 @@
   [closable]="true"
   [draggable]="false"
   [resizable]="false"
-  [style]="{ width: '90vw', 'max-width': '600px' }"
+  styleClass="w-[90vw] max-w-md"
   id="organization-switcher-dialog"
   [attr.aria-labelledby]="'organization-switcher-dialog-title'"
 >
   <ng-template #header>
-    <div class="flex items-center gap-2" id="organization-switcher-dialog-header">
-      <i class="pi pi-building text-primary-500" aria-hidden="true"></i>
+    <div class="flex items-center gap-1.5" id="organization-switcher-dialog-header">
+      <i class="pi pi-building text-primary-500 text-sm" aria-hidden="true"></i>
       <h2
         id="organization-switcher-dialog-title"
-        class="text-lg font-semibold text-surface-900 dark:text-surface-0"
+        class="text-base font-semibold text-surface-900 dark:text-surface-0"
       >
         {{ 'organizationSwitcher.selectOrganization' | transloco }}
       </h2>
     </div>
   </ng-template>
 
-  <div class="flex flex-col gap-3" id="organization-switcher-dialog-content">
+  <div class="flex flex-col gap-2" id="organization-switcher-dialog-content">
     @if (searchable()) {
     <!-- Search -->
-    <p-inputgroup>
+    <p-inputgroup size="small">
       <p-inputgroup-addon>
-        <i class="pi pi-search" aria-hidden="true"></i>
+        <i class="pi pi-search text-xs" aria-hidden="true"></i>
       </p-inputgroup-addon>
       <input
         id="organization-switcher-dialog-search"
@@ -259,13 +259,14 @@
         [(ngModel)]="searchQuery"
         [placeholder]="'organizationSwitcher.search' | transloco"
         [attr.aria-label]="'organizationSwitcher.search' | transloco"
+        class="text-sm"
       />
     </p-inputgroup>
     }
 
     <!-- Organization List -->
     <div
-      class="max-h-96 overflow-y-auto"
+      class="max-h-[60vh] overflow-y-auto -mx-1"
       id="organization-switcher-dialog-list"
       role="listbox"
     >
@@ -274,7 +275,7 @@
         type="button"
         [id]="'organization-switcher-dialog-option-' + org.id"
         (click)="onOrganizationSelect(org.id)"
-        class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-lg transition-colors text-left"
+        class="w-full flex items-center gap-2 px-2 py-1.5 hover:bg-surface-100 dark:hover:bg-surface-800 rounded-md transition-colors text-left"
         [class.bg-primary-50]="currentOrganization()?.id === org.id"
         [class.dark:bg-primary-900/20]="currentOrganization()?.id === org.id"
         [attr.aria-selected]="currentOrganization()?.id === org.id"
@@ -284,34 +285,34 @@
         <img
           [src]="org.logoUrl"
           [alt]="org.name + ' logo'"
-          class="w-10 h-10 rounded-full object-cover flex-shrink-0"
+          class="w-7 h-7 rounded-full object-cover flex-shrink-0"
           aria-hidden="true"
         />
         } @else {
         <div
-          class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+          class="w-7 h-7 rounded-full bg-primary-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
           aria-hidden="true"
         >
           {{ getOrganizationInitials(org.name) }}
         </div>
         }
         <div class="flex-1 min-w-0">
-          <div class="text-sm font-medium text-surface-900 dark:text-surface-0 truncate">
+          <div class="text-sm font-medium text-surface-900 dark:text-surface-0 truncate leading-tight">
             {{ org.name }}
           </div>
           @if (org.code) {
-          <div class="text-xs text-surface-500 dark:text-surface-400 truncate">
-            {{ 'organizationSwitcher.taxId' | transloco }}: {{ org.code }}
+          <div class="text-xs text-surface-500 dark:text-surface-400 truncate leading-tight">
+            {{ org.code }}
           </div>
           }
         </div>
         @if (currentOrganization()?.id === org.id) {
-        <i class="pi pi-check text-primary-500 flex-shrink-0" aria-hidden="true"></i>
+        <i class="pi pi-check text-primary-500 text-sm flex-shrink-0" aria-hidden="true"></i>
         }
       </button>
       } @empty {
       <div
-        class="px-3 py-8 text-center text-sm text-surface-500 dark:text-surface-400"
+        class="px-2 py-4 text-center text-sm text-surface-500 dark:text-surface-400"
         id="organization-switcher-dialog-empty"
       >
         {{ 'organizationSwitcher.noOrganizations' | transloco }}
@@ -319,27 +320,16 @@
       }
     </div>
 
-    <!-- Create New Organization Button -->
-    <div class="pt-2 border-t border-surface-200 dark:border-surface-700">
-      <p-button
-        id="organization-switcher-dialog-create"
-        (onClick)="onCreateOrganization()"
-        [label]="'organizationSwitcher.createNew' | transloco"
-        icon="pi pi-plus"
-        severity="primary"
-        class="w-full"
-        [attr.aria-label]="'organizationSwitcher.createNew' | transloco"
-      />
-    </div>
   </div>
 
   <ng-template #footer>
-    <div class="flex justify-end">
+    <div class="flex justify-end -mt-2">
       <p-button
         id="organization-switcher-dialog-close"
         (onClick)="closeOrganizationDialog()"
         [label]="'languageSelector.closeDialog' | transloco"
         severity="secondary"
+        size="small"
         [text]="true"
         [attr.aria-label]="'languageSelector.closeDialog' | transloco"
       />
