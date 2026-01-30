@@ -162,13 +162,17 @@ export class ResetPassword implements OnInit, OnDestroy {
         if (method === 'auto') {
           this.resetPasswordForm.controls.password.clearValidators();
           this.resetPasswordForm.controls.password.setValue('');
-          this.generatedPassword.set(null);
+          // Generate password immediately when switching to auto mode
+          const newPassword = this.generatePassword();
+          this.generatedPassword.set(newPassword);
         } else {
           this.resetPasswordForm.controls.password.setValidators([
             Validators.required,
             Validators.minLength(8),
             this.passwordStrengthValidator.bind(this),
           ]);
+          // Clear generated password when switching to manual mode
+          this.generatedPassword.set(null);
         }
         this.resetPasswordForm.controls.password.updateValueAndValidity();
       });
@@ -232,33 +236,45 @@ export class ResetPassword implements OnInit, OnDestroy {
   }
 
   /**
-   * Generate random password
+   * Generate random password using cryptographically secure method
    */
   private generatePassword(): string {
-    const length = Math.floor(Math.random() * 9) + 8; // 8-16 characters
+    const length = 12; // Fixed 12 characters for security
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const numbers = '0123456789';
     const special = '!@#$%^&*()_+-=[]{}';
-    const all = uppercase + lowercase + numbers + special;
 
-    let password = '';
+    // Use crypto.getRandomValues for cryptographically secure randomness
+    const getRandomChar = (charset: string): string => {
+      const randomValues = new Uint32Array(1);
+      crypto.getRandomValues(randomValues);
+      return charset[randomValues[0] % charset.length];
+    };
+
     // Ensure at least one of each type
-    password += uppercase[Math.floor(Math.random() * uppercase.length)];
-    password += lowercase[Math.floor(Math.random() * lowercase.length)];
-    password += numbers[Math.floor(Math.random() * numbers.length)];
-    password += special[Math.floor(Math.random() * special.length)];
+    const password: string[] = [
+      getRandomChar(uppercase),
+      getRandomChar(lowercase),
+      getRandomChar(numbers),
+      getRandomChar(special),
+    ];
 
-    // Fill the rest
+    // Fill the rest with random characters from all sets
+    const all = uppercase + lowercase + numbers + special;
     for (let i = password.length; i < length; i++) {
-      password += all[Math.floor(Math.random() * all.length)];
+      password.push(getRandomChar(all));
     }
 
-    // Shuffle the password
-    return password
-      .split('')
-      .sort(() => Math.random() - 0.5)
-      .join('');
+    // Fisher-Yates shuffle for uniform distribution
+    for (let i = password.length - 1; i > 0; i--) {
+      const randomValues = new Uint32Array(1);
+      crypto.getRandomValues(randomValues);
+      const j = randomValues[0] % (i + 1);
+      [password[i], password[j]] = [password[j], password[i]];
+    }
+
+    return password.join('');
   }
 
   /**
@@ -316,13 +332,21 @@ export class ResetPassword implements OnInit, OnDestroy {
     const formValue = this.resetPasswordForm.value;
     const isAutoGenerate = formValue.resetMethod === 'auto';
 
-    const requestData: any = {
+    const requestData: {
+      password?: string;
+      forceResetOnNextLogin?: boolean;
+      sendEmail?: boolean;
+      revokeSessions?: boolean;
+      reason?: string;
+    } = {
       forceResetOnNextLogin: formValue.forceResetOnNextLogin,
       sendEmail: formValue.sendEmail,
       revokeSessions: formValue.revokeSessions,
       reason: formValue.reason || undefined,
     };
 
+    // For manual mode, use the password from the form
+    // For auto mode, don't send password so backend generates one
     if (!isAutoGenerate && formValue.password) {
       requestData.password = formValue.password;
     }
@@ -440,9 +464,19 @@ export class ResetPassword implements OnInit, OnDestroy {
 
     const formValue = this.blockUserForm.value;
 
+    // Reason is required and validated by form, so we can safely use it
+    if (!formValue.reason) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.translocoService.translate('userDetail.resetPassword.messages.reasonRequired'),
+      });
+      this.isLoading.set(false);
+      return;
+    }
+
     this.userDetailService
       .adminBlockUser(currentUser.id, {
-        reason: formValue.reason!,
+        reason: formValue.reason,
         softBlock: formValue.softBlock,
         revokeSessions: formValue.revokeSessions,
         sendEmail: formValue.sendEmail,

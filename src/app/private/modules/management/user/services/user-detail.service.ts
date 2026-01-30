@@ -60,6 +60,49 @@ export interface UserActivityLogsResponse {
 }
 
 /**
+ * Admin reset password response
+ */
+export interface AdminResetPasswordResponse {
+  success: boolean;
+  userId: string;
+  generatedPassword?: string;
+  emailSent: boolean;
+  sessionsRevoked: boolean;
+  tokenVersion: number;
+}
+
+/**
+ * Admin revoke sessions response
+ */
+export interface AdminRevokeSessionsResponse {
+  success: boolean;
+  userId: string;
+  tokensRevoked: number;
+  tokenVersion: number;
+}
+
+/**
+ * Admin block user response
+ */
+export interface AdminBlockUserResponse {
+  success: boolean;
+  userId: string;
+  blockedAt: Date;
+  reason: string;
+  emailSent: boolean;
+  sessionsRevoked: boolean;
+}
+
+/**
+ * Admin unblock user response
+ */
+export interface AdminUnblockUserResponse {
+  success: boolean;
+  userId: string;
+  emailSent: boolean;
+}
+
+/**
  * Service for user detail operations
  * Handles fetching and managing user detail data
  */
@@ -265,31 +308,18 @@ export class UserDetailService {
       revokeSessions?: boolean;
       reason?: string;
     }
-  ): Observable<{
-    success: boolean;
-    userId: string;
-    generatedPassword?: string;
-    emailSent: boolean;
-    sessionsRevoked: boolean;
-    tokenVersion: number;
-  }> {
+  ): Observable<AdminResetPasswordResponse> {
     return this.http
-      .post<
-        ApiResponse<{
-          success: boolean;
-          userId: string;
-          generatedPassword?: string;
-          emailSent: boolean;
-          sessionsRevoked: boolean;
-          tokenVersion: number;
-        }>
-      >(`${API_URI_USER}/v1/admin/users/${identifier}/reset-password`, data)
+      .post<ApiResponse<AdminResetPasswordResponse>>(
+        `${API_URI_USER}/v1/admin/users/${identifier}/reset-password`,
+        data
+      )
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
             return unwrap(response);
           }
-          return response as any;
+          return response as unknown as AdminResetPasswordResponse;
         }),
         catchError(this.handleError)
       );
@@ -305,27 +335,18 @@ export class UserDetailService {
       revokeAllDevices?: boolean;
       reason?: string;
     }
-  ): Observable<{
-    success: boolean;
-    userId: string;
-    tokensRevoked: number;
-    tokenVersion: number;
-  }> {
+  ): Observable<AdminRevokeSessionsResponse> {
     return this.http
-      .post<
-        ApiResponse<{
-          success: boolean;
-          userId: string;
-          tokensRevoked: number;
-          tokenVersion: number;
-        }>
-      >(`${API_URI_USER}/v1/admin/users/${identifier}/revoke-sessions`, data)
+      .post<ApiResponse<AdminRevokeSessionsResponse>>(
+        `${API_URI_USER}/v1/admin/users/${identifier}/revoke-sessions`,
+        data
+      )
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
             return unwrap(response);
           }
-          return response as any;
+          return response as unknown as AdminRevokeSessionsResponse;
         }),
         catchError(this.handleError)
       );
@@ -342,36 +363,26 @@ export class UserDetailService {
       revokeSessions?: boolean;
       sendEmail?: boolean;
     }
-  ): Observable<{
-    success: boolean;
-    userId: string;
-    blockedAt: Date;
-    reason: string;
-    emailSent: boolean;
-    sessionsRevoked: boolean;
-  }> {
+  ): Observable<AdminBlockUserResponse> {
     return this.http
-      .post<
-        ApiResponse<{
-          success: boolean;
-          userId: string;
-          blockedAt: Date;
-          reason: string;
-          emailSent: boolean;
-          sessionsRevoked: boolean;
-        }>
-      >(`${API_URI_USER}/v1/admin/users/${identifier}/block`, data)
+      .post<ApiResponse<AdminBlockUserResponse>>(
+        `${API_URI_USER}/v1/admin/users/${identifier}/block`,
+        data
+      )
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
             return unwrap(response);
           }
-          return response as any;
+          return response as unknown as AdminBlockUserResponse;
         }),
         tap(() => {
           // Reload user to update status
           const user = this.userUpdatedSubject.value;
-          if (user && (user.id === identifier || user.username === identifier || user.email === identifier)) {
+          if (
+            user &&
+            (user.id === identifier || user.username === identifier || user.email === identifier)
+          ) {
             this.getUserDetail(user.id).subscribe();
           }
         }),
@@ -388,30 +399,26 @@ export class UserDetailService {
       reason?: string;
       sendEmail?: boolean;
     }
-  ): Observable<{
-    success: boolean;
-    userId: string;
-    emailSent: boolean;
-  }> {
+  ): Observable<AdminUnblockUserResponse> {
     return this.http
-      .post<
-        ApiResponse<{
-          success: boolean;
-          userId: string;
-          emailSent: boolean;
-        }>
-      >(`${API_URI_USER}/v1/admin/users/${identifier}/unblock`, data)
+      .post<ApiResponse<AdminUnblockUserResponse>>(
+        `${API_URI_USER}/v1/admin/users/${identifier}/unblock`,
+        data
+      )
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
             return unwrap(response);
           }
-          return response as any;
+          return response as unknown as AdminUnblockUserResponse;
         }),
         tap(() => {
           // Reload user to update status
           const user = this.userUpdatedSubject.value;
-          if (user && (user.id === identifier || user.username === identifier || user.email === identifier)) {
+          if (
+            user &&
+            (user.id === identifier || user.username === identifier || user.email === identifier)
+          ) {
             this.getUserDetail(user.id).subscribe();
           }
         }),
