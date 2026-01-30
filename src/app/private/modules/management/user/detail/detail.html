@@ -62,8 +62,8 @@
     </div>
 
     <!-- Actions Tab: General, Roles Assignment, Reset Password, Audit Logs -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-      <p-tabs [(value)]="activeTab" (onChange)="onTabChange($event)" id="user-detail-tabs">
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+      <p-tabs [(value)]="activeTab" (onChange)="onTabChange($event)" id="user-detail-tabs" class="flex flex-auto flex-col h-full">
         <p-tablist id="user-detail-tablist">
           <p-tab [routerLink]="['general']" value="general" id="user-detail-tab-general">
             <i class="pi pi-user mr-2"></i>
