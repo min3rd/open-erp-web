@@ -12,11 +12,11 @@
           <p-selectButton
             id="user-roles-assignment-scope-selector"
             [options]="scopeOptions()"
-            [(ngModel)]="selectedScope"
+            [ngModel]="selectedScope()"
             (onChange)="onScopeChange($event)"
             optionLabel="label"
             optionValue="value"
-            [attr.aria-label]="'userDetail.rolesAssignment.scopeSelector.global' | transloco"
+            [attr.aria-label]="'Select scope for viewing roles and permissions'"
           />
         </div>
       </ng-template>
@@ -278,7 +278,8 @@
 
 <!-- Grant Roles Dialog -->
 <p-dialog
-  [(visible)]="showGrantRolesDialog"
+  [visible]="showGrantRolesDialog()"
+  (onHide)="closeGrantRolesDialog()"
   [modal]="true"
   [style]="{ width: '600px' }"
   id="user-roles-grant-dialog"
@@ -302,7 +303,8 @@
       <p-multiSelect
         id="user-roles-grant-select"
         [options]="availableRoles()"
-        [(ngModel)]="selectedRoleIds"
+        [ngModel]="selectedRoleIds()"
+        (ngModelChange)="onRoleSelectionChange($event)"
         optionLabel="name"
         optionValue="id"
         [placeholder]="'userDetail.rolesAssignment.dialogs.grantRoles.selectRolesPlaceholder' | transloco"
@@ -318,7 +320,7 @@
         id="user-roles-grant-cancel-button"
         [label]="'userDetail.rolesAssignment.dialogs.grantRoles.cancel' | transloco"
         [text]="true"
-        (onClick)="showGrantRolesDialog.set(false)"
+        (onClick)="closeGrantRolesDialog()"
       />
       <p-button
         id="user-roles-grant-confirm-button"
@@ -333,7 +335,8 @@
 
 <!-- Manage Organization Roles Dialog -->
 <p-dialog
-  [(visible)]="showManageOrgRolesDialog"
+  [visible]="showManageOrgRolesDialog()"
+  (onHide)="closeManageOrgRolesDialog()"
   [modal]="true"
   [style]="{ width: '700px' }"
   id="user-roles-manage-org-dialog"
@@ -357,7 +360,8 @@
         <p-multiSelect
           id="user-roles-manage-org-select"
           [options]="availableRoles()"
-          [(ngModel)]="selectedRoleIds"
+          [ngModel]="selectedRoleIds()"
+          (ngModelChange)="onRoleSelectionChange($event)"
           optionLabel="name"
           optionValue="id"
           [placeholder]="'userDetail.rolesAssignment.dialogs.grantRoles.selectRolesPlaceholder' | transloco"
@@ -374,7 +378,7 @@
         id="user-roles-manage-org-cancel-button"
         [label]="'userDetail.rolesAssignment.dialogs.manageOrgRoles.cancel' | transloco"
         [text]="true"
-        (onClick)="showManageOrgRolesDialog.set(false)"
+        (onClick)="closeManageOrgRolesDialog()"
       />
       <p-button
         id="user-roles-manage-org-save-button"

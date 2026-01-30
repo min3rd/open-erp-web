@@ -32,6 +32,7 @@ import {
   UserRolesPermissions,
   OrganizationBasic,
   Role,
+  Permission,
 } from '../services/user-detail.service';
 import { UserRolesPermissionsData } from '../resolvers/user-roles-permissions.resolver';
 import { AuthService } from '../../../../../../core/services/auth-service';
@@ -212,8 +213,10 @@ export class RolesAssignment implements OnInit, OnDestroy {
    * Handle scope change
    */
   protected onScopeChange(event: any): void {
-    this.selectedScope.set(event.value);
-    this.reloadRolesPermissions();
+    if (event && event.value) {
+      this.selectedScope.set(event.value);
+      this.reloadRolesPermissions();
+    }
   }
 
   /**
@@ -238,7 +241,7 @@ export class RolesAssignment implements OnInit, OnDestroy {
           this.messageService.add({
             severity: 'error',
             summary: this.translocoService.translate('userDetail.messages.error'),
-            detail: error.message,
+            detail: this.translocoService.translate('userDetail.rolesAssignment.loadError'),
           });
           this.isLoading.set(false);
         },
@@ -253,7 +256,11 @@ export class RolesAssignment implements OnInit, OnDestroy {
     const orgId = this.currentOrganization()?.id;
     const roleIds = this.selectedRoleIds();
 
-    if (!userData || !orgId || roleIds.length === 0) return;
+    if (!userData || !orgId || roleIds.length === 0) {
+      // TODO: Implement global role grants when backend endpoint is available
+      console.warn('Grant roles requires organization ID. Global role grants not yet implemented.');
+      return;
+    }
 
     this.isGrantingRoles.set(true);
     this.userDetailService
@@ -295,17 +302,35 @@ export class RolesAssignment implements OnInit, OnDestroy {
       .subscribe({
         next: (roles) => {
           this.availableRoles.set(roles);
-          // TODO: Load current roles for this org
-          this.selectedRoleIds.set([]);
-          this.showManageOrgRolesDialog.set(true);
-          this.isLoading.set(false);
+          
+          // Load current roles for this organization from the memberships
+          const userData = this.user();
+          if (userData) {
+            this.userDetailService
+              .getUserRolesPermissions(userData.id, org.id)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (rolesPerms) => {
+                  const currentRoleIds = (rolesPerms.orgRoles || []).map(r => r.id);
+                  this.selectedRoleIds.set(currentRoleIds);
+                  this.showManageOrgRolesDialog.set(true);
+                  this.isLoading.set(false);
+                },
+                error: (error) => {
+                  console.error('Failed to load current roles:', error);
+                  this.selectedRoleIds.set([]);
+                  this.showManageOrgRolesDialog.set(true);
+                  this.isLoading.set(false);
+                }
+              });
+          }
         },
         error: (error) => {
           console.error('Failed to load available roles:', error);
           this.messageService.add({
             severity: 'error',
             summary: this.translocoService.translate('userDetail.messages.error'),
-            detail: error.message,
+            detail: this.translocoService.translate('userDetail.rolesAssignment.loadError'),
           });
           this.isLoading.set(false);
         },
@@ -314,47 +339,117 @@ export class RolesAssignment implements OnInit, OnDestroy {
 
   /**
    * Save organization roles
+   * This method compares current and selected roles, then grants new roles and revokes removed ones
    */
   protected saveOrgRoles(): void {
     const userData = this.user();
     const org = this.selectedOrgForManage();
-    const roleIds = this.selectedRoleIds();
+    const selectedRoleIds = this.selectedRoleIds();
 
     if (!userData || !org) return;
 
     this.isGrantingRoles.set(true);
+
+    // Get current roles to determine what needs to be added/removed
     this.userDetailService
-      .grantRolesToUserInOrg(org.id, userData.id, roleIds)
+      .getUserRolesPermissions(userData.id, org.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.translocoService.translate('userDetail.messages.success'),
-            detail: this.translocoService.translate('userDetail.rolesAssignment.dialogs.manageOrgRoles.success'),
-          });
-          this.showManageOrgRolesDialog.set(false);
-          this.isGrantingRoles.set(false);
+        next: (rolesPerms) => {
+          const currentRoleIds = (rolesPerms.orgRoles || []).map(r => r.id);
+          const rolesToGrant = selectedRoleIds.filter(id => !currentRoleIds.includes(id));
+          const rolesToRevoke = currentRoleIds.filter(id => !selectedRoleIds.includes(id));
+
+          // Create array of observables for the operations
+          const operations: any[] = [];
           
-          // Reload organizations to get updated roles
-          const userId = userData.id;
-          this.userDetailService
-            .getUserOrganizations(userId)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((orgs) => {
-              this.organizations.set(orgs);
-            });
+          if (rolesToGrant.length > 0) {
+            operations.push(
+              this.userDetailService.grantRolesToUserInOrg(org.id, userData.id, rolesToGrant)
+            );
+          }
+          
+          if (rolesToRevoke.length > 0) {
+            operations.push(
+              this.userDetailService.revokeRolesFromUserInOrg(org.id, userData.id, rolesToRevoke)
+            );
+          }
+
+          // If no changes, just close the dialog
+          if (operations.length === 0) {
+            this.showManageOrgRolesDialog.set(false);
+            this.isGrantingRoles.set(false);
+            return;
+          }
+
+          // Execute all operations
+          import('rxjs').then(({ forkJoin }) => {
+            forkJoin(operations)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: () => {
+                  this.messageService.add({
+                    severity: 'success',
+                    summary: this.translocoService.translate('userDetail.messages.success'),
+                    detail: this.translocoService.translate('userDetail.rolesAssignment.dialogs.manageOrgRoles.success'),
+                  });
+                  this.showManageOrgRolesDialog.set(false);
+                  this.isGrantingRoles.set(false);
+                  
+                  // Reload organizations to get updated roles
+                  this.userDetailService
+                    .getUserOrganizations(userData.id)
+                    .pipe(takeUntil(this.destroy$))
+                    .subscribe((orgs) => {
+                      this.organizations.set(orgs);
+                    });
+                },
+                error: (error) => {
+                  console.error('Failed to save organization roles:', error);
+                  this.messageService.add({
+                    severity: 'error',
+                    summary: this.translocoService.translate('userDetail.messages.error'),
+                    detail: this.translocoService.translate('userDetail.rolesAssignment.dialogs.manageOrgRoles.error'),
+                  });
+                  this.isGrantingRoles.set(false);
+                },
+              });
+          });
         },
         error: (error) => {
-          console.error('Failed to save organization roles:', error);
+          console.error('Failed to get current roles:', error);
           this.messageService.add({
             severity: 'error',
             summary: this.translocoService.translate('userDetail.messages.error'),
-            detail: this.translocoService.translate('userDetail.rolesAssignment.dialogs.manageOrgRoles.error'),
+            detail: this.translocoService.translate('userDetail.rolesAssignment.loadError'),
           });
           this.isGrantingRoles.set(false);
         },
       });
+  }
+
+  /**
+   * Close grant roles dialog
+   */
+  protected closeGrantRolesDialog(): void {
+    this.showGrantRolesDialog.set(false);
+    this.selectedRoleIds.set([]);
+  }
+
+  /**
+   * Close manage org roles dialog
+   */
+  protected closeManageOrgRolesDialog(): void {
+    this.showManageOrgRolesDialog.set(false);
+    this.selectedOrgForManage.set(null);
+    this.selectedRoleIds.set([]);
+  }
+
+  /**
+   * Handle role selection change
+   */
+  protected onRoleSelectionChange(roleIds: string[]): void {
+    this.selectedRoleIds.set(roleIds);
   }
 
   /**
@@ -376,9 +471,9 @@ export class RolesAssignment implements OnInit, OnDestroy {
   /**
    * Get permission names as comma-separated string
    */
-  protected getPermissionsDisplay(permissions: any[]): string {
+  protected getPermissionsDisplay(permissions: Permission[] | any[]): string {
     if (!permissions || permissions.length === 0) return '-';
-    return permissions.map(p => p.name || p).join(', ');
+    return permissions.map((p: any) => p.name || p).join(', ');
   }
 }
 
