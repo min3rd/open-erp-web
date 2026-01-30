@@ -6,6 +6,7 @@
   (onHide)="onClose()"
   styleClass="!w-full md:!w-96 lg:!w-[48rem]"
   id="user-detail-drawer"
+  #drawerRef
   [attr.aria-label]="'userDetail.drawer.label' | transloco"
 >
   <ng-template #header>
@@ -141,7 +142,7 @@
           id="user-detail-more-menu"
           [model]="actionMenuItems"
           [popup]="true"
-          appendTo="userDetailMoreButton"
+          [appendTo]="drawerRef"
         />
       </div>
       <p-button
