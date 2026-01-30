@@ -55,7 +55,6 @@ export const routes: Routes = [
                         path: 'roles-assignment',
                         component: RolesAssignment,
                         resolve: { 
-                          memberships: userMembershipsResolver,
                           rolesPermissionsData: userRolesPermissionsResolver
                         },
                       },
