@@ -30,9 +30,56 @@ export interface UserMembership {
   id: string;
   organizationId: string;
   organizationName: string;
+  organizationCode?: string;
   role: string;
+  roles?: string[];
   status: 'active' | 'inactive' | 'pending';
   joinedAt: string;
+}
+
+/**
+ * Role information
+ */
+export interface Role {
+  id: string;
+  name: string;
+  description?: string;
+  scope: 'global' | 'organization';
+  permissions?: string[];
+}
+
+/**
+ * Permission information
+ */
+export interface Permission {
+  id: string;
+  name: string;
+  description?: string;
+  resource?: string;
+  action?: string;
+}
+
+/**
+ * User roles and permissions response
+ */
+export interface UserRolesPermissions {
+  userId: string;
+  globalRoles: Role[];
+  globalPermissions: Permission[];
+  orgRoles?: Role[];
+  orgPermissions?: Permission[];
+  effectivePermissions?: Permission[];
+}
+
+/**
+ * Organization basic info
+ */
+export interface OrganizationBasic {
+  id: string;
+  name: string;
+  internationalName?: string;
+  code?: string;
+  taxId?: string;
 }
 
 /**
@@ -151,6 +198,119 @@ export class UserDetailService {
             return unwrap(response);
           }
           return response as unknown as UserMembership[];
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Get user organizations
+   * Returns all organizations the user belongs to
+   */
+  getUserOrganizations(userId: string): Observable<OrganizationBasic[]> {
+    return this.http
+      .get<ApiResponse<OrganizationBasic[]>>(`${API_URI_USER}/v1/orgs/user/${userId}`)
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            return unwrap(response);
+          }
+          return response as unknown as OrganizationBasic[];
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Get user roles and permissions
+   * @param userId - User identifier
+   * @param orgId - Optional organization ID to get org-specific roles
+   */
+  getUserRolesPermissions(userId: string, orgId?: string): Observable<UserRolesPermissions> {
+    let params = new HttpParams();
+    if (orgId) {
+      params = params.set('orgId', orgId);
+    }
+
+    return this.http
+      .get<ApiResponse<UserRolesPermissions>>(`${API_URI_USER}/v1/users/${userId}/roles-permissions`, { params })
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            return unwrap(response);
+          }
+          return response as unknown as UserRolesPermissions;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Grant roles to user in an organization
+   * @param orgId - Organization identifier
+   * @param userId - User identifier
+   * @param roleIds - Array of role IDs to grant
+   */
+  grantRolesToUserInOrg(orgId: string, userId: string, roleIds: string[]): Observable<void> {
+    return this.http
+      .post<ApiResponse<void>>(
+        `${API_URI_USER}/v1/orgs/${orgId}/members/${userId}/grant`,
+        { roleIds }
+      )
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            unwrap(response);
+            return;
+          }
+          return response as void;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Revoke roles from user in an organization
+   * @param orgId - Organization identifier
+   * @param userId - User identifier
+   * @param roleIds - Array of role IDs to revoke
+   */
+  revokeRolesFromUserInOrg(orgId: string, userId: string, roleIds: string[]): Observable<void> {
+    return this.http
+      .post<ApiResponse<void>>(
+        `${API_URI_USER}/v1/orgs/${orgId}/members/${userId}/revoke`,
+        { roleIds }
+      )
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            unwrap(response);
+            return;
+          }
+          return response as void;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Get available roles for an organization
+   * @param orgId - Organization identifier (optional, for global roles omit this)
+   */
+  getAvailableRoles(orgId?: string): Observable<Role[]> {
+    let params = new HttpParams();
+    if (orgId) {
+      params = params.set('orgId', orgId);
+    }
+
+    return this.http
+      .get<ApiResponse<Role[]>>(`${API_URI_USER}/v1/roles`, { params })
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            return unwrap(response);
+          }
+          return response as unknown as Role[];
         }),
         catchError(this.handleError)
       );

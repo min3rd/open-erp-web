@@ -639,6 +639,99 @@
       "joinedAt": "Se unió",
       "noMemberships": "No se encontraron membresías de organización"
     },
+    "rolesAssignment": {
+      "title": "Gestión de Roles y Membresías",
+      "scopeSelector": {
+        "global": "Global",
+        "organization": "Organización"
+      },
+      "globalScope": {
+        "title": "Ámbito Global",
+        "subtitle": "Roles del sistema y membresías de organización",
+        "rolesPermissions": {
+          "title": "Roles y Permisos Globales",
+          "noRoles": "No hay roles globales asignados",
+          "noPermissions": "No hay permisos globales asignados",
+          "roles": "Roles",
+          "permissions": "Permisos",
+          "grantRole": "Otorgar Rol Global",
+          "grantPermission": "Otorgar Permiso"
+        },
+        "organizationMemberships": {
+          "title": "Membresías de Organización",
+          "subtitle": "Todas las organizaciones a las que pertenece este usuario",
+          "noMemberships": "El usuario no es miembro de ninguna organización",
+          "table": {
+            "organization": "Organización",
+            "code": "Código",
+            "roles": "Roles",
+            "joinedAt": "Fecha de Unión",
+            "actions": "Acciones"
+          },
+          "actions": {
+            "manageRoles": "Gestionar Roles",
+            "viewOrg": "Ver Organización"
+          }
+        },
+        "restricted": {
+          "title": "Acceso Restringido",
+          "message": "No tiene permiso para ver la configuración de ámbito global. Esta sección requiere permisos globales de MANAGE_USER o MANAGE_ORG."
+        }
+      },
+      "organizationScope": {
+        "title": "Ámbito de Organización",
+        "subtitle": "Roles y permisos para la organización actual",
+        "currentOrg": "Organización Actual",
+        "rolesPermissions": {
+          "title": "Roles y Permisos de Organización",
+          "noRoles": "No hay roles asignados en esta organización",
+          "noPermissions": "No hay permisos asignados en esta organización",
+          "roles": "Roles",
+          "permissions": "Permisos",
+          "grantRole": "Otorgar Rol",
+          "revokeRole": "Revocar Rol"
+        },
+        "noOrganization": {
+          "title": "No hay Organización Seleccionada",
+          "message": "Por favor seleccione una organización para gestionar roles y permisos."
+        }
+      },
+      "dialogs": {
+        "grantRoles": {
+          "title": "Otorgar Roles",
+          "subtitle": "Asignar roles al usuario",
+          "selectRoles": "Seleccionar Roles",
+          "selectRolesPlaceholder": "Elija uno o más roles",
+          "cancel": "Cancelar",
+          "grant": "Otorgar Roles",
+          "success": "Roles otorgados exitosamente",
+          "error": "Error al otorgar roles"
+        },
+        "revokeRoles": {
+          "title": "Revocar Roles",
+          "subtitle": "Eliminar roles del usuario",
+          "selectRoles": "Seleccionar Roles a Revocar",
+          "cancel": "Cancelar",
+          "revoke": "Revocar Roles",
+          "confirm": "¿Está seguro de que desea revocar los roles seleccionados?",
+          "success": "Roles revocados exitosamente",
+          "error": "Error al revocar roles"
+        },
+        "manageOrgRoles": {
+          "title": "Gestionar Roles de Organización",
+          "subtitle": "Gestionar roles de usuario para {{orgName}}",
+          "currentRoles": "Roles Actuales",
+          "availableRoles": "Roles Disponibles",
+          "cancel": "Cancelar",
+          "save": "Guardar Cambios",
+          "success": "Roles de organización actualizados exitosamente",
+          "error": "Error al actualizar roles de organización"
+        }
+      },
+      "loading": "Cargando roles y permisos...",
+      "loadError": "Error al cargar roles y permisos",
+      "noData": "No hay datos disponibles"
+    },
     "activity": {
       "title": "Historial de Actividad",
       "loadMore": "Cargar Más",
