@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { API_URI_USER } from '../../../../../../core/constant';
+import { API_URI_USER, API_URI_ORGANIZATION } from '../../../../../../core/constant';
 import {
   ApiResponse,
   ApiSingleResponse,
@@ -209,11 +209,19 @@ export class UserDetailService {
    */
   getUserOrganizations(userId: string): Observable<OrganizationBasic[]> {
     return this.http
-      .get<ApiResponse<OrganizationBasic[]>>(`${API_URI_USER}/v1/orgs/user/${userId}`)
+      .get<ApiResponse<any[]>>(`${API_URI_ORGANIZATION}/v1/orgs/user/${userId}`)
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            return unwrap(response);
+            const data = unwrap(response);
+            // Transform backend response to OrganizationBasic format
+            return data.map((org: any) => ({
+              id: org.orgId,
+              name: org.orgName,
+              internationalName: org.orgName,
+              code: org.orgCode,
+              taxId: org.orgCode,
+            }));
           }
           return response as unknown as OrganizationBasic[];
         }),
@@ -233,11 +241,44 @@ export class UserDetailService {
     }
 
     return this.http
-      .get<ApiResponse<UserRolesPermissions>>(`${API_URI_USER}/v1/users/${userId}/roles-permissions`, { params })
+      .get<ApiResponse<any>>(`${API_URI_ORGANIZATION}/v1/users/${userId}/roles-permissions`, { params })
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            return unwrap(response);
+            const data = unwrap(response);
+            // Transform backend response format
+            const result: UserRolesPermissions = {
+              userId: userId,
+              globalRoles: (data.globalRoles || []).map((name: string) => ({
+                id: name,
+                name: name,
+                scope: 'global' as const,
+              })),
+              globalPermissions: (data.globalPermissions || []).map((name: string) => ({
+                id: name,
+                name: name,
+              })),
+              orgRoles: [],
+              orgPermissions: [],
+            };
+
+            // If orgId is provided, extract org-specific roles
+            if (orgId && data.orgRoles && data.orgRoles[orgId]) {
+              result.orgRoles = data.orgRoles[orgId].map((name: string) => ({
+                id: name,
+                name: name,
+                scope: 'organization' as const,
+              }));
+            }
+
+            if (orgId && data.orgPermissions && data.orgPermissions[orgId]) {
+              result.orgPermissions = data.orgPermissions[orgId].map((name: string) => ({
+                id: name,
+                name: name,
+              }));
+            }
+
+            return result;
           }
           return response as unknown as UserRolesPermissions;
         }),
@@ -247,39 +288,16 @@ export class UserDetailService {
 
   /**
    * Grant roles to user in an organization
+   * This replaces all existing roles with the provided ones
    * @param orgId - Organization identifier
    * @param userId - User identifier
-   * @param roleIds - Array of role IDs to grant
+   * @param roleIds - Array of role IDs to grant (replaces all existing roles)
    */
   grantRolesToUserInOrg(orgId: string, userId: string, roleIds: string[]): Observable<void> {
     return this.http
       .post<ApiResponse<void>>(
-        `${API_URI_USER}/v1/orgs/${orgId}/members/${userId}/grant`,
-        { roleIds }
-      )
-      .pipe(
-        map((response) => {
-          if (isApiResponse(response)) {
-            unwrap(response);
-            return;
-          }
-          return response as void;
-        }),
-        catchError(this.handleError)
-      );
-  }
-
-  /**
-   * Revoke roles from user in an organization
-   * @param orgId - Organization identifier
-   * @param userId - User identifier
-   * @param roleIds - Array of role IDs to revoke
-   */
-  revokeRolesFromUserInOrg(orgId: string, userId: string, roleIds: string[]): Observable<void> {
-    return this.http
-      .post<ApiResponse<void>>(
-        `${API_URI_USER}/v1/orgs/${orgId}/members/${userId}/revoke`,
-        { roleIds }
+        `${API_URI_ORGANIZATION}/v1/orgs/${orgId}/members/${userId}/grant`,
+        { roles: roleIds }
       )
       .pipe(
         map((response) => {
@@ -304,7 +322,7 @@ export class UserDetailService {
     }
 
     return this.http
-      .get<ApiResponse<Role[]>>(`${API_URI_USER}/v1/roles`, { params })
+      .get<ApiResponse<Role[]>>(`${API_URI_ORGANIZATION}/v1/roles`, { params })
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
