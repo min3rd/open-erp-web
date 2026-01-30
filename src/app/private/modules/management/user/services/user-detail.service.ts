@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { API_URI_USER, API_URI_ORGANIZATION } from '../../../../../../core/constant';
+import { API_URI_USER, API_URI_ORGANIZATION, API_URI_COMMON } from '../../../../../../core/constant';
 import {
   ApiResponse,
   ApiSingleResponse,
@@ -312,23 +312,93 @@ export class UserDetailService {
   }
 
   /**
-   * Get available roles for an organization
+   * Get available roles for an organization or global roles
    * @param orgId - Organization identifier (optional, for global roles omit this)
    */
   getAvailableRoles(orgId?: string): Observable<Role[]> {
+    // Use different endpoints based on scope
+    const url = orgId 
+      ? `${API_URI_ORGANIZATION}/v1/orgs/roles`
+      : `${API_URI_COMMON}/v1/common/roles/global`;
+
     let params = new HttpParams();
     if (orgId) {
       params = params.set('orgId', orgId);
     }
 
     return this.http
-      .get<ApiResponse<Role[]>>(`${API_URI_ORGANIZATION}/v1/roles`, { params })
+      .get<ApiResponse<any[]>>(url, { params })
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {
-            return unwrap(response);
+            const data = unwrap(response);
+            // Transform the response to Role[] format
+            // Backend returns string array of role names
+            return data.map((role: any) => {
+              if (typeof role === 'string') {
+                return {
+                  id: role,
+                  name: role,
+                  scope: orgId ? ('organization' as const) : ('global' as const),
+                };
+              }
+              // If backend returns objects, use them directly
+              return {
+                id: role.id || role.name,
+                name: role.name,
+                description: role.description,
+                scope: orgId ? ('organization' as const) : ('global' as const),
+                permissions: role.permissions,
+              };
+            });
           }
           return response as unknown as Role[];
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Get available permissions for an organization or global permissions
+   * @param orgId - Organization identifier (optional, for global permissions omit this)
+   */
+  getAvailablePermissions(orgId?: string): Observable<Permission[]> {
+    // Use different endpoints based on scope
+    const url = orgId 
+      ? `${API_URI_ORGANIZATION}/v1/orgs/permissions`
+      : `${API_URI_COMMON}/v1/common/permissions/global`;
+
+    let params = new HttpParams();
+    if (orgId) {
+      params = params.set('orgId', orgId);
+    }
+
+    return this.http
+      .get<ApiResponse<any[]>>(url, { params })
+      .pipe(
+        map((response) => {
+          if (isApiResponse(response)) {
+            const data = unwrap(response);
+            // Transform the response to Permission[] format
+            // Backend returns string array of permission names
+            return data.map((permission: any) => {
+              if (typeof permission === 'string') {
+                return {
+                  id: permission,
+                  name: permission,
+                };
+              }
+              // If backend returns objects, use them directly
+              return {
+                id: permission.id || permission.name,
+                name: permission.name,
+                description: permission.description,
+                resource: permission.resource,
+                action: permission.action,
+              };
+            });
+          }
+          return response as unknown as Permission[];
         }),
         catchError(this.handleError)
       );
