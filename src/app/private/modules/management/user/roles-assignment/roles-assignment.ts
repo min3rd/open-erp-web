@@ -339,7 +339,7 @@ export class RolesAssignment implements OnInit, OnDestroy {
 
   /**
    * Save organization roles
-   * This method compares current and selected roles, then grants new roles and revokes removed ones
+   * The grant endpoint replaces all roles, so we just send the selected roles
    */
   protected saveOrgRoles(): void {
     const userData = this.user();
@@ -350,78 +350,34 @@ export class RolesAssignment implements OnInit, OnDestroy {
 
     this.isGrantingRoles.set(true);
 
-    // Get current roles to determine what needs to be added/removed
+    // The grant endpoint replaces all roles with the provided ones
     this.userDetailService
-      .getUserRolesPermissions(userData.id, org.id)
+      .grantRolesToUserInOrg(org.id, userData.id, selectedRoleIds)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (rolesPerms) => {
-          const currentRoleIds = (rolesPerms.orgRoles || []).map(r => r.id);
-          const rolesToGrant = selectedRoleIds.filter(id => !currentRoleIds.includes(id));
-          const rolesToRevoke = currentRoleIds.filter(id => !selectedRoleIds.includes(id));
-
-          // Create array of observables for the operations
-          const operations: any[] = [];
-          
-          if (rolesToGrant.length > 0) {
-            operations.push(
-              this.userDetailService.grantRolesToUserInOrg(org.id, userData.id, rolesToGrant)
-            );
-          }
-          
-          if (rolesToRevoke.length > 0) {
-            operations.push(
-              this.userDetailService.revokeRolesFromUserInOrg(org.id, userData.id, rolesToRevoke)
-            );
-          }
-
-          // If no changes, just close the dialog
-          if (operations.length === 0) {
-            this.showManageOrgRolesDialog.set(false);
-            this.isGrantingRoles.set(false);
-            return;
-          }
-
-          // Execute all operations
-          import('rxjs').then(({ forkJoin }) => {
-            forkJoin(operations)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                next: () => {
-                  this.messageService.add({
-                    severity: 'success',
-                    summary: this.translocoService.translate('userDetail.messages.success'),
-                    detail: this.translocoService.translate('userDetail.rolesAssignment.dialogs.manageOrgRoles.success'),
-                  });
-                  this.showManageOrgRolesDialog.set(false);
-                  this.isGrantingRoles.set(false);
-                  
-                  // Reload organizations to get updated roles
-                  this.userDetailService
-                    .getUserOrganizations(userData.id)
-                    .pipe(takeUntil(this.destroy$))
-                    .subscribe((orgs) => {
-                      this.organizations.set(orgs);
-                    });
-                },
-                error: (error) => {
-                  console.error('Failed to save organization roles:', error);
-                  this.messageService.add({
-                    severity: 'error',
-                    summary: this.translocoService.translate('userDetail.messages.error'),
-                    detail: this.translocoService.translate('userDetail.rolesAssignment.dialogs.manageOrgRoles.error'),
-                  });
-                  this.isGrantingRoles.set(false);
-                },
-              });
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: this.translocoService.translate('userDetail.messages.success'),
+            detail: this.translocoService.translate('userDetail.rolesAssignment.dialogs.manageOrgRoles.success'),
           });
+          this.showManageOrgRolesDialog.set(false);
+          this.isGrantingRoles.set(false);
+          
+          // Reload organizations to get updated roles
+          this.userDetailService
+            .getUserOrganizations(userData.id)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((orgs) => {
+              this.organizations.set(orgs);
+            });
         },
         error: (error) => {
-          console.error('Failed to get current roles:', error);
+          console.error('Failed to save organization roles:', error);
           this.messageService.add({
             severity: 'error',
             summary: this.translocoService.translate('userDetail.messages.error'),
-            detail: this.translocoService.translate('userDetail.rolesAssignment.loadError'),
+            detail: this.translocoService.translate('userDetail.rolesAssignment.dialogs.manageOrgRoles.error'),
           });
           this.isGrantingRoles.set(false);
         },
