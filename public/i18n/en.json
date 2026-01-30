@@ -667,6 +667,117 @@
       "userEnabled": "User has been enabled successfully",
       "impersonating": "Impersonating User",
       "impersonatingDetail": "Now impersonating {{name}}"
+    },
+    "resetPassword": {
+      "title": "Password & Security",
+      "resetPasswordSection": {
+        "title": "Reset Password",
+        "method": {
+          "label": "Reset Method",
+          "autoGenerate": "Auto-generate password",
+          "manual": "Set custom password"
+        },
+        "password": {
+          "label": "New Password",
+          "placeholder": "Enter new password",
+          "showPassword": "Show password",
+          "hidePassword": "Hide password",
+          "copyPassword": "Copy password",
+          "passwordCopied": "Password copied to clipboard",
+          "generated": "Generated Password",
+          "strength": {
+            "label": "Password Strength",
+            "weak": "Weak",
+            "medium": "Medium",
+            "strong": "Strong",
+            "veryStrong": "Very Strong"
+          }
+        },
+        "options": {
+          "forceReset": "Force user to change password on next login",
+          "revokeSessions": "Revoke all sessions after reset",
+          "sendEmail": "Send email notification"
+        },
+        "button": "Reset Password",
+        "reason": {
+          "label": "Reason (optional)",
+          "placeholder": "Enter reason for audit log"
+        }
+      },
+      "sessionsSection": {
+        "title": "Login Sessions",
+        "description": "Revoke all active login sessions for this user",
+        "button": "Revoke All Sessions",
+        "options": {
+          "revokeRefreshTokens": "Revoke refresh tokens",
+          "revokeAllDevices": "Revoke all devices"
+        },
+        "reason": {
+          "label": "Reason (optional)",
+          "placeholder": "Enter reason for revoking sessions"
+        }
+      },
+      "accountStatusSection": {
+        "title": "Account Status",
+        "currentStatus": "Current Status",
+        "active": "Active",
+        "blocked": "Blocked",
+        "blockButton": "Block User",
+        "unblockButton": "Unblock User",
+        "blockOptions": {
+          "softBlock": "Soft block (prevent login but keep sessions)",
+          "revokeSessions": "Revoke sessions when blocking",
+          "sendEmail": "Send email notification"
+        },
+        "unblockOptions": {
+          "sendEmail": "Send email notification"
+        },
+        "reason": {
+          "label": "Reason",
+          "labelOptional": "Reason (optional)",
+          "placeholder": "Enter reason for blocking/unblocking",
+          "required": "Reason is required when blocking a user"
+        }
+      },
+      "confirmDialog": {
+        "resetPassword": {
+          "header": "Confirm Password Reset",
+          "message": "Are you sure you want to reset the password for this user?",
+          "messageWithRevoke": "This will reset the password and revoke all active sessions. The user will be logged out from all devices."
+        },
+        "revokeSessions": {
+          "header": "Confirm Revoke Sessions",
+          "message": "Are you sure you want to revoke all sessions for this user? They will be logged out from all devices immediately."
+        },
+        "blockUser": {
+          "header": "Confirm Block User",
+          "message": "Are you sure you want to block this user? They will not be able to log in."
+        },
+        "unblockUser": {
+          "header": "Confirm Unblock User",
+          "message": "Are you sure you want to unblock this user? They will be able to log in again."
+        },
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+      },
+      "messages": {
+        "passwordResetSuccess": "Password reset successfully",
+        "passwordResetError": "Failed to reset password",
+        "passwordCopied": "Password copied to clipboard",
+        "sessionsRevokedSuccess": "All sessions revoked successfully",
+        "sessionsRevokedError": "Failed to revoke sessions",
+        "userBlockedSuccess": "User blocked successfully",
+        "userBlockedError": "Failed to block user",
+        "userUnblockedSuccess": "User unblocked successfully",
+        "userUnblockedError": "Failed to unblock user",
+        "reasonRequired": "Reason is required when blocking a user"
+      },
+      "validation": {
+        "passwordRequired": "Password is required",
+        "passwordMinLength": "Password must be at least 8 characters",
+        "passwordPattern": "Password must contain uppercase, lowercase, number, and special character",
+        "reasonRequired": "Reason is required"
+      }
     }
   },
   "navigationManagement": {

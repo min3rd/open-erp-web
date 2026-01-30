@@ -767,5 +767,179 @@
       "provinceMessage": "Bạn có chắc chắn muốn xóa tỉnh {{name}}? Điều này cũng sẽ xóa tất cả các xã liên quan.",
       "wardMessage": "Bạn có chắc chắn muốn xóa xã {{name}}?"
     }
+  },
+  "userDetail": {
+    "drawer": {
+      "label": "Chi tiết người dùng",
+      "title": "Chi tiết người dùng"
+    },
+    "tabs": {
+      "general": "Thông tin chung",
+      "roles": "Vai trò & Thành viên",
+      "activity": "Nhật ký hoạt động",
+      "password": "Đặt lại mật khẩu"
+    },
+    "general": {
+      "profile": "Thông tin hồ sơ",
+      "email": "Email",
+      "username": "Tên đăng nhập",
+      "phone": "Điện thoại",
+      "lastLogin": "Đăng nhập lần cuối",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật",
+      "never": "Chưa bao giờ",
+      "additionalInfo": "Thông tin bổ sung",
+      "roles": "Vai trò",
+      "permissions": "Quyền",
+      "noData": "Không có dữ liệu bổ sung"
+    },
+    "roles": {
+      "title": "Thành viên tổ chức",
+      "organization": "Tổ chức",
+      "role": "Vai trò",
+      "status": "Trạng thái",
+      "joinedAt": "Tham gia",
+      "noMemberships": "Không tìm thấy thành viên tổ chức"
+    },
+    "activity": {
+      "title": "Lịch sử hoạt động",
+      "loadMore": "Tải thêm",
+      "noActivity": "Không tìm thấy nhật ký hoạt động"
+    },
+    "actions": {
+      "edit": "Sửa",
+      "close": "Đóng",
+      "more": "Thao tác khác",
+      "invite": "Mời",
+      "sendInvitation": "Gửi lời mời",
+      "resetPassword": "Đặt lại mật khẩu",
+      "disable": "Vô hiệu hóa người dùng",
+      "enable": "Kích hoạt người dùng",
+      "impersonate": "Mạo danh người dùng"
+    },
+    "messages": {
+      "loading": "Đang tải chi tiết người dùng...",
+      "error": "Lỗi",
+      "success": "Thành công",
+      "noData": "Không có dữ liệu người dùng",
+      "loadFailed": "Không thể tải chi tiết người dùng",
+      "invitationSent": "Đã gửi lời mời thành công",
+      "passwordReset": "Đã gửi email đặt lại mật khẩu thành công",
+      "userDisabled": "Đã vô hiệu hóa người dùng thành công",
+      "userEnabled": "Đã kích hoạt người dùng thành công",
+      "impersonating": "Đang mạo danh người dùng",
+      "impersonatingDetail": "Đang mạo danh {{name}}"
+    },
+    "resetPassword": {
+      "title": "Mật khẩu & Bảo mật",
+      "resetPasswordSection": {
+        "title": "Đặt lại mật khẩu",
+        "method": {
+          "label": "Phương thức đặt lại",
+          "autoGenerate": "Tự động tạo mật khẩu",
+          "manual": "Đặt mật khẩu tùy chỉnh"
+        },
+        "password": {
+          "label": "Mật khẩu mới",
+          "placeholder": "Nhập mật khẩu mới",
+          "showPassword": "Hiện mật khẩu",
+          "hidePassword": "Ẩn mật khẩu",
+          "copyPassword": "Sao chép mật khẩu",
+          "passwordCopied": "Đã sao chép mật khẩu",
+          "generated": "Mật khẩu được tạo",
+          "strength": {
+            "label": "Độ mạnh mật khẩu",
+            "weak": "Yếu",
+            "medium": "Trung bình",
+            "strong": "Mạnh",
+            "veryStrong": "Rất mạnh"
+          }
+        },
+        "options": {
+          "forceReset": "Bắt buộc người dùng đổi mật khẩu khi đăng nhập lần sau",
+          "revokeSessions": "Thu hồi tất cả phiên sau khi đặt lại",
+          "sendEmail": "Gửi thông báo email"
+        },
+        "button": "Đặt lại mật khẩu",
+        "reason": {
+          "label": "Lý do (tùy chọn)",
+          "placeholder": "Nhập lý do cho nhật ký kiểm toán"
+        }
+      },
+      "sessionsSection": {
+        "title": "Phiên đăng nhập",
+        "description": "Thu hồi tất cả phiên đăng nhập đang hoạt động của người dùng này",
+        "button": "Thu hồi tất cả phiên",
+        "options": {
+          "revokeRefreshTokens": "Thu hồi token làm mới",
+          "revokeAllDevices": "Thu hồi tất cả thiết bị"
+        },
+        "reason": {
+          "label": "Lý do (tùy chọn)",
+          "placeholder": "Nhập lý do thu hồi phiên"
+        }
+      },
+      "accountStatusSection": {
+        "title": "Trạng thái tài khoản",
+        "currentStatus": "Trạng thái hiện tại",
+        "active": "Hoạt động",
+        "blocked": "Bị khóa",
+        "blockButton": "Khóa người dùng",
+        "unblockButton": "Mở khóa người dùng",
+        "blockOptions": {
+          "softBlock": "Khóa mềm (ngăn đăng nhập nhưng giữ phiên)",
+          "revokeSessions": "Thu hồi phiên khi khóa",
+          "sendEmail": "Gửi thông báo email"
+        },
+        "unblockOptions": {
+          "sendEmail": "Gửi thông báo email"
+        },
+        "reason": {
+          "label": "Lý do",
+          "labelOptional": "Lý do (tùy chọn)",
+          "placeholder": "Nhập lý do khóa/mở khóa",
+          "required": "Lý do là bắt buộc khi khóa người dùng"
+        }
+      },
+      "confirmDialog": {
+        "resetPassword": {
+          "header": "Xác nhận đặt lại mật khẩu",
+          "message": "Bạn có chắc chắn muốn đặt lại mật khẩu cho người dùng này?",
+          "messageWithRevoke": "Điều này sẽ đặt lại mật khẩu và thu hồi tất cả phiên hoạt động. Người dùng sẽ bị đăng xuất khỏi tất cả thiết bị."
+        },
+        "revokeSessions": {
+          "header": "Xác nhận thu hồi phiên",
+          "message": "Bạn có chắc chắn muốn thu hồi tất cả phiên của người dùng này? Họ sẽ bị đăng xuất khỏi tất cả thiết bị ngay lập tức."
+        },
+        "blockUser": {
+          "header": "Xác nhận khóa người dùng",
+          "message": "Bạn có chắc chắn muốn khóa người dùng này? Họ sẽ không thể đăng nhập."
+        },
+        "unblockUser": {
+          "header": "Xác nhận mở khóa người dùng",
+          "message": "Bạn có chắc chắn muốn mở khóa người dùng này? Họ sẽ có thể đăng nhập lại."
+        },
+        "confirm": "Xác nhận",
+        "cancel": "Hủy"
+      },
+      "messages": {
+        "passwordResetSuccess": "Đặt lại mật khẩu thành công",
+        "passwordResetError": "Không thể đặt lại mật khẩu",
+        "passwordCopied": "Đã sao chép mật khẩu",
+        "sessionsRevokedSuccess": "Đã thu hồi tất cả phiên thành công",
+        "sessionsRevokedError": "Không thể thu hồi phiên",
+        "userBlockedSuccess": "Đã khóa người dùng thành công",
+        "userBlockedError": "Không thể khóa người dùng",
+        "userUnblockedSuccess": "Đã mở khóa người dùng thành công",
+        "userUnblockedError": "Không thể mở khóa người dùng",
+        "reasonRequired": "Lý do là bắt buộc khi khóa người dùng"
+      },
+      "validation": {
+        "passwordRequired": "Mật khẩu là bắt buộc",
+        "passwordMinLength": "Mật khẩu phải có ít nhất 8 ký tự",
+        "passwordPattern": "Mật khẩu phải chứa chữ hoa, chữ thường, số và ký tự đặc biệt",
+        "reasonRequired": "Lý do là bắt buộc"
+      }
+    }
   }
 }
