@@ -49,6 +49,16 @@ export interface Role {
 }
 
 /**
+ * Backend API response format for roles (can be string or object)
+ */
+export type RoleApiResponse = string | {
+  id?: string;
+  name: string;
+  description?: string;
+  permissions?: string[];
+};
+
+/**
  * Permission information
  */
 export interface Permission {
@@ -58,6 +68,17 @@ export interface Permission {
   resource?: string;
   action?: string;
 }
+
+/**
+ * Backend API response format for permissions (can be string or object)
+ */
+export type PermissionApiResponse = string | {
+  id?: string;
+  name: string;
+  description?: string;
+  resource?: string;
+  action?: string;
+};
 
 /**
  * User roles and permissions response
@@ -320,7 +341,7 @@ export class UserDetailService {
   private getResources<T>(
     resourceType: 'roles' | 'permissions',
     orgId: string | undefined,
-    transform: (item: any, orgId?: string) => T
+    transform: (item: RoleApiResponse | PermissionApiResponse, orgId?: string) => T
   ): Observable<T[]> {
     // Use different endpoints based on scope and resource type
     const url = orgId
@@ -332,11 +353,11 @@ export class UserDetailService {
       params = params.set('orgId', orgId);
     }
 
-    return this.http.get<ApiResponse<any[]>>(url, { params }).pipe(
+    return this.http.get<ApiResponse<(RoleApiResponse | PermissionApiResponse)[]>>(url, { params }).pipe(
       map((response) => {
         if (isApiResponse(response)) {
           const data = unwrap(response);
-          return data.map((item: any) => transform(item, orgId));
+          return data.map((item) => transform(item, orgId));
         }
         return response as unknown as T[];
       }),
@@ -349,7 +370,7 @@ export class UserDetailService {
    * @param orgId - Organization identifier (optional, for global roles omit this)
    */
   getAvailableRoles(orgId?: string): Observable<Role[]> {
-    return this.getResources<Role>('roles', orgId, (role: any, orgId) => {
+    return this.getResources<Role>('roles', orgId, (role: RoleApiResponse, orgId?: string) => {
       if (typeof role === 'string') {
         return {
           id: role,
@@ -373,7 +394,7 @@ export class UserDetailService {
    * @param orgId - Organization identifier (optional, for global permissions omit this)
    */
   getAvailablePermissions(orgId?: string): Observable<Permission[]> {
-    return this.getResources<Permission>('permissions', orgId, (permission: any) => {
+    return this.getResources<Permission>('permissions', orgId, (permission: PermissionApiResponse, orgId?: string) => {
       if (typeof permission === 'string') {
         return {
           id: permission,
