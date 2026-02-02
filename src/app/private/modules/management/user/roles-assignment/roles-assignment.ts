@@ -82,12 +82,13 @@ export class RolesAssignment implements OnInit, OnDestroy {
   protected readonly currentOrganization = this.orgContextService.currentOrganization;
 
   // Dialog states
-  protected readonly showGrantRolesDialog = signal(false);
+  protected readonly showGrantRolesPanel = signal(false);
   protected readonly showManageOrgRolesDialog = signal(false);
   protected readonly selectedOrgForManage = signal<OrganizationBasic | null>(null);
   protected readonly availableRoles = signal<Role[]>([]);
   protected readonly selectedRoleIds = signal<string[]>([]);
   protected readonly isGrantingRoles = signal(false);
+  protected readonly grantRolesScope = signal<'global' | 'organization'>('organization');
 
   // Scope options for SelectButton
   protected readonly scopeOptions = computed<ScopeOption[]>(() => [
@@ -227,11 +228,12 @@ export class RolesAssignment implements OnInit, OnDestroy {
   }
 
   /**
-   * Open grant roles dialog
+   * Open grant roles panel (inline form instead of modal)
    */
-  protected openGrantRolesDialog(scope: 'global' | 'organization'): void {
+  protected openGrantRolesPanel(scope: 'global' | 'organization'): void {
     const orgId = scope === 'organization' ? this.currentOrganization()?.id : undefined;
     
+    this.grantRolesScope.set(scope);
     this.isLoading.set(true);
     this.userDetailService
       .getAvailableRoles(orgId)
@@ -240,7 +242,7 @@ export class RolesAssignment implements OnInit, OnDestroy {
         next: (roles) => {
           this.availableRoles.set(roles);
           this.selectedRoleIds.set([]);
-          this.showGrantRolesDialog.set(true);
+          this.showGrantRolesPanel.set(true);
           this.isLoading.set(false);
         },
         error: (error) => {
@@ -279,7 +281,7 @@ export class RolesAssignment implements OnInit, OnDestroy {
         summary: this.translocoService.translate('userDetail.messages.error'),
         detail: 'Global role grants are not yet implemented. Please select an organization scope.',
       });
-      this.showGrantRolesDialog.set(false);
+      this.showGrantRolesPanel.set(false);
       return;
     }
 
@@ -294,7 +296,7 @@ export class RolesAssignment implements OnInit, OnDestroy {
             summary: this.translocoService.translate('userDetail.messages.success'),
             detail: this.translocoService.translate('userDetail.rolesAssignment.dialogs.grantRoles.success'),
           });
-          this.showGrantRolesDialog.set(false);
+          this.showGrantRolesPanel.set(false);
           this.isGrantingRoles.set(false);
           this.reloadRolesPermissions();
         },
@@ -406,11 +408,12 @@ export class RolesAssignment implements OnInit, OnDestroy {
   }
 
   /**
-   * Close grant roles dialog
+   * Close grant roles panel
    */
-  protected closeGrantRolesDialog(): void {
-    this.showGrantRolesDialog.set(false);
+  protected closeGrantRolesPanel(): void {
+    this.showGrantRolesPanel.set(false);
     this.selectedRoleIds.set([]);
+    this.availableRoles.set([]);
   }
 
   /**
